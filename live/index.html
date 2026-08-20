@@ -202,6 +202,7 @@ function render(){
   else if(S.view==='erfassen') body=viewErfassen();
   else if(S.view==='verwaltung') body=viewVerwaltung();
   root.innerHTML = topbar()+`<div class="wrap">${body}</div>`+tabbar()+`<div class="disc">Betriebliche Unterstützung – ersetzt keine Beurteilung vor Ort.</div>`;
+  if(S.view==='erfassen'){ onSubChange(); filterLocs(); }
 }
 
 function sdbBadge(){ return ''; }
@@ -229,6 +230,7 @@ function viewErfassen(){
   const ghsBoxes = GHS.map(k=>`<label style="display:inline-flex;align-items:center;gap:6px;font-weight:500;margin:0 10px 6px 0"><input type="checkbox" style="width:auto" value="${k}" class="ghsChk"> ${GHS_LBL[k]}</label>`).join('');
   return `<h2>Gefahrstoff erfassen</h2>
   <div class="card">
+    <div id="erfNote"></div>
     <label>Firma</label><select id="fCompany">${compOpts}</select>
     <label>Lagerort</label><select id="fLoc">${locOpts}</select>
     <label>Stoff</label><select id="fSub" data-a="subChange">${subOpts}</select>
@@ -244,7 +246,9 @@ function viewErfassen(){
     <button class="btn" data-a="saveInst">Erfassen</button>
   </div>`;
 }
-function onSubChange(){ const v=$('#fSub').value; $('#newSub').style.display = v==='__new'?'block':'none'; }
+function onSubChange(){ const el=$('#fSub'); if(!el) return; const ns=$('#newSub'); if(ns) ns.style.display = el.value==='__new'?'block':'none'; }
+function filterLocs(){ const sel=$('#fCompany'), loc=$('#fLoc'); if(!sel||!loc) return; const cid=sel.value; const opts=S.locations.filter(l=>l.company_id===cid); loc.innerHTML = opts.length ? opts.map(l=>`<option value="${esc(l.id)}">${esc(l.name)}${l.bereich?' · '+esc(l.bereich):''}</option>`).join('') : `<option value="">— kein Lagerort für diese Firma —</option>`; }
+function erfErr(m){ const n=$('#erfNote'); if(n) n.innerHTML='<div class="notice err">'+esc(m)+'</div>'; toast(m,false); }
 
 async function saveInst(){
   const org = S.profile.organization_id;
@@ -252,16 +256,17 @@ async function saveInst(){
   try{
     if(subId==='__new'){
       const produktname=$('#nProd').value.trim();
-      if(!produktname){ toast('Produktname fehlt.',false); return; }
+      if(!produktname){ erfErr('Produktname fehlt.'); $('#nProd')?.focus(); return; }
       const ghs=[...document.querySelectorAll('.ghsChk:checked')].map(c=>c.value);
       const { data, error } = await sb.from('substances').insert({
         organization_id: org, produktname, hersteller:$('#nHerst').value.trim()||null,
         signalwort:$('#nSignal').value||null, ghs_piktogramme: ghs
       }).select().single();
-      if(error){ toast(error.message,false); return; }
+      if(error){ erfErr('Stoff anlegen: '+error.message); return; }
       subId = data.id;
     }
-    const companyId=$('#fCompany').value, locId=$('#fLoc').value;
+    if(!subId){ erfErr('Bitte einen Stoff wählen oder neu anlegen.'); return; }
+    const companyId=$('#fCompany').value, locId=$('#fLoc').value||null;
     const menge = $('#fMenge').value===''?null:Number($('#fMenge').value);
     const qr = 'INST-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,6).toUpperCase();
     const { error } = await sb.from('substance_instances').insert({
@@ -269,10 +274,10 @@ async function saveInst(){
       gebindeart:$('#fGebinde').value.trim()||null, menge_aktuell: menge,
       mengeneinheit:$('#fEinheit').value.trim()||null, status:$('#fStatus').value, internal_qr: qr
     });
-    if(error){ toast(error.message,false); return; }
+    if(error){ erfErr('Erfassen: '+error.message); return; }
     toast('Erfasst. Interner QR: '+qr, true);
     await loadAll(); S.view='bestand'; render();
-  }catch(e){ toast('Fehler: '+e.message,false); }
+  }catch(e){ erfErr('Fehler: '+e.message); }
 }
 
 /* ---------- Instance detail + QR deep link ---------- */
@@ -368,7 +373,7 @@ document.addEventListener('click', async (e)=>{
   else if(act==='addCompany') addCompany();
   else if(act==='addLoc') addLoc();
 });
-document.addEventListener('change', (e)=>{ if(e.target.id==='fSub') onSubChange(); });
+document.addEventListener('change', (e)=>{ if(e.target.id==='fSub') onSubChange(); else if(e.target.id==='fCompany') filterLocs(); });
 
 boot();
 </script>
