@@ -51,17 +51,18 @@ jetzt: ein **generisches, verkaufbares Mehrmandanten-SaaS** ohne Kundenbezug.
 |---|---|---|
 | Produktname | **StoffScan** | 2026-08-20 |
 | Backend-Stack | **Supabase** (Postgres + Auth + Storage + Row-Level-Security) | 2026-08-20 |
+| Datenstandort | **Supabase EU-Region** (Datenschutz + Tempo; CH-Option später) | 2026-08-20 |
+| Zielgruppe | **Breit** – Bau, Werkhof/Gemeinde, Recycling, Industrie/Gewerbe (kein enger Fokus) | 2026-08-20 |
 | Vorgehen | Erst planen (dieses Dokument), dann bauen | 2026-08-20 |
 
 ## 5. Offene Entscheidungen (brauchen Input)
 
 | # | Frage | Optionen / Notiz |
 |---|---|---|
-| O1 | **Datenstandort / Hosting** | Schweiz-Hosting = starkes CH-Verkaufsargument. Supabase EU-Region vs. CH-Anbieter. |
-| O2 | **Erste Zielgruppe / Pilot** | Bau · Werkhof/Gemeinde · Recycling · Industrie – wo starten? |
 | O3 | **Domain** | z. B. stoffscan.ch / .app – Verfügbarkeit prüfen. |
 | O4 | **Rechtsträger / AGB** | Verkauf an Fremdfirmen braucht AGB, Datenschutzerklärung, Haftungsgrenzen. |
 | O5 | **Preismodell final** | Aktuell Richtpreise (49 / 149 / Anfrage). Nach Pilot validieren. |
+| O6 | **Konkreter erster Pilotkunde** | Zielgruppe ist breit – für den *ersten* Piloten hilft **ein** benannter Betrieb als Referenz. |
 
 ---
 
