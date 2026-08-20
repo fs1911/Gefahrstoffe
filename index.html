@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StoffScan – Gefahrstoff-Kataster für Bau & Gewerbe</title>
+<meta name="description" content="StoffScan ist das mobile Gefahrstoff-Kataster für Bau-, Werkhof- und Gewerbebetriebe. Lagerort scannen, Artikel scannen – Menge, Sicherheitsdatenblatt und Gefahrenhinweise sofort erfasst und für alle abrufbar.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#13171b;--ink-2:#414a52;--ink-3:#737d86;
+    --line:#d3d8dd;--line-2:#e7eaed;--bg:#ffffff;--surface:#fff;--surface-2:#f5f6f8;
+    --slate:#1d262d;--slate-2:#28333b;
+    --accent:#0a5a78;--accent-ink:#073f54;--accent-soft:#e7f0f4;
+    --danger:#a31f14;--danger-bg:#fae9e7;--danger-line:#e7c0bb;
+    --warn:#8a5200;--warn-bg:#faefda;--warn-line:#ecd5a6;
+    --ok:#1c6240;--ok-bg:#e4efe8;--ok-line:#c2ddcd;
+    --ghs-red:#cc1717;
+    --font:'IBM Plex Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    --maxw:1120px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:var(--font);color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;line-height:1.55;font-size:17px}
+  a{color:inherit;text-decoration:none}
+  img,svg{max-width:100%}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
+  section{padding:84px 0}
+  h1,h2,h3{margin:0;line-height:1.15;letter-spacing:-.01em}
+  h2{font-size:34px;font-weight:700;margin-bottom:14px}
+  .eyebrow{font-family:var(--mono);font-size:12.5px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent)}
+  .lead{font-size:19px;color:var(--ink-2);max-width:640px}
+  .center{text-align:center}
+  .center .lead{margin-left:auto;margin-right:auto}
+
+  /* Buttons */
+  .btn{display:inline-flex;align-items:center;gap:9px;border:0;border-radius:10px;font-family:var(--font);font-size:16px;font-weight:600;padding:14px 22px;cursor:pointer;transition:background .15s,transform .05s}
+  .btn.primary{background:var(--accent);color:#fff;box-shadow:0 3px 14px rgba(10,90,120,.28)}
+  .btn.primary:hover{background:var(--accent-ink)}
+  .btn.ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.3)}
+  .btn.ghost:hover{background:rgba(255,255,255,.08)}
+  .btn.dark{background:var(--slate);color:#fff}
+  .btn.dark:hover{background:var(--slate-2)}
+  .btn:active{transform:translateY(1px)}
+  .btn svg{width:18px;height:18px}
+
+  /* GHS diamond motif */
+  .diamond{display:inline-grid;place-items:center;width:44px;height:44px}
+  .diamond svg{width:44px;height:44px}
+
+  /* Nav */
+  nav.top{position:sticky;top:0;z-index:50;background:rgba(29,38,45,.96);backdrop-filter:blur(8px);color:#fff;border-bottom:1px solid rgba(255,255,255,.08)}
+  nav.top .wrap{display:flex;align-items:center;gap:26px;height:64px}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:700;font-size:19px;letter-spacing:-.01em}
+  .brand .logo{width:34px;height:34px;border-radius:8px;background:var(--accent);display:grid;place-items:center;font-family:var(--mono);font-weight:600;font-size:14px;letter-spacing:.5px}
+  nav.top .links{display:flex;gap:22px;margin-left:auto;font-size:15px;color:#cdd4da}
+  nav.top .links a:hover{color:#fff}
+  nav.top .navcta{display:inline-flex}
+  @media(max-width:860px){nav.top .links{display:none}}
+
+  /* Hero */
+  .hero{background:linear-gradient(160deg,#1d262d 0%,#22303a 55%,#0a3346 100%);color:#fff;padding:0;overflow:hidden;position:relative}
+  .hero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;padding-top:78px;padding-bottom:78px}
+  .hero h1{font-size:52px;font-weight:700;letter-spacing:-.02em;margin-bottom:20px}
+  .hero h1 .hl{color:#5fc1e6}
+  .hero p.sub{font-size:20px;color:#c6d0d7;max-width:560px;margin:0 0 30px}
+  .hero .cta-row{display:flex;gap:14px;flex-wrap:wrap}
+  .hero .trust{margin-top:26px;display:flex;flex-wrap:wrap;gap:8px 20px;font-size:13.5px;color:#9fb0ba}
+  .hero .trust span{display:inline-flex;align-items:center;gap:7px}
+  .hero .trust .dot{width:6px;height:6px;border-radius:50%;background:#5fc1e6}
+  @media(max-width:900px){.hero .wrap{grid-template-columns:1fr;gap:36px}.hero h1{font-size:38px}.hero p.sub{font-size:18px}}
+
+  /* Phone mock */
+  .phone{justify-self:center;width:290px;background:#0e1519;border:8px solid #0a0f12;border-radius:34px;padding:0;box-shadow:0 24px 60px rgba(0,0,0,.4);overflow:hidden}
+  .phone .pbar{background:var(--slate);color:#fff;display:flex;align-items:center;gap:9px;padding:14px 15px}
+  .phone .pbar .logo{width:28px;height:28px;border-radius:7px;background:var(--accent);display:grid;place-items:center;font-family:var(--mono);font-size:12px;font-weight:600}
+  .phone .pbar b{font-size:15px}
+  .phone .pbar small{display:block;font-size:11px;color:#9fb0ba;font-weight:400}
+  .phone .locctx{background:#11211a;color:#eaf3ee;padding:11px 15px;font-size:13px;display:flex;align-items:center;gap:9px;border-bottom:1px solid #1c6240}
+  .phone .locctx .pin{width:26px;height:26px;border-radius:6px;background:#1c6240;display:grid;place-items:center;flex:none}
+  .phone .pbody{background:#f5f6f8;padding:15px}
+  .pcard{background:#fff;border:1px solid var(--line);border-radius:11px;padding:13px;border-left:4px solid var(--danger)}
+  .pcard .pt{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+  .pcard .pt b{font-size:15px}
+  .ghsbadge{width:30px;height:30px;flex:none}
+  .prow{font-size:12.5px;color:var(--ink-2);margin-top:3px}
+  .prow b{color:var(--ink)}
+  .pbadges{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+  .pbadge{font-size:11px;font-weight:600;padding:3px 8px;border-radius:5px}
+  .pb-d{background:var(--danger-bg);color:var(--danger)}
+  .pb-w{background:var(--warn-bg);color:var(--warn)}
+  .pb-firm{background:var(--slate);color:#fff}
+  .pqr{margin-top:12px;display:flex;align-items:center;gap:11px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px}
+  .pqr .qr{width:44px;height:44px;flex:none}
+  .pqr .code{font-family:var(--mono);font-size:12px;color:var(--ink-2)}
+
+  /* Logos / stat strip */
+  .strip{background:var(--surface-2);border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2);padding:26px 0}
+  .strip .wrap{display:flex;flex-wrap:wrap;gap:14px 40px;justify-content:center;align-items:center}
+  .stat{text-align:center}
+  .stat b{font-family:var(--mono);font-size:26px;color:var(--accent);display:block}
+  .stat span{font-size:13px;color:var(--ink-3)}
+
+  /* Problem cards */
+  .grid{display:grid;gap:18px}
+  .g4{grid-template-columns:repeat(4,1fr)}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  @media(max-width:900px){.g4{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:1fr}.g2{grid-template-columns:1fr}}
+  @media(max-width:560px){.g4{grid-template-columns:1fr}}
+  .pcardp{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:22px}
+  .pcardp .ic{width:40px;height:40px;border-radius:10px;background:var(--danger-bg);color:var(--danger);display:grid;place-items:center;margin-bottom:13px}
+  .pcardp h3{font-size:17px;margin-bottom:6px}
+  .pcardp p{margin:0;font-size:14.5px;color:var(--ink-2)}
+
+  /* Steps */
+  .steps{counter-reset:step}
+  .step{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:26px 24px;position:relative}
+  .step .num{counter-increment:step;font-family:var(--mono);font-size:13px;font-weight:600;color:#fff;background:var(--accent);width:30px;height:30px;border-radius:8px;display:grid;place-items:center;margin-bottom:16px}
+  .step .num::before{content:counter(step)}
+  .step h3{font-size:19px;margin-bottom:8px}
+  .step p{margin:0;color:var(--ink-2);font-size:15px}
+  .step .arrow{position:absolute;right:-24px;top:50%;transform:translateY(-50%);color:var(--line);z-index:2}
+  @media(max-width:900px){.step .arrow{display:none}}
+
+  /* Feature list */
+  .feat{display:flex;gap:14px;padding:18px 0;border-top:1px solid var(--line-2)}
+  .feat .fi{width:42px;height:42px;border-radius:10px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;flex:none}
+  .feat h3{font-size:16.5px;margin-bottom:4px}
+  .feat p{margin:0;font-size:14.5px;color:var(--ink-2)}
+
+  /* Branchen */
+  .tag{display:inline-flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:11px 18px;font-size:15px;font-weight:500}
+  .tag .d{width:8px;height:8px;border-radius:2px;background:var(--accent);transform:rotate(45deg)}
+  .tags{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+
+  /* Compliance band */
+  .band{background:var(--slate);color:#eef2f5}
+  .band h2{color:#fff}
+  .band .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:44px;align-items:center}
+  .band .lead{color:#b9c4cc}
+  .band ul{list-style:none;margin:18px 0 0;padding:0}
+  .band li{display:flex;gap:11px;padding:9px 0;font-size:15.5px;color:#dbe3e8}
+  .band li svg{color:#5fc1e6;flex:none;margin-top:3px}
+  .band .note{margin-top:22px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:11px;padding:15px 17px;font-size:13.5px;color:#aebac2;display:flex;gap:11px}
+  .band .note svg{color:#e6c56a;flex:none}
+  @media(max-width:900px){.band .wrap{grid-template-columns:1fr;gap:26px}}
+
+  /* Pricing */
+  .price-grid{grid-template-columns:repeat(3,1fr)}
+  @media(max-width:900px){.price-grid{grid-template-columns:1fr}}
+  .plan{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:30px 26px;display:flex;flex-direction:column}
+  .plan.pop{border:2px solid var(--accent);box-shadow:0 10px 34px rgba(10,90,120,.14);position:relative}
+  .plan.pop .flag{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-size:12px;font-weight:600;padding:5px 14px;border-radius:999px;white-space:nowrap}
+  .plan h3{font-size:20px;margin-bottom:5px}
+  .plan .pdesc{font-size:14px;color:var(--ink-3);min-height:40px}
+  .plan .amt{font-family:var(--mono);font-size:38px;font-weight:600;margin:14px 0 2px}
+  .plan .amt small{font-size:15px;color:var(--ink-3);font-weight:400}
+  .plan .per{font-size:13px;color:var(--ink-3);margin-bottom:20px}
+  .plan ul{list-style:none;margin:0 0 24px;padding:0;flex:1}
+  .plan li{display:flex;gap:10px;padding:7px 0;font-size:14.5px;color:var(--ink-2);border-top:1px solid var(--line-2)}
+  .plan li:first-child{border-top:0}
+  .plan li svg{color:var(--ok);flex:none;margin-top:3px}
+  .plan .btn{justify-content:center;width:100%}
+
+  /* FAQ */
+  .faq{max-width:760px;margin:0 auto}
+  details{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin-bottom:12px;overflow:hidden}
+  details[open]{border-color:var(--accent)}
+  summary{list-style:none;cursor:pointer;padding:18px 20px;font-weight:600;font-size:16.5px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+  summary::-webkit-details-marker{display:none}
+  summary .pm{width:22px;height:22px;flex:none;position:relative}
+  summary .pm::before,summary .pm::after{content:'';position:absolute;background:var(--accent);border-radius:2px}
+  summary .pm::before{top:10px;left:3px;right:3px;height:2px}
+  summary .pm::after{left:10px;top:3px;bottom:3px;width:2px;transition:transform .2s}
+  details[open] summary .pm::after{transform:scaleY(0)}
+  details .ans{padding:0 20px 20px;color:var(--ink-2);font-size:15px}
+
+  /* CTA band */
+  .ctaband{background:linear-gradient(160deg,#0a3346,#0a5a78);color:#fff;text-align:center}
+  .ctaband h2{color:#fff;font-size:32px}
+  .ctaband p{color:#cfe4ec;font-size:18px;max-width:540px;margin:0 auto 26px}
+  .ctaband .cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+  /* Footer */
+  footer{background:var(--slate);color:#aab6bd;padding:52px 0 34px;font-size:14px}
+  footer .wrap{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:32px}
+  footer .brand{color:#fff;margin-bottom:12px}
+  footer h4{color:#fff;font-size:13px;text-transform:uppercase;letter-spacing:1px;margin:0 0 12px}
+  footer a{display:block;padding:5px 0;color:#aab6bd}
+  footer a:hover{color:#fff}
+  .disclaimer{border-top:1px solid rgba(255,255,255,.1);margin-top:36px;padding-top:22px;font-size:13px;color:#8896a0;display:flex;gap:11px;align-items:flex-start}
+  .disclaimer svg{color:#e6c56a;flex:none;margin-top:2px}
+  .demo-note{font-size:12.5px;color:#7a8890;margin-top:14px}
+  @media(max-width:760px){footer .wrap{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="top">
+  <div class="wrap">
+    <a class="brand" href="#top"><span class="logo">St</span> StoffScan</a>
+    <div class="links">
+      <a href="#problem">Problem</a>
+      <a href="#how">So funktioniert's</a>
+      <a href="#features">Funktionen</a>
+      <a href="#branchen">Branchen</a>
+      <a href="#preise">Preise</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <a class="btn primary navcta" href="app/" target="_blank" rel="noopener">Demo öffnen</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero" id="top">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow" style="color:#5fc1e6">Gefahrstoff-Kataster für Bau &amp; Gewerbe</div>
+      <h1>Jeder Gefahrstoff.<br>Jeder Standort.<br><span class="hl">Ein Scan.</span></h1>
+      <p class="sub">StoffScan ist das mobile Gefahrstoff-Kataster für Bau-, Werkhof- und Gewerbebetriebe. Lagerort scannen, Artikel scannen – Menge, Sicherheitsdatenblatt und Gefahrenhinweise sind sofort erfasst und für alle abrufbar.</p>
+      <div class="cta-row">
+        <a class="btn primary" href="app/" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3m4 0v.01M14 21h7"/></svg>
+          Live-Demo testen
+        </a>
+        <a class="btn ghost" href="#kontakt">Beratung anfragen</a>
+      </div>
+      <div class="trust">
+        <span><span class="dot"></span> Für Einzelbetrieb bis Firmengruppe</span>
+        <span><span class="dot"></span> Läuft auf jedem Smartphone</span>
+        <span><span class="dot"></span> SDB immer griffbereit</span>
+      </div>
+    </div>
+
+    <!-- Phone mock -->
+    <div class="phone" aria-hidden="true">
+      <div class="pbar"><span class="logo">St</span><div><b>StoffScan</b><small>Gefahrstoff-Kataster</small></div></div>
+      <div class="locctx"><span class="pin"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 21s7-6.3 7-11a7 7 0 10-14 0c0 4.7 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span> Werkhof Nord · Gefahrstoffschrank A</div>
+      <div class="pbody">
+        <div class="pcard">
+          <div class="pt">
+            <svg class="ghsbadge" viewBox="0 0 24 24"><path d="M12 2.2L21.8 12 12 21.8 2.2 12Z" fill="#fff" stroke="#cc1717" stroke-width="2.4" stroke-linejoin="round"/><path d="M8.5 15.5c1-2 .3-3.2-.3-4.2.9.3 1.4 1 1.6 1.7.4-1.2-.1-2.6-.7-3.5 1.8.8 3.4 2.6 3.4 4.4 0 1.2-.8 2.3-2 2.6.6-.5.8-1.2.6-1.9-.3.8-1.2 1.1-2 .9-.6-.2-.9-.7-.6-1z" fill="#cc1717"/></svg>
+            <b>Bremsenreiniger</b>
+          </div>
+          <div class="prow">Hersteller: <b>Würth</b> · UN 1950</div>
+          <div class="prow">Menge: <b>3 l</b> · 6 × Dose 0.5 l</div>
+          <div class="pbadges">
+            <span class="pbadge pb-firm">Bau Nord</span>
+            <span class="pbadge pb-d">Gefahr</span>
+            <span class="pbadge pb-w">⚠ SDB prüfen (2020)</span>
+          </div>
+          <div class="pqr">
+            <svg class="qr" viewBox="0 0 24 24"><rect width="24" height="24" fill="#fff"/><path d="M2 2h7v7H2zM4 4v3h3V4zM15 2h7v7h-7zM17 4v3h3V4zM2 15h7v7H2zM4 17v3h3v-3zM12 2h2v2h-2zM12 5h2v4h-2zM11 11h3v3h-3zM15 11h2v2h-2zM19 11h3v2h-3zM11 15h2v3h-2zM14 16h3v2h-3zM18 15h4v2h-4zM15 19h2v3h-2zM19 19h3v3h-3z" fill="#13171b"/></svg>
+            <div class="code">INST-000118<br><span style="color:#737d86">interner QR</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- STAT STRIP -->
+<div class="strip">
+  <div class="wrap">
+    <div class="stat"><b>2</b><span>Scans bis zum erfassten Stoff</span></div>
+    <div class="stat"><b>1</b><span>Quelle für Bestand &amp; SDB</span></div>
+    <div class="stat"><b>0</b><span>Excel-Listen nötig</span></div>
+    <div class="stat"><b>∞</b><span>Firmen &amp; Lagerorte</span></div>
+  </div>
+</div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="wrap">
+    <div class="center" style="max-width:660px;margin:0 auto 44px">
+      <div class="eyebrow">Der Alltag ohne Kataster</div>
+      <h2>Gefährliche Stoffe sind da – die Übersicht fehlt.</h2>
+      <p class="lead">In fast jedem Betrieb lagern Reiniger, Lösemittel, Sprays, Gasflaschen und Sonderabfall. Wo genau, in welcher Menge und mit welchem Sicherheitsdatenblatt – das weiss meist niemand verlässlich.</p>
+    </div>
+    <div class="grid g4">
+      <div class="pcardp">
+        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></div>
+        <h3>Keine Gesamtübersicht</h3>
+        <p>Niemand weiss zuverlässig, welche Stoffe wo und in welcher Menge lagern.</p>
+      </div>
+      <div class="pcardp">
+        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h5l2 3h9v11H4z"/><path d="M8 13h8"/></svg></div>
+        <h3>SDB verstreut</h3>
+        <p>Sicherheitsdatenblätter liegen in Ordnern, Mailboxen und Laufwerken – vor Ort oft nicht greifbar.</p>
+      </div>
+      <div class="pcardp">
+        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+        <h3>Mengen geschätzt</h3>
+        <p>Bestände werden geschätzt statt erfasst; Reststände und Sonderabfall bleiben unbemerkt.</p>
+      </div>
+      <div class="pcardp">
+        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9l-8 13.8A1.5 1.5 0 003.6 20h16.8a1.5 1.5 0 001.3-2.3l-8-13.8a1.5 1.5 0 00-2.6 0z"/><path d="M12 9v4M12 16.5v.5"/></svg></div>
+        <h3>Kein Zugriff vor Ort</h3>
+        <p>Gefahrenhinweise und SDB fehlen genau dann, wenn sie auf Baustelle oder Werkhof gebraucht werden.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW -->
+<section id="how" style="background:var(--surface-2);border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2)">
+  <div class="wrap">
+    <div class="center" style="max-width:640px;margin:0 auto 46px">
+      <div class="eyebrow">So funktioniert's</div>
+      <h2>Zuerst Lagerort scannen. Dann Artikel scannen.</h2>
+      <p class="lead">Das ganze Prinzip in einem Satz. Kein Formular-Marathon, keine Schulung nötig – in unter einer Minute erfasst.</p>
+    </div>
+    <div class="grid g3 steps">
+      <div class="step">
+        <div class="num"></div>
+        <h3>Lagerort scannen</h3>
+        <p>QR am Schrank, Container oder Regal scannen. Firma und Lagerort sind damit automatisch als Kontext gesetzt.</p>
+        <svg class="arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </div>
+      <div class="step">
+        <div class="num"></div>
+        <h3>Artikel scannen</h3>
+        <p>Barcode oder internen QR scannen. Bekannter Stoff öffnet direkt die Stoffkarte, unbekannter wird in Sekunden neu angelegt.</p>
+        <svg class="arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </div>
+      <div class="step">
+        <div class="num"></div>
+        <h3>Erfasst &amp; abrufbar</h3>
+        <p>Menge, SDB, GHS-Piktogramme und ein interner QR-Code – sofort dokumentiert und für die ganze Firma sichtbar.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="wrap">
+    <div class="center" style="max-width:640px;margin:0 auto 44px">
+      <div class="eyebrow">Funktionen</div>
+      <h2>Alles, was ein Gefahrstoff-Kataster braucht.</h2>
+      <p class="lead">Gebaut für den rauen Alltag auf Baustelle, Werkhof, Magazin und in der Werkstatt – bedienbar mit einer Hand, auch mit Handschuhen.</p>
+    </div>
+    <div class="grid g2">
+      <div>
+        <div class="feat"><div class="fi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3m4 0v.01M14 21h7"/></svg></div><div><h3>Scan-first Erfassung</h3><p>QR- und Barcode-Scan mit der Handykamera. Lagerort setzt den Kontext, der Artikel-Scan erledigt den Rest.</p></div></div>
+        <div class="feat"><div class="fi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h10"/></svg></div><div><h3>Stoffstamm &amp; Bestand getrennt</h3><p>Ein Produkt existiert einmal im Stamm, kann aber in vielen Firmen und Lagerorten als Bestand geführt werden. Saubere Daten statt Doppelerfassung.</p></div></div>
+        <div class="feat"><div class="fi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></div><div><h3>Sicherheitsdatenblätter</h3><p>SDB als Datei oder Link mit Revisionsdatum. Immer beim richtigen Stoff, immer griffbereit – nie mehr im falschen Ordner.</p></div></div>
+        <div class="feat"><div class="fi"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 3l9 9-9 9-9-9z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></div><div><h3>GHS-Piktogramme &amp; H-/P-Sätze</h3><p>Gefahrenmerkmale auf einen Blick – als klare Badges im offiziellen GHS-Stil, mit Signalwort und Gefahren-/Sicherheitshinweisen.</p></div></div>
+        <div class="feat"><div class="fi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 8h2v2H8zM14 8h2v2h-2zM8 14h2v2H8zM14 14h2v2h-2z"/></svg></div><div><h3>Interne QR-Etiketten</h3><p>Jeder Bestand erhält automatisch einen QR-Code zum Aufkleben. Scannen öffnet direkt die Stoffkarte – auf jedem Handy.</p></div></div>
+      </div>
+      <div>
+        <div class="feat"><div class="fi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M6 21V8l6-4 6 4v13M10 21v-5h4v5"/></svg></div><div><h3>Mehrere Firmen &amp; Gruppen</h3><p>Vom Einzelbetrieb bis zur Firmengruppe: jede Firma sieht ihre Daten, die Gruppenleitung die Gesamtsicht über alle Standorte.</p></div></div>
+        <div class="feat"><div class="fi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9l-8 13.8A1.5 1.5 0 003.6 20h16.8a1.5 1.5 0 001.3-2.3l-8-13.8a1.5 1.5 0 00-2.6 0z"/><path d="M12 9v4M12 16.5v.5"/></svg></div><div><h3>Warnhinweise automatisch</h3><p>Fehlendes oder veraltetes SDB, fehlende Menge, kritische Konstellationen – die App markiert Lücken, bevor sie zum Problem werden.</p></div></div>
+        <div class="feat"><div class="fi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></div><div><h3>Volltextsuche &amp; Filter</h3><p>Suche über Produktname, Hersteller, UN-Nummer, QR und Lagerort. Filter nach Firma, Status oder «ohne SDB».</p></div></div>
+        <div class="feat"><div class="fi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M8 11l4 4 4-4M4 21h16"/></svg></div><div><h3>Export &amp; Berichte</h3><p>Bestandslisten je Firma und Lagerort als CSV oder PDF – für Audit, Behörde oder interne Kontrolle.</p></div></div>
+        <div class="feat"><div class="fi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div><h3>Änderungsverlauf</h3><p>Wer hat wann was erfasst oder geändert – lückenlos protokolliert für Nachvollziehbarkeit und Audit-Vorbereitung.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BRANCHEN -->
+<section id="branchen" style="background:var(--surface-2);border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2)">
+  <div class="wrap center">
+    <div class="eyebrow">Für wen</div>
+    <h2>Gemacht für Betriebe mit Chemie im Alltag.</h2>
+    <p class="lead" style="margin-bottom:34px">Überall dort, wo Gefahrstoffe gelagert werden, entsteht Dokumentationspflicht – und Chaos. StoffScan passt in jede dieser Umgebungen.</p>
+    <div class="tags">
+      <span class="tag"><span class="d"></span> Bauunternehmen</span>
+      <span class="tag"><span class="d"></span> Werkhöfe &amp; Gemeinden</span>
+      <span class="tag"><span class="d"></span> Garten- &amp; Landschaftsbau</span>
+      <span class="tag"><span class="d"></span> Metall- &amp; Holzbau</span>
+      <span class="tag"><span class="d"></span> Recycling &amp; Entsorgung</span>
+      <span class="tag"><span class="d"></span> Industrie &amp; Gewerbe</span>
+      <span class="tag"><span class="d"></span> Facility Management</span>
+      <span class="tag"><span class="d"></span> Landwirtschaft</span>
+      <span class="tag"><span class="d"></span> Malerei &amp; Ausbau</span>
+    </div>
+  </div>
+</section>
+
+<!-- COMPLIANCE -->
+<section class="band">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow" style="color:#5fc1e6">Rechtlicher Rahmen</div>
+      <h2>Unterstützt Ihre Sorgfaltspflichten.</h2>
+      <p class="lead">Gefahrstoffe müssen bekannt, gekennzeichnet und dokumentiert sein. StoffScan schafft die betriebliche Grundlage dafür – strukturiert, aktuell und für alle zugänglich.</p>
+      <div class="note">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16v.5"/></svg>
+        <div>StoffScan unterstützt die betriebliche Organisation. Es ersetzt <b>keine</b> Rechtsberatung, keine Gefährdungsbeurteilung und keine Instruktion vor Ort – diese bleiben in Ihrer Verantwortung.</div>
+      </div>
+    </div>
+    <div>
+      <ul>
+        <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Aktuelles Verzeichnis aller Gefahrstoffe je Standort</li>
+        <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Sicherheitsdatenblätter zentral und griffbereit</li>
+        <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> GHS-/CLP-Kennzeichnung sichtbar bei jedem Stoff</li>
+        <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Hinweise auf fehlende oder veraltete Datenblätter</li>
+        <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Nachvollziehbarkeit durch Änderungsprotokoll</li>
+        <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Export für Audit &amp; Kontrolle auf Knopfdruck</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="preise">
+  <div class="wrap">
+    <div class="center" style="max-width:620px;margin:0 auto 48px">
+      <div class="eyebrow">Preise</div>
+      <h2>Ein Preis pro Betrieb. Keine Überraschungen.</h2>
+      <p class="lead">Transparent nach Betriebsgrösse. Jederzeit monatlich kündbar. Richtpreise – finale Konditionen im Gespräch.</p>
+    </div>
+    <div class="grid price-grid">
+      <div class="plan">
+        <h3>Starter</h3>
+        <div class="pdesc">Für den einzelnen Betrieb mit einem Standort.</div>
+        <div class="amt">CHF 49<small> /Mt.</small></div>
+        <div class="per">pro Betrieb, jährlich abgerechnet</div>
+        <ul>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> 1 Firma, mehrere Lagerorte</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Scan-Erfassung &amp; Stoffkarten</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> SDB-Ablage &amp; QR-Etiketten</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Bis 5 Benutzer</li>
+        </ul>
+        <a class="btn dark" href="#kontakt">Beratung anfragen</a>
+      </div>
+      <div class="plan pop">
+        <div class="flag">Am beliebtesten</div>
+        <h3>Betrieb</h3>
+        <div class="pdesc">Für Betriebe mit mehreren Standorten und Teams.</div>
+        <div class="amt">CHF 149<small> /Mt.</small></div>
+        <div class="per">pro Betrieb, jährlich abgerechnet</div>
+        <ul>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Alles aus Starter</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Rollen &amp; Rechte, Freigaben</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Warnhinweise &amp; Hinweis-Dashboard</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Export CSV/PDF, Etiketten-Druck</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Unbegrenzte Benutzer</li>
+        </ul>
+        <a class="btn primary" href="#kontakt">Beratung anfragen</a>
+      </div>
+      <div class="plan">
+        <h3>Gruppe</h3>
+        <div class="pdesc">Für Firmengruppen mit mehreren Gesellschaften.</div>
+        <div class="amt">Auf Anfrage</div>
+        <div class="per">nach Anzahl Firmen &amp; Standorten</div>
+        <ul>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Alles aus Betrieb</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Gruppenweite Gesamtsicht (IMS)</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Zentraler Stoffstamm für alle Firmen</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Onboarding &amp; Support</li>
+        </ul>
+        <a class="btn dark" href="#kontakt">Kontakt aufnehmen</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" style="background:var(--surface-2);border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2)">
+  <div class="wrap">
+    <div class="center" style="margin-bottom:38px">
+      <div class="eyebrow">Häufige Fragen</div>
+      <h2>Kurz beantwortet.</h2>
+    </div>
+    <div class="faq">
+      <details open><summary>Brauchen wir spezielle Hardware oder Scanner?<span class="pm"></span></summary><div class="ans">Nein. StoffScan läuft im Browser auf jedem Smartphone oder Tablet. Der Scan von QR-Codes und Barcodes erfolgt mit der eingebauten Kamera – keine zusätzliche Ausrüstung nötig.</div></details>
+      <details><summary>Wie kommen unsere bestehenden Stoffe in die App?<span class="pm"></span></summary><div class="ans">Neue Stoffe werden beim ersten Scan in wenigen Sekunden angelegt oder manuell erfasst. Für grössere Bestände unterstützen wir Sie beim Onboarding mit einer Erst-Erfassung und einem vorbefüllten Stoffstamm für häufige Produkte.</div></details>
+      <details><summary>Ist StoffScan eine Rechtsberatung?<span class="pm"></span></summary><div class="ans">Nein. StoffScan ist ein betriebliches Organisationswerkzeug. Es hilft, Gefahrstoffe zu erfassen, zu dokumentieren und Sicherheitsdatenblätter griffbereit zu halten. Die Gefährdungsbeurteilung, Instruktion und rechtliche Verantwortung bleiben beim Betrieb.</div></details>
+      <details><summary>Sehen alle Firmen die Daten der anderen?<span class="pm"></span></summary><div class="ans">Nein. Jede Firma sieht standardmässig nur ihre eigenen Daten. Nur eine zentrale Gruppen- bzw. IMS-Rolle erhält die firmenübergreifende Gesamtsicht. Die Trennung ist im Datenmodell fest verankert.</div></details>
+      <details><summary>Funktioniert die App auch ohne Internet?<span class="pm"></span></summary><div class="ans">Der Kamera-Scan und die Erfassung brauchen aktuell eine Verbindung. Ein Offline-Modus für schlecht abgedeckte Baustellen ist auf der Roadmap.</div></details>
+      <details><summary>Können wir StoffScan zuerst testen?<span class="pm"></span></summary><div class="ans">Ja. Die <a href="app/" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600">Live-Demo</a> zeigt den kompletten Ablauf mit Musterdaten – ohne Anmeldung. Für einen Pilotbetrieb mit Ihren eigenen Daten kontaktieren Sie uns.</div></details>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="ctaband" id="kontakt">
+  <div class="wrap">
+    <h2>Bereit für Ordnung im Gefahrstofflager?</h2>
+    <p>Testen Sie die Demo oder besprechen Sie mit uns einen Pilotbetrieb – unverbindlich.</p>
+    <div class="cta-row">
+      <a class="btn primary" style="background:#fff;color:var(--accent-ink)" href="app/" target="_blank" rel="noopener">Live-Demo öffnen</a>
+      <a class="btn ghost" href="mailto:kontakt@stoffscan.example?subject=StoffScan%20Beratung">Beratung anfragen</a>
+    </div>
+    <p class="demo-note" style="color:#bcd6e0;margin-top:20px">Kontaktadresse und Konditionen bitte anpassen.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div>
+      <div class="brand" style="display:flex;align-items:center;gap:11px;font-size:19px;font-weight:700"><span class="logo" style="width:34px;height:34px;border-radius:8px;background:var(--accent);display:grid;place-items:center;font-family:var(--mono);font-size:14px">St</span> StoffScan</div>
+      <p style="max-width:320px;color:#8896a0">Das mobile Gefahrstoff-Kataster für Bau-, Werkhof- und Gewerbebetriebe. Lagerort scannen, Artikel scannen – erfasst.</p>
+    </div>
+    <div>
+      <h4>Produkt</h4>
+      <a href="#features">Funktionen</a>
+      <a href="#how">So funktioniert's</a>
+      <a href="#preise">Preise</a>
+      <a href="app/" target="_blank" rel="noopener">Live-Demo</a>
+    </div>
+    <div>
+      <h4>Kontakt</h4>
+      <a href="mailto:kontakt@stoffscan.example">kontakt@stoffscan.example</a>
+      <a href="#kontakt">Beratung anfragen</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div class="disclaimer" style="grid-column:1/-1">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16v.5"/></svg>
+      <div>Diese App unterstützt die betriebliche Organisation. Beurteilung vor Ort und Instruktion bleiben erforderlich. Die Live-Demo arbeitet mit Musterdaten. · © <span id="yr"></span> StoffScan</div>
+    </div>
+  </div>
+</footer>
+<script>document.getElementById('yr').textContent=new Date().getFullYear();</script>
+</body>
+</html>
