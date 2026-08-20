@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>StoffScan – Live (Anmeldung)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root{
+    --ink:#13171b;--ink-2:#414a52;--ink-3:#737d86;
+    --line:#d3d8dd;--line-2:#e7eaed;--bg:#e9ecee;--surface:#fff;--surface-2:#f5f6f8;
+    --slate:#1d262d;--accent:#0a5a78;--accent-ink:#073f54;
+    --danger:#a31f14;--danger-bg:#fae9e7;--warn:#8a5200;--warn-bg:#faefda;
+    --ok:#1c6240;--ok-bg:#e4efe8;
+    --font:'IBM Plex Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    --mono:'IBM Plex Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--font);color:var(--ink);background:var(--bg);font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent)}
+  .topbar{background:var(--slate);color:#fff;position:sticky;top:0;z-index:30;padding-top:env(safe-area-inset-top)}
+  .topbar-in{max-width:840px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:12px 16px}
+  .logo{width:34px;height:34px;border-radius:8px;background:var(--accent);display:grid;place-items:center;font-family:var(--mono);font-weight:600;font-size:14px}
+  .topbar h1{font-size:17px;margin:0}
+  .topbar small{display:block;font-size:11.5px;color:#9fb0ba;font-weight:400}
+  .topbar .sp{margin-left:auto}
+  .wrap{max-width:840px;margin:0 auto;padding:16px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px}
+  .card.flag{border-left:4px solid var(--danger)}
+  h2{font-size:20px;margin:2px 0 12px}
+  h3{font-size:16px;margin:0 0 4px}
+  label{display:block;font-size:13px;color:var(--ink-2);font-weight:600;margin:10px 0 4px}
+  input,select,textarea{width:100%;font-family:var(--font);font-size:16px;padding:11px 12px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink)}
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);border-color:var(--accent)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:#fff;border:0;border-radius:10px;padding:13px 18px;font-family:var(--font);font-size:16px;font-weight:600;cursor:pointer;width:100%}
+  .btn:active{background:var(--accent-ink)}
+  .btn.sec{background:var(--surface-2);color:var(--ink);border:1px solid var(--line)}
+  .btn.sm{width:auto;padding:8px 13px;font-size:14px}
+  .btn.ghost{background:transparent;color:var(--accent);width:auto;padding:6px 8px}
+  .row{display:flex;gap:10px}.row>*{flex:1}
+  .muted{color:var(--ink-3);font-size:13.5px}
+  .badge{display:inline-block;font-size:11.5px;font-weight:600;padding:3px 8px;border-radius:5px;background:var(--surface-2);border:1px solid var(--line)}
+  .b-danger{background:var(--danger-bg);color:var(--danger);border-color:transparent}
+  .b-warn{background:var(--warn-bg);color:var(--warn);border-color:transparent}
+  .b-ok{background:var(--ok-bg);color:var(--ok);border-color:transparent}
+  .b-firm{background:var(--slate);color:#fff;border-color:transparent}
+  .listitem{display:flex;gap:12px;align-items:center;padding:13px 14px;border:1px solid var(--line);border-radius:11px;margin-bottom:9px;background:#fff;cursor:pointer}
+  .listitem b{font-size:15.5px}
+  .listitem .chev{margin-left:auto;color:var(--ink-3)}
+  .tabbar{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);display:flex;padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar button{flex:1;background:none;border:0;padding:8px 4px;font-size:12px;color:var(--ink-3);font-weight:600;cursor:pointer;border-radius:8px}
+  .tabbar button.on{color:var(--accent);background:var(--surface-2)}
+  .notice{display:flex;gap:10px;padding:12px 14px;border-radius:10px;font-size:14px;margin:8px 0}
+  .notice.err{background:var(--danger-bg);color:var(--danger)}
+  .notice.ok{background:var(--ok-bg);color:var(--ok)}
+  .notice.info{background:var(--surface-2);color:var(--ink-2);border:1px solid var(--line)}
+  .center{min-height:70vh;display:grid;place-items:center}
+  .auth{width:100%;max-width:380px}
+  .qrbox{display:grid;place-items:center;padding:16px;background:#fff;border:1px solid var(--line);border-radius:12px}
+  .qrbox img,.qrbox canvas{width:180px!important;height:180px!important}
+  .disc{font-size:12px;color:var(--ink-3);text-align:center;padding:16px}
+  #toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:var(--slate);color:#fff;padding:11px 16px;border-radius:9px;font-size:14px;opacity:0;transition:.2s;pointer-events:none;z-index:60;max-width:90%}
+  #toast.show{opacity:1}
+  .split{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+</style>
+</head>
+<body>
+<div id="root"><div class="center"><div class="muted">Lädt…</div></div></div>
+<div id="toast"></div>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const SUPABASE_URL = 'https://pvzjxzunhhbgfimirbkl.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_dV_7ME6EOrTKbqHYlYlfcw_GV8e6XW_';
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const $ = s => document.querySelector(s);
+const root = $('#root');
+const esc = s => (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let toastT;
+function toast(m, ok){ const t=$('#toast'); t.textContent=m; t.style.background = ok===false?'#a31f14':(ok===true?'#1c6240':'#1d262d'); t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2600); }
+
+const S = { session:null, profile:null, org:null, companies:[], locations:[], substances:[], instances:[], view:'bestand' };
+const GHS = ['flamm','aetz','giftig','gesundheit','umwelt','druckgas','oxid','explosiv'];
+const GHS_LBL = {flamm:'entzündbar',aetz:'ätzend',giftig:'giftig',gesundheit:'gesundheitsschädl.',umwelt:'umweltgefährl.',druckgas:'Druckgas',oxid:'oxidierend',explosiv:'explosiv'};
+
+/* ---------- Boot / Auth ---------- */
+sb.auth.onAuthStateChange((_e, session)=>{ if((session&&!S.session)||(!session&&S.session)){ S.session=session; boot(); }});
+
+async function boot(){
+  const { data:{ session } } = await sb.auth.getSession();
+  S.session = session;
+  if(!session){ renderAuth(); return; }
+  const { data: prof, error } = await sb.from('profiles').select('*').eq('id', session.user.id).maybeSingle();
+  if(error){ renderError('Profil laden fehlgeschlagen', error.message); return; }
+  if(!prof){ renderOnboarding(); return; }
+  S.profile = prof;
+  const { data: org } = await sb.from('organizations').select('*').eq('id', prof.organization_id).maybeSingle();
+  S.org = org;
+  await loadAll();
+  const m = (location.hash||'').match(/#open=(INST-[\w-]+)/);
+  if(m){ return openByQr(m[1]); }
+  render();
+}
+
+async function loadAll(){
+  const [c,l,s,i] = await Promise.all([
+    sb.from('companies').select('*').order('name'),
+    sb.from('storage_locations').select('*').order('name'),
+    sb.from('substances').select('*').order('produktname'),
+    sb.from('substance_instances').select('*, substances(produktname,hersteller,signalwort,ghs_piktogramme), companies(name,short), storage_locations(name,bereich)').order('created_at',{ascending:false})
+  ]);
+  S.companies=c.data||[]; S.locations=l.data||[]; S.substances=s.data||[]; S.instances=i.data||[];
+  const err = c.error||l.error||s.error||i.error;
+  if(err) toast('Daten: '+err.message, false);
+}
+
+/* ---------- Auth screens ---------- */
+function renderAuth(){
+  root.innerHTML = `<div class="center"><div class="auth">
+    <div style="text-align:center;margin-bottom:18px">
+      <div class="logo" style="margin:0 auto 10px;width:44px;height:44px;font-size:17px">St</div>
+      <h2 style="margin:0">StoffScan</h2>
+      <div class="muted">Gefahrstoff-Kataster · Anmeldung</div>
+    </div>
+    <div class="card">
+      <div id="authNote"></div>
+      <label>E-Mail</label><input id="email" type="email" autocomplete="email" placeholder="name@firma.ch">
+      <label>Passwort</label><input id="pw" type="password" autocomplete="current-password" placeholder="••••••••">
+      <div style="height:12px"></div>
+      <button class="btn" data-a="login">Anmelden</button>
+      <div style="height:8px"></div>
+      <button class="btn sec" data-a="signup">Neues Konto erstellen</button>
+    </div>
+    <div class="disc">Betriebliche Unterstützung – ersetzt keine Beurteilung vor Ort.<br><a href="../app/">Zur Login-freien Demo</a></div>
+  </div></div>`;
+}
+function authNote(msg, kind){ const n=$('#authNote'); if(n) n.innerHTML = msg?`<div class="notice ${kind||'info'}">${esc(msg)}</div>`:''; }
+
+async function doLogin(){
+  const email=$('#email').value.trim(), pw=$('#pw').value;
+  if(!email||!pw){ authNote('Bitte E-Mail und Passwort eingeben.','err'); return; }
+  authNote('Anmelden…');
+  const { error } = await sb.auth.signInWithPassword({ email, password: pw });
+  if(error) authNote(error.message,'err');
+}
+async function doSignup(){
+  const email=$('#email').value.trim(), pw=$('#pw').value;
+  if(!email||pw.length<6){ authNote('E-Mail angeben und Passwort mit mind. 6 Zeichen.','err'); return; }
+  authNote('Konto wird erstellt…');
+  const { data, error } = await sb.auth.signUp({ email, password: pw });
+  if(error){ authNote(error.message,'err'); return; }
+  if(data.session){ /* onAuthStateChange handles boot */ }
+  else authNote('Konto erstellt. Bitte E-Mail bestätigen und dann anmelden. (Für schnelle Tests: E-Mail-Bestätigung in Supabase → Auth deaktivieren.)','ok');
+}
+
+/* ---------- Onboarding ---------- */
+function renderOnboarding(){
+  root.innerHTML = `<div class="center"><div class="auth">
+    <h2>Willkommen bei StoffScan</h2>
+    <p class="muted">Erstelle deine Organisation. Du wirst automatisch Gruppen-/IMS-Admin.</p>
+    <div class="card">
+      <div id="obNote"></div>
+      <label>Name der Organisation / Firma</label><input id="orgName" placeholder="Muster Bau AG">
+      <label>Dein Name</label><input id="userName" placeholder="Vorname Nachname">
+      <div style="height:12px"></div>
+      <button class="btn" data-a="createOrg">Organisation anlegen</button>
+      <div style="height:8px"></div>
+      <button class="btn ghost" data-a="logout" style="width:100%">Abmelden</button>
+    </div>
+  </div></div>`;
+}
+async function createOrg(){
+  const orgName=$('#orgName').value.trim(), userName=$('#userName').value.trim();
+  if(!orgName){ $('#obNote').innerHTML='<div class="notice err">Bitte einen Organisationsnamen eingeben.</div>'; return; }
+  $('#obNote').innerHTML='<div class="notice info">Wird angelegt…</div>';
+  const { error } = await sb.rpc('create_org_and_profile', { p_org_name: orgName, p_user_name: userName });
+  if(error){ $('#obNote').innerHTML='<div class="notice err">'+esc(error.message)+'</div>'; return; }
+  toast('Organisation angelegt.', true); boot();
+}
+
+/* ---------- Main app ---------- */
+function topbar(){
+  return `<div class="topbar"><div class="topbar-in">
+    <div class="logo">St</div>
+    <div><h1>StoffScan</h1><small>${esc(S.org?.name||'')} · ${esc(S.profile?.role||'')}</small></div>
+    <div class="sp"></div>
+    <button class="btn ghost" data-a="logout">Abmelden</button>
+  </div></div>`;
+}
+function tabbar(){
+  const t=(id,lbl)=>`<button class="${S.view===id?'on':''}" data-tab="${id}">${lbl}</button>`;
+  return `<div class="tabbar">${t('bestand','Bestand')}${t('erfassen','Erfassen')}${t('verwaltung','Verwaltung')}</div>`;
+}
+function render(){
+  let body='';
+  if(S.view==='bestand') body=viewBestand();
+  else if(S.view==='erfassen') body=viewErfassen();
+  else if(S.view==='verwaltung') body=viewVerwaltung();
+  root.innerHTML = topbar()+`<div class="wrap">${body}</div>`+tabbar()+`<div class="disc">Betriebliche Unterstützung – ersetzt keine Beurteilung vor Ort.</div>`;
+}
+
+function sdbBadge(){ return ''; }
+function instRow(i){
+  const s=i.substances||{}; const co=i.companies||{}; const lo=i.storage_locations||{};
+  const menge = i.menge_aktuell==null?'<span class="badge b-warn">Menge fehlt</span>':`<b>${esc(i.menge_aktuell)} ${esc(i.mengeneinheit||'')}</b>`;
+  return `<div class="listitem" data-open="${esc(i.id)}">
+    <div style="flex:1">
+      <div class="split"><b>${esc(s.produktname||'—')}</b><span class="badge b-firm">${esc(co.short||co.name||'')}</span></div>
+      <div class="muted">${esc(lo.name||'kein Lagerort')}${lo.bereich?' · '+esc(lo.bereich):''} · ${menge} · ${esc(i.status||'')}</div>
+    </div><span class="chev">›</span></div>`;
+}
+function viewBestand(){
+  if(!S.instances.length) return `<h2>Bestand</h2><div class="card"><p class="muted">Noch keine Gefahrstoffe erfasst.</p><button class="btn" data-tab="erfassen">Ersten Stoff erfassen</button></div>`;
+  return `<h2>Bestand <span class="muted" style="font-size:14px">(${S.instances.length})</span></h2>`+S.instances.map(instRow).join('');
+}
+
+function viewErfassen(){
+  if(!S.companies.length||!S.locations.length){
+    return `<h2>Erfassen</h2><div class="notice info">Lege zuerst unter <b>Verwaltung</b> mindestens eine Firma und einen Lagerort an.</div>`;
+  }
+  const compOpts = S.companies.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('');
+  const locOpts = S.locations.map(l=>`<option value="${esc(l.id)}" data-c="${esc(l.company_id)}">${esc(l.name)}${l.bereich?' · '+esc(l.bereich):''}</option>`).join('');
+  const subOpts = `<option value="__new">➕ Neuen Stoff anlegen…</option>`+S.substances.map(s=>`<option value="${esc(s.id)}">${esc(s.produktname)}${s.hersteller?' · '+esc(s.hersteller):''}</option>`).join('');
+  const ghsBoxes = GHS.map(k=>`<label style="display:inline-flex;align-items:center;gap:6px;font-weight:500;margin:0 10px 6px 0"><input type="checkbox" style="width:auto" value="${k}" class="ghsChk"> ${GHS_LBL[k]}</label>`).join('');
+  return `<h2>Gefahrstoff erfassen</h2>
+  <div class="card">
+    <label>Firma</label><select id="fCompany">${compOpts}</select>
+    <label>Lagerort</label><select id="fLoc">${locOpts}</select>
+    <label>Stoff</label><select id="fSub" data-a="subChange">${subOpts}</select>
+    <div id="newSub" style="display:none;border-left:3px solid var(--accent);padding-left:12px;margin-top:8px">
+      <label>Produktname</label><input id="nProd" placeholder="z. B. Bremsenreiniger">
+      <label>Hersteller</label><input id="nHerst" placeholder="z. B. Würth">
+      <label>Signalwort</label><select id="nSignal"><option value="">–</option><option>Gefahr</option><option>Achtung</option></select>
+      <label>GHS-Piktogramme</label><div style="margin-top:2px">${ghsBoxes}</div>
+    </div>
+    <div class="row"><div><label>Menge</label><input id="fMenge" type="number" inputmode="decimal" placeholder="z. B. 5"></div><div><label>Einheit</label><input id="fEinheit" placeholder="l / kg / Stk"></div></div>
+    <div class="row"><div><label>Gebinde</label><input id="fGebinde" placeholder="Kanister / Dose"></div><div><label>Status</label><select id="fStatus"><option>Lager</option><option>im Einsatz</option><option>zur Entsorgung</option><option>unklar</option></select></div></div>
+    <div style="height:14px"></div>
+    <button class="btn" data-a="saveInst">Erfassen</button>
+  </div>`;
+}
+function onSubChange(){ const v=$('#fSub').value; $('#newSub').style.display = v==='__new'?'block':'none'; }
+
+async function saveInst(){
+  const org = S.profile.organization_id;
+  let subId = $('#fSub').value;
+  try{
+    if(subId==='__new'){
+      const produktname=$('#nProd').value.trim();
+      if(!produktname){ toast('Produktname fehlt.',false); return; }
+      const ghs=[...document.querySelectorAll('.ghsChk:checked')].map(c=>c.value);
+      const { data, error } = await sb.from('substances').insert({
+        organization_id: org, produktname, hersteller:$('#nHerst').value.trim()||null,
+        signalwort:$('#nSignal').value||null, ghs_piktogramme: ghs
+      }).select().single();
+      if(error){ toast(error.message,false); return; }
+      subId = data.id;
+    }
+    const companyId=$('#fCompany').value, locId=$('#fLoc').value;
+    const menge = $('#fMenge').value===''?null:Number($('#fMenge').value);
+    const qr = 'INST-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,6).toUpperCase();
+    const { error } = await sb.from('substance_instances').insert({
+      organization_id: org, substance_id: subId, company_id: companyId, storage_location_id: locId,
+      gebindeart:$('#fGebinde').value.trim()||null, menge_aktuell: menge,
+      mengeneinheit:$('#fEinheit').value.trim()||null, status:$('#fStatus').value, internal_qr: qr
+    });
+    if(error){ toast(error.message,false); return; }
+    toast('Erfasst. Interner QR: '+qr, true);
+    await loadAll(); S.view='bestand'; render();
+  }catch(e){ toast('Fehler: '+e.message,false); }
+}
+
+/* ---------- Instance detail + QR deep link ---------- */
+async function openInstance(id){
+  const { data:i, error } = await sb.from('substance_instances')
+    .select('*, substances(*), companies(name,short), storage_locations(name,bereich)')
+    .eq('id', id).maybeSingle();
+  if(error||!i){ toast(error?.message||'Nicht gefunden',false); return; }
+  renderDetail(i);
+}
+async function openByQr(qr){
+  if(!S.profile){ return; }
+  const { data:i, error } = await sb.from('substance_instances')
+    .select('*, substances(*), companies(name,short), storage_locations(name,bereich)')
+    .eq('internal_qr', qr).maybeSingle();
+  if(error||!i){ root.innerHTML=topbar()+`<div class="wrap"><div class="notice err">QR ${esc(qr)} nicht gefunden oder kein Zugriff.</div><button class="btn" data-tab="bestand">Zum Bestand</button></div>`+tabbar(); return; }
+  renderDetail(i);
+}
+function renderDetail(i){
+  const s=i.substances||{}; const co=i.companies||{}; const lo=i.storage_locations||{};
+  const ghs=(s.ghs_piktogramme||[]).map(k=>`<span class="badge b-danger">${GHS_LBL[k]||k}</span>`).join(' ');
+  const menge = i.menge_aktuell==null?'<span class="badge b-warn">Menge fehlt</span>':`${esc(i.menge_aktuell)} ${esc(i.mengeneinheit||'')}`;
+  root.innerHTML = topbar()+`<div class="wrap">
+    <button class="btn ghost" data-tab="bestand">‹ Zurück zum Bestand</button>
+    <div class="card">
+      <div class="split"><h2 style="margin:0">${esc(s.produktname||'—')}</h2>${s.signalwort?`<span class="badge ${s.signalwort==='Gefahr'?'b-danger':'b-warn'}">${esc(s.signalwort)}</span>`:''}</div>
+      <div class="muted" style="margin-bottom:8px">${esc(s.hersteller||'')}</div>
+      <div style="margin-bottom:10px">${ghs||'<span class="muted">keine Piktogramme erfasst</span>'}</div>
+      <div class="split"><span class="muted">Firma</span><b>${esc(co.name||'')}</b></div>
+      <div class="split"><span class="muted">Lagerort</span><b>${esc(lo.name||'—')}${lo.bereich?' · '+esc(lo.bereich):''}</b></div>
+      <div class="split"><span class="muted">Menge</span><b>${menge}</b></div>
+      <div class="split"><span class="muted">Status</span><b>${esc(i.status||'')}</b></div>
+      <div class="split"><span class="muted">Gebinde</span><b>${esc(i.gebindeart||'–')}</b></div>
+    </div>
+    <div class="card">
+      <h3>Interner QR-Code</h3>
+      <div class="muted" style="margin-bottom:10px">Ausdrucken und aufs Gebinde kleben. Scannen öffnet diese Stoffkarte – auf jedem angemeldeten Gerät derselben Organisation.</div>
+      <div class="qrbox" id="qrbox"></div>
+      <div style="text-align:center;font-family:var(--mono);font-size:13px;margin-top:8px">${esc(i.internal_qr||'')}</div>
+    </div>
+  </div>`+tabbar();
+  const url = location.origin+location.pathname+'#open='+i.internal_qr;
+  try{ new QRCode($('#qrbox'), { text:url, width:180, height:180, correctLevel:QRCode.CorrectLevel.M }); }catch(e){}
+}
+
+/* ---------- Verwaltung (Firmen + Lagerorte) ---------- */
+function viewVerwaltung(){
+  const isAdmin = ['firmenadmin','gruppenadmin'].includes(S.profile?.role);
+  const comps = S.companies.map(c=>`<div class="listitem" style="cursor:default"><b>${esc(c.name)}</b>${c.is_group?' <span class="badge">Gruppe</span>':''}</div>`).join('')||'<p class="muted">Keine Firmen.</p>';
+  const locs = S.locations.map(l=>{const c=S.companies.find(x=>x.id===l.company_id); return `<div class="listitem" style="cursor:default"><div><b>${esc(l.name)}</b><div class="muted">${esc(l.bereich||'')}${c?' · '+esc(c.name):''}</div></div></div>`;}).join('')||'<p class="muted">Keine Lagerorte.</p>';
+  const compOpts = S.companies.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('');
+  return `<h2>Verwaltung</h2>
+  <div class="card"><h3>Firmen</h3>${comps}
+    ${isAdmin?`<label>Neue Firma</label><div class="row"><input id="ncName" placeholder="Firmenname"><button class="btn sm" data-a="addCompany">+</button></div>`:''}
+  </div>
+  <div class="card"><h3>Lagerorte</h3>${locs}
+    ${isAdmin?`<label>Neuer Lagerort</label>
+      <select id="nlCompany">${compOpts}</select>
+      <div class="row" style="margin-top:8px"><input id="nlName" placeholder="Name (z. B. Werkhof Nord)"><input id="nlBereich" placeholder="Bereich (z. B. Schrank A)"></div>
+      <div style="height:8px"></div><button class="btn sm" data-a="addLoc">Lagerort anlegen</button>`:''}
+  </div>
+  <div class="card"><h3>Konto</h3><div class="muted">${esc(S.session?.user?.email||'')} · Rolle ${esc(S.profile?.role||'')}</div></div>`;
+}
+async function addCompany(){
+  const name=$('#ncName').value.trim(); if(!name){ toast('Firmenname fehlt.',false); return; }
+  const { error } = await sb.from('companies').insert({ organization_id:S.profile.organization_id, name });
+  if(error){ toast(error.message,false); return; }
+  toast('Firma angelegt.',true); await loadAll(); render();
+}
+async function addLoc(){
+  const name=$('#nlName').value.trim(), company_id=$('#nlCompany').value;
+  if(!name){ toast('Name fehlt.',false); return; }
+  const { error } = await sb.from('storage_locations').insert({ organization_id:S.profile.organization_id, company_id, name, bereich:$('#nlBereich').value.trim()||null });
+  if(error){ toast(error.message,false); return; }
+  toast('Lagerort angelegt.',true); await loadAll(); render();
+}
+
+/* ---------- error screen ---------- */
+function renderError(title,msg){ root.innerHTML=`<div class="wrap"><div class="notice err"><b>${esc(title)}</b><br>${esc(msg)}</div><button class="btn" data-a="logout">Abmelden</button></div>`; }
+
+/* ---------- event delegation ---------- */
+document.addEventListener('click', async (e)=>{
+  const tab=e.target.closest('[data-tab]'); if(tab){ S.view=tab.dataset.tab; if(location.hash) history.replaceState(null,'',location.pathname); render(); return; }
+  const open=e.target.closest('[data-open]'); if(open){ openInstance(open.dataset.open); return; }
+  const a=e.target.closest('[data-a]'); if(!a) return;
+  const act=a.dataset.a;
+  if(act==='login') doLogin();
+  else if(act==='signup') doSignup();
+  else if(act==='logout'){ await sb.auth.signOut(); S.profile=null;S.org=null; }
+  else if(act==='createOrg') createOrg();
+  else if(act==='subChange') {}
+  else if(act==='saveInst') saveInst();
+  else if(act==='addCompany') addCompany();
+  else if(act==='addLoc') addLoc();
+});
+document.addEventListener('change', (e)=>{ if(e.target.id==='fSub') onSubChange(); });
+
+boot();
+</script>
+</body>
+</html>

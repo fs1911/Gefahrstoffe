@@ -84,13 +84,18 @@ jetzt: ein **generisches, verkaufbares Mehrmandanten-SaaS** ohne Kundenbezug.
 
 ### Phase 1 – Backend / MVP  *(der Wertsprung)*
 **Ziel:** geräteübergreifende, echte, mandantengetrennte Daten.
-- [ ] Supabase-Projekt + Datenmodell aus Fachkonzept (siehe §7)
-- [ ] Auth (E-Mail-Login), Benutzer ↔ Firma ↔ Organisation
-- [ ] **Row-Level-Security** = Mandantentrennung (Kern des Geschäftsmodells)
-- [ ] App an Supabase anbinden (statt localStorage)
-- [ ] Echter SDB-Datei-Upload (Storage) statt Platzhalter-Link
-- [ ] QR-Deep-Link öffnet denselben Datensatz auf jedem Gerät
+- [x] Supabase-Projekt (Org ShiftProof, EU-Region) + Datenmodell (0001_schema.sql)
+- [x] **Row-Level-Security** = Mandantentrennung (0002_rls.sql, angewendet)
+- [x] Onboarding-Funktion + Storage-Bucket SDB (0003_onboarding_storage.sql)
+- [x] Live-App mit Login unter `/live/` (Auth, Org-Onboarding, Bestand, Erfassen, Verwaltung)
+- [x] QR-Deep-Link (`#open=INST-…`) öffnet Datensatz geräteübergreifend (angemeldet, gleiche Org)
+- [ ] 0003-SQL im Supabase-Editor ausführen + Live-Test (E-Mail-Bestätigung für Test aus)
+- [ ] Echter SDB-Datei-Upload ins Storage (nächster Schliff)
+- [ ] Demo-Seed für `/live/` (optional, Beispiel-Org mit Daten)
 - **Definition of Done:** QR am Schrank aufkleben → jedes berechtigte Handy sieht denselben Bestand inkl. SDB.
+
+> **Architektur:** `/app/` bleibt die Login-freie Verkaufs-Demo (localStorage).
+> `/live/` ist das echte, Supabase-gestützte Produkt mit Login und Mandantentrennung.
 
 ### Phase 2 – Produktreife
 **Ziel:** ein Betrieb kann eigenständig sauber arbeiten.
