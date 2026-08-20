@@ -73,8 +73,15 @@ jetzt: ein **generisches, verkaufbares Mehrmandanten-SaaS** ohne Kundenbezug.
 - [x] Entbranding, generische Demo-Daten
 - [x] Produktname StoffScan, zentral im Header
 - [x] Marketing-Landingpage v1
-- [ ] Demo + Seite deploybar (Netlify/Cloudflare Pages) & getestet
+- [x] Deploy-fertig: `netlify.toml` (Root = Seite, `/app/` = Demo), Struktur geprüft
+- [ ] Netlify-Site `gefahrstoff` mit GitHub-Repo verbinden → Auto-Deploy bei Push
+      *(einmaliger Schritt im Netlify-Dashboard – Anleitung siehe unten)*
 - [ ] Domain sichern (O3)
+
+> **Deploy-Handoff (einmalig):** Netlify → Add new site → Import from Git →
+> GitHub → Repo `fs1911/gefahrstoffe` → Branch `main`, Publish directory `.`
+> (kein Build-Command). Danach deployt jeder `git push` automatisch. Alternativ
+> für einen Sofort-Test: Ordner via https://app.netlify.com/drop hochladen.
 
 ### Phase 1 – Backend / MVP  *(der Wertsprung)*
 **Ziel:** geräteübergreifende, echte, mandantengetrennte Daten.

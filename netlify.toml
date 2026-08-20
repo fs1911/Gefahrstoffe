@@ -1,0 +1,14 @@
+# Netlify-Konfiguration für StoffScan
+# Statische Site, kein Build. Root = Marketing-Landingpage, /app/ = Produkt-Demo.
+
+[build]
+  publish = "."
+  command = ""
+
+# Sicherheits-Header (Kamera-Scan braucht HTTPS – von Netlify automatisch bereitgestellt)
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(self)"
