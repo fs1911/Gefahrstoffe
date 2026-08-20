@@ -37,6 +37,9 @@ end;
 $$;
 
 grant execute on function create_org_and_profile(text, text) to authenticated;
+-- nur eingeloggte Nutzer dürfen onboarden (anon nicht)
+revoke execute on function create_org_and_profile(text, text) from public;
+revoke execute on function create_org_and_profile(text, text) from anon;
 
 -- Storage-Bucket für Sicherheitsdatenblätter (privat).
 -- Dateien werden unter <organization_id>/<dateiname> abgelegt -> erste Pfadebene = org.
