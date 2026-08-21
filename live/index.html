@@ -6,23 +6,24 @@
 <title>StoffScan – Live</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Schibsted+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
   :root{
-    --ink:#13171b;--ink-2:#414a52;--ink-3:#737d86;
-    --line:#d3d8dd;--line-2:#e7eaed;--bg:#e9ecee;--surface:#fff;--surface-2:#f5f6f8;
-    --slate:#1d262d;--slate-2:#28333b;
-    --accent:#0a5a78;--accent-ink:#073f54;
-    --danger:#a31f14;--danger-bg:#fae9e7;--danger-line:#e7c0bb;
-    --warn:#8a5200;--warn-bg:#faefda;--warn-line:#ecd5a6;
-    --ok:#1c6240;--ok-bg:#e4efe8;--ok-line:#c2ddcd;
-    --green:#11211a;--green-2:#1c6240;
+    --ink:#191c19;--ink-2:#565d55;--ink-3:#868c82;
+    --line:#e0e3dc;--line-2:#eef0ec;--bg:#eef1ee;--surface:#fff;--surface-2:#f4f6f3;
+    --slate:#22332b;--slate-2:#2c4034;
+    --accent:#0c6b4f;--accent-ink:#0a5540;
+    --danger:#c0261f;--danger-bg:#fbe9e7;--danger-line:#eec6c0;
+    --warn:#a85e05;--warn-bg:#f7edd6;--warn-line:#ecd6a4;
+    --ok:#1f7a4d;--ok-bg:#e4f0e9;--ok-line:#c2ddcd;
+    --green:#123b2c;--green-2:#1f7a4d;
     --ghs-red:#cc1717;
-    --r:8px;--r-s:6px;--tap:52px;
-    --font:"IBM Plex Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace;
+    --r:14px;--r-s:10px;--tap:52px;
+    --font:"Hanken Grotesk",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace;
+    --font-display:"Schibsted Grotesk","Hanken Grotesk",sans-serif;
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
@@ -428,6 +429,41 @@
     h2.title{font-size:24px}
   }
   @media(min-width:1180px){.act-grid{grid-template-columns:repeat(3,1fr);max-width:560px}}
+  /* ============================================================
+     Richtung C · „Signal" — Theme-Layer (Schibsted Grotesk)
+     Reskin ohne Struktur-Eingriff: Display-Schrift auf Titel/Zahlen,
+     heller Kopf, weichere Radien, grüne Marke.
+     ============================================================ */
+  .brand h1,h2.title,.sk-name,.loc-hero h2,.kpi .n,.stat-box .n,
+  .bf.menge .v,.capture-btn b,.act-primary b,.modal-h b,.qr-code{font-family:var(--font-display)}
+  .brand h1{font-weight:700;letter-spacing:-.01em}
+  h2.title{font-weight:700;letter-spacing:-.02em;font-size:23px}
+  .sk-name{font-weight:700;letter-spacing:-.02em}
+  .loc-hero h2{font-weight:700;letter-spacing:-.015em}
+  /* Kennzahlen: kräftig & gross (Schibsted, nicht Mono) */
+  .kpi .n,.stat-box .n{font-family:var(--font-display);font-weight:800;font-size:34px;
+    letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .bf.menge .v{font-weight:800;letter-spacing:-.01em}
+
+  /* Heller Kopf statt dunklem Slate */
+  header.topbar{background:var(--surface);color:var(--ink);border-bottom:1px solid var(--line)}
+  .brand small{color:var(--ink-3)}
+  .iconbtn{background:var(--surface-2);color:var(--ink)}
+  .iconbtn:active{background:var(--line-2)}
+  .firm-chip{background:var(--surface-2);color:var(--ink)}
+  .firm-chip:active{background:var(--line-2)}
+  .firm-chip .lbl{color:var(--ink-3)}
+  .logo{border-radius:11px}
+
+  /* Weichere, konsistente Radien */
+  .act-primary,.capture-btn{border-radius:18px;box-shadow:0 6px 16px -4px rgba(12,107,79,.40)}
+  nav.bottom .scan-btn .sc{box-shadow:0 4px 12px rgba(12,107,79,.42)}
+  .kpi,.stat-box,.card,.panel,.arow,.mrow,.firma,.sk-hero,.bestand,details.stamm,
+  .loc-hero,.pick,.notice,.userline,.ctx-line,.linkbox,.add-btn{border-radius:14px}
+  .btn,.chip,.tab,.field select,.field input,.field textarea{border-radius:12px}
+
+  /* Bottom-Nav: aktive grüne Pille */
+  nav.bottom button.active{background:var(--ok-bg)}
 </style>
 </head>
 <body>
