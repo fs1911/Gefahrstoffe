@@ -97,7 +97,12 @@ jetzt: ein **generisches, verkaufbares Mehrmandanten-SaaS** ohne Kundenbezug.
 - **Definition of Done:** QR am Schrank aufkleben → jedes berechtigte Handy sieht denselben Bestand inkl. SDB.
 
 > **Block B (Backend-Feinschliff) – erledigt:** SDB-Upload, Einladungs-Flow, Aufräumen.
-> Nächster gewählter Block: **A (Design-Upgrade)** – Stil-Varianten zeigen, dann umsetzen.
+> **Block A (Design-Upgrade) – erledigt:** Richtung **C „Signal"** gewählt und in `/app/`
+> + `/live/` umgesetzt (Tannengrün, Schibsted Grotesk / Hanken Grotesk, kräftige
+> Kennzahlen, heller Kopf, weiche Radien; GHS/Ampel konstant). Umsetzung als
+> Theme-Layer + Token-Reskin (keine Struktur-/Logikänderung).
+> Offen/optional: **Dark-Mode** der App (kleiner Folgeblock).
+> Nächster Schritt: **Marketing-Website** im selben Stil aufwerten (weg vom KI-Look).
 
 > **Architektur:** `/app/` bleibt die Login-freie Verkaufs-Demo (localStorage).
 > `/live/` ist das echte, Supabase-gestützte Produkt mit Login und Mandantentrennung.
