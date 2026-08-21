@@ -2,380 +2,1159 @@
 <html lang="de-CH">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
-<title>StoffScan – Live (Anmeldung)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>StoffScan – Live</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
   :root{
     --ink:#13171b;--ink-2:#414a52;--ink-3:#737d86;
     --line:#d3d8dd;--line-2:#e7eaed;--bg:#e9ecee;--surface:#fff;--surface-2:#f5f6f8;
-    --slate:#1d262d;--accent:#0a5a78;--accent-ink:#073f54;
-    --danger:#a31f14;--danger-bg:#fae9e7;--warn:#8a5200;--warn-bg:#faefda;
-    --ok:#1c6240;--ok-bg:#e4efe8;
-    --font:'IBM Plex Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-    --mono:'IBM Plex Mono',ui-monospace,monospace;
+    --slate:#1d262d;--slate-2:#28333b;
+    --accent:#0a5a78;--accent-ink:#073f54;
+    --danger:#a31f14;--danger-bg:#fae9e7;--danger-line:#e7c0bb;
+    --warn:#8a5200;--warn-bg:#faefda;--warn-line:#ecd5a6;
+    --ok:#1c6240;--ok-bg:#e4efe8;--ok-line:#c2ddcd;
+    --green:#11211a;--green-2:#1c6240;
+    --ghs-red:#cc1717;
+    --r:8px;--r-s:6px;--tap:52px;
+    --font:"IBM Plex Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace;
   }
   *{box-sizing:border-box}
-  body{margin:0;font-family:var(--font);color:var(--ink);background:var(--bg);font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
-  a{color:var(--accent)}
-  .topbar{background:var(--slate);color:#fff;position:sticky;top:0;z-index:30;padding-top:env(safe-area-inset-top)}
-  .topbar-in{max-width:840px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:12px 16px}
-  .logo{width:34px;height:34px;border-radius:8px;background:var(--accent);display:grid;place-items:center;font-family:var(--mono);font-weight:600;font-size:14px}
-  .topbar h1{font-size:17px;margin:0}
-  .topbar small{display:block;font-size:11.5px;color:#9fb0ba;font-weight:400}
-  .topbar .sp{margin-left:auto}
-  .wrap{max-width:840px;margin:0 auto;padding:16px}
-  .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px}
-  .card.flag{border-left:4px solid var(--danger)}
-  h2{font-size:20px;margin:2px 0 12px}
-  h3{font-size:16px;margin:0 0 4px}
-  label{display:block;font-size:13px;color:var(--ink-2);font-weight:600;margin:10px 0 4px}
-  input,select,textarea{width:100%;font-family:var(--font);font-size:16px;padding:11px 12px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink)}
-  input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);border-color:var(--accent)}
-  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:#fff;border:0;border-radius:10px;padding:13px 18px;font-family:var(--font);font-size:16px;font-weight:600;cursor:pointer;width:100%}
+  html,body{margin:0;padding:0}
+  body{font-family:var(--font);color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;line-height:1.45;font-size:16px}
+  button{font-family:inherit;cursor:pointer}
+  input,select,textarea{font-family:inherit;font-size:16px}
+  .mono{font-family:var(--mono)}
+  .app{max-width:620px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;background:var(--bg)}
+
+  /* Kopf */
+  header.topbar{background:var(--slate);color:#fff;position:sticky;top:0;z-index:40;padding-top:env(safe-area-inset-top)}
+  .topbar-inner{display:flex;align-items:center;gap:10px;padding:10px 14px}
+  .iconbtn{width:42px;height:42px;border:0;border-radius:8px;background:rgba(255,255,255,.12);color:#fff;display:none;align-items:center;justify-content:center;flex:none}
+  .iconbtn.show{display:flex}.iconbtn:active{background:rgba(255,255,255,.24)}.iconbtn svg{width:22px;height:22px}
+  .brand{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
+  .logo{width:36px;height:36px;border-radius:7px;background:var(--accent);display:grid;place-items:center;font-family:var(--mono);font-weight:700;font-size:15px;flex:none;letter-spacing:.5px}
+  .brand h1{font-size:16px;font-weight:600;margin:0;line-height:1.05}
+  .brand small{display:block;font-size:11px;color:#aab6bf;font-weight:400}
+  .firm-chip{display:flex;flex-direction:column;align-items:flex-end;gap:1px;background:rgba(255,255,255,.1);border:0;color:#fff;padding:7px 12px;border-radius:8px;flex:none;max-width:42%}
+  .firm-chip:active{background:rgba(255,255,255,.2)}
+  .firm-chip .lbl{font-size:9.5px;letter-spacing:1px;color:#9fb0ba;text-transform:uppercase;font-weight:600}
+  .firm-chip .val{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:118px}
+  #headSlot{margin-left:auto;flex:none}
+  .head-cap{display:none;align-items:center;gap:8px;background:var(--accent);color:#fff;border:0;border-radius:8px;height:40px;padding:0 14px;font-size:14px;font-weight:600}
+  .head-cap svg{width:18px;height:18px}
+  .head-cap:active{background:var(--accent-ink)}
+  @media(min-width:980px){.head-cap{display:inline-flex}}
+
+  /* Lagerort-Statusband */
+  .locband{position:sticky;top:calc(56px + env(safe-area-inset-top));z-index:38;display:flex;align-items:stretch;border-bottom:2px solid var(--slate)}
+  .locband.set{background:var(--green);color:#eaf3ee;border-bottom-color:var(--green-2)}
+  .locband.unset{background:var(--warn-bg);color:#5e3800;border-bottom-color:var(--warn)}
+  .lb-tap{flex:1;min-width:0;display:flex;align-items:center;gap:11px;padding:10px 6px 10px 14px;border:0;background:transparent;color:inherit;text-align:left}
+  .lb-tap:active{background:rgba(255,255,255,.06)}
+  .lb-ico{width:34px;height:34px;border-radius:8px;flex:none;display:grid;place-items:center}
+  .locband.set .lb-ico{background:var(--green-2);color:#fff}
+  .locband.unset .lb-ico{background:var(--warn);color:#fff}
+  .lb-ico svg{width:20px;height:20px}
+  .lb-txt{flex:1;min-width:0}
+  .lb-kicker{display:block;font-size:9.5px;letter-spacing:1.3px;text-transform:uppercase;font-weight:700;opacity:.9;margin-bottom:2px}
+  .locband.set .lb-kicker{color:#7fd3a4}
+  .lb-main{display:block;font-size:14.5px;font-weight:600;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .lb-sub{display:block;font-size:11.5px;opacity:.82;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+  .lb-act{flex:none;border:0;margin:7px 8px 7px 0;border-radius:8px;padding:0 13px;font-size:13.5px;font-weight:700;display:inline-flex;flex-direction:row;align-items:center;justify-content:center;gap:7px;min-height:42px;white-space:nowrap}
+  .lb-act svg{width:18px;height:18px;flex:none}
+  .locband.set .lb-act{background:#fff;color:var(--green-2)}
+  .locband.set .lb-act:active{background:#dceee4}
+  .locband.unset .lb-act{background:var(--warn);color:#fff}
+  .locband.unset .lb-act:active{background:#7a4900}
+
+  main{flex:1;padding:16px 14px 96px}
+  .view{animation:fade .16s ease}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  h2.title{font-size:21px;margin:0 0 2px;font-weight:600}
+  p.sub{margin:0 0 16px;color:var(--ink-2);font-size:13.5px}
+  .label-h{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--ink-3);font-weight:700;margin:22px 2px 9px;display:flex;align-items:center;gap:8px}
+  .label-h:first-child{margin-top:4px}
+  .label-h .cnt{font-family:var(--mono);color:var(--ink-2)}
+
+  /* Start */
+  .act-primary{width:100%;background:var(--accent);color:#fff;border:0;border-radius:12px;padding:20px 18px;display:flex;align-items:center;gap:15px;text-align:left;margin-bottom:11px;box-shadow:0 2px 10px rgba(10,90,120,.22)}
+  .act-primary:active{background:var(--accent-ink)}
+  .act-primary .ico{width:52px;height:52px;border-radius:11px;background:rgba(255,255,255,.18);display:grid;place-items:center;flex:none}
+  .act-primary .ico svg{width:28px;height:28px}
+  .act-primary b{font-size:18px;font-weight:600;display:block}
+  .act-primary span{font-size:13px;color:#cce6ef}
+  .act-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+  .act{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:15px 8px 13px;display:flex;flex-direction:column;align-items:center;gap:9px;text-align:center;min-height:104px}
+  .act:active{background:var(--surface-2)}
+  .act .ico{width:44px;height:44px;border-radius:10px;background:var(--surface-2);display:grid;place-items:center;color:var(--accent)}
+  .act .ico svg{width:24px;height:24px}
+  .act b{font-size:13px;font-weight:600;line-height:1.2}
+  .hb-banner{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--danger-bg);border:1px solid var(--danger-line);border-radius:10px;padding:13px 14px;margin-top:14px}
+  .hb-banner:active{background:#f6ddd9}
+  .hb-banner .ico{width:38px;height:38px;border-radius:9px;background:var(--danger);color:#fff;display:grid;place-items:center;flex:none}
+  .hb-banner .ico svg{width:20px;height:20px}
+  .hb-banner b{font-size:14.5px;color:var(--danger);display:block}
+  .hb-banner span{font-size:12.5px;color:#7a1c14}
+  .hb-banner .chev{margin-left:auto;color:var(--danger)}
+
+  /* Karten/Listen */
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+  .card + .card{margin-top:10px}
+  .card.flag-danger{border-left:5px solid var(--danger)}
+  .card.flag-warn{border-left:5px solid var(--warn)}
+  .ctap{width:100%;text-align:left;background:transparent;border:0;padding:13px 14px;display:flex;gap:12px;align-items:flex-start}
+  .ctap:active{background:var(--surface-2)}
+  .ctap .ghs-row{flex:none}
+  .cmain{flex:1;min-width:0}
+  .ctitle{font-size:16px;font-weight:600;line-height:1.25}
+  .cmeta{font-size:13px;color:var(--ink-2);margin-top:3px;line-height:1.5}
+  .cmeta b{color:var(--ink);font-weight:600}
+  .chev{align-self:center;color:var(--ink-3);flex:none}
+  .cbadges{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+
+  .firmtag{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;background:var(--slate);color:#fff;padding:3px 9px;border-radius:5px}
+  .firmtag.alt{background:var(--surface-2);color:var(--ink);border:1px solid var(--line)}
+
+  .badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:3px 9px;border-radius:6px;line-height:1.3;white-space:nowrap}
+  .badge svg{width:13px;height:13px}
+  .b-danger{background:var(--danger-bg);color:var(--danger)}
+  .b-warn{background:var(--warn-bg);color:var(--warn)}
+  .b-ok{background:var(--ok-bg);color:var(--ok)}
+  .b-neutral{background:var(--surface-2);color:var(--ink-2);border:1px solid var(--line)}
+  .b-signal{font-weight:700;text-transform:uppercase;font-size:11px;letter-spacing:.7px}
+
+  .ghs-row{display:flex;gap:9px;flex-wrap:wrap}
+  .ghs{display:flex;flex-direction:column;align-items:center;gap:3px;width:54px}
+  .ghs svg{width:46px;height:46px;display:block}
+  .ghs small{font-size:9.5px;color:var(--ink-2);text-align:center;line-height:1.15;font-weight:500}
+  .ghs.mini{width:auto}.ghs.mini svg{width:30px;height:30px}.ghs.mini small{display:none}
+  .ghs.big{width:62px}.ghs.big svg{width:56px;height:56px}.ghs.big small{font-size:10.5px;font-weight:600;color:var(--ink)}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:var(--tap);padding:0 16px;border-radius:9px;border:1px solid var(--accent);background:var(--accent);color:#fff;font-size:15.5px;font-weight:600;width:100%}
   .btn:active{background:var(--accent-ink)}
-  .btn.sec{background:var(--surface-2);color:var(--ink);border:1px solid var(--line)}
-  .btn.sm{width:auto;padding:8px 13px;font-size:14px}
-  .btn.ghost{background:transparent;color:var(--accent);width:auto;padding:6px 8px}
-  .row{display:flex;gap:10px}.row>*{flex:1}
-  .muted{color:var(--ink-3);font-size:13.5px}
-  .badge{display:inline-block;font-size:11.5px;font-weight:600;padding:3px 8px;border-radius:5px;background:var(--surface-2);border:1px solid var(--line)}
-  .b-danger{background:var(--danger-bg);color:var(--danger);border-color:transparent}
-  .b-warn{background:var(--warn-bg);color:var(--warn);border-color:transparent}
-  .b-ok{background:var(--ok-bg);color:var(--ok);border-color:transparent}
-  .b-firm{background:var(--slate);color:#fff;border-color:transparent}
-  .listitem{display:flex;gap:12px;align-items:center;padding:13px 14px;border:1px solid var(--line);border-radius:11px;margin-bottom:9px;background:#fff;cursor:pointer}
-  .listitem b{font-size:15.5px}
-  .listitem .chev{margin-left:auto;color:var(--ink-3)}
-  .tabbar{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);display:flex;padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
-  .tabbar button{flex:1;background:none;border:0;padding:8px 4px;font-size:12px;color:var(--ink-3);font-weight:600;cursor:pointer;border-radius:8px}
-  .tabbar button.on{color:var(--accent);background:var(--surface-2)}
-  .notice{display:flex;gap:10px;padding:12px 14px;border-radius:10px;font-size:14px;margin:8px 0}
-  .notice.err{background:var(--danger-bg);color:var(--danger)}
-  .notice.ok{background:var(--ok-bg);color:var(--ok)}
-  .notice.info{background:var(--surface-2);color:var(--ink-2);border:1px solid var(--line)}
-  .center{min-height:70vh;display:grid;place-items:center}
-  .auth{width:100%;max-width:380px}
-  .qrbox{display:grid;place-items:center;padding:16px;background:#fff;border:1px solid var(--line);border-radius:12px}
-  .qrbox img,.qrbox canvas{width:180px!important;height:180px!important}
-  .disc{font-size:12px;color:var(--ink-3);text-align:center;padding:16px}
-  #toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:var(--slate);color:#fff;padding:11px 16px;border-radius:9px;font-size:14px;opacity:0;transition:.2s;pointer-events:none;z-index:60;max-width:90%}
-  #toast.show{opacity:1}
-  .split{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .btn svg{width:19px;height:19px}
+  .btn.secondary{background:var(--surface);color:var(--accent);border-color:var(--accent)}
+  .btn.secondary:active{background:var(--surface-2)}
+  .btn.ghost{background:var(--surface);color:var(--ink);border-color:var(--line)}
+  .btn-row{display:flex;gap:10px;margin-top:13px}
+
+  /* ===== STOFFKARTE (überarbeitet) ===== */
+  .sk-hero{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:15px 15px 16px;margin-bottom:11px}
+  .sk-badges{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:11px}
+  .sk-name{font-size:23px;font-weight:600;line-height:1.12;margin:0}
+  .sk-mfr{color:var(--ink-2);font-size:13px;margin-top:3px}
+  .sk-ghs{display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-start;margin-top:14px;padding-top:14px;border-top:1px solid var(--line-2)}
+  .sk-ghs.none{color:var(--ink-3);font-size:12.5px;padding-top:12px}
+
+  /* Bestand-Block: Lagerort-gebunden, grün markiert */
+  .bestand{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-bottom:11px}
+  .bestand-h{display:flex;align-items:center;gap:9px;padding:11px 14px;background:var(--green);color:#eaf3ee}
+  .bestand-h svg{width:18px;height:18px;color:#7fd3a4}
+  .bestand-h .tag{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;font-weight:700;color:#7fd3a4}
+  .bestand-h .where{font-size:13px;font-weight:600;color:#fff;margin-left:auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:55%}
+  .bf-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:1px;background:var(--line-2)}
+  .bf{background:var(--surface);padding:12px 14px}
+  .bf .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-3);font-weight:700}
+  .bf .v{font-size:16px;font-weight:600;margin-top:3px;line-height:1.2}
+  .bf.menge .v{font-size:27px;line-height:1}
+  .bf.menge .v.open{color:var(--warn);font-size:19px}
+  .bf.full{grid-column:span 2}
+  .bf .v.mono{font-family:var(--mono);font-size:14px}
+  .qr-cta{display:flex;gap:10px;padding:12px 14px;border-top:1px solid var(--line-2);background:var(--surface-2)}
+  .qr-cta .btn{min-height:48px}
+
+  /* Stammdaten einklappbar */
+  details.stamm{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);margin-bottom:11px;overflow:hidden}
+  details.stamm summary{list-style:none;padding:13px 14px;display:flex;align-items:center;gap:10px;font-weight:600;font-size:14px}
+  details.stamm summary::-webkit-details-marker{display:none}
+  details.stamm summary .tag{font-size:9.5px;letter-spacing:1.2px;text-transform:uppercase;font-weight:700;color:#fff;background:var(--slate-2);padding:3px 7px;border-radius:5px}
+  details.stamm summary .chev{margin-left:auto;transition:transform .2s}
+  details.stamm[open] summary .chev{transform:rotate(90deg)}
+  details.stamm .body{padding:4px 14px 14px;border-top:1px solid var(--line-2)}
+  .phr{font-size:13px;color:var(--ink-2);line-height:1.55;padding:7px 0}
+  .phr b{color:var(--ink)}
+  .kv{display:flex;justify-content:space-between;gap:14px;padding:8px 0;border-bottom:1px solid var(--line-2);font-size:13.5px}
+  .kv:last-child{border-bottom:0}.kv .k{color:var(--ink-2)}.kv .v{font-weight:500;text-align:right}
+
+  .notice{display:flex;gap:10px;border-radius:var(--r-s);padding:11px 12px;font-size:13px;margin-bottom:11px;align-items:flex-start}
+  .notice svg{width:18px;height:18px;flex:none;margin-top:1px}
+  .notice.danger{background:var(--danger-bg);border:1px solid var(--danger-line);color:#7a1c14}
+  .notice.warn{background:var(--warn-bg);border:1px solid var(--warn-line);color:#5e3800}
+  .notice.info{background:#e8f0f4;border:1px solid #c6dae3;color:#0a455c}
+  .notice.ok{background:var(--ok-bg);border:1px solid var(--ok-line);color:#13452c}
+  .notice b{font-weight:600}
+  .disclaimer{font-size:11.5px;color:var(--ink-3);text-align:center;line-height:1.5;padding:18px 8px 2px}
+
+  /* Felder/Filter */
+  .field{display:flex;flex-direction:column;gap:5px;margin-bottom:11px}
+  .field label{font-size:11px;font-weight:700;color:var(--ink-3);letter-spacing:.6px;text-transform:uppercase}
+  .field select,.field input,.field textarea{width:100%;min-height:var(--tap);border:1px solid var(--line);border-radius:9px;padding:0 13px;background:var(--surface);color:var(--ink);font-weight:500}
+  .field textarea{min-height:70px;padding:11px 13px;resize:vertical;font-weight:400}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:11px;align-items:center}
+  .chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:20px;padding:0 14px;height:42px;font-size:13.5px;font-weight:600;color:var(--ink-2)}
+  .chip svg{width:16px;height:16px;flex:none}
+  .chip:active{background:var(--surface-2)}
+  .chip.on{background:var(--slate);color:#fff;border-color:var(--slate)}
+  .chip.hb.on{background:var(--danger);border-color:var(--danger)}
+  .rescount{font-size:12.5px;color:var(--ink-3);margin:2px 2px 11px;font-weight:500}
+
+  /* Scanner */
+  .scanner{background:#0e171c;border-radius:var(--r);padding:24px 18px;text-align:center;position:relative;overflow:hidden;color:#cfe0e9;margin-bottom:15px}
+  .scanner.fallback{background:#2a2113}
+  .vf{width:160px;height:160px;margin:4px auto 13px;position:relative;border-radius:10px;background:repeating-linear-gradient(45deg,#141d23,#141d23 8px,#18222a 8px,#18222a 16px)}
+  .scanner.fallback .vf{background:repeating-linear-gradient(45deg,#241c10,#241c10 8px,#2c2415 8px,#2c2415 16px)}
+  .vf .corner{position:absolute;width:28px;height:28px;border:3px solid var(--accent)}
+  .scanner.fallback .vf .corner{border-color:var(--warn)}
+  .vf .tl{top:8px;left:8px;border-right:0;border-bottom:0;border-radius:6px 0 0 0}
+  .vf .tr{top:8px;right:8px;border-left:0;border-bottom:0;border-radius:0 6px 0 0}
+  .vf .bl{bottom:8px;left:8px;border-right:0;border-top:0;border-radius:0 0 0 6px}
+  .vf .br{bottom:8px;right:8px;border-left:0;border-top:0;border-radius:0 0 6px 0}
+  .vf .line{position:absolute;left:13px;right:13px;height:2px;background:#5fd08a;box-shadow:0 0 8px #5fd08a;animation:scan 1.8s ease-in-out infinite}
+  .scanner.fallback .vf .line{background:#e0a13a;box-shadow:0 0 8px #e0a13a}
+  @keyframes scan{0%,100%{top:16px}50%{top:142px}}
+  .scanner p{font-size:13px;margin:0;color:#9fb4c0}
+  .pick{width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:13px;display:flex;align-items:center;gap:12px;margin-bottom:9px;min-height:60px}
+  .pick:active{background:var(--surface-2)}
+  .pick .qr-ico{width:30px;height:30px;flex:none;color:var(--accent)}
+  .pick .pm{flex:1;min-width:0}.pick .pm b{font-size:15px;display:block}.pick .pm small{font-size:12.5px;color:var(--ink-2)}
+  .pick.new{border:2px dashed var(--accent);color:var(--accent)}.pick.new b{color:var(--accent)}
+
+  /* QR/SDB */
+  .qr-wrap{text-align:center;padding:4px 0}
+  .qr-frame{display:inline-block;background:#fff;border:1px solid var(--line);padding:14px;border-radius:10px}
+  .qr-code{font-family:var(--mono);font-size:16px;font-weight:600;margin-top:12px;letter-spacing:1px}
+  .qr-sub{font-size:13px;color:var(--ink-2);margin-top:6px;display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap}
+  .sdb-doc{display:flex;gap:13px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:15px}
+  .sdb-ico{width:48px;height:60px;flex:none;border:1px solid var(--line);border-radius:5px;background:var(--surface-2);position:relative;display:grid;place-items:end center;padding-bottom:8px}
+  .sdb-ico .fold{position:absolute;top:0;right:0;width:15px;height:15px;background:linear-gradient(225deg,var(--line) 50%,transparent 50%)}
+  .sdb-ico span{font-family:var(--mono);font-size:10px;font-weight:700}
+
+  /* ===== ADMIN (überarbeitet) ===== */
+  .tabs{display:flex;gap:7px;margin-bottom:14px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+  .tab{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:9px 13px;font-size:13.5px;font-weight:600;color:var(--ink-2);min-height:42px;white-space:nowrap}
+  .tab.active{background:var(--slate);color:#fff;border-color:var(--slate)}
+  .tab .cnt{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:18px;padding:0 5px;margin-left:6px;border-radius:9px;font-family:var(--mono);font-size:11px;background:var(--surface-2);color:var(--ink-2)}
+  .tab.active .cnt{background:rgba(255,255,255,.2);color:#fff}
+  .tab .cnt.alert{background:var(--danger);color:#fff}
+  .admin-filter{margin-bottom:14px}
+  .stat-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px}
+  .stat-box{text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:13px 14px;display:flex;flex-direction:column;gap:3px}
+  .stat-box:active{background:var(--surface-2)}
+  .stat-box.alert{border-left:5px solid var(--danger)}
+  .stat-box.warnb{border-left:5px solid var(--warn)}
+  .stat-box.on{outline:2px solid var(--accent);outline-offset:-1px}
+  .stat-box .n{font-size:30px;font-weight:700;font-family:var(--mono);line-height:1}
+  .stat-box.alert .n{color:var(--danger)}.stat-box.warnb .n{color:var(--warn)}
+  .stat-box .t{font-size:12px;color:var(--ink-2);font-weight:500;display:flex;align-items:center;gap:5px}
+  .stat-box .t svg{width:13px;height:13px}
+  /* kompakte Admin-Arbeitszeile */
+  .arow{width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:11px 13px;display:flex;align-items:center;gap:11px;margin-bottom:8px}
+  .arow:active{background:var(--surface-2)}
+  .arow.flag-danger{border-left:5px solid var(--danger)}
+  .arow.flag-warn{border-left:5px solid var(--warn)}
+  .arow .ag{flex:none}
+  .arow .am{flex:1;min-width:0}
+  .arow .at{font-size:14.5px;font-weight:600;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .arow .as{font-size:12px;color:var(--ink-2);margin-top:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .arow .reason{font-size:11.5px;font-weight:700;padding:2px 7px;border-radius:5px;white-space:nowrap}
+  .arow .reason.d{background:var(--danger-bg);color:var(--danger)}
+  .arow .reason.w{background:var(--warn-bg);color:var(--warn)}
+  .arow .chev{color:var(--ink-3);flex:none}
+
+  /* Firmen */
+  .firma{width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;align-items:center;gap:13px;margin-bottom:9px}
+  .firma:active{background:var(--surface-2)}
+  .firma.group{background:var(--slate);color:#fff;border-color:var(--slate)}
+  .firma .fm{flex:1;min-width:0}.firma b{font-size:15.5px;display:block}
+  .firma .meta{font-size:12.5px;color:var(--ink-2);margin-top:3px}.firma.group .meta{color:#b9c4cc}
+  .firma .nums{display:flex;gap:7px;flex-wrap:wrap;margin-top:7px}
+  .firma .chev{color:var(--ink-3)}.firma.group .chev{color:#9fb0ba}
+  .ficon{width:38px;height:38px;border-radius:8px;display:grid;place-items:center;flex:none;background:var(--surface-2);color:var(--accent)}
+  .firma.group .ficon{background:rgba(255,255,255,.14);color:#fff}
+  .mini-num{font-size:11.5px;font-weight:600;font-family:var(--mono);padding:2px 7px;border-radius:5px;background:var(--surface-2);color:var(--ink-2);border:1px solid var(--line)}
+  .firma.group .mini-num{background:rgba(255,255,255,.12);color:#fff;border:0}
+  .mini-num.d{background:var(--danger-bg);color:var(--danger);border-color:var(--danger-line)}
+  .mini-num.w{background:var(--warn-bg);color:var(--warn);border-color:var(--warn-line)}
+
+  /* Lagerortdetail */
+  .loc-hero{background:var(--green);color:#eaf3ee;border-radius:var(--r);padding:15px;margin-bottom:11px}
+  .loc-hero .kicker{font-size:10px;letter-spacing:1.3px;text-transform:uppercase;font-weight:700;color:#7fd3a4}
+  .loc-hero h2{margin:3px 0 2px;font-size:21px;color:#fff;line-height:1.15}
+  .loc-hero .sub{color:#bcd4c8;font-size:13px;margin:0}
+  .loc-hero .lh-stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .loc-hero .lh-stat{background:rgba(255,255,255,.12);border-radius:7px;padding:6px 11px;font-size:12.5px;font-weight:600}
+  .loc-hero .lh-stat.d{background:var(--danger);color:#fff}
+  .loc-hero .lh-stat.w{background:var(--warn);color:#fff}
+  .loc-active-pill{display:inline-flex;align-items:center;gap:6px;background:var(--green-2);color:#fff;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:20px;margin-top:12px}
+
+  /* Verlauf */
+  .timeline{position:relative;padding-left:18px}
+  .timeline:before{content:"";position:absolute;left:5px;top:5px;bottom:5px;width:2px;background:var(--line)}
+  .tl-item{position:relative;padding:0 0 15px}.tl-item:last-child{padding-bottom:0}
+  .tl-item:before{content:"";position:absolute;left:-16px;top:4px;width:9px;height:9px;border-radius:50%;background:var(--accent);border:2px solid var(--surface)}
+  .tl-item.alert:before{background:var(--danger)}
+  .tl-item .t{font-size:11.5px;color:var(--ink-3);font-family:var(--mono)}
+  .tl-item .a{font-size:14px;font-weight:600;margin-top:1px}
+  .tl-item .m{font-size:12.5px;color:var(--ink-2)}
+
+  .empty{text-align:center;color:var(--ink-3);padding:30px 16px;font-size:13.5px}
+  .empty svg{width:36px;height:36px;color:var(--line);margin-bottom:8px}
+
+  /* Dashboard-Panels */
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-bottom:14px}
+  .panel-h{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--line-2);font-weight:600;font-size:14px}
+  .panel-h .cnt{font-family:var(--mono);color:var(--ink-3);font-weight:600;margin-left:6px}
+  .panel-h a{font-size:13px;color:var(--accent);text-decoration:none;font-weight:600}
+  .panel-body{padding:12px 14px}
+  .panel-body .arow:last-child{margin-bottom:0}
+  .panel-body .timeline{padding-left:18px}
+  .scanner{cursor:pointer}
+  .scanner:active{filter:brightness(1.15)}
+  .scan-graphic{display:block}
+  #reader{display:none;width:100%}
+  .scanner.live{padding:0;background:#000;cursor:default}
+  .scanner.live .scan-graphic{display:none}
+  .scanner.live #reader{display:block;min-height:250px}
+  .scanner.live #reader video{display:block;width:100%!important;height:auto!important}
+  .scan-cancel{display:none;position:absolute;top:8px;right:8px;z-index:6;background:rgba(0,0,0,.6);color:#fff;border:0;border-radius:8px;height:38px;padding:0 14px;font-weight:600;font-size:13px}
+  .scanner.live .scan-cancel{display:block}
+  .scan-msg{padding:14px}
+  .linkbox{display:flex;align-items:center;gap:9px;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:11px 12px;font-size:12.5px;word-break:break-all;color:var(--ink-2)}
+  .linkbox svg{width:18px;height:18px;flex:none;color:var(--accent)}
+  .scan-hint{display:inline-flex;align-items:center;gap:7px;margin-top:6px;font-size:12px;color:#7fd3a4;font-weight:600}
+  .ctx-line{display:flex;align-items:center;gap:8px;background:var(--ok-bg);border:1px solid var(--ok-line);color:var(--ok);border-radius:8px;padding:9px 12px;font-size:13px;font-weight:600;margin-bottom:14px}
+  .ctx-line svg{width:16px;height:16px;flex:none}
+  .userline{display:flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:9px 12px;margin-bottom:14px;font-size:12.5px;color:var(--ink-2)}
+  .userline svg{width:18px;height:18px;flex:none;color:var(--accent)}
+  .userline b{color:var(--ink)}
+  .userline .chg{margin-left:auto;color:var(--accent);font-weight:600;font-size:12.5px}
+  @media(min-width:980px){.userline{display:none}}
+
+  /* Verwaltung: Hinzufügen + Zeilen mit Löschen */
+  .add-btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:48px;border:1.5px dashed var(--accent);background:var(--surface);color:var(--accent);border-radius:9px;font-size:14.5px;font-weight:600;margin-bottom:12px}
+  .add-btn:active{background:var(--surface-2)}
+  .add-btn svg{width:18px;height:18px}
+  .mrow{display:flex;align-items:center;gap:11px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:10px 8px 10px 13px;margin-bottom:8px}
+  .mrow .mg{width:36px;height:36px;border-radius:8px;background:var(--surface-2);display:grid;place-items:center;color:var(--accent);flex:none}
+  .mrow .mg svg{width:19px;height:19px}
+  .mrow .mm{flex:1;min-width:0}
+  .mrow .mt{font-size:14.5px;font-weight:600;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mrow .ms{font-size:12px;color:var(--ink-2);margin-top:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .del-btn{flex:none;width:42px;height:42px;border:1px solid var(--line);background:var(--surface);border-radius:8px;color:var(--danger);display:grid;place-items:center}
+  .del-btn:active{background:var(--danger-bg)}
+  .del-btn svg{width:18px;height:18px}
+  .role-tag{font-size:11px;font-weight:600;padding:2px 8px;border-radius:5px;background:var(--surface-2);border:1px solid var(--line);color:var(--ink-2)}
+
+  /* Bottom-Nav */
+  nav.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:620px;background:var(--surface);border-top:1px solid var(--line);display:flex;z-index:40;padding-bottom:env(safe-area-inset-bottom)}
+  nav.bottom button{flex:1;background:transparent;border:0;padding:8px 2px;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--ink-3);font-size:10.5px;font-weight:600;min-height:58px}
+  nav.bottom button svg{width:23px;height:23px}
+  nav.bottom button.active{color:var(--accent)}
+  nav.bottom .scan-btn{color:var(--accent)}
+  nav.bottom .scan-btn .sc{width:50px;height:50px;border-radius:50%;background:var(--accent);display:grid;place-items:center;margin-top:-18px;box-shadow:0 3px 9px rgba(10,90,120,.4);border:3px solid var(--surface)}
+  nav.bottom .scan-btn .sc svg{width:25px;height:25px;color:#fff}
+
+  /* Modal */
+  .modal-back{position:fixed;inset:0;background:rgba(13,18,22,.55);z-index:60;display:flex;align-items:flex-end;justify-content:center;animation:fade .15s}
+  .modal{background:var(--surface);width:100%;max-width:620px;border-radius:16px 16px 0 0;max-height:90vh;overflow:auto;animation:up .22s ease;padding-bottom:env(safe-area-inset-bottom)}
+  @keyframes up{from{transform:translateY(100%)}to{transform:none}}
+  .modal-h{display:flex;align-items:center;justify-content:space-between;padding:15px 16px;border-bottom:1px solid var(--line-2);position:sticky;top:0;background:var(--surface)}
+  .modal-h b{font-size:16px}
+  .modal-h .x{width:40px;height:40px;border:0;background:var(--surface-2);border-radius:8px;color:var(--ink-2);font-size:20px;display:grid;place-items:center}
+  .modal-body{padding:16px}
+  @media(min-width:680px){.modal-back{align-items:center}.modal{border-radius:14px;max-height:84vh}}
+
+  #toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%) translateY(20px);background:var(--slate);color:#fff;padding:13px 18px;border-radius:10px;font-size:13.5px;font-weight:600;z-index:70;opacity:0;pointer-events:none;transition:.25s;max-width:88%;box-shadow:0 6px 20px rgba(0,0,0,.3);display:flex;gap:9px;align-items:center}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  #toast svg{width:18px;height:18px;flex:none;color:#7fd3a4}
+  @media(min-width:680px){main{padding:22px 20px 96px}.act-grid{grid-template-columns:repeat(3,1fr)}}
+
+  /* ===== Dashboard + Desktop-Layout ===== */
+  .shell{display:block}
+  .content{min-width:0}
+  .sidebar{display:none}
+  /* Dashboard */
+  .capture-btn{width:100%;background:var(--accent);color:#fff;border:0;border-radius:12px;padding:22px 20px;display:flex;align-items:center;gap:16px;text-align:left;margin-bottom:16px;box-shadow:0 2px 12px rgba(10,90,120,.25)}
+  .capture-btn:active{background:var(--accent-ink)}
+  .capture-btn .ico{width:56px;height:56px;border-radius:12px;background:rgba(255,255,255,.18);display:grid;place-items:center;flex:none}
+  .capture-btn .ico svg{width:30px;height:30px}
+  .capture-btn b{font-size:19px;display:block;font-weight:600}
+  .capture-btn span{font-size:13px;color:#cce6ef}
+  .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px}
+  .kpi{text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:4px}
+  .kpi:active{background:var(--surface-2)}
+  .kpi.alert{border-left:5px solid var(--danger)}
+  .kpi.warnb{border-left:5px solid var(--warn)}
+  .kpi.accent{border-left:5px solid var(--accent)}
+  .kpi .n{font-size:30px;font-weight:700;font-family:var(--mono);line-height:1}
+  .kpi.alert .n{color:var(--danger)}.kpi.warnb .n{color:var(--warn)}
+  .kpi .t{font-size:12px;color:var(--ink-2);font-weight:500;display:flex;align-items:center;gap:5px}
+  .kpi .t svg{width:13px;height:13px}
+  .dash-cols{display:block}
+
+  @media(min-width:980px){
+    .app{max-width:1180px}
+    .shell{display:flex;align-items:flex-start;gap:0}
+    .sidebar{display:block;width:248px;flex:none;position:sticky;top:calc(56px + env(safe-area-inset-top));align-self:flex-start;height:calc(100vh - 56px - env(safe-area-inset-top));overflow:auto;background:var(--surface);border-right:1px solid var(--line);padding:14px 12px}
+    .content{flex:1;min-width:0;border-left:0}
+    nav.bottom{display:none}
+    main{padding:24px 28px 40px;max-width:980px;margin:0 auto;width:100%}
+    .locband{top:calc(56px + env(safe-area-inset-top))}
+    /* Sidebar-Einträge */
+    .sb-cap{width:100%;background:var(--accent);color:#fff;border:0;border-radius:10px;padding:13px 14px;display:flex;align-items:center;gap:10px;font-size:14.5px;font-weight:600;margin-bottom:14px}
+    .sb-cap:active{background:var(--accent-ink)}
+    .sb-cap svg{width:20px;height:20px;flex:none}
+    .sb-item{width:100%;display:flex;align-items:center;gap:11px;border:0;background:transparent;color:var(--ink-2);padding:11px 12px;border-radius:9px;font-size:14.5px;font-weight:600;text-align:left;margin-bottom:3px}
+    .sb-item:active{background:var(--surface-2)}
+    .sb-item.active{background:var(--surface-2);color:var(--accent)}
+    .sb-item svg{width:21px;height:21px;flex:none}
+    .sb-sep{height:1px;background:var(--line-2);margin:10px 4px}
+    .sb-foot{font-size:11px;color:var(--ink-3);padding:10px 8px;line-height:1.5}
+    .sb-user{width:100%;display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:9px 11px;border-radius:9px;text-align:left}
+    .sb-user:active{background:var(--surface-2)}
+    .sb-user svg{width:20px;height:20px;flex:none;color:var(--accent)}
+    .sb-user .su-txt b{display:block;font-size:13px}
+    .sb-user .su-txt small{display:block;font-size:11px;color:var(--ink-2)}
+    /* Dashboard breiter */
+    .kpi-grid{grid-template-columns:repeat(4,1fr)}
+    .dash-cols{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+    .capture-btn{max-width:none}
+    h2.title{font-size:24px}
+  }
+  @media(min-width:1180px){.act-grid{grid-template-columns:repeat(3,1fr);max-width:560px}}
 </style>
 </head>
 <body>
-<div id="root"><div class="center"><div class="muted">Lädt…</div></div></div>
+<div class="app">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button class="iconbtn" id="backBtn" data-action="back" aria-label="Zurück"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="brand"><div class="logo">St</div><div><h1>StoffScan</h1><small>Gefahrstoff-Kataster · Demo</small></div></div>
+      <div id="headSlot"></div>
+    </div>
+  </header>
+  <div class="shell">
+    <aside class="sidebar" id="sidebar"></aside>
+    <div class="content">
+      <div id="locband"></div>
+      <main id="main"></main>
+    </div>
+  </div>
+  <nav class="bottom" id="bottomNav"></nav>
+</div>
 <div id="toast"></div>
 
-<script type="module">
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+<script>
+/* ============================================================ StoffScan · Prototyp · Mock-Daten ============================================================ */
+const ICO={
+  loc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 21s-7-6.2-7-11a7 7 0 1114 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>',
+  scan:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 7V5a1 1 0 011-1h2M20 7V5a1 1 0 00-1-1h-2M4 17v2a1 1 0 001 1h2M20 17v2a1 1 0 01-1 1h-2"/><path d="M3 12h18" stroke-width="2.1"/></svg>',
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>',
+  list:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>',
+  qr:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M20 14v.01M14 20h.01M17 20h.01M20 17v3"/></svg>',
+  home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 11l8-7 8 7M6 10v9h12v-9"/></svg>',
+  firma:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-4h6v4"/><path d="M9 9h.01M15 9h.01"/></svg>',
+  admin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M9 3h6v3l2 1 2-1 2 3-2 2v2l2 2-2 3-2-1-2 1v3H9v-3l-2-1-2 1-2-3 2-2v-2L1 9l2-3 2 1 2-1z"/><circle cx="12" cy="12" r="2.6"/></svg>',
+  chev:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.1"><path d="M9 18l6-6-6-6"/></svg>',
+  warn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>',
+  ok:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path d="M20 6L9 17l-5-5"/></svg>',
+  info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>',
+  doc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 5v14M5 12h14"/></svg>',
+  print:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-4a2 2 0 012-2h16a2 2 0 012 2v4a2 2 0 01-2 2h-2M6 14h12v8H6z"/></svg>',
+  box:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8"/></svg>',
+  user:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>',
+  trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></svg>'
+};
+const GHS_SYM={
+  flamm:'<rect x="6" y="18.8" width="12" height="1.5" fill="#000"/><path d="M12.6 4.8c.9 2.7-1.4 3.6-1.4 5.9 0 1.5 1.1 2.2 1.1 2.2s-.3-1.7 1-2.5c1.6 2 2.5 3.1 2.5 5.2 0 2.6-2.1 4.3-4.2 4.3s-4.4-1.7-4.4-4.4c0-3.4 3.4-4.6 2-9.8.9.4 2.5 1.5 3.4 2.7-.2-1.7-1.1-3-2.1-3.8.9-.4 1.7-.5 2.5-.5z" fill="#000"/>',
+  oxid:'<rect x="6" y="18.8" width="12" height="1.5" fill="#000"/><circle cx="12" cy="14" r="4.3" fill="none" stroke="#000" stroke-width="1.7"/><path d="M12.5 4.4c.6 1.9-.9 2.5-.9 4 0 1 .7 1.5.7 1.5s-.2-1.1.7-1.7c1.1 1.4 1.7 2.1 1.7 3.5 0 .3 0 .5-.1.7-.7-.5-1.6-.8-2.6-.8-.9 0-1.8.2-2.4.7-.1-.2-.1-.5-.1-.8 0-2.3 2.3-3.1 1.4-6.6.6.3 1.6 1 2.2 1.8-.1-1.1-.7-2-1.4-2.5z" fill="#000"/>',
+  explosiv:'<path d="M12 3.2l1.5 4.6 3.4-3.1-1.4 4.5 4.6-1.2-3.3 3.4 4.4 1.6-4.6.6 2.6 3.8-4.2-2-.3 4.6-2.2-4-2.6 3.8.1-4.6-4.4 1.4 3-3.5-4.6-.8 4.3-1.7-3-3.5 4.4 1.4-.7-4.6 3.3 3.2z" fill="#000"/>',
+  druckgas:'<g transform="rotate(-32 12 12)"><rect x="9.2" y="5" width="5.6" height="12.5" rx="2.6" fill="#000"/><rect x="10.7" y="3.1" width="2.6" height="2.4" rx=".6" fill="#000"/></g>',
+  aetz:'<path d="M5 4.6l2.4 1.2-3 6.2-2.4-1.2z" fill="#000"/><path d="M19 4.6l-2.4 1.2 3 6.2 2.4-1.2z" fill="#000"/><circle cx="6.4" cy="13.4" r=".8" fill="#000"/><circle cx="17.6" cy="13.4" r=".8" fill="#000"/><path d="M3 18h6.4l-1 2.2H4z" fill="#000"/><path d="M13.6 18.2c1.9.8 4 .5 5.9-.5l.7 1.4c-2.1 1.1-4.5 1.4-6.7.6z" fill="#000"/><path d="M14.6 16.6l5.6-1 .4 1.6-5.4 1.3z" fill="#000"/>',
+  giftig:'<path d="M5.8 16.8l12.4 4.1M18.2 16.8L5.8 20.9" stroke="#000" stroke-width="1.9" stroke-linecap="round"/><path d="M12 4.6c-3.1 0-5.2 2-5.2 4.8 0 1.7.9 2.9 1.8 3.5.3.2.4.5.4.9 0 .8.7 1.2 1.4 1.2h3.2c.7 0 1.4-.4 1.4-1.2 0-.4.1-.7.4-.9.9-.6 1.8-1.8 1.8-3.5 0-2.8-2.1-4.8-5.2-4.8z" fill="#000"/><circle cx="10" cy="9.7" r="1.3" fill="#fff"/><circle cx="14" cy="9.7" r="1.3" fill="#fff"/><path d="M12 11.4l1 1.9h-2z" fill="#fff"/>',
+  reiz:'<path d="M10.5 5.4h3l-.55 7.8h-1.9z" fill="#000"/><circle cx="12" cy="16.8" r="1.7" fill="#000"/>',
+  gesundheit:'<path d="M12 4.3c1.45 0 2.6 1.15 2.6 2.6 0 1.05-.55 1.9-1.4 2.35 2.55.55 4.3 2.45 4.3 6.35v3.4H6.5v-3.4c0-3.9 1.75-5.8 4.3-6.35-.85-.45-1.4-1.3-1.4-2.35 0-1.45 1.15-2.6 2.6-2.6z" fill="#000"/><path d="M12 11.6l.85 2.35 2.35-.5-1.55 1.9 1.55 1.9-2.35-.5L12 19.05l-.85-2.35-2.35.5 1.55-1.9-1.55-1.9 2.35.5z" fill="#fff"/>',
+  umwelt:'<rect x="3.4" y="13" width="17.2" height="1.4" fill="#000"/><path d="M7.6 13V6.4" stroke="#000" stroke-width="1.3" stroke-linecap="round"/><path d="M7.6 8.6 5.6 6.9M7.6 9.8 9.7 8M7.6 6.6 6.3 5.4M7.6 6.6 9 5.5" stroke="#000" stroke-width="1.2" stroke-linecap="round"/><path d="M11.8 18.2l4.8-2.4 2.2 2.4-2.2 2.4z" fill="#000"/><path d="M11.6 16.6 13.2 18.2 11.6 19.8z" fill="#000"/><circle cx="17" cy="18.2" r=".55" fill="#fff"/>'
+};
+const GHS_LABEL={flamm:'entzündbar',oxid:'brandfördernd',explosiv:'explosiv',druckgas:'Druckgas',aetz:'ätzend',giftig:'giftig',reiz:'reizend',gesundheit:'Gesundheitsgefahr',umwelt:'umweltgef.'};
+function ghsBadge(k,cls){return '<span class="ghs '+(cls||'')+'"><svg viewBox="0 0 24 24"><path d="M12 2.2L21.8 12 12 21.8 2.2 12Z" fill="#fff" stroke="var(--ghs-red)" stroke-width="2.4" stroke-linejoin="round"/>'+(GHS_SYM[k]||'')+'</svg><small>'+(GHS_LABEL[k]||'')+'</small></span>';}
+function pseudoQr(seed,size){size=size||140;const n=21,m=size/n;let h=0;for(let i=0;i<seed.length;i++)h=(h*31+seed.charCodeAt(i))>>>0;
+  function fnd(x,y){return '<rect x="'+(x*m)+'" y="'+(y*m)+'" width="'+(7*m)+'" height="'+(7*m)+'" fill="#13171b"/><rect x="'+((x+1)*m)+'" y="'+((y+1)*m)+'" width="'+(5*m)+'" height="'+(5*m)+'" fill="#fff"/><rect x="'+((x+2)*m)+'" y="'+((y+2)*m)+'" width="'+(3*m)+'" height="'+(3*m)+'" fill="#13171b"/>';}
+  let c='';for(let y=0;y<n;y++)for(let x=0;x<n;x++){if((x<8&&y<8)||(x>n-9&&y<8)||(x<8&&y>n-9))continue;h=(h*1103515245+12345)>>>0;if(h>>16&1)c+='<rect x="'+(x*m)+'" y="'+(y*m)+'" width="'+m+'" height="'+m+'" fill="#13171b"/>';}
+  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'" shape-rendering="crispEdges"><rect width="'+size+'" height="'+size+'" fill="#fff"/>'+c+fnd(0,0)+fnd(n-7,0)+fnd(0,n-7)+'</svg>';}
 
-const SUPABASE_URL = 'https://pvzjxzunhhbgfimirbkl.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_dV_7ME6EOrTKbqHYlYlfcw_GV8e6XW_';
-const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-const $ = s => document.querySelector(s);
-const root = $('#root');
-const esc = s => (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-let toastT;
-function toast(m, ok){ const t=$('#toast'); t.textContent=m; t.style.background = ok===false?'#a31f14':(ok===true?'#1c6240':'#1d262d'); t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2600); }
-
-const S = { session:null, profile:null, org:null, companies:[], locations:[], substances:[], instances:[], view:'bestand' };
-const GHS = ['flamm','aetz','giftig','gesundheit','umwelt','druckgas','oxid','explosiv'];
-const GHS_LBL = {flamm:'entzündbar',aetz:'ätzend',giftig:'giftig',gesundheit:'gesundheitsschädl.',umwelt:'umweltgefährl.',druckgas:'Druckgas',oxid:'oxidierend',explosiv:'explosiv'};
-
-/* ---------- Boot / Auth ---------- */
-sb.auth.onAuthStateChange((_e, session)=>{ if((session&&!S.session)||(!session&&S.session)){ S.session=session; boot(); }});
-
-async function boot(){
-  const { data:{ session } } = await sb.auth.getSession();
-  S.session = session;
-  if(!session){ renderAuth(); return; }
-  const { data: prof, error } = await sb.from('profiles').select('*').eq('id', session.user.id).maybeSingle();
-  if(error){ renderError('Profil laden fehlgeschlagen', error.message); return; }
-  if(!prof){ renderOnboarding(); return; }
-  S.profile = prof;
-  const { data: org } = await sb.from('organizations').select('*').eq('id', prof.organization_id).maybeSingle();
-  S.org = org;
-  await loadAll();
-  const m = (location.hash||'').match(/#open=(INST-[\w-]+)/);
-  if(m){ return openByQr(m[1]); }
-  render();
-}
-
-async function loadAll(){
-  const [c,l,s,i] = await Promise.all([
-    sb.from('companies').select('*').order('name'),
-    sb.from('storage_locations').select('*').order('name'),
-    sb.from('substances').select('*').order('produktname'),
-    sb.from('substance_instances').select('*, substances(produktname,hersteller,signalwort,ghs_piktogramme), companies(name,short), storage_locations(name,bereich)').order('created_at',{ascending:false})
-  ]);
-  S.companies=c.data||[]; S.locations=l.data||[]; S.substances=s.data||[]; S.instances=i.data||[];
-  const err = c.error||l.error||s.error||i.error;
-  if(err) toast('Daten: '+err.message, false);
-}
-
-/* ---------- Auth screens ---------- */
-function renderAuth(){
-  root.innerHTML = `<div class="center"><div class="auth">
-    <div style="text-align:center;margin-bottom:18px">
-      <div class="logo" style="margin:0 auto 10px;width:44px;height:44px;font-size:17px">St</div>
-      <h2 style="margin:0">StoffScan</h2>
-      <div class="muted">Gefahrstoff-Kataster · Anmeldung</div>
-    </div>
-    <div class="card">
-      <div id="authNote"></div>
-      <label>E-Mail</label><input id="email" type="email" autocomplete="email" placeholder="name@firma.ch">
-      <label>Passwort</label><input id="pw" type="password" autocomplete="current-password" placeholder="••••••••">
-      <div style="height:12px"></div>
-      <button class="btn" data-a="login">Anmelden</button>
-      <div style="height:8px"></div>
-      <button class="btn sec" data-a="signup">Neues Konto erstellen</button>
-    </div>
-    <div class="disc">Betriebliche Unterstützung – ersetzt keine Beurteilung vor Ort.<br><a href="../app/">Zur Login-freien Demo</a></div>
-  </div></div>`;
-}
-function authNote(msg, kind){ const n=$('#authNote'); if(n) n.innerHTML = msg?`<div class="notice ${kind||'info'}">${esc(msg)}</div>`:''; }
-
-async function doLogin(){
-  const email=$('#email').value.trim(), pw=$('#pw').value;
-  if(!email||!pw){ authNote('Bitte E-Mail und Passwort eingeben.','err'); return; }
-  authNote('Anmelden…');
-  const { error } = await sb.auth.signInWithPassword({ email, password: pw });
-  if(error) authNote(error.message,'err');
-}
-async function doSignup(){
-  const email=$('#email').value.trim(), pw=$('#pw').value;
-  if(!email||pw.length<6){ authNote('E-Mail angeben und Passwort mit mind. 6 Zeichen.','err'); return; }
-  authNote('Konto wird erstellt…');
-  const { data, error } = await sb.auth.signUp({ email, password: pw });
-  if(error){ authNote(error.message,'err'); return; }
-  if(data.session){ /* onAuthStateChange handles boot */ }
-  else authNote('Konto erstellt. Bitte E-Mail bestätigen und dann anmelden. (Für schnelle Tests: E-Mail-Bestätigung in Supabase → Auth deaktivieren.)','ok');
-}
-
-/* ---------- Onboarding ---------- */
-function renderOnboarding(){
-  root.innerHTML = `<div class="center"><div class="auth">
-    <h2>Willkommen bei StoffScan</h2>
-    <p class="muted">Erstelle deine Organisation. Du wirst automatisch Gruppen-/IMS-Admin.</p>
-    <div class="card">
-      <div id="obNote"></div>
-      <label>Name der Organisation / Firma</label><input id="orgName" placeholder="Muster Bau AG">
-      <label>Dein Name</label><input id="userName" placeholder="Vorname Nachname">
-      <div style="height:12px"></div>
-      <button class="btn" data-a="createOrg">Organisation anlegen</button>
-      <div style="height:8px"></div>
-      <button class="btn ghost" data-a="logout" style="width:100%">Abmelden</button>
-    </div>
-  </div></div>`;
-}
-async function createOrg(){
-  const orgName=$('#orgName').value.trim(), userName=$('#userName').value.trim();
-  if(!orgName){ $('#obNote').innerHTML='<div class="notice err">Bitte einen Organisationsnamen eingeben.</div>'; return; }
-  $('#obNote').innerHTML='<div class="notice info">Wird angelegt…</div>';
-  const { error } = await sb.rpc('create_org_and_profile', { p_org_name: orgName, p_user_name: userName });
-  if(error){ $('#obNote').innerHTML='<div class="notice err">'+esc(error.message)+'</div>'; return; }
-  toast('Organisation angelegt.', true); boot();
-}
-
-/* ---------- Main app ---------- */
-function topbar(){
-  return `<div class="topbar"><div class="topbar-in">
-    <div class="logo">St</div>
-    <div><h1>StoffScan</h1><small>${esc(S.org?.name||'')} · ${esc(S.profile?.role||'')}</small></div>
-    <div class="sp"></div>
-    <button class="btn ghost" data-a="logout">Abmelden</button>
-  </div></div>`;
-}
-function tabbar(){
-  const t=(id,lbl)=>`<button class="${S.view===id?'on':''}" data-tab="${id}">${lbl}</button>`;
-  return `<div class="tabbar">${t('bestand','Bestand')}${t('erfassen','Erfassen')}${t('verwaltung','Verwaltung')}</div>`;
-}
-function render(){
-  let body='';
-  if(S.view==='bestand') body=viewBestand();
-  else if(S.view==='erfassen') body=viewErfassen();
-  else if(S.view==='verwaltung') body=viewVerwaltung();
-  root.innerHTML = topbar()+`<div class="wrap">${body}</div>`+tabbar()+`<div class="disc">Betriebliche Unterstützung – ersetzt keine Beurteilung vor Ort.</div>`;
-  if(S.view==='erfassen'){ onSubChange(); filterLocs(); }
-}
-
-function sdbBadge(){ return ''; }
-function instRow(i){
-  const s=i.substances||{}; const co=i.companies||{}; const lo=i.storage_locations||{};
-  const menge = i.menge_aktuell==null?'<span class="badge b-warn">Menge fehlt</span>':`<b>${esc(i.menge_aktuell)} ${esc(i.mengeneinheit||'')}</b>`;
-  return `<div class="listitem" data-open="${esc(i.id)}">
-    <div style="flex:1">
-      <div class="split"><b>${esc(s.produktname||'—')}</b><span class="badge b-firm">${esc(co.short||co.name||'')}</span></div>
-      <div class="muted">${esc(lo.name||'kein Lagerort')}${lo.bereich?' · '+esc(lo.bereich):''} · ${menge} · ${esc(i.status||'')}</div>
-    </div><span class="chev">›</span></div>`;
-}
-function viewBestand(){
-  if(!S.instances.length) return `<h2>Bestand</h2><div class="card"><p class="muted">Noch keine Gefahrstoffe erfasst.</p><button class="btn" data-tab="erfassen">Ersten Stoff erfassen</button></div>`;
-  return `<h2>Bestand <span class="muted" style="font-size:14px">(${S.instances.length})</span></h2>`+S.instances.map(instRow).join('');
-}
-
-function viewErfassen(){
-  if(!S.companies.length||!S.locations.length){
-    return `<h2>Erfassen</h2><div class="notice info">Lege zuerst unter <b>Verwaltung</b> mindestens eine Firma und einen Lagerort an.</div>`;
+/* ---------- Echte QR-Codes + Routing ---------- */
+function baseUrl(){return location.href.split('#')[0];}
+function qrTextInst(i){return baseUrl()+'#open='+i.qr;}
+function qrTextLoc(l){return baseUrl()+'#open=LOC-'+l.id;}
+function renderRealQr(boxId,text){const el=document.getElementById(boxId);if(!el)return;el.innerHTML='';
+  if(window.QRCode){try{new QRCode(el,{text:text,width:150,height:150,correctLevel:QRCode.CorrectLevel.M});return;}catch(e){}}
+  el.innerHTML=pseudoQr(text,150);}
+function routeCode(raw){
+  let full=String(raw||'').trim();
+  // 1) Eigener Deep-Link (App-QR)
+  const h=full.indexOf('#open=');
+  if(h>=0){const t=full.slice(h+6).trim();
+    if(t.indexOf('LOC-')===0){const lid=t.slice(4);const l=location_(lid);if(l){state.activeLoc=lid;addHistory('Lagerort gescannt',l.name+' · '+company(l.company).name,l.company);toast('Lagerort gesetzt: '+l.name);goTo('scanArt',{reset:true,nav:'scan'});return true;}}
+    const inst=DB.instances.find(x=>x.qr===t);if(inst){state.activeLoc=inst.loc;toast('Stoffkarte geöffnet');goTo('detail',{sub:inst.sub,inst:inst.id,reset:true,nav:'start'});return true;}
   }
-  const compOpts = S.companies.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('');
-  const locOpts = S.locations.map(l=>`<option value="${esc(l.id)}" data-c="${esc(l.company_id)}">${esc(l.name)}${l.bereich?' · '+esc(l.bereich):''}</option>`).join('');
-  const subOpts = `<option value="__new">➕ Neuen Stoff anlegen…</option>`+S.substances.map(s=>`<option value="${esc(s.id)}">${esc(s.produktname)}${s.hersteller?' · '+esc(s.hersteller):''}</option>`).join('');
-  const ghsBoxes = GHS.map(k=>`<label style="display:inline-flex;align-items:center;gap:6px;font-weight:500;margin:0 10px 6px 0"><input type="checkbox" style="width:auto" value="${k}" class="ghsChk"> ${GHS_LBL[k]}</label>`).join('');
-  return `<h2>Gefahrstoff erfassen</h2>
-  <div class="card">
-    <div id="erfNote"></div>
-    <label>Firma</label><select id="fCompany">${compOpts}</select>
-    <label>Lagerort</label><select id="fLoc">${locOpts}</select>
-    <label>Stoff</label><select id="fSub" data-a="subChange">${subOpts}</select>
-    <div id="newSub" style="display:none;border-left:3px solid var(--accent);padding-left:12px;margin-top:8px">
-      <label>Produktname</label><input id="nProd" placeholder="z. B. Bremsenreiniger">
-      <label>Hersteller</label><input id="nHerst" placeholder="z. B. Würth">
-      <label>Signalwort</label><select id="nSignal"><option value="">–</option><option>Gefahr</option><option>Achtung</option></select>
-      <label>GHS-Piktogramme</label><div style="margin-top:2px">${ghsBoxes}</div>
-    </div>
-    <div class="row"><div><label>Menge</label><input id="fMenge" type="number" inputmode="decimal" placeholder="z. B. 5"></div><div><label>Einheit</label><input id="fEinheit" placeholder="l / kg / Stk"></div></div>
-    <div class="row"><div><label>Gebinde</label><input id="fGebinde" placeholder="Kanister / Dose"></div><div><label>Status</label><select id="fStatus"><option>Lager</option><option>im Einsatz</option><option>zur Entsorgung</option><option>unklar</option></select></div></div>
-    <div style="height:14px"></div>
-    <button class="btn" data-a="saveInst">Erfassen</button>
-  </div>`;
-}
-function onSubChange(){ const el=$('#fSub'); if(!el) return; const ns=$('#newSub'); if(ns) ns.style.display = el.value==='__new'?'block':'none'; }
-function filterLocs(){ const sel=$('#fCompany'), loc=$('#fLoc'); if(!sel||!loc) return; const cid=sel.value; const opts=S.locations.filter(l=>l.company_id===cid); loc.innerHTML = opts.length ? opts.map(l=>`<option value="${esc(l.id)}">${esc(l.name)}${l.bereich?' · '+esc(l.bereich):''}</option>`).join('') : `<option value="">— kein Lagerort für diese Firma —</option>`; }
-function erfErr(m){ const n=$('#erfNote'); if(n) n.innerHTML='<div class="notice err">'+esc(m)+'</div>'; toast(m,false); }
-
-async function saveInst(){
-  const org = S.profile.organization_id;
-  let subId = $('#fSub').value;
-  try{
-    if(subId==='__new'){
-      const produktname=$('#nProd').value.trim();
-      if(!produktname){ erfErr('Produktname fehlt.'); $('#nProd')?.focus(); return; }
-      const ghs=[...document.querySelectorAll('.ghsChk:checked')].map(c=>c.value);
-      const { data, error } = await sb.from('substances').insert({
-        organization_id: org, produktname, hersteller:$('#nHerst').value.trim()||null,
-        signalwort:$('#nSignal').value||null, ghs_piktogramme: ghs
-      }).select().single();
-      if(error){ erfErr('Stoff anlegen: '+error.message); return; }
-      subId = data.id;
-    }
-    if(!subId){ erfErr('Bitte einen Stoff wählen oder neu anlegen.'); return; }
-    const companyId=$('#fCompany').value, locId=$('#fLoc').value||null;
-    const menge = $('#fMenge').value===''?null:Number($('#fMenge').value);
-    const qr = 'INST-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,6).toUpperCase();
-    const { error } = await sb.from('substance_instances').insert({
-      organization_id: org, substance_id: subId, company_id: companyId, storage_location_id: locId,
-      gebindeart:$('#fGebinde').value.trim()||null, menge_aktuell: menge,
-      mengeneinheit:$('#fEinheit').value.trim()||null, status:$('#fStatus').value, internal_qr: qr
-    });
-    if(error){ erfErr('Erfassen: '+error.message); return; }
-    toast('Erfasst. Interner QR: '+qr, true);
-    await loadAll(); S.view='bestand'; render();
-  }catch(e){ erfErr('Fehler: '+e.message); }
+  // 2) Interner QR direkt (ohne Hash)
+  const inst2=DB.instances.find(x=>x.qr===full);
+  if(inst2){state.activeLoc=inst2.loc;toast('Stoffkarte geöffnet');goTo('detail',{sub:inst2.sub,inst:inst2.id,reset:true,nav:'start'});return true;}
+  // 3) Externe URL -> als Infoseite/SDB-Link hinterlegen (nicht selbst alles ablegen)
+  if(/^https?:\/\//i.test(full)){
+    openModal('Link erkannt','<div class="notice info" style="margin-bottom:12px">'+ICO.info+'<div>Hinter dem Code liegt eine Internetseite. Diese wird als <b>Link hinterlegt</b> (z. B. Hersteller-Infoseite / SDB) – die App speichert nicht alles selbst.</div></div>'+
+      '<div class="linkbox">'+ICO.doc+'<span>'+full+'</span></div>'+
+      '<div class="btn-row"><button class="btn secondary" data-action="openExtLink" data-id="'+encodeURIComponent(full)+'">'+ICO.doc+' Seite öffnen</button>'+
+      '<button class="btn" data-action="captureWithLink" data-id="'+encodeURIComponent(full)+'">'+ICO.plus+' Als Stoff anlegen + Link</button></div>');
+    return true;
+  }
+  // 4) Externer Barcode -> bekannter Artikel oder Neuanlage mit übernommenem Barcode
+  const sub=DB.substances.find(s=>s.barcode&&s.barcode===full);
+  if(sub){const i=state.activeLoc?DB.instances.find(x=>x.sub===sub.id&&x.loc===state.activeLoc):null;toast('Artikel erkannt: '+sub.name);goTo('detail',{sub:sub.id,inst:i?i.id:null,reset:true,nav:'start'});return true;}
+  // unbekannter Barcode -> Erfassung mit Barcode
+  state.scanPrefill={barcode:full,info:''};toast('Neuer Artikel – Barcode übernommen');goTo('erfassung',{reset:true,nav:'scan'});return true;
 }
 
-/* ---------- Instance detail + QR deep link ---------- */
-async function openInstance(id){
-  const { data:i, error } = await sb.from('substance_instances')
-    .select('*, substances(*), companies(name,short), storage_locations(name,bereich)')
-    .eq('id', id).maybeSingle();
-  if(error||!i){ toast(error?.message||'Nicht gefunden',false); return; }
-  renderDetail(i);
-}
-async function openByQr(qr){
-  if(!S.profile){ return; }
-  const { data:i, error } = await sb.from('substance_instances')
-    .select('*, substances(*), companies(name,short), storage_locations(name,bereich)')
-    .eq('internal_qr', qr).maybeSingle();
-  if(error||!i){ root.innerHTML=topbar()+`<div class="wrap"><div class="notice err">QR ${esc(qr)} nicht gefunden oder kein Zugriff.</div><button class="btn" data-tab="bestand">Zum Bestand</button></div>`+tabbar(); return; }
-  renderDetail(i);
-}
-function renderDetail(i){
-  const s=i.substances||{}; const co=i.companies||{}; const lo=i.storage_locations||{};
-  const ghs=(s.ghs_piktogramme||[]).map(k=>`<span class="badge b-danger">${GHS_LBL[k]||k}</span>`).join(' ');
-  const menge = i.menge_aktuell==null?'<span class="badge b-warn">Menge fehlt</span>':`${esc(i.menge_aktuell)} ${esc(i.mengeneinheit||'')}`;
-  root.innerHTML = topbar()+`<div class="wrap">
-    <button class="btn ghost" data-tab="bestand">‹ Zurück zum Bestand</button>
-    <div class="card">
-      <div class="split"><h2 style="margin:0">${esc(s.produktname||'—')}</h2>${s.signalwort?`<span class="badge ${s.signalwort==='Gefahr'?'b-danger':'b-warn'}">${esc(s.signalwort)}</span>`:''}</div>
-      <div class="muted" style="margin-bottom:8px">${esc(s.hersteller||'')}</div>
-      <div style="margin-bottom:10px">${ghs||'<span class="muted">keine Piktogramme erfasst</span>'}</div>
-      <div class="split"><span class="muted">Firma</span><b>${esc(co.name||'')}</b></div>
-      <div class="split"><span class="muted">Lagerort</span><b>${esc(lo.name||'—')}${lo.bereich?' · '+esc(lo.bereich):''}</b></div>
-      <div class="split"><span class="muted">Menge</span><b>${menge}</b></div>
-      <div class="split"><span class="muted">Status</span><b>${esc(i.status||'')}</b></div>
-      <div class="split"><span class="muted">Gebinde</span><b>${esc(i.gebindeart||'–')}</b></div>
-    </div>
-    <div class="card">
-      <h3>Interner QR-Code</h3>
-      <div class="muted" style="margin-bottom:10px">Ausdrucken und aufs Gebinde kleben. Scannen öffnet diese Stoffkarte – auf jedem angemeldeten Gerät derselben Organisation.</div>
-      <div class="qrbox" id="qrbox"></div>
-      <div style="text-align:center;font-family:var(--mono);font-size:13px;margin-top:8px">${esc(i.internal_qr||'')}</div>
-    </div>
-  </div>`+tabbar();
-  const url = location.origin+location.pathname+'#open='+i.internal_qr;
-  try{ new QRCode($('#qrbox'), { text:url, width:180, height:180, correctLevel:QRCode.CorrectLevel.M }); }catch(e){}
+/* ---------- Echter Kamera-Scan (html5-qrcode) ---------- */
+let camInst=null;
+function stopCamera(cb){if(camInst){const c=camInst;camInst=null;c.stop().then(()=>{try{c.clear();}catch(e){}cb&&cb();}).catch(()=>{cb&&cb();});}else{cb&&cb();}}
+function startCamera(){
+  const box=document.getElementById('scanBox');const r=document.getElementById('reader');if(!box||!r)return;
+  box.classList.add('live');
+  if(!window.isSecureContext){
+    r.innerHTML='<div class="scan-msg"><div class="notice info" style="margin:0">'+ICO.info+'<div><b>Kamera-Scan nur über HTTPS.</b> Diese Datei läuft lokal/ohne sichere Adresse. App online stellen (z. B. Netlify Drop) und am Handy öffnen – dann startet die Kamera direkt hier. Für die Demo unten manuell wählen.</div></div></div>';
+    return;
+  }
+  if(!window.Html5Qrcode){r.innerHTML='<div class="scan-msg"><div class="notice warn" style="margin:0">'+ICO.warn+'<div>Scanner-Bibliothek nicht geladen (keine Internetverbindung?).</div></div></div>';return;}
+  r.innerHTML='';
+  stopCamera(()=>{try{camInst=new Html5Qrcode('reader',{verbose:false});
+    var fmts;try{var F=Html5QrcodeSupportedFormats;fmts=[F.QR_CODE,F.EAN_13,F.EAN_8,F.UPC_A,F.UPC_E,F.CODE_128,F.CODE_39,F.CODE_93,F.ITF,F.CODABAR,F.DATA_MATRIX];}catch(e){fmts=undefined;}
+    const cfg={fps:12,qrbox:function(w,h){const m=Math.floor(Math.min(w,h)*0.78);return {width:m,height:m};},aspectRatio:1.0};
+    if(fmts)cfg.formatsToSupport=fmts;
+    camInst.start({facingMode:'environment'},cfg,txt=>{stopCamera(()=>routeCode(txt));},function(){})
+      .catch(()=>{r.innerHTML='<div class="scan-msg"><div class="notice warn" style="margin:0">'+ICO.warn+'<div>Kamerazugriff verweigert oder nicht verfügbar. Bitte Kamerafreigabe erlauben – oder unten manuell wählen.</div></div></div>';camInst=null;});
+  }catch(e){r.innerHTML='<div class="scan-msg"><div class="notice warn" style="margin:0">'+ICO.warn+'<div>Kamera-Start fehlgeschlagen.</div></div></div>';}});
 }
 
-/* ---------- Verwaltung (Firmen + Lagerorte) ---------- */
-function viewVerwaltung(){
-  const isAdmin = ['firmenadmin','gruppenadmin'].includes(S.profile?.role);
-  const comps = S.companies.map(c=>`<div class="listitem" style="cursor:default"><b>${esc(c.name)}</b>${c.is_group?' <span class="badge">Gruppe</span>':''}</div>`).join('')||'<p class="muted">Keine Firmen.</p>';
-  const locs = S.locations.map(l=>{const c=S.companies.find(x=>x.id===l.company_id); return `<div class="listitem" style="cursor:default"><div><b>${esc(l.name)}</b><div class="muted">${esc(l.bereich||'')}${c?' · '+esc(c.name):''}</div></div></div>`;}).join('')||'<p class="muted">Keine Lagerorte.</p>';
-  const compOpts = S.companies.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('');
-  return `<h2>Verwaltung</h2>
-  <div class="card"><h3>Firmen</h3>${comps}
-    ${isAdmin?`<label>Neue Firma</label><div class="row"><input id="ncName" placeholder="Firmenname"><button class="btn sm" data-a="addCompany">+</button></div>`:''}
-  </div>
-  <div class="card"><h3>Lagerorte</h3>${locs}
-    ${isAdmin?`<label>Neuer Lagerort</label>
-      <select id="nlCompany">${compOpts}</select>
-      <div class="row" style="margin-top:8px"><input id="nlName" placeholder="Name (z. B. Werkhof Nord)"><input id="nlBereich" placeholder="Bereich (z. B. Schrank A)"></div>
-      <div style="height:8px"></div><button class="btn sm" data-a="addLoc">Lagerort anlegen</button>`:''}
-  </div>
-  <div class="card"><h3>Konto</h3><div class="muted">${esc(S.session?.user?.email||'')} · Rolle ${esc(S.profile?.role||'')}</div></div>`;
+/* ---------- Supabase-Anbindung (Live) ---------- */
+const SB_URL='https://pvzjxzunhhbgfimirbkl.supabase.co';
+const SB_KEY='sb_publishable_dV_7ME6EOrTKbqHYlYlfcw_GV8e6XW_';
+const sbc=window.supabase.createClient(SB_URL,SB_KEY);
+const AUTH={user:null,profile:null};
+function orgId(){return AUTH.profile&&AUTH.profile.organization_id;}
+const ROLE_DB2UI={viewer:'Viewer',mitarbeitend:'Mitarbeitend',lagerverantwortlich:'Lagerverantwortlich',firmenadmin:'Firmenadmin',gruppenadmin:'Gruppenadmin / IMS'};
+const ROLE_UI2DB={'Viewer':'viewer','Mitarbeitend':'mitarbeitend','Lagerverantwortlich':'lagerverantwortlich','Firmenadmin':'firmenadmin','Gruppenadmin / IMS':'gruppenadmin'};
+
+function sdbFrom(rows){ // neuestes SDB je Stoff -> {status,rev,link}
+  if(!rows||!rows.length) return {status:'fehlt',rev:null,link:null};
+  const r=rows.slice().sort((a,b)=>String(b.revisionsdatum||'').localeCompare(String(a.revisionsdatum||'')))[0];
+  if(!r.revisionsdatum) return {status:'ok',rev:null,link:r.storage_path||r.external_link||'SDB'};
+  const age=(Date.now()-new Date(r.revisionsdatum).getTime())/(365.25*24*3600*1000);
+  return {status:age>3?'alt':'ok',rev:String(r.revisionsdatum).slice(0,7),link:r.storage_path||r.external_link||'SDB'};
 }
-async function addCompany(){
-  const name=$('#ncName').value.trim(); if(!name){ toast('Firmenname fehlt.',false); return; }
-  const { error } = await sb.from('companies').insert({ organization_id:S.profile.organization_id, name });
-  if(error){ toast(error.message,false); return; }
-  toast('Firma angelegt.',true); await loadAll(); render();
+function fmtTs(iso){const n=new Date(iso);return ('0'+n.getDate()).slice(-2)+'.'+('0'+(n.getMonth()+1)).slice(-2)+'. '+('0'+n.getHours()).slice(-2)+':'+('0'+n.getMinutes()).slice(-2);}
+
+async function loadDB(){
+  const [c,l,s,sd,i,p,h]=await Promise.all([
+    sbc.from('companies').select('*').order('name'),
+    sbc.from('storage_locations').select('*').order('name'),
+    sbc.from('substances').select('*').order('produktname'),
+    sbc.from('sds_documents').select('*'),
+    sbc.from('substance_instances').select('*').order('created_at',{ascending:false}),
+    sbc.from('profiles').select('*'),
+    sbc.from('audit_logs').select('*').eq('entity_typ','history').order('created_at',{ascending:false}).limit(50)
+  ]);
+  const err=c.error||l.error||s.error||sd.error||i.error||p.error||h.error;
+  if(err){toast('Laden: '+err.message,false);}
+  DB.companies=(c.data||[]).map(x=>({id:x.id,name:x.name,short:x.short||x.name,group:!!x.is_group}));
+  DB.locations=(l.data||[]).map(x=>({id:x.id,company:x.company_id,name:x.name,bereich:x.bereich||'',typ:x.typ||'Lager'}));
+  const sdBySub={}; (sd.data||[]).forEach(d=>{(sdBySub[d.substance_id]=sdBySub[d.substance_id]||[]).push(d);});
+  DB.substances=(s.data||[]).map(x=>({id:x.id,name:x.produktname,hersteller:x.hersteller||'unbekannt',signal:x.signalwort||'Achtung',ghs:x.ghs_piktogramme||[],h:x.h_saetze||'–',p:x.p_saetze||'–',un:x.un_nummer||'–',barcode:x.externer_barcode||'',info:x.info_link||'',sdb:sdbFrom(sdBySub[x.id])}));
+  DB.instances=(i.data||[]).map(x=>({id:x.id,sub:x.substance_id,loc:x.storage_location_id,gebinde:x.gebindeart||'Gebinde',groesse:x.gebindegroesse||'–',anzahl:x.anzahl_gebinde||1,menge:x.menge_aktuell,einheit:x.mengeneinheit||'',status:x.status||'Lager',qr:x.internal_qr,last:(x.updated_at||x.created_at||'').slice(0,10)}));
+  DB.users=(p.data||[]).map(x=>({id:x.id,name:x.name||x.email||'Benutzer',role:ROLE_DB2UI[x.role]||'Mitarbeitend',company:x.company_id}));
+  DB.history=(h.data||[]).map(x=>({t:fmtTs(x.created_at),who:(x.neu_wert&&x.neu_wert.who)||'—',a:x.aktion,m:(x.neu_wert&&x.neu_wert.m)||'',cid:(x.neu_wert&&x.neu_wert.cid)||'',alert:!!(x.neu_wert&&x.neu_wert.alert)}));
+  if(AUTH.profile) state.currentUser=AUTH.profile.id;
 }
-async function addLoc(){
-  const name=$('#nlName').value.trim(), company_id=$('#nlCompany').value;
-  if(!name){ toast('Name fehlt.',false); return; }
-  const { error } = await sb.from('storage_locations').insert({ organization_id:S.profile.organization_id, company_id, name, bereich:$('#nlBereich').value.trim()||null });
-  if(error){ toast(error.message,false); return; }
-  toast('Lagerort angelegt.',true); await loadAll(); render();
+function saveDB(){/* Persistenz erfolgt pro Mutation direkt in Supabase */}
+function resetDB(){toast('Zurücksetzen ist im Live-Modus deaktiviert.',false);}
+
+/* ---------- MOCK-DATEN ---------- */
+const DB={
+  companies:[
+    {id:'c1',name:'Muster Gruppe AG',short:'Gruppe',group:true},
+    {id:'c2',name:'Bau Nord AG',short:'Bau Nord'},{id:'c3',name:'Bau City AG',short:'Bau City'},
+    {id:'c4',name:'Bau Mitte AG',short:'Bau Mitte'},{id:'c5',name:'Bau West AG',short:'Bau West'},
+    {id:'c6',name:'Gartenbau Meier AG',short:'Gartenbau'},{id:'c7',name:'Technik & Unterhalt AG',short:'Technik'},
+    {id:'c8',name:'Recycling & Entsorgung AG',short:'Recycling'},{id:'c9',name:'Infra Service AG',short:'Infra'},
+    {id:'c10',name:'Logistik Zentral AG',short:'Logistik'},{id:'c11',name:'Immobilien Verwaltung AG',short:'Immo'}
+  ],
+  locations:[
+    {id:'l1',company:'c2',name:'Werkhof Nord',bereich:'Gefahrstoffschrank A',typ:'Werkhof'},
+    {id:'l2',company:'c4',name:'Werkhof Mitte',bereich:'Container 2',typ:'Werkhof'},
+    {id:'l3',company:'c3',name:'Baustelle City',bereich:'Magazincontainer',typ:'Baustelle'},
+    {id:'l4',company:'c7',name:'Werkstatt Technik',bereich:'Chemikalienschrank',typ:'Werkstatt'},
+    {id:'l5',company:'c8',name:'Lager Recycling',bereich:'Sonderabfallzone',typ:'Sonderabfall'},
+    {id:'l6',company:'c5',name:'Werkhof West',bereich:'Regal Gefahrstoffe',typ:'Werkhof'}
+  ],
+  substances:[
+    {id:'s1',name:'Schalöl',hersteller:'Sika',signal:'Achtung',ghs:['umwelt'],h:'H412 – schädlich für Wasserorganismen, langfristige Wirkung',p:'P273 – Freisetzung in die Umwelt vermeiden',un:'–',sdb:{status:'ok',rev:'2024-05',link:'sika_schaloel_sdb.pdf'}},
+    {id:'s2',name:'Bremsenreiniger',hersteller:'Würth',signal:'Gefahr',ghs:['flamm','reiz'],h:'H222 extrem entzündbar · H319 Augenreizung',p:'P210 von Hitze fernhalten · P251 nicht durchstechen',un:'1950',barcode:'4007123456789',info:'https://www.wuerth.ch/bremsenreiniger',sdb:{status:'alt',rev:'2020-02',link:'wuerth_bremsenreiniger_sdb.pdf'}},
+    {id:'s3',name:'Aceton',hersteller:'Brenntag',signal:'Gefahr',ghs:['flamm','reiz'],h:'H225 leicht entzündbar · H319 Augenreizung · H336',p:'P210 · P233 Behälter dicht halten',un:'1090',barcode:'7611234500012',info:'https://www.brenntag.com/aceton',sdb:{status:'ok',rev:'2025-01',link:'brenntag_aceton_sdb.pdf'}},
+    {id:'s4',name:'Epoxidharz-Komponente A',hersteller:'Sika',signal:'Achtung',ghs:['reiz','umwelt'],h:'H315 Hautreizung · H317 Sensibilisierung · H411',p:'P280 Schutzhandschuhe tragen',un:'–',sdb:{status:'ok',rev:'2023-09',link:'sika_epoxid_a_sdb.pdf'}},
+    {id:'s5',name:'Dieselersatz / Alkylatbenzin',hersteller:'Aspen',signal:'Gefahr',ghs:['flamm','gesundheit','umwelt'],h:'H225 leicht entzündbar · H304 Aspiration · H411',p:'P210 · P273',un:'1203',sdb:{status:'ok',rev:'2024-11',link:'aspen_alkylatbenzin_sdb.pdf'}},
+    {id:'s6',name:'Entkalker sauer',hersteller:'Hagerty',signal:'Gefahr',ghs:['aetz'],h:'H314 schwere Verätzungen / Augenschäden',p:'P280 · P305+P351+P338 mit Wasser spülen',un:'–',sdb:{status:'fehlt',rev:null,link:null}},
+    {id:'s7',name:'Markierspray',hersteller:'Edding',signal:'Gefahr',ghs:['flamm','druckgas'],h:'H222 extrem entzündbar · H229 unter Druck',p:'P210 · P251 nicht durchstechen',un:'1950',sdb:{status:'ok',rev:'2024-03',link:'edding_markierspray_sdb.pdf'}},
+    {id:'s8',name:'Gasflasche Propan',hersteller:'PanGas',signal:'Gefahr',ghs:['flamm','druckgas'],h:'H220 extrem entzündbares Gas · H280 unter Druck',p:'P210 · P377 · P381',un:'1978',sdb:{status:'ok',rev:'2025-02',link:'pangas_propan_sdb.pdf'}},
+    {id:'s9',name:'Reinigungsmittel alkalisch',hersteller:'Kärcher',signal:'Gefahr',ghs:['aetz'],h:'H314 schwere Verätzungen / Augenschäden',p:'P280 · P305+P351+P338',un:'–',sdb:{status:'ok',rev:'2024-07',link:'kaercher_alkalisch_sdb.pdf'}},
+    {id:'s10',name:'Leim / Lösemittelreiniger',hersteller:'Henkel',signal:'Achtung',ghs:['flamm','reiz'],h:'H226 entzündbar · H319 Augenreizung',p:'P210 von Zündquellen fernhalten',un:'1133',sdb:{status:'fehlt',rev:null,link:null}}
+  ],
+  instances:[
+    {id:'i1',sub:'s2',loc:'l1',gebinde:'Dose',groesse:'0.5 l',anzahl:6,menge:3,einheit:'l',status:'im Einsatz',qr:'INST-000118',last:'2026-05-28'},
+    {id:'i2',sub:'s3',loc:'l1',gebinde:'Kanister',groesse:'10 l',anzahl:1,menge:10,einheit:'l',status:'Lager',qr:'INST-000119',last:'2026-05-12'},
+    {id:'i3',sub:'s1',loc:'l2',gebinde:'Fass',groesse:'200 l',anzahl:1,menge:180,einheit:'l',status:'Lager',qr:'INST-000131',last:'2026-04-30'},
+    {id:'i4',sub:'s5',loc:'l2',gebinde:'Kanister',groesse:'25 l',anzahl:2,menge:50,einheit:'l',status:'im Einsatz',qr:'INST-000132',last:'2026-05-20'},
+    {id:'i5',sub:'s4',loc:'l3',gebinde:'Gebinde',groesse:'5 kg',anzahl:4,menge:20,einheit:'kg',status:'Lager',qr:'INST-000140',last:'2026-05-22'},
+    {id:'i6',sub:'s10',loc:'l3',gebinde:'Kanister',groesse:'5 l',anzahl:2,menge:null,einheit:'l',status:'unklar',qr:'INST-000141',last:'2026-05-22'},
+    {id:'i7',sub:'s6',loc:'l4',gebinde:'Flasche',groesse:'1 l',anzahl:3,menge:3,einheit:'l',status:'im Einsatz',qr:'INST-000150',last:'2026-05-26'},
+    {id:'i8',sub:'s9',loc:'l4',gebinde:'Kanister',groesse:'10 l',anzahl:1,menge:8,einheit:'l',status:'im Einsatz',qr:'INST-000151',last:'2026-05-18'},
+    {id:'i9',sub:'s2',loc:'l4',gebinde:'Dose',groesse:'0.5 l',anzahl:12,menge:6,einheit:'l',status:'Lager',qr:'INST-000152',last:'2026-05-15'},
+    {id:'i10',sub:'s8',loc:'l5',gebinde:'Flasche',groesse:'11 kg',anzahl:2,menge:22,einheit:'kg',status:'Lager',qr:'INST-000160',last:'2026-05-29'},
+    {id:'i11',sub:'s6',loc:'l5',gebinde:'Kanister',groesse:'5 l',anzahl:1,menge:5,einheit:'l',status:'zur Entsorgung',qr:'INST-000161',last:'2026-05-29'},
+    {id:'i12',sub:'s7',loc:'l6',gebinde:'Dose',groesse:'0.5 l',anzahl:8,menge:4,einheit:'l',status:'im Einsatz',qr:'INST-000170',last:'2026-05-10'},
+    {id:'i13',sub:'s5',loc:'l6',gebinde:'Kanister',groesse:'25 l',anzahl:1,menge:null,einheit:'l',status:'Lager',qr:'INST-000171',last:'2026-05-10'},
+    {id:'i14',sub:'s3',loc:'l4',gebinde:'Flasche',groesse:'1 l',anzahl:2,menge:2,einheit:'l',status:'im Einsatz',qr:'INST-000153',last:'2026-05-08'}
+  ],
+  history:[
+    {t:'28.05. 09:42',who:'M. Brunner',a:'Bestand erfasst',m:'Bremsenreiniger · Werkhof Nord',cid:'c2',alert:false},
+    {t:'29.05. 07:15',who:'K. Roth',a:'Gasflasche gescannt',m:'Propan · Lager Recycling',cid:'c8',alert:false},
+    {t:'29.05. 14:03',who:'A. Frei (SIBE)',a:'Hinweis: SDB fehlt',m:'Entkalker sauer · Lager Recycling',cid:'c8',alert:true},
+    {t:'26.05. 16:20',who:'R. Meier',a:'Menge angepasst',m:'Entkalker sauer · Werkstatt Technik',cid:'c7',alert:false}
+  ],
+  users:[
+    {id:'u1',name:'A. Frei',role:'Gruppenadmin / IMS',company:'c1'},
+    {id:'u2',name:'M. Brunner',role:'Lagerverantwortlich',company:'c2'},
+    {id:'u3',name:'K. Roth',role:'Mitarbeitend',company:'c8'},
+    {id:'u4',name:'R. Meier',role:'Mitarbeitend',company:'c7'},
+    {id:'u5',name:'S. Keller',role:'Firmenadmin',company:'c4'}
+  ]
+};
+const ROLES=['Viewer','Mitarbeitend','Lagerverantwortlich','Firmenadmin','Gruppenadmin / IMS'];
+let qrCounter=200;
+
+/* ---------- Helpers ---------- */
+const company=id=>DB.companies.find(c=>c.id===id);
+const location_=id=>DB.locations.find(l=>l.id===id);
+const substance=id=>DB.substances.find(s=>s.id===id);
+const instance=id=>DB.instances.find(i=>i.id===id);
+const locCompany=lid=>company(location_(lid).company);
+const instIncomplete=i=>i.menge==null;
+const instWarn=i=>instIncomplete(i)||substance(i.sub).sdb.status==='fehlt';
+const instsAtLoc=lid=>DB.instances.filter(i=>i.loc===lid);
+function sdbBadge(s){if(s.sdb.status==='fehlt')return '<span class="badge b-danger">'+ICO.warn+'SDB fehlt</span>';if(s.sdb.status==='alt')return '<span class="badge b-warn">'+ICO.warn+'SDB prüfen</span>';return '<span class="badge b-ok">'+ICO.ok+'SDB '+s.sdb.rev+'</span>';}
+function signalBadge(s){return '<span class="badge b-signal '+(s.signal==='Gefahr'?'b-danger':'b-warn')+'">'+s.signal+'</span>';}
+function firmTag(cid,alt){return '<span class="firmtag '+(alt?'alt':'')+'">'+company(cid).short+'</span>';}
+
+/* ---------- State / Router ---------- */
+const state={view:'start',stack:[],activeLoc:null,nav:'start',currentUser:'u1',scanPrefill:null,
+  filter:{company:'',loc:'',status:'',hb:false},
+  curSub:null,curInst:null,curLoc:null,adminTab:'hb',adminCompany:'',adminHbView:'all'};
+function curUser(){return DB.users.find(u=>u.id===state.currentUser)||DB.users[0];}
+function isAdmin(){const u=curUser();return !!u && (u.role==='Firmenadmin'||u.role==='Gruppenadmin / IMS');}
+function goTo(v,o){o=o||{};stopCamera();if(o.reset)state.stack=[];else if(state.view!==v||o.push)state.stack.push(state.view);
+  state.view=v;if(o.sub!==undefined)state.curSub=o.sub;if(o.inst!==undefined)state.curInst=o.inst;if(o.loc!==undefined)state.curLoc=o.loc;if(o.nav)state.nav=o.nav;window.scrollTo(0,0);render();}
+function goBack(){if(state.stack.length){state.view=state.stack.pop();window.scrollTo(0,0);render();}else goTo('start',{reset:true});}
+
+/* ---------- Lagerort-Statusband (geschärft) ---------- */
+function renderLocband(){
+  const el=document.getElementById('locband');
+  if(state.activeLoc){
+    const l=location_(state.activeLoc),c=locCompany(state.activeLoc),n=instsAtLoc(l.id).length;
+    el.className='locband set';
+    el.innerHTML='<button class="lb-tap" data-action="openLoc" data-id="'+l.id+'"><span class="lb-ico">'+ICO.loc+'</span>'+
+      '<span class="lb-txt"><span class="lb-kicker">Aktiver Lagerort</span>'+
+      '<span class="lb-main">'+l.name+' · '+l.bereich+'</span>'+
+      '<span class="lb-sub">'+c.name+' · '+n+' Stoffe</span></span></button>'+
+      '<button class="lb-act" data-action="nav" data-v="scanLoc" data-nav="scan">'+ICO.scan+'Wechseln</button>';
+  }else{
+    el.className='locband unset';
+    el.innerHTML='<button class="lb-tap" data-action="nav" data-v="scanLoc" data-nav="scan"><span class="lb-ico">'+ICO.warn+'</span>'+
+      '<span class="lb-txt"><span class="lb-kicker">Kein Lagerort gesetzt</span>'+
+      '<span class="lb-main">Zuerst Lagerort scannen</span></span></button>'+
+      '<button class="lb-act" data-action="nav" data-v="scanLoc" data-nav="scan">'+ICO.scan+'Scannen</button>';
+  }
+}
+function renderHeadSlot(){const el=document.getElementById('headSlot');if(!el)return;el.innerHTML=(state.view!=='start')?'<button class="head-cap" data-action="capture">'+ICO.plus+' Gefahrstoff aufnehmen</button>':'';}
+const NAVITEMS=[['start','start',ICO.home,'Dashboard'],['bestand','bestand',ICO.list,'Bestände'],['firmen','firmen',ICO.firma,'Firmen'],['admin','admin',ICO.admin,'Verwaltung']];
+function renderNav(){
+  const admin=isAdmin();
+  const u=curUser();
+  const items=[['start','start',ICO.home,'Start'],['bestand','bestand',ICO.list,'Bestand'],['__scan','scan',ICO.scan,'Aufnehmen'],['firmen','firmen',ICO.firma,'Firmen']];
+  if(admin)items.push(['admin','admin',ICO.admin,'Admin']);
+  document.getElementById('bottomNav').innerHTML=items.map(it=>it[0]==='__scan'
+    ?'<button class="scan-btn" data-action="capture"><span class="sc">'+ICO.plus+'</span><span>'+it[3]+'</span></button>'
+    :'<button class="'+(state.nav===it[1]?'active':'')+'" data-action="nav" data-v="'+it[0]+'" data-nav="'+it[1]+'">'+it[2]+'<span>'+it[3]+'</span></button>').join('');
+  const sb=document.getElementById('sidebar');
+  if(sb){const navi=NAVITEMS.filter(it=>it[0]!=='admin'||admin);
+    sb.innerHTML=navi.map(it=>'<button class="sb-item '+(state.nav===it[1]?'active':'')+'" data-action="nav" data-v="'+it[0]+'" data-nav="'+it[1]+'">'+it[2]+' '+it[3]+'</button>').join('')+
+    '<div class="sb-sep"></div>'+
+    '<button class="sb-item" data-action="reScan">'+ICO.qr+' Artikel-QR öffnen</button>'+
+    '<div class="sb-sep"></div>'+
+    '<button class="sb-user" data-action="switchUser">'+ICO.user+'<span class="su-txt"><b>'+u.name+'</b><small>'+u.role+(admin?' · Admin':'')+'</small></span></button>'+
+    '<div class="sb-foot">Angemeldet (Demo) · Rolle bestimmt den Zugriff. Verwaltung nur für Admin sichtbar.</div>';}
 }
 
-/* ---------- error screen ---------- */
-function renderError(title,msg){ root.innerHTML=`<div class="wrap"><div class="notice err"><b>${esc(title)}</b><br>${esc(msg)}</div><button class="btn" data-a="logout">Abmelden</button></div>`; }
+/* ============================================================ SCREENS ============================================================ */
+function disclaimer(){return '<div class="disclaimer">Betriebliche Unterstützung – ersetzt keine Beurteilung vor Ort. · Prototyp mit Mock-Daten.</div>';}
 
-/* ---------- event delegation ---------- */
-document.addEventListener('click', async (e)=>{
-  const tab=e.target.closest('[data-tab]'); if(tab){ S.view=tab.dataset.tab; if(location.hash) history.replaceState(null,'',location.pathname); render(); return; }
-  const open=e.target.closest('[data-open]'); if(open){ openInstance(open.dataset.open); return; }
-  const a=e.target.closest('[data-a]'); if(!a) return;
-  const act=a.dataset.a;
-  if(act==='login') doLogin();
-  else if(act==='signup') doSignup();
-  else if(act==='logout'){ await sb.auth.signOut(); S.profile=null;S.org=null; }
-  else if(act==='createOrg') createOrg();
-  else if(act==='subChange') {}
-  else if(act==='saveInst') saveInst();
-  else if(act==='addCompany') addCompany();
-  else if(act==='addLoc') addLoc();
+function scrStart(){
+  const all=DB.instances;
+  const noSdb=all.filter(i=>substance(i.sub).sdb.status==='fehlt');
+  const incompl=all.filter(instIncomplete);
+  const hbList=all.filter(instWarn);
+  const recent=DB.history.slice(0,5).map(h=>'<div class="tl-item '+(h.alert?'alert':'')+'"><div class="t">'+h.t+' · '+h.who+'</div><div class="a">'+h.a+'</div><div class="m">'+h.m+'</div></div>').join('');
+  const hbTop=hbList.slice(0,5).map(adminHbRow).join('');
+  const ctxNote=state.activeLoc?('Aktiver Lagerort: '+location_(state.activeLoc).name):'Startet mit Lagerort scannen';
+  return '<div class="view">'+
+    '<h2 class="title">Dashboard</h2><p class="sub">Übersicht über gefährliche Stoffe der Gruppe.</p>'+
+    '<button class="userline" data-action="switchUser">'+ICO.user+'<span>Angemeldet als <b>'+curUser().name+'</b> · '+curUser().role+'</span><span class="chg">wechseln</span></button>'+
+    '<button class="capture-btn" data-action="capture"><span class="ico">'+ICO.plus+'</span><span><b>Gefahrstoff aufnehmen</b><span>'+ctxNote+'</span></span></button>'+
+    '<div class="kpi-grid">'+
+      '<button class="kpi accent" data-action="goBestandAll"><span class="n">'+all.length+'</span><span class="t">'+ICO.box+' Datensätze</span></button>'+
+      '<button class="kpi alert" data-action="goAdminSdb"><span class="n">'+noSdb.length+'</span><span class="t">'+ICO.warn+' ohne SDB</span></button>'+
+      '<button class="kpi warnb" data-action="goAdminMenge"><span class="n">'+incompl.length+'</span><span class="t">'+ICO.warn+' unvollständig</span></button>'+
+      '<button class="kpi" data-action="goAdminLager"><span class="n">'+DB.locations.length+'</span><span class="t">'+ICO.loc+' Lagerorte</span></button>'+
+    '</div>'+
+    '<div class="dash-cols">'+
+      '<div class="panel"><div class="panel-h"><span>Handlungsbedarf<span class="cnt">'+hbList.length+'</span></span>'+(hbList.length>5?'<a data-action="goAdminHB">alle</a>':'')+'</div>'+
+        '<div class="panel-body rows" style="padding:10px">'+(hbList.length?hbTop:'<div class="empty" style="padding:18px">'+ICO.ok+'<div>Kein Handlungsbedarf.</div></div>')+'</div></div>'+
+      '<div class="panel"><div class="panel-h"><span>Letzte Änderungen</span><a data-action="goAdminVerlauf">Verlauf</a></div>'+
+        '<div class="panel-body"><div class="timeline">'+recent+'</div></div></div>'+
+    '</div>'+
+    disclaimer()+'</div>';
+}
+
+function scannerPanel(label,fb){
+  return '<div class="scanner'+(fb?' fallback':'')+'" id="scanBox">'+
+    '<div class="scan-graphic" data-action="camScan"><div class="vf"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><span class="line"></span></div>'+
+    '<p>'+label+'</p><span class="scan-hint">'+ICO.scan+' Tippen, um die Kamera zu starten</span></div>'+
+    '<button class="scan-cancel" data-action="stopCam">Schliessen</button>'+
+    '<div id="reader"></div></div>';
+}
+function scrScanLoc(){
+  const list=DB.locations.map(l=>{const c=company(l.company);
+    return '<button class="pick" data-action="setLoc" data-id="'+l.id+'"><span class="qr-ico">'+ICO.qr+'</span><span class="pm"><b>'+l.name+' · '+l.bereich+'</b><small>'+c.name+' · '+l.typ+'</small></span>'+ICO.chev+'</button>';}).join('');
+  const cur=state.activeLoc?'<div class="ctx-line">'+ICO.ok+' Aktuell: '+location_(state.activeLoc).name+' – anderen Lagerort wählen</div>':'';
+  return '<div class="view"><h2 class="title">Lagerort '+(state.activeLoc?'wechseln':'scannen')+'</h2><p class="sub">QR scannen oder unten manuell wählen.</p>'+cur+
+    scannerPanel('Lagerort-QR scannen',false)+
+    '<div class="label-h" style="margin-top:16px">Lagerort manuell wählen</div>'+list+disclaimer()+'</div>';
+}
+
+function scrScanArt(){
+  const fb=!state.activeLoc;const l=state.activeLoc?location_(state.activeLoc):null;
+  const known=DB.substances.slice(0,6).map(s=>'<button class="pick" data-action="pickArt" data-id="'+s.id+'"><span class="qr-ico">'+ICO.qr+'</span><span class="pm"><b>'+s.name+'</b><small>'+s.hersteller+(s.un!=='–'?' · UN '+s.un:'')+'</small></span>'+ICO.chev+'</button>').join('');
+  return '<div class="view"><h2 class="title">Artikel scannen</h2>'+
+    (fb?'<div class="notice warn">'+ICO.warn+'<div><b>Kein Lagerort gesetzt.</b> Normal ist «zuerst Lagerort». <a data-action="nav" data-v="scanLoc" data-nav="scan" style="color:#5e3800;font-weight:700;text-decoration:underline">Jetzt Lagerort wählen</a> – oder ausnahmsweise ohne erfassen.</div></div>'
+       :'<div class="ctx-line">'+ICO.ok+' Lagerort: '+l.name+' · '+l.bereich+'</div>')+
+    scannerPanel('Barcode oder internen QR scannen',fb)+
+    '<button class="pick new" data-action="newArt" style="margin-top:16px"><span class="qr-ico">'+ICO.plus+'</span><span class="pm"><b>Unbekannter Artikel – neu erfassen</b><small>Externer Barcode ohne Treffer</small></span></button>'+
+    '<div class="label-h">Bekannte Artikel (Treffer simulieren)</div>'+known+disclaimer()+'</div>';
+}
+
+/* ===== STOFFKARTE (neu strukturiert) ===== */
+function scrDetail(){
+  const s=substance(state.curSub);
+  let inst=state.curInst?instance(state.curInst):null;
+  if(!inst&&state.activeLoc)inst=DB.instances.find(i=>i.sub===s.id&&i.loc===state.activeLoc)||null;
+
+  // 1) HERO: Name, Signal+SDB-Badges, GHS gross
+  const ghs=s.ghs.length?'<div class="sk-ghs">'+s.ghs.map(g=>ghsBadge(g,'big')).join('')+'</div>':'<div class="sk-ghs none">Keine GHS-Piktogramme hinterlegt</div>';
+  const hero='<div class="sk-hero"><div class="sk-badges">'+signalBadge(s)+sdbBadge(s)+'</div>'+
+    '<h1 class="sk-name">'+s.name+'</h1><div class="sk-mfr">'+s.hersteller+(s.un!=='–'?' · UN '+s.un:'')+'</div>'+ghs+'</div>';
+
+  // 2) WARNHINWEISE direkt unter Hero
+  let notes='';
+  if(s.sdb.status==='fehlt')notes+='<div class="notice danger">'+ICO.warn+'<div><b>Kein SDB hinterlegt.</b> Sicherheitsdatenblatt ergänzen.</div></div>';
+  else if(s.sdb.status==='alt')notes+='<div class="notice warn">'+ICO.warn+'<div><b>SDB älter als 3 Jahre</b> (Stand '+s.sdb.rev+'). Auf Aktualität prüfen.</div></div>';
+  if(inst&&instIncomplete(inst))notes+='<div class="notice warn">'+ICO.warn+'<div><b>Menge fehlt</b> bei diesem Bestand – bitte ergänzen.</div></div>';
+
+  // 3) BESTAND (Lagerort-gebunden) – Fakten + QR-CTA
+  let bestand;
+  if(inst){
+    const l=location_(inst.loc),c=locCompany(inst.loc);
+    const mengeV=inst.menge==null?'<span class="open">offen</span>':inst.menge+' '+inst.einheit;
+    bestand='<div class="bestand">'+
+      '<div class="bestand-h">'+ICO.box+'<span class="tag">Bestand · dieser Lagerort</span><span class="where">'+l.name+'</span></div>'+
+      '<div class="bf-grid">'+
+        '<div class="bf menge"><div class="k">Menge</div><div class="v">'+mengeV+'</div></div>'+
+        '<div class="bf"><div class="k">Gebinde</div><div class="v">'+inst.anzahl+' × '+inst.gebinde+'</div></div>'+
+        '<div class="bf full"><div class="k">Firma</div><div class="v">'+firmTag(l.company)+' '+c.name+'</div></div>'+
+        '<div class="bf full"><div class="k">Lagerort</div><div class="v">'+l.name+' · '+l.bereich+'</div></div>'+
+        '<div class="bf"><div class="k">Status</div><div class="v">'+inst.status+'</div></div>'+
+        '<div class="bf"><div class="k">Interner QR</div><div class="v mono">'+inst.qr+'</div></div>'+
+      '</div>'+
+      '<div class="qr-cta"><button class="btn" data-action="showQr" data-id="'+inst.id+'">'+ICO.qr+' QR-Code anzeigen</button>'+
+        '<button class="btn secondary" data-action="showSdb" data-id="'+s.id+'">'+ICO.doc+' SDB</button></div>'+
+    '</div>';
+  }else{
+    bestand='<div class="bestand"><div class="bestand-h">'+ICO.box+'<span class="tag">Bestand · dieser Lagerort</span></div>'+
+      '<div style="padding:14px"><div class="notice info" style="margin:0">'+ICO.info+'<div>Noch kein Bestand '+(state.activeLoc?'am aktiven Lagerort':'erfasst')+'. <b>Menge und Lagerort gehören zum Bestand</b>, nicht zum Stoffstamm.</div></div></div>'+
+      '<div class="qr-cta"><button class="btn" data-action="addBestand" data-id="'+s.id+'">'+ICO.plus+' Bestand hier erfassen</button>'+
+        '<button class="btn secondary" data-action="showSdb" data-id="'+s.id+'">'+ICO.doc+' SDB</button></div></div>';
+  }
+
+  // 4) STOFFSTAMM einklappbar (H/P) – klar als "gilt für alle Vorkommen"
+  const stamm='<details class="stamm"><summary><span class="tag">Stoffstamm</span> Gefahren- &amp; Sicherheitshinweise<span class="chev">'+ICO.chev+'</span></summary>'+
+    '<div class="body"><div class="phr" style="color:var(--ink-3);padding-top:0">Gilt für alle Vorkommen dieses Stoffs in der Gruppe.</div>'+
+    '<div class="phr"><b>H-Sätze:</b> '+s.h+'</div><div class="phr"><b>P-Sätze:</b> '+s.p+'</div>'+
+    '<div class="kv"><span class="k">Signalwort</span><span class="v">'+s.signal+'</span></div>'+
+    '<div class="kv"><span class="k">UN-Nummer</span><span class="v mono">'+s.un+'</span></div>'+
+    (s.barcode?'<div class="kv"><span class="k">Barcode</span><span class="v mono">'+s.barcode+'</span></div>':'')+
+    (s.info?'<div class="kv"><span class="k">Infoseite</span><span class="v"><a data-action="openExtLink" data-id="'+encodeURIComponent(s.info)+'" style="color:var(--accent);text-decoration:none;font-weight:600">Link öffnen</a></span></div>':'')+
+    '<div class="kv"><span class="k">Hersteller</span><span class="v">'+s.hersteller+'</span></div></div></details>';
+
+  // 5) Weitere Vorkommen (Datenlogik sichtbar)
+  const others=DB.instances.filter(i=>i.sub===s.id&&(!inst||i.id!==inst.id));
+  let oth='';
+  if(others.length){
+    oth='<div class="label-h">Gleicher Stoff – weitere Vorkommen <span class="cnt">'+others.length+'</span></div>'+
+      others.map(i=>{const l=location_(i.loc);return '<button class="arow" data-action="openInst" data-id="'+i.id+'"><span class="ag">'+firmTag(l.company)+'</span><span class="am"><span class="at">'+l.name+'</span><span class="as">'+l.bereich+' · <b>'+(i.menge==null?'Menge offen':i.menge+' '+i.einheit)+'</b> · '+i.status+'</span></span><span class="chev">'+ICO.chev+'</span></button>';}).join('');
+  }
+
+  return '<div class="view">'+hero+notes+bestand+stamm+oth+disclaimer()+'</div>';
+}
+
+/* ===== LAGERORTDETAIL (nützlicher) ===== */
+function scrLocDetail(){
+  const l=location_(state.curLoc),c=company(l.company);const insts=instsAtLoc(l.id);
+  const noSdb=insts.filter(i=>substance(i.sub).sdb.status==='fehlt').length;
+  const incompl=insts.filter(instIncomplete).length;
+  const isActive=state.activeLoc===l.id;
+  const stats='<div class="lh-stats"><span class="lh-stat">'+insts.length+' Stoffe</span>'+
+    (noSdb?'<span class="lh-stat d">'+noSdb+' ohne SDB</span>':'')+
+    (incompl?'<span class="lh-stat w">'+incompl+' unvollständig</span>':'')+
+    (!noSdb&&!incompl?'<span class="lh-stat">vollständig</span>':'')+'</div>';
+  const hero='<div class="loc-hero"><div class="kicker">Lagerort</div><h2>'+l.name+'</h2><p class="sub">'+l.bereich+' · '+l.typ+' · '+firmTag(l.company).replace('firmtag','firmtag')+'</p>'+stats+
+    (isActive?'<div class="loc-active-pill">'+ICO.ok+' Aktiver Lagerort</div>':'')+'</div>';
+  const action=isActive
+    ?'<button class="btn" data-action="goArtikel">'+ICO.plus+' Gefahrstoff hier aufnehmen</button>'+
+       '<div class="btn-row" style="margin-top:10px"><button class="btn secondary" data-action="showLocQr" data-id="'+l.id+'">'+ICO.qr+' Lagerort-QR</button>'+
+       '<button class="btn ghost" data-action="clearLoc">'+ICO.warn.replace('width="13"','')+' Kontext aufheben</button></div>'
+    :'<div class="btn-row" style="margin-top:0"><button class="btn" data-action="setLocFromDetail" data-id="'+l.id+'">'+ICO.scan+' Diesen Lagerort aktivieren</button><button class="btn secondary" data-action="showLocQr" data-id="'+l.id+'">'+ICO.qr+' QR</button></div>';
+  const cards=insts.length?insts.map(instCard).join(''):'<div class="empty">'+ICO.box+'<div>Noch keine Stoffe erfasst.</div></div>';
+  return '<div class="view">'+hero+action+'<div class="label-h">Stoffe an diesem Lagerort <span class="cnt">'+insts.length+'</span></div>'+cards+disclaimer()+'</div>';
+}
+
+function instCard(i){
+  const s=substance(i.sub),l=location_(i.loc);
+  const flag=substance(i.sub).sdb.status==='fehlt'?'flag-danger':(instIncomplete(i)?'flag-warn':'');
+  let wb='';if(s.sdb.status==='fehlt')wb='<span class="badge b-danger">'+ICO.warn+'SDB fehlt</span>';else if(instIncomplete(i))wb='<span class="badge b-warn">'+ICO.warn+'Menge offen</span>';else if(s.sdb.status==='alt')wb='<span class="badge b-warn">'+ICO.warn+'SDB prüfen</span>';
+  return '<div class="card '+flag+'"><button class="ctap" data-action="openInst" data-id="'+i.id+'"><div class="ghs-row">'+s.ghs.map(g=>ghsBadge(g,'mini')).join('')+'</div>'+
+    '<div class="cmain"><div class="ctitle">'+s.name+'</div><div class="cmeta"><b>'+(i.menge==null?'Menge offen':i.menge+' '+i.einheit)+'</b> · '+i.anzahl+' × '+i.gebinde+' · '+i.status+'</div>'+
+    '<div class="cbadges">'+firmTag(l.company)+'<span class="badge b-neutral">'+l.name+'</span>'+wb+'</div></div><span class="chev">'+ICO.chev+'</span></button></div>';
+}
+
+function scrBestand(){
+  const f=state.filter;let list=DB.instances.slice();
+  if(f.company)list=list.filter(i=>location_(i.loc).company===f.company);
+  if(f.loc)list=list.filter(i=>i.loc===f.loc);
+  if(f.status)list=list.filter(i=>i.status===f.status);
+  if(f.hb)list=list.filter(instWarn);
+  list.sort((a,b)=>instWarn(b)-instWarn(a));
+  const compOpts='<option value="">Alle Firmen (Gruppe)</option>'+DB.companies.filter(c=>!c.group).map(c=>'<option value="'+c.id+'" '+(f.company===c.id?'selected':'')+'>'+c.name+'</option>').join('');
+  const locOpts='<option value="">Alle Lagerorte</option>'+DB.locations.map(l=>'<option value="'+l.id+'" '+(f.loc===l.id?'selected':'')+'>'+l.name+'</option>').join('');
+  const statusChips=['Lager','im Einsatz','zur Entsorgung'].map(st=>'<button class="chip '+(f.status===st?'on':'')+'" data-action="statusChip" data-id="'+st+'">'+st+'</button>').join('');
+  const cards=list.length?list.map(instCard).join(''):'<div class="empty">'+ICO.search+'<div>Keine Treffer. Filter anpassen.</div></div>';
+  return '<div class="view"><h2 class="title">Bestände</h2><p class="sub">Vorkommen über alle Firmen und Lagerorte.</p>'+
+    '<div class="field"><label>Firma / Ansicht</label><select data-action="filter" data-key="company">'+compOpts+'</select></div>'+
+    '<div class="field"><label>Lagerort</label><select data-action="filter" data-key="loc">'+locOpts+'</select></div>'+
+    '<div class="chips">'+statusChips+'<button class="chip hb '+(f.hb?'on':'')+'" data-action="hbChip">'+ICO.warn+' Nur Handlungsbedarf</button></div>'+
+    '<div class="rescount">'+list.length+' Datensätze · '+(f.company?company(f.company).name:'Gruppe')+'</div>'+cards+disclaimer()+'</div>';
+}
+
+function scrFirmen(){
+  function st(cid){const ins=DB.instances.filter(i=>location_(i.loc).company===cid);return {n:ins.length,m:ins.filter(i=>substance(i.sub).sdb.status==='fehlt').length,u:ins.filter(instIncomplete).length};}
+  const all=DB.instances;const g={n:all.length,m:all.filter(i=>substance(i.sub).sdb.status==='fehlt').length,u:all.filter(instIncomplete).length};
+  const grp='<button class="firma group" data-action="filterCompany" data-id=""><span class="ficon">'+ICO.firma+'</span><div class="fm"><b>Gruppe – Gesamtsicht</b><div class="meta">Muster Gruppe AG · alle Firmen</div><div class="nums"><span class="mini-num">'+g.n+' Datensätze</span>'+(g.m?'<span class="mini-num d">'+g.m+' SDB fehlt</span>':'')+(g.u?'<span class="mini-num w">'+g.u+' unvollst.</span>':'')+'</div></div><span class="chev">'+ICO.chev+'</span></button>';
+  const cards=DB.companies.filter(c=>!c.group).map(c=>{const s=st(c.id);return '<button class="firma" data-action="filterCompany" data-id="'+c.id+'"><span class="ficon">'+ICO.firma+'</span><div class="fm"><b>'+c.name+'</b><div class="meta">'+s.n+' Datensätze</div><div class="nums">'+(s.m?'<span class="mini-num d">'+s.m+' SDB fehlt</span>':'')+(s.u?'<span class="mini-num w">'+s.u+' unvollst.</span>':'')+(!s.m&&!s.u&&s.n?'<span class="mini-num">ok</span>':'')+(!s.n?'<span class="mini-num">keine Daten</span>':'')+'</div></div><span class="chev">'+ICO.chev+'</span></button>';}).join('');
+  return '<div class="view"><h2 class="title">Firmen</h2><p class="sub">Tippen filtert die Bestandsliste nach Firma.</p>'+grp+cards+disclaimer()+'</div>';
+}
+
+/* ===== ADMIN (Arbeitsübersicht) ===== */
+function scrAdmin(){
+  if(!isAdmin()){return '<div class="view"><h2 class="title">Verwaltung</h2>'+
+    '<div class="notice danger">'+ICO.warn+'<div><b>Kein Zugriff.</b> Die Verwaltung ist nur für Personen mit Admin-Rolle sichtbar. Deine Rolle: '+curUser().role+'.</div></div>'+
+    '<button class="btn secondary" data-action="switchUser">'+ICO.user+' Benutzer wechseln (Demo)</button>'+disclaimer()+'</div>';}
+  const tab=state.adminTab;
+  const fc=state.adminCompany;
+  const inScope=i=>!fc||location_(i.loc).company===fc;
+  const allHb=DB.instances.filter(i=>inScope(i)&&instWarn(i));
+  const tabs=[['hb','Handlungsbedarf',allHb.length],['stoffe','Stoffstamm',null],['lager','Lagerorte',null],['firmen','Firmen',null],['personen','Personen',null],['verlauf','Verlauf',null]];
+  const tabsHtml='<div class="tabs">'+tabs.map(t=>'<button class="tab '+(tab===t[0]?'active':'')+'" data-action="adminTab" data-id="'+t[0]+'">'+t[1]+(t[2]!=null?'<span class="cnt'+(t[2]?' alert':'')+'">'+t[2]+'</span>':'')+'</button>').join('')+'</div>';
+  const fOpts='<option value="">Alle Firmen (Gruppe)</option>'+DB.companies.filter(c=>!c.group).map(c=>'<option value="'+c.id+'" '+(fc===c.id?'selected':'')+'>'+c.name+'</option>').join('');
+  const filterBar='<div class="field admin-filter"><label>Firma eingrenzen</label><select data-action="adminCompany">'+fOpts+'</select></div>';
+
+  let body='';
+  if(tab==='hb'){
+    const noSdb=DB.instances.filter(i=>inScope(i)&&substance(i.sub).sdb.status==='fehlt');
+    const incompl=DB.instances.filter(i=>inScope(i)&&instIncomplete(i));
+    const v=state.adminHbView;
+    body=filterBar+
+      '<div class="stat-row">'+
+        '<button class="stat-box alert '+(v==='sdb'?'on':'')+'" data-action="hbView" data-id="sdb"><span class="n">'+noSdb.length+'</span><span class="t">'+ICO.warn+'ohne SDB</span></button>'+
+        '<button class="stat-box warnb '+(v==='menge'?'on':'')+'" data-action="hbView" data-id="menge"><span class="n">'+incompl.length+'</span><span class="t">'+ICO.warn+'Menge fehlt</span></button>'+
+      '</div>'+
+      '<div class="chips" style="margin-top:10px"><button class="chip '+(v==='all'?'on':'')+'" data-action="hbView" data-id="all">Alle ('+allHb.length+')</button><button class="chip '+(v==='sdb'?'on':'')+'" data-action="hbView" data-id="sdb">Nur SDB</button><button class="chip '+(v==='menge'?'on':'')+'" data-action="hbView" data-id="menge">Nur Menge</button></div>';
+    let show=v==='sdb'?noSdb:(v==='menge'?incompl:allHb);
+    body+=show.length?('<div class="label-h">Zu prüfen <span class="cnt">'+show.length+'</span></div>'+show.map(adminHbRow).join('')):'<div class="empty">'+ICO.ok+'<div>Kein Handlungsbedarf'+(fc?' für '+company(fc).name:'')+'.</div></div>';
+  }else if(tab==='stoffe'){
+    body=filterBar+DB.substances.map(s=>{const vk=DB.instances.filter(i=>i.sub===s.id&&inScope(i));if(fc&&!vk.length)return '';
+      return '<button class="arow" data-action="openSub" data-id="'+s.id+'"><span class="ag"><span class="ghs-row">'+s.ghs.map(g=>ghsBadge(g,'mini')).join('')+'</span></span><span class="am"><span class="at">'+s.name+'</span><span class="as">'+s.hersteller+' · '+vk.length+' Vorkommen</span></span>'+(s.sdb.status==='fehlt'?'<span class="reason d">SDB fehlt</span>':(s.sdb.status==='alt'?'<span class="reason w">SDB alt</span>':''))+'<span class="chev">'+ICO.chev+'</span></button>';}).join('');
+  }else if(tab==='lager'){
+    const locs=DB.locations.filter(l=>!fc||l.company===fc);
+    body=filterBar+'<button class="add-btn" data-action="addLocation">'+ICO.plus+' Lagerort hinzufügen</button>'+
+      (locs.length?locs.map(l=>{const ins=instsAtLoc(l.id);const w=ins.filter(instWarn).length;
+      return '<div class="mrow"><button class="ag" style="all:unset;flex:1;min-width:0;display:flex;align-items:center;gap:11px;cursor:pointer" data-action="openLoc" data-id="'+l.id+'"><span class="mg">'+ICO.loc+'</span><span class="mm"><span class="mt">'+l.name+'</span><span class="ms">'+firmTag(l.company)+' '+l.bereich+' · '+ins.length+' Stoffe'+(w?' · <b style="color:var(--warn)">'+w+' offen</b>':'')+'</span></span></button><button class="del-btn" data-action="delLocation" data-id="'+l.id+'" aria-label="Löschen">'+ICO.trash+'</button></div>';}).join(''):'<div class="empty">'+ICO.loc+'<div>Keine Lagerorte.</div></div>');
+  }else if(tab==='firmen'){
+    body='<button class="add-btn" data-action="addCompany">'+ICO.plus+' Firma hinzufügen</button>'+
+      DB.companies.filter(c=>!c.group).map(c=>{const n=DB.instances.filter(i=>location_(i.loc).company===c.id).length;const lc=DB.locations.filter(l=>l.company===c.id).length;
+      return '<div class="mrow"><span class="mg">'+ICO.firma+'</span><span class="mm"><span class="mt">'+c.name+'</span><span class="ms">'+lc+' Lagerorte · '+n+' Bestände</span></span><button class="del-btn" data-action="delCompany" data-id="'+c.id+'" aria-label="Löschen">'+ICO.trash+'</button></div>';}).join('');
+  }else if(tab==='personen'){
+    body=filterBar+'<button class="add-btn" data-action="addUser">'+ICO.plus+' Person hinzufügen</button>'+
+      DB.users.filter(u=>!fc||u.company===fc).map(u=>{const c=company(u.company);
+      return '<div class="mrow"><span class="mg">'+ICO.user+'</span><span class="mm"><span class="mt">'+u.name+'</span><span class="ms">'+(c?firmTag(u.company):'')+' <span class="role-tag">'+u.role+'</span></span></span><button class="del-btn" data-action="delUser" data-id="'+u.id+'" aria-label="Löschen">'+ICO.trash+'</button></div>';}).join('') ||'<div class="empty">'+ICO.user+'<div>Keine Personen.</div></div>';
+  }else if(tab==='verlauf'){
+    const hist=DB.history.filter(h=>!fc||h.cid===fc);
+    body=filterBar+'<div class="card"><div style="padding:15px"><div class="timeline">'+(hist.length?hist.map(h=>'<div class="tl-item '+(h.alert?'alert':'')+'"><div class="t">'+h.t+' · '+h.who+'</div><div class="a">'+h.a+'</div><div class="m">'+h.m+'</div></div>').join(''):'<div class="empty" style="padding:10px">Keine Einträge.</div>')+'</div></div></div>';
+  }
+  return '<div class="view"><h2 class="title">Verwaltung</h2><p class="sub">Arbeitsübersicht: was ist offen, wo und in welcher Firma.</p>'+tabsHtml+body+
+    '<div style="height:14px"></div><button class="btn ghost" data-action="resetDB">'+ICO.trash+' Demo-Daten zurücksetzen</button>'+disclaimer()+'</div>';
+}
+function adminHbRow(i){
+  const s=substance(i.sub),l=location_(i.loc);
+  const reason=s.sdb.status==='fehlt'?'<span class="reason d">SDB fehlt</span>':(instIncomplete(i)?'<span class="reason w">Menge fehlt</span>':(s.sdb.status==='alt'?'<span class="reason w">SDB alt</span>':''));
+  const flag=s.sdb.status==='fehlt'?'flag-danger':'flag-warn';
+  return '<button class="arow '+flag+'" data-action="openInst" data-id="'+i.id+'"><span class="ag">'+firmTag(l.company)+'</span><span class="am"><span class="at">'+s.name+'</span><span class="as">'+l.name+' · '+l.bereich+'</span></span>'+reason+'<span class="chev">'+ICO.chev+'</span></button>';
+}
+
+function scrErfassung(){
+  const l=state.activeLoc?location_(state.activeLoc):null;
+  const ctx=l?(l.name+' · '+l.bereich+' · '+company(l.company).name):'kein Lagerort';
+  const pf=state.scanPrefill||{};
+  const haz=['flamm','aetz','giftig','umwelt','druckgas','reiz'].map(h=>'<button type="button" class="chip" data-haz="'+h+'" onclick="this.classList.toggle(\'on\')">'+GHS_LABEL[h]+'</button>').join('');
+  const scanInfo=(pf.barcode||pf.info)?'<div class="notice ok">'+ICO.ok+'<div>Aus dem Scan übernommen:'+(pf.barcode?' Barcode <b>'+pf.barcode+'</b>':'')+(pf.info?'<br>Infoseite wird verlinkt.':'')+'</div></div>':'';
+  return '<div class="view"><h2 class="title">Stoff erfassen</h2><p class="sub">Nur das Nötigste. Lagerort: <b>'+ctx+'</b></p>'+
+    (!l?'<div class="notice warn">'+ICO.warn+'<div>Kein Lagerort gesetzt – Datensatz wird ohne Lagerort gespeichert.</div></div>':'')+scanInfo+
+    '<form id="erfForm">'+
+    '<div class="field"><label>Produktname *</label><input name="name" placeholder="z. B. Spezialkleber X"></div>'+
+    '<div class="field"><label>Menge *</label><div style="display:flex;gap:9px"><input name="menge" type="number" inputmode="decimal" placeholder="z. B. 5" style="flex:2"><select name="einheit" style="flex:1"><option>l</option><option>kg</option><option>Stk</option><option>ml</option></select></div></div>'+
+    '<div class="field"><label>Gebinde</label><div style="display:flex;gap:9px"><input name="anzahl" type="number" inputmode="numeric" value="1" style="flex:1"><select name="gebinde" style="flex:2"><option>Kanister</option><option>Dose</option><option>Flasche</option><option>Fass</option><option>Gebinde</option></select></div></div>'+
+    '<div class="field"><label>Signalwort</label><div class="chips" style="margin:0"><button type="button" class="chip on" id="sigA" onclick="setSig(\'Achtung\')">Achtung</button><button type="button" class="chip" id="sigG" onclick="setSig(\'Gefahr\')">Gefahr</button></div></div>'+
+    '<div class="field"><label>Gefahrmerkmale (GHS)</label><div class="chips" style="margin:0">'+haz+'</div></div>'+
+    '<div class="field"><label>Externer Barcode (optional)</label><input name="barcode" placeholder="EAN / Barcode" value="'+(pf.barcode||'')+'"></div>'+
+    '<div class="field"><label>Infoseite / SDB-Link (optional)</label><input name="sdb" placeholder="Link oder Dateiname – leer = SDB fehlt" value="'+(pf.info||'')+'"></div>'+
+    '<div class="notice info" style="margin-top:4px">'+ICO.info+'<div>Es entstehen ein <b>Stoffstamm</b> und ein <b>Bestand</b> am Lagerort. Ein verlinkter Inhalt (Infoseite/SDB) wird als <b>Link hinterlegt</b>. Interner QR wird automatisch erzeugt.</div></div>'+
+    '<div class="btn-row"><button type="button" class="btn ghost" data-action="back">Abbrechen</button><button type="button" class="btn" data-action="saveErf">Speichern</button></div></form>'+disclaimer()+'</div>';
+}
+window.setSig=function(v){state._sig=v;document.getElementById('sigA').classList.toggle('on',v==='Achtung');document.getElementById('sigG').classList.toggle('on',v==='Gefahr');};
+
+function render(){
+  const map={start:scrStart,scanLoc:scrScanLoc,scanArt:scrScanArt,detail:scrDetail,locDetail:scrLocDetail,bestand:scrBestand,firmen:scrFirmen,admin:scrAdmin,erfassung:scrErfassung};
+  document.getElementById('main').innerHTML=(map[state.view]||scrStart)();
+  document.getElementById('backBtn').classList.toggle('show',state.view!=='start');
+  renderLocband();renderHeadSlot();renderNav();
+}
+
+/* ---------- Modals ---------- */
+function openModal(t,b){const el=document.createElement('div');el.className='modal-back';el.id='modalBack';el.innerHTML='<div class="modal"><div class="modal-h"><b>'+t+'</b><button class="x" data-action="closeModal">×</button></div><div class="modal-body">'+b+'</div></div>';el.addEventListener('click',e=>{if(e.target===el)closeModal();});document.body.appendChild(el);}
+function closeModal(){const e=document.getElementById('modalBack');if(e)e.remove();}
+function modalQr(id){const i=instance(id),s=substance(i.sub),l=location_(i.loc);openModal('Interner QR-Code','<div class="qr-wrap"><div class="qr-frame" id="qrBox"></div><div class="qr-code">'+i.qr+'</div><div class="qr-sub">'+s.name+' · '+firmTag(l.company)+' '+l.name+'</div></div><div class="notice info" style="margin-top:15px">'+ICO.info+'<div>Echter QR-Code: mit jeder Handy-Kamera scannbar – öffnet diese Stoffkarte (wenn die App online erreichbar ist).</div></div><div class="btn-row"><button class="btn secondary" data-action="printQr">'+ICO.print+' Etikette drucken</button><button class="btn" data-action="simScanQr" data-id="'+i.id+'">'+ICO.qr+' Öffnen</button></div>');renderRealQr('qrBox',qrTextInst(i));}
+function modalLocQr(id){const l=location_(id),c=company(l.company);openModal('Lagerort-QR','<div class="qr-wrap"><div class="qr-frame" id="qrBox"></div><div class="qr-code">LOC-'+id.toUpperCase()+'</div><div class="qr-sub">'+l.name+' · '+l.bereich+' · '+c.name+'</div></div><div class="notice info" style="margin-top:15px">'+ICO.info+'<div>Echter QR-Code für die Lagerort-Etikette – scannen setzt diesen Lagerort als Kontext.</div></div><div class="btn-row"><button class="btn secondary" data-action="printQr">'+ICO.print+' Etikette drucken</button><button class="btn" data-action="setLoc" data-id="'+id+'">'+ICO.scan+' Als Lagerort setzen</button></div>');renderRealQr('qrBox',qrTextLoc(l));}
+function modalSdb(id){const s=substance(id);let note,doc;if(s.sdb.status==='fehlt'){note='<div class="notice danger">'+ICO.warn+'<div><b>Kein SDB hinterlegt.</b> Bitte ergänzen.</div></div>';doc='<div class="empty">'+ICO.doc+'<div>Keine SDB-Datei vorhanden.</div></div>';}else{const col=s.sdb.status==='alt'?'var(--warn)':'var(--ok)';note=s.sdb.status==='alt'?'<div class="notice warn">'+ICO.warn+'<div><b>SDB älter als 3 Jahre</b> (Stand '+s.sdb.rev+').</div></div>':'<div class="notice ok">'+ICO.ok+'<div>SDB hinterlegt · Revision '+s.sdb.rev+'.</div></div>';doc='<div class="sdb-doc"><div class="sdb-ico"><span class="fold"></span><span style="color:'+col+'">PDF</span></div><div><b style="font-size:15px">'+s.name+'</b><div style="font-size:12.5px;color:var(--ink-2);margin-top:3px">'+s.sdb.link+'</div><div style="font-size:12px;color:var(--ink-3);margin-top:2px">Revision '+s.sdb.rev+' · '+s.hersteller+'</div></div></div>';}openModal('Sicherheitsdatenblatt',note+doc+(s.sdb.status!=='fehlt'?'<div class="btn-row"><button class="btn secondary" data-action="openSdbLink">'+ICO.doc+' SDB-Link öffnen</button></div>':'<div class="btn-row"><button class="btn" data-action="closeModal">'+ICO.plus+' SDB verknüpfen (Demo)</button></div>'));}
+function modalSwitchUser(){
+  const u=curUser();const em=(AUTH.user&&AUTH.user.email)||'';
+  openModal('Konto','<div class="notice info" style="margin-bottom:14px">'+ICO.user+'<div>Angemeldet als <b>'+u.name+'</b><br>'+em+' · Rolle: '+u.role+'</div></div>'+
+    '<div class="btn-row" style="margin-top:0"><button class="btn ghost" data-action="closeModal">Schliessen</button><button class="btn danger" data-action="logout">'+ICO.user+' Abmelden</button></div>');
+}
+
+function modalAddUser(){
+  const fOpts=DB.companies.map(c=>'<option value="'+c.id+'">'+c.name+'</option>').join('');
+  const rOpts=ROLES.map(r=>'<option'+(r==='Mitarbeitend'?' selected':'')+'>'+r+'</option>').join('');
+  openModal('Person hinzufügen','<form id="mForm">'+
+    '<div class="field"><label>Name *</label><input name="name" placeholder="z. B. P. Müller"></div>'+
+    '<div class="field"><label>Rolle</label><select name="role">'+rOpts+'</select></div>'+
+    '<div class="field"><label>Firma</label><select name="company">'+fOpts+'</select></div>'+
+    '<button type="button" class="btn" data-action="saveUser">'+ICO.plus+' Person speichern</button></form>');
+}
+function modalAddCompany(){
+  openModal('Firma hinzufügen','<form id="mForm">'+
+    '<div class="field"><label>Firmenname *</label><input name="name" placeholder="z. B. Muster AG"></div>'+
+    '<div class="field"><label>Kurzname (für Tags)</label><input name="short" placeholder="z. B. Muster"></div>'+
+    '<button type="button" class="btn" data-action="saveCompany">'+ICO.plus+' Firma speichern</button></form>');
+}
+function modalAddLocation(){
+  const fOpts=DB.companies.filter(c=>!c.group).map(c=>'<option value="'+c.id+'"'+(c.id===state.adminCompany?' selected':'')+'>'+c.name+'</option>').join('');
+  const tOpts=['Werkhof','Baustelle','Magazin','Werkstatt','Containerlager','Zwischenlager','Sonderabfall'].map(t=>'<option>'+t+'</option>').join('');
+  openModal('Lagerort hinzufügen','<form id="mForm">'+
+    '<div class="field"><label>Firma *</label><select name="company">'+fOpts+'</select></div>'+
+    '<div class="field"><label>Standort / Name *</label><input name="name" placeholder="z. B. Werkhof Sissach"></div>'+
+    '<div class="field"><label>Bereich *</label><input name="bereich" placeholder="z. B. Gefahrstoffschrank B"></div>'+
+    '<div class="field"><label>Typ</label><select name="typ">'+tOpts+'</select></div>'+
+    '<button type="button" class="btn" data-action="saveLocation">'+ICO.plus+' Lagerort speichern</button></form>');
+}
+function confirmModal(title,text,actionId,id){
+  openModal(title,'<div class="notice danger" style="margin-bottom:14px">'+ICO.warn+'<div>'+text+'</div></div>'+
+    '<div class="btn-row" style="margin-top:0"><button class="btn ghost" data-action="closeModal">Abbrechen</button><button class="btn danger" data-action="'+actionId+'" data-id="'+id+'">'+ICO.trash+' Löschen</button></div>');
+}
+
+let toastT;function toast(m,ok){const t=document.getElementById('toast');t.innerHTML=(ok!==false?ICO.ok:'')+'<span>'+m+'</span>';t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2400);}
+
+/* ---------- Events ---------- */
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-action]');if(!el)return;const a=el.dataset.action,id=el.dataset.id;
+  switch(a){
+    case 'back':goBack();break;
+    case 'closeModal':stopCamera();closeModal();break;
+    case 'camScan':startCamera();break;
+    case 'stopCam':stopCamera(()=>render());break;
+    case 'nav':closeModal();state.nav=el.dataset.nav;goTo(el.dataset.v,{reset:true,nav:el.dataset.nav});break;
+    case 'goArtikel':goTo('scanArt',{nav:'scan'});break;
+    case 'goFirmen':goTo('firmen',{reset:true,nav:'firmen'});break;
+    case 'goBestandAll':state.filter={company:'',loc:'',status:'',hb:false};goTo('bestand',{reset:true,nav:'bestand'});break;
+    case 'goAdminHB':state.adminTab='hb';state.adminCompany='';state.adminHbView='all';goTo('admin',{reset:true,nav:'admin'});break;
+    case 'goAdminSdb':state.adminTab='hb';state.adminCompany='';state.adminHbView='sdb';goTo('admin',{reset:true,nav:'admin'});break;
+    case 'goAdminMenge':state.adminTab='hb';state.adminCompany='';state.adminHbView='menge';goTo('admin',{reset:true,nav:'admin'});break;
+    case 'goAdminLager':state.adminTab='lager';state.adminCompany='';goTo('admin',{reset:true,nav:'admin'});break;
+    case 'goAdminVerlauf':state.adminTab='verlauf';state.adminCompany='';goTo('admin',{reset:true,nav:'admin'});break;
+    case 'clearLoc':state.activeLoc=null;toast('Lagerort-Kontext aufgehoben');goTo('start',{reset:true,nav:'start'});break;
+    case 'capture':goTo(state.activeLoc?'scanArt':'scanLoc',{reset:true,nav:'scan'});break;
+    case 'setLoc':{closeModal();state.activeLoc=id;const l=location_(id);addHistory('Lagerort gescannt',l.name+' · '+company(l.company).name,l.company);toast('Lagerort gesetzt · Artikel scannen');goTo('scanArt',{reset:true,nav:'scan'});break;}
+    case 'setLocFromDetail':state.activeLoc=id;toast('Lagerort gesetzt · Artikel scannen');goTo('scanArt',{reset:true,nav:'scan'});break;
+    case 'pickArt':goTo('detail',{sub:id,inst:null,nav:'scan'});break;
+    case 'newArt':state.scanPrefill=null;goTo('erfassung',{nav:'scan'});break;
+    case 'openExtLink':try{window.open(decodeURIComponent(id),'_blank');}catch(e){}break;
+    case 'captureWithLink':closeModal();state.scanPrefill={barcode:'',info:decodeURIComponent(id)};goTo('erfassung',{reset:true,nav:'scan'});break;
+    case 'openInst':{const i=instance(id);state.activeLoc=i.loc;goTo('detail',{sub:i.sub,inst:id});break;}
+    case 'openSub':goTo('detail',{sub:id,inst:null});break;
+    case 'openLoc':goTo('locDetail',{loc:id});break;
+    case 'addBestand':goTo('erfassung',{});break;
+    case 'showQr':modalQr(id);break;
+    case 'showLocQr':modalLocQr(id);break;
+    case 'showSdb':modalSdb(id);break;
+    case 'reScan':modalReScan();break;
+    case 'switchUser':modalSwitchUser();break;
+    case 'setUser':{state.currentUser=id;closeModal();const adm=isAdmin();if(!adm&&(state.view==='admin')){goTo('start',{reset:true,nav:'start'});}else{toast('Angemeldet als '+curUser().name);render();}break;}
+    case 'simScanQr':{closeModal();const i=instance(id);state.activeLoc=i.loc;addHistory('Artikel-QR gescannt',substance(i.sub).name+' · '+location_(i.loc).name,location_(i.loc).company);toast('Stoffkarte geöffnet');goTo('detail',{sub:i.sub,inst:id,reset:true,nav:'start'});break;}
+    case 'printQr':toast('Etikette an Drucker gesendet (simuliert)');break;
+    case 'openSdbLink':toast('SDB-Link würde geöffnet (Prototyp)');break;
+    case 'filterCompany':state.filter={company:id,loc:'',status:'',hb:false};goTo('bestand',{reset:true,nav:'bestand'});break;
+    case 'statusChip':state.filter.status=state.filter.status===id?'':id;render();break;
+    case 'hbChip':state.filter.hb=!state.filter.hb;render();break;
+    case 'adminTab':state.adminTab=id;render();break;
+    case 'hbView':state.adminHbView=(state.adminHbView===id&&id!=='all')?'all':id;render();break;
+    case 'addUser':modalAddUser();break;
+    case 'addCompany':modalAddCompany();break;
+    case 'addLocation':modalAddLocation();break;
+    case 'saveUser':saveUser();break;
+    case 'saveCompany':saveCompany();break;
+    case 'saveLocation':saveLocation();break;
+    case 'delUser':confirmModal('Person löschen','Diese Person wirklich löschen?','doDelUser',id);break;
+    case 'delCompany':{const n=DB.instances.filter(i=>location_(i.loc).company===id).length+DB.locations.filter(l=>l.company===id).length;
+      if(n){toast('Firma noch in Verwendung ('+n+' Einträge)',false);}else confirmModal('Firma löschen','Diese Firma wirklich löschen?','doDelCompany',id);break;}
+    case 'delLocation':{const n=instsAtLoc(id).length;
+      if(n){toast('Lagerort hat noch '+n+' Stoffe',false);}else confirmModal('Lagerort löschen','Diesen Lagerort wirklich löschen?','doDelLocation',id);break;}
+    case 'doDelUser':closeModal();toast('Personen-Verwaltung folgt in Kürze.',false);break;
+    case 'doDelCompany':delCompanyDo(id);break;
+    case 'doDelLocation':delLocationDo(id);break;
+    case 'logout':sbc.auth.signOut().then(()=>location.reload());break;
+    case 'authLogin':doLogin();break;
+    case 'authSignup':doSignup();break;
+    case 'authCreateOrg':doCreateOrg();break;
+    case 'resetDB':resetDB();break;
+    case 'saveErf':saveErf();break;
+  }
 });
-document.addEventListener('change', (e)=>{ if(e.target.id==='fSub') onSubChange(); else if(e.target.id==='fCompany') filterLocs(); });
+document.addEventListener('change',e=>{
+  const f=e.target.closest('[data-action="filter"]');if(f){state.filter[f.dataset.key]=f.value;render();return;}
+  const ac=e.target.closest('[data-action="adminCompany"]');if(ac){state.adminCompany=ac.value;render();}
+});
+function addHistory(a,m,cid){const who=(AUTH.profile&&AUTH.profile.name)||'Sie';DB.history.unshift({t:fmtTs(new Date().toISOString()),who,a,m,cid:cid||'',alert:false});
+  try{sbc.from('audit_logs').insert({organization_id:orgId(),entity_typ:'history',aktion:a,user_id:AUTH.profile&&AUTH.profile.id,neu_wert:{who,m,cid:cid||'',alert:false}}).then(()=>{});}catch(e){}}
 
-boot();
+function saveUser(){closeModal();toast('Personen werden per E-Mail-Einladung angelegt – folgt in Kürze.',false);}
+async function saveCompany(){const f=document.getElementById('mForm');const name=f.name.value.trim();if(!name){toast('Firmenname fehlt.',false);f.name.focus();return;}
+  const {error}=await sbc.from('companies').insert({organization_id:orgId(),name,short:f.short.value.trim()||name});
+  if(error){toast(error.message,false);return;}
+  closeModal();await loadDB();toast('Firma hinzugefügt');render();}
+async function saveLocation(){const f=document.getElementById('mForm');const name=f.name.value.trim(),ber=f.bereich.value.trim();
+  if(!name){toast('Name fehlt.',false);f.name.focus();return;}if(!ber){toast('Bereich fehlt.',false);f.bereich.focus();return;}
+  const {error}=await sbc.from('storage_locations').insert({organization_id:orgId(),company_id:f.company.value,name,bereich:ber,typ:f.typ.value});
+  if(error){toast(error.message,false);return;}
+  closeModal();await loadDB();toast('Lagerort hinzugefügt');render();}
+async function delCompanyDo(id){const {error}=await sbc.from('companies').delete().eq('id',id);closeModal();if(error){toast(error.message,false);return;}await loadDB();toast('Firma gelöscht');render();}
+async function delLocationDo(id){const {error}=await sbc.from('storage_locations').delete().eq('id',id);if(state.activeLoc===id)state.activeLoc=null;closeModal();if(error){toast(error.message,false);return;}await loadDB();toast('Lagerort gelöscht');render();}
+
+function defaultCompanyId(){const g=DB.companies.find(c=>c.group);return (g||DB.companies[0]||{}).id;}
+async function saveErf(){const f=document.getElementById('erfForm');const name=f.name.value.trim();if(!name){toast('Produktname fehlt.',false);f.name.focus();return;}
+  const mr=f.menge.value.trim();if(!mr){toast('Menge fehlt.',false);f.menge.focus();return;}
+  const haz=[...f.querySelectorAll('.chip.on[data-haz]')].map(c=>c.dataset.haz);const sdb=f.sdb.value.trim();const bc=(f.barcode&&f.barcode.value.trim())||'';const sig=state._sig||'Achtung';
+  const compId=state.activeLoc?location_(state.activeLoc).company:defaultCompanyId();
+  if(!compId){toast('Keine Firma vorhanden – zuerst in der Verwaltung anlegen.',false);return;}
+  try{
+    const {data:sub,error:e1}=await sbc.from('substances').insert({organization_id:orgId(),produktname:name,hersteller:'unbekannt',signalwort:sig,ghs_piktogramme:haz,h_saetze:'– (manuell, bitte ergänzen)',p_saetze:'–',externer_barcode:bc||null,info_link:(/^https?:\/\//i.test(sdb)?sdb:null)}).select().single();
+    if(e1){toast('Stoff: '+e1.message,false);return;}
+    if(sdb){await sbc.from('sds_documents').insert({organization_id:orgId(),substance_id:sub.id,external_link:sdb,revisionsdatum:new Date().toISOString().slice(0,10),uploaded_by:AUTH.profile.id});}
+    const qr='INST-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,5).toUpperCase();
+    const {data:inst,error:e2}=await sbc.from('substance_instances').insert({organization_id:orgId(),substance_id:sub.id,company_id:compId,storage_location_id:state.activeLoc||null,gebindeart:f.gebinde.value,anzahl_gebinde:parseInt(f.anzahl.value||'1',10),menge_aktuell:parseFloat(mr),mengeneinheit:f.einheit.value,status:'Lager',internal_qr:qr}).select().single();
+    if(e2){toast('Bestand: '+e2.message,false);return;}
+    addHistory('Bestand erfasst',name+(state.activeLoc?' · '+location_(state.activeLoc).name:''),state.activeLoc?location_(state.activeLoc).company:'');
+    state._sig=null;state.scanPrefill=null;
+    await loadDB();toast('Bestand erfasst · QR erstellt');goTo('detail',{sub:sub.id,inst:inst.id,reset:true,nav:'start'});setTimeout(()=>modalQr(inst.id),350);
+  }catch(e){toast('Fehler: '+e.message,false);}}
+
+/* ---------- Auth-Gate (Login / Onboarding) ---------- */
+function overlay(html){let o=document.getElementById('authOverlay');if(!o){o=document.createElement('div');o.id='authOverlay';o.style.cssText='position:fixed;inset:0;z-index:200;background:var(--bg);overflow:auto';document.body.appendChild(o);}o.innerHTML=html;}
+function clearOverlay(){const o=document.getElementById('authOverlay');if(o)o.remove();}
+function authNote(m,k){const n=document.getElementById('authNote');if(n)n.innerHTML=m?'<div class="notice '+(k||'info')+'" style="margin:0 0 10px">'+m+'</div>':'';}
+function renderLogin(){overlay('<div style="max-width:390px;margin:0 auto;padding:44px 20px">'+
+  '<div style="text-align:center;margin-bottom:18px"><div class="logo" style="margin:0 auto 12px;width:46px;height:46px;font-size:17px">St</div><h2 class="title" style="text-align:center;margin:0">StoffScan</h2><p class="sub" style="text-align:center">Gefahrstoff-Kataster · Anmeldung</p></div>'+
+  '<div class="card" style="padding:18px"><div id="authNote"></div>'+
+  '<div class="field"><label>E-Mail</label><input id="aEmail" type="email" autocomplete="email" placeholder="name@firma.ch"></div>'+
+  '<div class="field"><label>Passwort</label><input id="aPw" type="password" autocomplete="current-password" placeholder="••••••••"></div>'+
+  '<button class="btn" data-action="authLogin">Anmelden</button><div style="height:9px"></div>'+
+  '<button class="btn secondary" data-action="authSignup">Neues Konto erstellen</button></div>'+
+  '<div class="disclaimer" style="text-align:center">Betriebliche Unterstützung – ersetzt keine Beurteilung vor Ort.<br><a href="../app/" style="color:var(--accent)">Zur Login-freien Demo</a></div></div>');}
+function renderOnboarding(){overlay('<div style="max-width:390px;margin:0 auto;padding:44px 20px">'+
+  '<h2 class="title">Willkommen bei StoffScan</h2><p class="sub">Erstelle deine Organisation. Du wirst automatisch Gruppen-/IMS-Admin.</p>'+
+  '<div class="card" style="padding:18px"><div id="authNote"></div>'+
+  '<div class="field"><label>Organisation / Firma</label><input id="obOrg" placeholder="Muster Bau AG"></div>'+
+  '<div class="field"><label>Dein Name</label><input id="obName" placeholder="Vorname Nachname"></div>'+
+  '<button class="btn" data-action="authCreateOrg">Organisation anlegen</button><div style="height:9px"></div>'+
+  '<button class="btn ghost" data-action="logout">Abmelden</button></div></div>');}
+async function doLogin(){const em=(document.getElementById('aEmail').value||'').trim(),pw=document.getElementById('aPw').value||'';if(!em||!pw){authNote('E-Mail und Passwort eingeben.','danger');return;}authNote('Anmelden…');const {error}=await sbc.auth.signInWithPassword({email:em,password:pw});if(error){authNote(error.message,'danger');return;}initApp();}
+async function doSignup(){const em=(document.getElementById('aEmail').value||'').trim(),pw=document.getElementById('aPw').value||'';if(!em||pw.length<6){authNote('E-Mail angeben und Passwort mit mind. 6 Zeichen.','danger');return;}authNote('Konto wird erstellt…');const {data,error}=await sbc.auth.signUp({email:em,password:pw});if(error){authNote(error.message,'danger');return;}if(data.session){initApp();}else{authNote('Konto erstellt. Bitte E-Mail bestätigen und dann anmelden. (Für schnelle Tests: E-Mail-Bestätigung in Supabase → Auth deaktivieren.)','ok');}}
+async function doCreateOrg(){const on=(document.getElementById('obOrg').value||'').trim(),nm=(document.getElementById('obName').value||'').trim();if(!on){authNote('Organisationsname fehlt.','danger');return;}authNote('Wird angelegt…');const {error}=await sbc.rpc('create_org_and_profile',{p_org_name:on,p_user_name:nm});if(error){authNote(error.message,'danger');return;}initApp();}
+async function initApp(){
+  const {data:{session}}=await sbc.auth.getSession();
+  AUTH.user=session?session.user:null;
+  if(!session){renderLogin();return;}
+  const {data:prof,error}=await sbc.from('profiles').select('*').eq('id',session.user.id).maybeSingle();
+  if(error){renderLogin();authNote('Profil laden: '+error.message,'danger');return;}
+  if(!prof){renderOnboarding();return;}
+  AUTH.profile=prof;
+  try{await loadDB();}catch(e){toast('Daten laden fehlgeschlagen: '+(e&&e.message||e),false);}
+  clearOverlay();
+  render();
+  const hsh=location.hash||'';if(hsh.indexOf('#open=')===0){setTimeout(()=>routeCode(hsh),80);}
+}
+initApp();
 </script>
 </body>
 </html>
