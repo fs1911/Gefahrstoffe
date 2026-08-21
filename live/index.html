@@ -435,7 +435,7 @@
   <header class="topbar">
     <div class="topbar-inner">
       <button class="iconbtn" id="backBtn" data-action="back" aria-label="Zurück"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M15 18l-6-6 6-6"/></svg></button>
-      <div class="brand"><div class="logo">St</div><div><h1>StoffScan</h1><small>Gefahrstoff-Kataster · Demo</small></div></div>
+      <div class="brand"><div class="logo">St</div><div><h1>StoffScan</h1><small>Gefahrstoff-Kataster</small></div></div>
       <div id="headSlot"></div>
     </div>
   </header>
@@ -451,7 +451,7 @@
 <div id="toast"></div>
 
 <script>
-/* ============================================================ StoffScan · Prototyp · Mock-Daten ============================================================ */
+/* ============================================================ StoffScan · Live (Supabase-Backend, Mandantentrennung via RLS) ============================================================ */
 const ICO={
   loc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 21s-7-6.2-7-11a7 7 0 1114 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>',
   scan:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 7V5a1 1 0 011-1h2M20 7V5a1 1 0 00-1-1h-2M4 17v2a1 1 0 001 1h2M20 17v2a1 1 0 01-1 1h-2"/><path d="M3 12h18" stroke-width="2.1"/></svg>',
@@ -553,24 +553,27 @@ function orgId(){return AUTH.profile&&AUTH.profile.organization_id;}
 const ROLE_DB2UI={viewer:'Viewer',mitarbeitend:'Mitarbeitend',lagerverantwortlich:'Lagerverantwortlich',firmenadmin:'Firmenadmin',gruppenadmin:'Gruppenadmin / IMS'};
 const ROLE_UI2DB={'Viewer':'viewer','Mitarbeitend':'mitarbeitend','Lagerverantwortlich':'lagerverantwortlich','Firmenadmin':'firmenadmin','Gruppenadmin / IMS':'gruppenadmin'};
 
-function sdbFrom(rows){ // neuestes SDB je Stoff -> {status,rev,link}
-  if(!rows||!rows.length) return {status:'fehlt',rev:null,link:null};
+function sdbFrom(rows){ // neuestes SDB je Stoff -> {status,rev,link,path,url}
+  if(!rows||!rows.length) return {status:'fehlt',rev:null,link:null,path:null,url:null};
   const r=rows.slice().sort((a,b)=>String(b.revisionsdatum||'').localeCompare(String(a.revisionsdatum||'')))[0];
-  if(!r.revisionsdatum) return {status:'ok',rev:null,link:r.storage_path||r.external_link||'SDB'};
+  const path=r.storage_path||null,url=r.external_link||null;
+  const name=path?path.split('/').pop().replace(/^[a-z0-9]+_/i,''):(url||'SDB');
+  if(!r.revisionsdatum) return {status:'ok',rev:null,link:name,path,url};
   const age=(Date.now()-new Date(r.revisionsdatum).getTime())/(365.25*24*3600*1000);
-  return {status:age>3?'alt':'ok',rev:String(r.revisionsdatum).slice(0,7),link:r.storage_path||r.external_link||'SDB'};
+  return {status:age>3?'alt':'ok',rev:String(r.revisionsdatum).slice(0,7),link:name,path,url};
 }
 function fmtTs(iso){const n=new Date(iso);return ('0'+n.getDate()).slice(-2)+'.'+('0'+(n.getMonth()+1)).slice(-2)+'. '+('0'+n.getHours()).slice(-2)+':'+('0'+n.getMinutes()).slice(-2);}
 
 async function loadDB(){
-  const [c,l,s,sd,i,p,h]=await Promise.all([
+  const [c,l,s,sd,i,p,h,iv]=await Promise.all([
     sbc.from('companies').select('*').order('name'),
     sbc.from('storage_locations').select('*').order('name'),
     sbc.from('substances').select('*').order('produktname'),
     sbc.from('sds_documents').select('*'),
     sbc.from('substance_instances').select('*').order('created_at',{ascending:false}),
     sbc.from('profiles').select('*'),
-    sbc.from('audit_logs').select('*').eq('entity_typ','history').order('created_at',{ascending:false}).limit(50)
+    sbc.from('audit_logs').select('*').eq('entity_typ','history').order('created_at',{ascending:false}).limit(50),
+    sbc.from('invitations').select('*').is('accepted_at',null).order('created_at',{ascending:false})
   ]);
   const err=c.error||l.error||s.error||sd.error||i.error||p.error||h.error;
   if(err){toast('Laden: '+err.message,false);}
@@ -581,71 +584,14 @@ async function loadDB(){
   DB.instances=(i.data||[]).map(x=>({id:x.id,sub:x.substance_id,loc:x.storage_location_id,gebinde:x.gebindeart||'Gebinde',groesse:x.gebindegroesse||'–',anzahl:x.anzahl_gebinde||1,menge:x.menge_aktuell,einheit:x.mengeneinheit||'',status:x.status||'Lager',qr:x.internal_qr,last:(x.updated_at||x.created_at||'').slice(0,10)}));
   DB.users=(p.data||[]).map(x=>({id:x.id,name:x.name||x.email||'Benutzer',role:ROLE_DB2UI[x.role]||'Mitarbeitend',company:x.company_id}));
   DB.history=(h.data||[]).map(x=>({t:fmtTs(x.created_at),who:(x.neu_wert&&x.neu_wert.who)||'—',a:x.aktion,m:(x.neu_wert&&x.neu_wert.m)||'',cid:(x.neu_wert&&x.neu_wert.cid)||'',alert:!!(x.neu_wert&&x.neu_wert.alert)}));
+  DB.invites=((iv&&iv.data)||[]).map(x=>({id:x.id,email:x.email,role:ROLE_DB2UI[x.role]||'Mitarbeitend',company:x.company_id}));
   if(AUTH.profile) state.currentUser=AUTH.profile.id;
 }
 function saveDB(){/* Persistenz erfolgt pro Mutation direkt in Supabase */}
 function resetDB(){toast('Zurücksetzen ist im Live-Modus deaktiviert.',false);}
 
-/* ---------- MOCK-DATEN ---------- */
-const DB={
-  companies:[
-    {id:'c1',name:'Muster Gruppe AG',short:'Gruppe',group:true},
-    {id:'c2',name:'Bau Nord AG',short:'Bau Nord'},{id:'c3',name:'Bau City AG',short:'Bau City'},
-    {id:'c4',name:'Bau Mitte AG',short:'Bau Mitte'},{id:'c5',name:'Bau West AG',short:'Bau West'},
-    {id:'c6',name:'Gartenbau Meier AG',short:'Gartenbau'},{id:'c7',name:'Technik & Unterhalt AG',short:'Technik'},
-    {id:'c8',name:'Recycling & Entsorgung AG',short:'Recycling'},{id:'c9',name:'Infra Service AG',short:'Infra'},
-    {id:'c10',name:'Logistik Zentral AG',short:'Logistik'},{id:'c11',name:'Immobilien Verwaltung AG',short:'Immo'}
-  ],
-  locations:[
-    {id:'l1',company:'c2',name:'Werkhof Nord',bereich:'Gefahrstoffschrank A',typ:'Werkhof'},
-    {id:'l2',company:'c4',name:'Werkhof Mitte',bereich:'Container 2',typ:'Werkhof'},
-    {id:'l3',company:'c3',name:'Baustelle City',bereich:'Magazincontainer',typ:'Baustelle'},
-    {id:'l4',company:'c7',name:'Werkstatt Technik',bereich:'Chemikalienschrank',typ:'Werkstatt'},
-    {id:'l5',company:'c8',name:'Lager Recycling',bereich:'Sonderabfallzone',typ:'Sonderabfall'},
-    {id:'l6',company:'c5',name:'Werkhof West',bereich:'Regal Gefahrstoffe',typ:'Werkhof'}
-  ],
-  substances:[
-    {id:'s1',name:'Schalöl',hersteller:'Sika',signal:'Achtung',ghs:['umwelt'],h:'H412 – schädlich für Wasserorganismen, langfristige Wirkung',p:'P273 – Freisetzung in die Umwelt vermeiden',un:'–',sdb:{status:'ok',rev:'2024-05',link:'sika_schaloel_sdb.pdf'}},
-    {id:'s2',name:'Bremsenreiniger',hersteller:'Würth',signal:'Gefahr',ghs:['flamm','reiz'],h:'H222 extrem entzündbar · H319 Augenreizung',p:'P210 von Hitze fernhalten · P251 nicht durchstechen',un:'1950',barcode:'4007123456789',info:'https://www.wuerth.ch/bremsenreiniger',sdb:{status:'alt',rev:'2020-02',link:'wuerth_bremsenreiniger_sdb.pdf'}},
-    {id:'s3',name:'Aceton',hersteller:'Brenntag',signal:'Gefahr',ghs:['flamm','reiz'],h:'H225 leicht entzündbar · H319 Augenreizung · H336',p:'P210 · P233 Behälter dicht halten',un:'1090',barcode:'7611234500012',info:'https://www.brenntag.com/aceton',sdb:{status:'ok',rev:'2025-01',link:'brenntag_aceton_sdb.pdf'}},
-    {id:'s4',name:'Epoxidharz-Komponente A',hersteller:'Sika',signal:'Achtung',ghs:['reiz','umwelt'],h:'H315 Hautreizung · H317 Sensibilisierung · H411',p:'P280 Schutzhandschuhe tragen',un:'–',sdb:{status:'ok',rev:'2023-09',link:'sika_epoxid_a_sdb.pdf'}},
-    {id:'s5',name:'Dieselersatz / Alkylatbenzin',hersteller:'Aspen',signal:'Gefahr',ghs:['flamm','gesundheit','umwelt'],h:'H225 leicht entzündbar · H304 Aspiration · H411',p:'P210 · P273',un:'1203',sdb:{status:'ok',rev:'2024-11',link:'aspen_alkylatbenzin_sdb.pdf'}},
-    {id:'s6',name:'Entkalker sauer',hersteller:'Hagerty',signal:'Gefahr',ghs:['aetz'],h:'H314 schwere Verätzungen / Augenschäden',p:'P280 · P305+P351+P338 mit Wasser spülen',un:'–',sdb:{status:'fehlt',rev:null,link:null}},
-    {id:'s7',name:'Markierspray',hersteller:'Edding',signal:'Gefahr',ghs:['flamm','druckgas'],h:'H222 extrem entzündbar · H229 unter Druck',p:'P210 · P251 nicht durchstechen',un:'1950',sdb:{status:'ok',rev:'2024-03',link:'edding_markierspray_sdb.pdf'}},
-    {id:'s8',name:'Gasflasche Propan',hersteller:'PanGas',signal:'Gefahr',ghs:['flamm','druckgas'],h:'H220 extrem entzündbares Gas · H280 unter Druck',p:'P210 · P377 · P381',un:'1978',sdb:{status:'ok',rev:'2025-02',link:'pangas_propan_sdb.pdf'}},
-    {id:'s9',name:'Reinigungsmittel alkalisch',hersteller:'Kärcher',signal:'Gefahr',ghs:['aetz'],h:'H314 schwere Verätzungen / Augenschäden',p:'P280 · P305+P351+P338',un:'–',sdb:{status:'ok',rev:'2024-07',link:'kaercher_alkalisch_sdb.pdf'}},
-    {id:'s10',name:'Leim / Lösemittelreiniger',hersteller:'Henkel',signal:'Achtung',ghs:['flamm','reiz'],h:'H226 entzündbar · H319 Augenreizung',p:'P210 von Zündquellen fernhalten',un:'1133',sdb:{status:'fehlt',rev:null,link:null}}
-  ],
-  instances:[
-    {id:'i1',sub:'s2',loc:'l1',gebinde:'Dose',groesse:'0.5 l',anzahl:6,menge:3,einheit:'l',status:'im Einsatz',qr:'INST-000118',last:'2026-05-28'},
-    {id:'i2',sub:'s3',loc:'l1',gebinde:'Kanister',groesse:'10 l',anzahl:1,menge:10,einheit:'l',status:'Lager',qr:'INST-000119',last:'2026-05-12'},
-    {id:'i3',sub:'s1',loc:'l2',gebinde:'Fass',groesse:'200 l',anzahl:1,menge:180,einheit:'l',status:'Lager',qr:'INST-000131',last:'2026-04-30'},
-    {id:'i4',sub:'s5',loc:'l2',gebinde:'Kanister',groesse:'25 l',anzahl:2,menge:50,einheit:'l',status:'im Einsatz',qr:'INST-000132',last:'2026-05-20'},
-    {id:'i5',sub:'s4',loc:'l3',gebinde:'Gebinde',groesse:'5 kg',anzahl:4,menge:20,einheit:'kg',status:'Lager',qr:'INST-000140',last:'2026-05-22'},
-    {id:'i6',sub:'s10',loc:'l3',gebinde:'Kanister',groesse:'5 l',anzahl:2,menge:null,einheit:'l',status:'unklar',qr:'INST-000141',last:'2026-05-22'},
-    {id:'i7',sub:'s6',loc:'l4',gebinde:'Flasche',groesse:'1 l',anzahl:3,menge:3,einheit:'l',status:'im Einsatz',qr:'INST-000150',last:'2026-05-26'},
-    {id:'i8',sub:'s9',loc:'l4',gebinde:'Kanister',groesse:'10 l',anzahl:1,menge:8,einheit:'l',status:'im Einsatz',qr:'INST-000151',last:'2026-05-18'},
-    {id:'i9',sub:'s2',loc:'l4',gebinde:'Dose',groesse:'0.5 l',anzahl:12,menge:6,einheit:'l',status:'Lager',qr:'INST-000152',last:'2026-05-15'},
-    {id:'i10',sub:'s8',loc:'l5',gebinde:'Flasche',groesse:'11 kg',anzahl:2,menge:22,einheit:'kg',status:'Lager',qr:'INST-000160',last:'2026-05-29'},
-    {id:'i11',sub:'s6',loc:'l5',gebinde:'Kanister',groesse:'5 l',anzahl:1,menge:5,einheit:'l',status:'zur Entsorgung',qr:'INST-000161',last:'2026-05-29'},
-    {id:'i12',sub:'s7',loc:'l6',gebinde:'Dose',groesse:'0.5 l',anzahl:8,menge:4,einheit:'l',status:'im Einsatz',qr:'INST-000170',last:'2026-05-10'},
-    {id:'i13',sub:'s5',loc:'l6',gebinde:'Kanister',groesse:'25 l',anzahl:1,menge:null,einheit:'l',status:'Lager',qr:'INST-000171',last:'2026-05-10'},
-    {id:'i14',sub:'s3',loc:'l4',gebinde:'Flasche',groesse:'1 l',anzahl:2,menge:2,einheit:'l',status:'im Einsatz',qr:'INST-000153',last:'2026-05-08'}
-  ],
-  history:[
-    {t:'28.05. 09:42',who:'M. Brunner',a:'Bestand erfasst',m:'Bremsenreiniger · Werkhof Nord',cid:'c2',alert:false},
-    {t:'29.05. 07:15',who:'K. Roth',a:'Gasflasche gescannt',m:'Propan · Lager Recycling',cid:'c8',alert:false},
-    {t:'29.05. 14:03',who:'A. Frei (SIBE)',a:'Hinweis: SDB fehlt',m:'Entkalker sauer · Lager Recycling',cid:'c8',alert:true},
-    {t:'26.05. 16:20',who:'R. Meier',a:'Menge angepasst',m:'Entkalker sauer · Werkstatt Technik',cid:'c7',alert:false}
-  ],
-  users:[
-    {id:'u1',name:'A. Frei',role:'Gruppenadmin / IMS',company:'c1'},
-    {id:'u2',name:'M. Brunner',role:'Lagerverantwortlich',company:'c2'},
-    {id:'u3',name:'K. Roth',role:'Mitarbeitend',company:'c8'},
-    {id:'u4',name:'R. Meier',role:'Mitarbeitend',company:'c7'},
-    {id:'u5',name:'S. Keller',role:'Firmenadmin',company:'c4'}
-  ]
-};
+/* ---------- Daten: leer initialisiert – Inhalt kommt live aus Supabase (loadDB) ---------- */
+const DB={companies:[],locations:[],substances:[],instances:[],history:[],users:[],invites:[]};
 const ROLES=['Viewer','Mitarbeitend','Lagerverantwortlich','Firmenadmin','Gruppenadmin / IMS'];
 let qrCounter=200;
 
@@ -712,7 +658,7 @@ function renderNav(){
 }
 
 /* ============================================================ SCREENS ============================================================ */
-function disclaimer(){return '<div class="disclaimer">Betriebliche Unterstützung – ersetzt keine Beurteilung vor Ort. · Prototyp mit Mock-Daten.</div>';}
+function disclaimer(){return '<div class="disclaimer">Betriebliche Unterstützung – ersetzt keine Beurteilung, Gefährdungsermittlung oder Instruktion vor Ort.</div>';}
 
 function scrStart(){
   const all=DB.instances;
@@ -927,15 +873,18 @@ function scrAdmin(){
       DB.companies.filter(c=>!c.group).map(c=>{const n=DB.instances.filter(i=>location_(i.loc).company===c.id).length;const lc=DB.locations.filter(l=>l.company===c.id).length;
       return '<div class="mrow"><span class="mg">'+ICO.firma+'</span><span class="mm"><span class="mt">'+c.name+'</span><span class="ms">'+lc+' Lagerorte · '+n+' Bestände</span></span><button class="del-btn" data-action="delCompany" data-id="'+c.id+'" aria-label="Löschen">'+ICO.trash+'</button></div>';}).join('');
   }else if(tab==='personen'){
-    body=filterBar+'<button class="add-btn" data-action="addUser">'+ICO.plus+' Person hinzufügen</button>'+
-      DB.users.filter(u=>!fc||u.company===fc).map(u=>{const c=company(u.company);
-      return '<div class="mrow"><span class="mg">'+ICO.user+'</span><span class="mm"><span class="mt">'+u.name+'</span><span class="ms">'+(c?firmTag(u.company):'')+' <span class="role-tag">'+u.role+'</span></span></span><button class="del-btn" data-action="delUser" data-id="'+u.id+'" aria-label="Löschen">'+ICO.trash+'</button></div>';}).join('') ||'<div class="empty">'+ICO.user+'<div>Keine Personen.</div></div>';
+    const users=DB.users.filter(u=>!fc||u.company===fc).map(u=>{const c=company(u.company);const self=AUTH.profile&&u.id===AUTH.profile.id;
+      return '<div class="mrow"><span class="mg">'+ICO.user+'</span><span class="mm"><span class="mt">'+u.name+(self?' (Sie)':'')+'</span><span class="ms">'+(c?firmTag(u.company):'')+' <span class="role-tag">'+u.role+'</span></span></span>'+(self?'':'<button class="del-btn" data-action="delUser" data-id="'+u.id+'" aria-label="Entfernen">'+ICO.trash+'</button>')+'</div>';}).join('');
+    const invs=(DB.invites||[]).filter(iv=>!fc||iv.company===fc);
+    const invHtml=invs.length?('<div class="label-h">Offene Einladungen <span class="cnt">'+invs.length+'</span></div>'+invs.map(iv=>{const c=company(iv.company);
+      return '<div class="mrow"><span class="mg" style="color:var(--warn)">'+ICO.user+'</span><span class="mm"><span class="mt">'+iv.email+'</span><span class="ms">'+(c?firmTag(iv.company):'')+' <span class="role-tag">'+iv.role+'</span> · <b style="color:var(--warn)">wartet auf Registrierung</b></span></span><button class="del-btn" data-action="delInvite" data-id="'+iv.id+'" aria-label="Zurückziehen">'+ICO.trash+'</button></div>';}).join('')):'';
+    body=filterBar+'<button class="add-btn" data-action="addUser">'+ICO.plus+' Person einladen</button>'+
+      (users||'<div class="empty">'+ICO.user+'<div>Noch keine Personen.</div></div>')+invHtml;
   }else if(tab==='verlauf'){
     const hist=DB.history.filter(h=>!fc||h.cid===fc);
     body=filterBar+'<div class="card"><div style="padding:15px"><div class="timeline">'+(hist.length?hist.map(h=>'<div class="tl-item '+(h.alert?'alert':'')+'"><div class="t">'+h.t+' · '+h.who+'</div><div class="a">'+h.a+'</div><div class="m">'+h.m+'</div></div>').join(''):'<div class="empty" style="padding:10px">Keine Einträge.</div>')+'</div></div></div>';
   }
-  return '<div class="view"><h2 class="title">Verwaltung</h2><p class="sub">Arbeitsübersicht: was ist offen, wo und in welcher Firma.</p>'+tabsHtml+body+
-    '<div style="height:14px"></div><button class="btn ghost" data-action="resetDB">'+ICO.trash+' Demo-Daten zurücksetzen</button>'+disclaimer()+'</div>';
+  return '<div class="view"><h2 class="title">Verwaltung</h2><p class="sub">Arbeitsübersicht: was ist offen, wo und in welcher Firma.</p>'+tabsHtml+body+disclaimer()+'</div>';
 }
 function adminHbRow(i){
   const s=substance(i.sub),l=location_(i.loc);
@@ -959,8 +908,9 @@ function scrErfassung(){
     '<div class="field"><label>Signalwort</label><div class="chips" style="margin:0"><button type="button" class="chip on" id="sigA" onclick="setSig(\'Achtung\')">Achtung</button><button type="button" class="chip" id="sigG" onclick="setSig(\'Gefahr\')">Gefahr</button></div></div>'+
     '<div class="field"><label>Gefahrmerkmale (GHS)</label><div class="chips" style="margin:0">'+haz+'</div></div>'+
     '<div class="field"><label>Externer Barcode (optional)</label><input name="barcode" placeholder="EAN / Barcode" value="'+(pf.barcode||'')+'"></div>'+
-    '<div class="field"><label>Infoseite / SDB-Link (optional)</label><input name="sdb" placeholder="Link oder Dateiname – leer = SDB fehlt" value="'+(pf.info||'')+'"></div>'+
-    '<div class="notice info" style="margin-top:4px">'+ICO.info+'<div>Es entstehen ein <b>Stoffstamm</b> und ein <b>Bestand</b> am Lagerort. Ein verlinkter Inhalt (Infoseite/SDB) wird als <b>Link hinterlegt</b>. Interner QR wird automatisch erzeugt.</div></div>'+
+    '<div class="field"><label>SDB-Datei hochladen (PDF, optional)</label><input name="sdbfile" type="file" accept="application/pdf,image/*"></div>'+
+    '<div class="field"><label>oder SDB-Link / Infoseite (optional)</label><input name="sdb" placeholder="Link – leer = SDB fehlt" value="'+(pf.info||'')+'"></div>'+
+    '<div class="notice info" style="margin-top:4px">'+ICO.info+'<div>Es entstehen ein <b>Stoffstamm</b> und ein <b>Bestand</b> am Lagerort. Eine <b>SDB-Datei</b> wird sicher ins Storage geladen; alternativ wird ein Link hinterlegt. Interner QR wird automatisch erzeugt.</div></div>'+
     '<div class="btn-row"><button type="button" class="btn ghost" data-action="back">Abbrechen</button><button type="button" class="btn" data-action="saveErf">Speichern</button></div></form>'+disclaimer()+'</div>';
 }
 window.setSig=function(v){state._sig=v;document.getElementById('sigA').classList.toggle('on',v==='Achtung');document.getElementById('sigG').classList.toggle('on',v==='Gefahr');};
@@ -977,7 +927,37 @@ function openModal(t,b){const el=document.createElement('div');el.className='mod
 function closeModal(){const e=document.getElementById('modalBack');if(e)e.remove();}
 function modalQr(id){const i=instance(id),s=substance(i.sub),l=location_(i.loc);openModal('Interner QR-Code','<div class="qr-wrap"><div class="qr-frame" id="qrBox"></div><div class="qr-code">'+i.qr+'</div><div class="qr-sub">'+s.name+' · '+firmTag(l.company)+' '+l.name+'</div></div><div class="notice info" style="margin-top:15px">'+ICO.info+'<div>Echter QR-Code: mit jeder Handy-Kamera scannbar – öffnet diese Stoffkarte (wenn die App online erreichbar ist).</div></div><div class="btn-row"><button class="btn secondary" data-action="printQr">'+ICO.print+' Etikette drucken</button><button class="btn" data-action="simScanQr" data-id="'+i.id+'">'+ICO.qr+' Öffnen</button></div>');renderRealQr('qrBox',qrTextInst(i));}
 function modalLocQr(id){const l=location_(id),c=company(l.company);openModal('Lagerort-QR','<div class="qr-wrap"><div class="qr-frame" id="qrBox"></div><div class="qr-code">LOC-'+id.toUpperCase()+'</div><div class="qr-sub">'+l.name+' · '+l.bereich+' · '+c.name+'</div></div><div class="notice info" style="margin-top:15px">'+ICO.info+'<div>Echter QR-Code für die Lagerort-Etikette – scannen setzt diesen Lagerort als Kontext.</div></div><div class="btn-row"><button class="btn secondary" data-action="printQr">'+ICO.print+' Etikette drucken</button><button class="btn" data-action="setLoc" data-id="'+id+'">'+ICO.scan+' Als Lagerort setzen</button></div>');renderRealQr('qrBox',qrTextLoc(l));}
-function modalSdb(id){const s=substance(id);let note,doc;if(s.sdb.status==='fehlt'){note='<div class="notice danger">'+ICO.warn+'<div><b>Kein SDB hinterlegt.</b> Bitte ergänzen.</div></div>';doc='<div class="empty">'+ICO.doc+'<div>Keine SDB-Datei vorhanden.</div></div>';}else{const col=s.sdb.status==='alt'?'var(--warn)':'var(--ok)';note=s.sdb.status==='alt'?'<div class="notice warn">'+ICO.warn+'<div><b>SDB älter als 3 Jahre</b> (Stand '+s.sdb.rev+').</div></div>':'<div class="notice ok">'+ICO.ok+'<div>SDB hinterlegt · Revision '+s.sdb.rev+'.</div></div>';doc='<div class="sdb-doc"><div class="sdb-ico"><span class="fold"></span><span style="color:'+col+'">PDF</span></div><div><b style="font-size:15px">'+s.name+'</b><div style="font-size:12.5px;color:var(--ink-2);margin-top:3px">'+s.sdb.link+'</div><div style="font-size:12px;color:var(--ink-3);margin-top:2px">Revision '+s.sdb.rev+' · '+s.hersteller+'</div></div></div>';}openModal('Sicherheitsdatenblatt',note+doc+(s.sdb.status!=='fehlt'?'<div class="btn-row"><button class="btn secondary" data-action="openSdbLink">'+ICO.doc+' SDB-Link öffnen</button></div>':'<div class="btn-row"><button class="btn" data-action="closeModal">'+ICO.plus+' SDB verknüpfen (Demo)</button></div>'));}
+function modalSdb(id){const s=substance(id);let note,doc;
+  if(s.sdb.status==='fehlt'){
+    note='<div class="notice danger">'+ICO.warn+'<div><b>Kein SDB hinterlegt.</b> Datei hochladen oder Link ergänzen.</div></div>';
+    doc='<div class="empty">'+ICO.doc+'<div>Keine SDB-Datei vorhanden.</div></div>';
+  }else{
+    const col=s.sdb.status==='alt'?'var(--warn)':'var(--ok)';
+    note=s.sdb.status==='alt'?'<div class="notice warn">'+ICO.warn+'<div><b>SDB älter als 3 Jahre</b> (Stand '+s.sdb.rev+').</div></div>':'<div class="notice ok">'+ICO.ok+'<div>SDB hinterlegt'+(s.sdb.rev?' · Revision '+s.sdb.rev:'')+'.</div></div>';
+    doc='<div class="sdb-doc"><div class="sdb-ico"><span class="fold"></span><span style="color:'+col+'">'+(s.sdb.path?'PDF':'LINK')+'</span></div><div style="min-width:0"><b style="font-size:15px">'+s.name+'</b><div style="font-size:12.5px;color:var(--ink-2);margin-top:3px;word-break:break-all">'+s.sdb.link+'</div>'+(s.sdb.rev?'<div style="font-size:12px;color:var(--ink-3);margin-top:2px">Revision '+s.sdb.rev+' · '+s.hersteller+'</div>':'')+'</div></div>';
+  }
+  const openBtn=(s.sdb.path||s.sdb.url)?'<div class="btn-row"><button class="btn secondary" data-action="openSdbDoc" data-id="'+s.id+'">'+ICO.doc+' SDB öffnen</button></div>':'';
+  const canUp=isAdmin()||curUser().role==='Lagerverantwortlich'||curUser().role==='Mitarbeitend';
+  const uploader=canUp?('<div class="field" style="margin-top:16px"><label>SDB-Datei '+(s.sdb.status==='fehlt'?'hochladen':'ersetzen')+' (PDF)</label><input id="sdbFile" type="file" accept="application/pdf,image/*"></div>'+
+    '<button class="btn" data-action="uploadSdb" data-id="'+s.id+'">'+ICO.doc+' Hochladen &amp; verknüpfen</button>'):'';
+  openModal('Sicherheitsdatenblatt',note+doc+openBtn+uploader);}
+async function openSdbDoc(subId){const s=substance(subId);if(!s)return;
+  if(s.sdb.path){const {data,error}=await sbc.storage.from('sds').createSignedUrl(s.sdb.path,120);if(error){toast(error.message,false);return;}window.open(data.signedUrl,'_blank');}
+  else if(s.sdb.url){window.open(s.sdb.url,'_blank');}
+  else toast('Kein SDB hinterlegt.',false);}
+async function uploadSdbFile(subId,file){
+  const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,'_').slice(-70);
+  const path=orgId()+'/'+subId+'/'+Date.now().toString(36)+'_'+safe;
+  const up=await sbc.storage.from('sds').upload(path,file,{upsert:false,contentType:file.type||'application/pdf'});
+  if(up.error) throw up.error;
+  const ins=await sbc.from('sds_documents').insert({organization_id:orgId(),substance_id:subId,storage_path:path,revisionsdatum:new Date().toISOString().slice(0,10),uploaded_by:AUTH.profile.id});
+  if(ins.error) throw ins.error;
+  return path;}
+async function uploadSdbFromModal(subId){const inp=document.getElementById('sdbFile');const file=inp&&inp.files&&inp.files[0];
+  if(!file){toast('Bitte zuerst eine Datei wählen.',false);return;}
+  toast('Lädt hoch…');
+  try{await uploadSdbFile(subId,file);addHistory('SDB hochgeladen',substance(subId).name);await loadDB();closeModal();toast('SDB verknüpft');render();}
+  catch(e){toast('Upload: '+(e&&e.message||e),false);}}
 function modalSwitchUser(){
   const u=curUser();const em=(AUTH.user&&AUTH.user.email)||'';
   openModal('Konto','<div class="notice info" style="margin-bottom:14px">'+ICO.user+'<div>Angemeldet als <b>'+u.name+'</b><br>'+em+' · Rolle: '+u.role+'</div></div>'+
@@ -987,11 +967,12 @@ function modalSwitchUser(){
 function modalAddUser(){
   const fOpts=DB.companies.map(c=>'<option value="'+c.id+'">'+c.name+'</option>').join('');
   const rOpts=ROLES.map(r=>'<option'+(r==='Mitarbeitend'?' selected':'')+'>'+r+'</option>').join('');
-  openModal('Person hinzufügen','<form id="mForm">'+
-    '<div class="field"><label>Name *</label><input name="name" placeholder="z. B. P. Müller"></div>'+
+  openModal('Person einladen','<form id="mForm">'+
+    '<div class="notice info" style="margin-bottom:12px">'+ICO.info+'<div>Die Person registriert sich anschliessend selbst mit genau dieser <b>E-Mail-Adresse</b> über «Neues Konto erstellen». Beim ersten Login wird sie automatisch dieser Organisation mit der gewählten Rolle zugeordnet.</div></div>'+
+    '<div class="field"><label>E-Mail *</label><input name="email" type="email" placeholder="name@firma.ch"></div>'+
     '<div class="field"><label>Rolle</label><select name="role">'+rOpts+'</select></div>'+
     '<div class="field"><label>Firma</label><select name="company">'+fOpts+'</select></div>'+
-    '<button type="button" class="btn" data-action="saveUser">'+ICO.plus+' Person speichern</button></form>');
+    '<button type="button" class="btn" data-action="saveUser">'+ICO.plus+' Einladung erstellen</button></form>');
 }
 function modalAddCompany(){
   openModal('Firma hinzufügen','<form id="mForm">'+
@@ -1048,6 +1029,8 @@ document.addEventListener('click',e=>{
     case 'showQr':modalQr(id);break;
     case 'showLocQr':modalLocQr(id);break;
     case 'showSdb':modalSdb(id);break;
+    case 'openSdbDoc':openSdbDoc(id);break;
+    case 'uploadSdb':uploadSdbFromModal(id);break;
     case 'reScan':modalReScan();break;
     case 'switchUser':modalSwitchUser();break;
     case 'setUser':{state.currentUser=id;closeModal();const adm=isAdmin();if(!adm&&(state.view==='admin')){goTo('start',{reset:true,nav:'start'});}else{toast('Angemeldet als '+curUser().name);render();}break;}
@@ -1065,12 +1048,14 @@ document.addEventListener('click',e=>{
     case 'saveUser':saveUser();break;
     case 'saveCompany':saveCompany();break;
     case 'saveLocation':saveLocation();break;
-    case 'delUser':confirmModal('Person löschen','Diese Person wirklich löschen?','doDelUser',id);break;
+    case 'delUser':{if(AUTH.profile&&id===AUTH.profile.id){toast('Sich selbst kann man nicht entfernen.',false);break;}confirmModal('Person entfernen','Zugriff dieser Person auf die Organisation entfernen? Das Login-Konto bleibt bestehen, verliert aber den Zugang.','doDelUser',id);break;}
+    case 'delInvite':confirmModal('Einladung zurückziehen','Diese offene Einladung wirklich zurückziehen?','doDelInvite',id);break;
     case 'delCompany':{const n=DB.instances.filter(i=>location_(i.loc).company===id).length+DB.locations.filter(l=>l.company===id).length;
       if(n){toast('Firma noch in Verwendung ('+n+' Einträge)',false);}else confirmModal('Firma löschen','Diese Firma wirklich löschen?','doDelCompany',id);break;}
     case 'delLocation':{const n=instsAtLoc(id).length;
       if(n){toast('Lagerort hat noch '+n+' Stoffe',false);}else confirmModal('Lagerort löschen','Diesen Lagerort wirklich löschen?','doDelLocation',id);break;}
-    case 'doDelUser':closeModal();toast('Personen-Verwaltung folgt in Kürze.',false);break;
+    case 'doDelUser':delUserDo(id);break;
+    case 'doDelInvite':delInviteDo(id);break;
     case 'doDelCompany':delCompanyDo(id);break;
     case 'doDelLocation':delLocationDo(id);break;
     case 'logout':sbc.auth.signOut().then(()=>location.reload());break;
@@ -1088,7 +1073,14 @@ document.addEventListener('change',e=>{
 function addHistory(a,m,cid){const who=(AUTH.profile&&AUTH.profile.name)||'Sie';DB.history.unshift({t:fmtTs(new Date().toISOString()),who,a,m,cid:cid||'',alert:false});
   try{sbc.from('audit_logs').insert({organization_id:orgId(),entity_typ:'history',aktion:a,user_id:AUTH.profile&&AUTH.profile.id,neu_wert:{who,m,cid:cid||'',alert:false}}).then(()=>{});}catch(e){}}
 
-function saveUser(){closeModal();toast('Personen werden per E-Mail-Einladung angelegt – folgt in Kürze.',false);}
+async function saveUser(){const f=document.getElementById('mForm');const email=((f.email&&f.email.value)||'').trim().toLowerCase();
+  if(!email||email.indexOf('@')<1||email.indexOf('.')<0){toast('Gültige E-Mail eingeben.',false);f.email&&f.email.focus();return;}
+  const role=ROLE_UI2DB[f.role.value]||'mitarbeitend';
+  const {error}=await sbc.from('invitations').insert({organization_id:orgId(),email,role,company_id:f.company.value||null,invited_by:AUTH.profile.id});
+  if(error){toast(error.message,false);return;}
+  closeModal();await loadDB();toast('Einladung erstellt: '+email);render();}
+async function delInviteDo(id){const {error}=await sbc.from('invitations').delete().eq('id',id);closeModal();if(error){toast(error.message,false);return;}await loadDB();toast('Einladung zurückgezogen');render();}
+async function delUserDo(id){const {error}=await sbc.from('profiles').delete().eq('id',id);closeModal();if(error){toast(error.message,false);return;}await loadDB();toast('Person entfernt');render();}
 async function saveCompany(){const f=document.getElementById('mForm');const name=f.name.value.trim();if(!name){toast('Firmenname fehlt.',false);f.name.focus();return;}
   const {error}=await sbc.from('companies').insert({organization_id:orgId(),name,short:f.short.value.trim()||name});
   if(error){toast(error.message,false);return;}
@@ -1104,13 +1096,14 @@ async function delLocationDo(id){const {error}=await sbc.from('storage_locations
 function defaultCompanyId(){const g=DB.companies.find(c=>c.group);return (g||DB.companies[0]||{}).id;}
 async function saveErf(){const f=document.getElementById('erfForm');const name=f.name.value.trim();if(!name){toast('Produktname fehlt.',false);f.name.focus();return;}
   const mr=f.menge.value.trim();if(!mr){toast('Menge fehlt.',false);f.menge.focus();return;}
-  const haz=[...f.querySelectorAll('.chip.on[data-haz]')].map(c=>c.dataset.haz);const sdb=f.sdb.value.trim();const bc=(f.barcode&&f.barcode.value.trim())||'';const sig=state._sig||'Achtung';
+  const haz=[...f.querySelectorAll('.chip.on[data-haz]')].map(c=>c.dataset.haz);const sdb=f.sdb.value.trim();const sdbfile=f.sdbfile&&f.sdbfile.files&&f.sdbfile.files[0];const bc=(f.barcode&&f.barcode.value.trim())||'';const sig=state._sig||'Achtung';
   const compId=state.activeLoc?location_(state.activeLoc).company:defaultCompanyId();
   if(!compId){toast('Keine Firma vorhanden – zuerst in der Verwaltung anlegen.',false);return;}
   try{
     const {data:sub,error:e1}=await sbc.from('substances').insert({organization_id:orgId(),produktname:name,hersteller:'unbekannt',signalwort:sig,ghs_piktogramme:haz,h_saetze:'– (manuell, bitte ergänzen)',p_saetze:'–',externer_barcode:bc||null,info_link:(/^https?:\/\//i.test(sdb)?sdb:null)}).select().single();
     if(e1){toast('Stoff: '+e1.message,false);return;}
-    if(sdb){await sbc.from('sds_documents').insert({organization_id:orgId(),substance_id:sub.id,external_link:sdb,revisionsdatum:new Date().toISOString().slice(0,10),uploaded_by:AUTH.profile.id});}
+    if(sdbfile){try{await uploadSdbFile(sub.id,sdbfile);}catch(err){toast('SDB-Upload: '+(err&&err.message||err),false);}}
+    else if(sdb){await sbc.from('sds_documents').insert({organization_id:orgId(),substance_id:sub.id,external_link:sdb,revisionsdatum:new Date().toISOString().slice(0,10),uploaded_by:AUTH.profile.id});}
     const qr='INST-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,5).toUpperCase();
     const {data:inst,error:e2}=await sbc.from('substance_instances').insert({organization_id:orgId(),substance_id:sub.id,company_id:compId,storage_location_id:state.activeLoc||null,gebindeart:f.gebinde.value,anzahl_gebinde:parseInt(f.anzahl.value||'1',10),menge_aktuell:parseFloat(mr),mengeneinheit:f.einheit.value,status:'Lager',internal_qr:qr}).select().single();
     if(e2){toast('Bestand: '+e2.message,false);return;}
@@ -1145,8 +1138,13 @@ async function initApp(){
   const {data:{session}}=await sbc.auth.getSession();
   AUTH.user=session?session.user:null;
   if(!session){renderLogin();return;}
-  const {data:prof,error}=await sbc.from('profiles').select('*').eq('id',session.user.id).maybeSingle();
+  let {data:prof,error}=await sbc.from('profiles').select('*').eq('id',session.user.id).maybeSingle();
   if(error){renderLogin();authNote('Profil laden: '+error.message,'danger');return;}
+  if(!prof){
+    // Liegt eine Einladung zu dieser E-Mail vor? -> automatisch beitreten (Rolle/Firma aus Einladung).
+    const r=await sbc.rpc('redeem_invite');
+    if(!r.error && r.data){prof=(await sbc.from('profiles').select('*').eq('id',session.user.id).maybeSingle()).data;}
+  }
   if(!prof){renderOnboarding();return;}
   AUTH.profile=prof;
   try{await loadDB();}catch(e){toast('Daten laden fehlgeschlagen: '+(e&&e.message||e),false);}

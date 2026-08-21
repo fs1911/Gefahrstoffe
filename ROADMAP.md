@@ -89,10 +89,15 @@ jetzt: ein **generisches, verkaufbares Mehrmandanten-SaaS** ohne Kundenbezug.
 - [x] Onboarding-Funktion + Storage-Bucket SDB (0003_onboarding_storage.sql)
 - [x] Live-App mit Login unter `/live/` (Auth, Org-Onboarding, Bestand, Erfassen, Verwaltung)
 - [x] QR-Deep-Link (`#open=INST-…`) öffnet Datensatz geräteübergreifend (angemeldet, gleiche Org)
-- [ ] 0003-SQL im Supabase-Editor ausführen + Live-Test (E-Mail-Bestätigung für Test aus)
-- [ ] Echter SDB-Datei-Upload ins Storage (nächster Schliff)
+- [x] 0003-SQL angewendet (Storage-Bucket `sds` + Policies live, geprüft)
+- [x] **Echter SDB-Datei-Upload** ins Storage (Erfassen + Stoffkarte); Öffnen via Signed-URL
+- [x] **Personen per Einladung** (`invitations`-Tabelle + `redeem_invite()`, 0004) – Admin lädt E-Mail+Rolle+Firma ein, Person tritt beim ersten Login automatisch bei (kein SMTP/Service-Key nötig)
+- [x] Tote Mock-Daten aus `live/index.html` entfernt
 - [ ] Demo-Seed für `/live/` (optional, Beispiel-Org mit Daten)
 - **Definition of Done:** QR am Schrank aufkleben → jedes berechtigte Handy sieht denselben Bestand inkl. SDB.
+
+> **Block B (Backend-Feinschliff) – erledigt:** SDB-Upload, Einladungs-Flow, Aufräumen.
+> Nächster gewählter Block: **A (Design-Upgrade)** – Stil-Varianten zeigen, dann umsetzen.
 
 > **Architektur:** `/app/` bleibt die Login-freie Verkaufs-Demo (localStorage).
 > `/live/` ist das echte, Supabase-gestützte Produkt mit Login und Mandantentrennung.
