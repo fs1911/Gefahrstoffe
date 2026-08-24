@@ -464,6 +464,45 @@
 
   /* Bottom-Nav: aktive grüne Pille */
   nav.bottom button.active{background:var(--ok-bg)}
+
+  /* Export & Druck */
+  .exp-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:6px}
+  @media(min-width:680px){.exp-grid{grid-template-columns:repeat(3,1fr)}}
+  .exp-btn{display:flex;align-items:center;gap:12px;text-align:left;background:var(--surface);
+    border:1px solid var(--line);border-radius:14px;padding:14px;color:var(--ink)}
+  .exp-btn:active{background:var(--surface-2)}
+  .exp-btn svg{width:22px;height:22px;color:var(--accent);flex:none}
+  .exp-btn b{display:block;font-size:14.5px;font-weight:600}
+  .exp-btn small{display:block;font-size:12px;color:var(--ink-2);margin-top:2px}
+
+  /* Druckansicht (Bericht + Etiketten) */
+  #printArea{display:none}
+  @media print{
+    @page{size:A4;margin:12mm}
+    body{background:#fff!important}
+    body.printing .app,body.printing #toast,body.printing #modalBack,body.printing #authOverlay{display:none!important}
+    body.printing #printArea{display:block!important}
+    .pr-h{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #111;padding-bottom:8px;margin-bottom:12px}
+    .pr-h .pr-logo{font-family:var(--display);font-weight:700;font-size:18px}
+    .pr-h .pr-meta{font-family:var(--mono);font-size:11px;color:#333;text-align:right}
+    .pr-title{font-family:var(--display);font-weight:700;font-size:16px;margin:0 0 10px}
+    table.pr-tbl{width:100%;border-collapse:collapse;font-size:10px}
+    table.pr-tbl th{background:#eee;text-align:left;padding:5px 6px;border:1px solid #bbb;font-weight:700}
+    table.pr-tbl td{padding:4px 6px;border:1px solid #ccc;vertical-align:top}
+    table.pr-tbl tr:nth-child(even) td{background:#f6f6f6}
+    .pr-warn{color:#a3140b;font-weight:700}
+    .pr-foot{margin-top:14px;font-size:10px;color:#555;border-top:1px solid #ccc;padding-top:8px}
+    .lbl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8mm}
+    .lbl{border:1px solid #111;border-radius:6px;padding:8px;display:flex;flex-direction:column;align-items:center;
+      text-align:center;break-inside:avoid;page-break-inside:avoid}
+    .lbl.loc{border-width:2px}
+    .lbl .lqr{width:34mm;height:34mm;display:flex;align-items:center;justify-content:center}
+    .lbl .lqr img,.lbl .lqr canvas,.lbl .lqr svg{width:34mm!important;height:34mm!important}
+    .lbl .lname{font-family:var(--display);font-weight:700;font-size:11px;margin-top:5px;line-height:1.15}
+    .lbl .lsub{font-size:9px;color:#333;margin-top:2px}
+    .lbl .lcode{font-family:var(--mono);font-size:8.5px;margin-top:3px;color:#111}
+    .lbl .ltag{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:#666;margin-bottom:4px}
+  }
 </style>
 </head>
 <body>
@@ -485,6 +524,7 @@
   <nav class="bottom" id="bottomNav"></nav>
 </div>
 <div id="toast"></div>
+<div id="printArea"></div>
 
 <script>
 /* ============================================================ StoffScan · Live (Supabase-Backend, Mandantentrennung via RLS) ============================================================ */
@@ -910,7 +950,13 @@ function scrAdmin(){
     const hist=DB.history.filter(h=>!fc||h.cid===fc);
     body=filterBar+'<div class="card"><div style="padding:15px"><div class="timeline">'+(hist.length?hist.map(h=>'<div class="tl-item '+(h.alert?'alert':'')+'"><div class="t">'+h.t+' · '+h.who+'</div><div class="a">'+h.a+'</div><div class="m">'+h.m+'</div></div>').join(''):'<div class="empty" style="padding:10px">Keine Einträge.</div>')+'</div></div></div>';
   }
-  return '<div class="view"><h2 class="title">Verwaltung</h2><p class="sub">Arbeitsübersicht: was ist offen, wo und in welcher Firma.</p>'+tabsHtml+body+disclaimer()+'</div>';
+  const exportBar='<div class="label-h" style="margin-top:24px">Export &amp; Druck'+(fc?' · '+company(fc).name:' · ganze Gruppe')+'</div>'+
+    '<div class="exp-grid">'+
+      '<button class="exp-btn" data-action="exportCSV">'+ICO.box+'<span><b>CSV exportieren</b><small>Bestandsliste für Excel</small></span></button>'+
+      '<button class="exp-btn" data-action="printReport">'+ICO.doc+'<span><b>Bericht als PDF</b><small>Druckansicht · «Als PDF speichern»</small></span></button>'+
+      '<button class="exp-btn" data-action="printLabels">'+ICO.qr+'<span><b>Etiketten-Druckbogen</b><small>Lagerort- &amp; Artikel-QR</small></span></button>'+
+    '</div>';
+  return '<div class="view"><h2 class="title">Verwaltung</h2><p class="sub">Arbeitsübersicht: was ist offen, wo und in welcher Firma.</p>'+tabsHtml+body+exportBar+disclaimer()+'</div>';
 }
 function adminHbRow(i){
   const s=substance(i.sub),l=location_(i.loc);
@@ -1090,6 +1136,9 @@ document.addEventListener('click',e=>{
     case 'authCreateOrg':doCreateOrg();break;
     case 'resetDB':resetDB();break;
     case 'saveErf':saveErf();break;
+    case 'exportCSV':exportCSV();break;
+    case 'printReport':printReport();break;
+    case 'printLabels':printLabels();break;
   }
 });
 document.addEventListener('change',e=>{
@@ -1160,6 +1209,75 @@ function renderOnboarding(){overlay('<div style="max-width:390px;margin:0 auto;p
 async function doLogin(){const em=(document.getElementById('aEmail').value||'').trim(),pw=document.getElementById('aPw').value||'';if(!em||!pw){authNote('E-Mail und Passwort eingeben.','danger');return;}authNote('Anmelden…');const {error}=await sbc.auth.signInWithPassword({email:em,password:pw});if(error){authNote(error.message,'danger');return;}initApp();}
 async function doSignup(){const em=(document.getElementById('aEmail').value||'').trim(),pw=document.getElementById('aPw').value||'';if(!em||pw.length<6){authNote('E-Mail angeben und Passwort mit mind. 6 Zeichen.','danger');return;}authNote('Konto wird erstellt…');const {data,error}=await sbc.auth.signUp({email:em,password:pw});if(error){authNote(error.message,'danger');return;}if(data.session){initApp();}else{authNote('Konto erstellt. Bitte E-Mail bestätigen und dann anmelden. (Für schnelle Tests: E-Mail-Bestätigung in Supabase → Auth deaktivieren.)','ok');}}
 async function doCreateOrg(){const on=(document.getElementById('obOrg').value||'').trim(),nm=(document.getElementById('obName').value||'').trim();if(!on){authNote('Organisationsname fehlt.','danger');return;}authNote('Wird angelegt…');const {error}=await sbc.rpc('create_org_and_profile',{p_org_name:on,p_user_name:nm});if(error){authNote(error.message,'danger');return;}initApp();}
+/* ---------- Export & Druck (Phase 2) ---------- */
+function expScope(){return state.adminCompany||'';}
+function expInsts(){const fc=expScope();return DB.instances.filter(i=>{const l=location_(i.loc);return !fc||(l&&l.company===fc);});}
+function expLocs(){const fc=expScope();return DB.locations.filter(l=>!fc||l.company===fc);}
+function orgName(){const g=DB.companies.find(c=>c.group);return (g&&g.name)||(DB.companies[0]&&DB.companies[0].name)||'StoffScan';}
+function scopeName(){const fc=expScope();return fc?(company(fc)||{}).name:'ganze Gruppe';}
+function sdbText(s){if(s.sdb.status==='fehlt')return 'SDB fehlt';if(s.sdb.status==='alt')return 'SDB '+(s.sdb.rev||'')+' (prüfen)';return 'SDB '+(s.sdb.rev||'ok');}
+function ghsText(s){return (s.ghs||[]).map(g=>GHS_LABEL[g]||g).join(', ');}
+function mengeText(i){return i.menge==null?'offen':(i.menge+' '+(i.einheit||''));}
+function todayStr(){const n=new Date();return n.getFullYear()+'-'+('0'+(n.getMonth()+1)).slice(-2)+'-'+('0'+n.getDate()).slice(-2);}
+
+function exportCSV(){
+  const insts=expInsts();
+  if(!insts.length){toast('Keine Daten zum Exportieren.',false);return;}
+  const cols=['Firma','Lagerort','Bereich','Produkt','Hersteller','Signalwort','GHS','H-Sätze','Menge','Einheit','Gebinde','Anzahl','Status','UN-Nummer','Barcode','SDB-Status','SDB-Revision','Interner QR'];
+  const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
+  const rows=[cols.map(q).join(';')];
+  insts.forEach(i=>{const s=substance(i.sub),l=location_(i.loc),c=l?company(l.company):null;
+    rows.push([c?c.name:'',l?l.name:'',l?l.bereich:'',s.name,s.hersteller,s.signal,ghsText(s),s.h,(i.menge==null?'':i.menge),i.einheit,i.gebinde,i.anzahl,i.status,s.un,s.barcode,s.sdb.status,s.sdb.rev||'',i.qr].map(q).join(';'));});
+  const csv='﻿'+rows.join('\r\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='StoffScan_Bestand_'+todayStr()+'.csv';document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);
+  toast('CSV exportiert ('+insts.length+' Zeilen)');
+}
+
+function doPrint(html,afterRender){
+  const pa=document.getElementById('printArea');pa.innerHTML=html;
+  if(afterRender)afterRender(pa);
+  document.body.classList.add('printing');
+  const done=()=>{document.body.classList.remove('printing');pa.innerHTML='';window.removeEventListener('afterprint',done);};
+  window.addEventListener('afterprint',done);
+  setTimeout(()=>window.print(),60);
+}
+function prHeader(sub){return '<div class="pr-h"><div><div class="pr-logo">StoffScan</div><div style="font-size:11px;color:#333">Gefahrstoff-Kataster</div></div>'+
+  '<div class="pr-meta">'+orgName()+'<br>'+sub+'<br>Stand '+todayStr()+'</div></div>';}
+function prFooter(){return '<div class="pr-foot">Betriebliche Unterstützung – ersetzt keine Beurteilung, Gefährdungsermittlung oder Instruktion vor Ort. · Erstellt mit StoffScan</div>';}
+
+function printReport(){
+  const insts=expInsts().slice().sort((a,b)=>{const la=location_(a.loc),lb=location_(b.loc);return ((la&&la.name)||'').localeCompare((lb&&lb.name)||'')||substance(a.sub).name.localeCompare(substance(b.sub).name);});
+  if(!insts.length){toast('Keine Daten zum Drucken.',false);return;}
+  let rows='';insts.forEach(i=>{const s=substance(i.sub),l=location_(i.loc),c=l?company(l.company):null;
+    const warn=s.sdb.status==='fehlt';
+    rows+='<tr><td>'+(c?c.name:'–')+'</td><td>'+(l?l.name+' · '+l.bereich:'–')+'</td><td><b>'+s.name+'</b><br>'+s.hersteller+'</td>'+
+      '<td>'+mengeText(i)+'<br>'+i.anzahl+'× '+i.gebinde+'</td><td>'+s.signal+(ghsText(s)?'<br>'+ghsText(s):'')+'</td>'+
+      '<td>'+s.un+'</td><td'+(warn?' class="pr-warn"':'')+'>'+sdbText(s)+'</td><td>'+i.status+'</td><td>'+i.qr+'</td></tr>';});
+  const html=prHeader('Bestandsliste · '+scopeName())+
+    '<div class="pr-title">Gefahrstoff-Bestand · '+scopeName()+' ('+insts.length+' Positionen)</div>'+
+    '<table class="pr-tbl"><thead><tr><th>Firma</th><th>Lagerort</th><th>Produkt</th><th>Menge / Gebinde</th><th>Signal / GHS</th><th>UN</th><th>SDB</th><th>Status</th><th>Interner QR</th></tr></thead><tbody>'+rows+'</tbody></table>'+prFooter();
+  doPrint(html);
+}
+
+function printLabels(){
+  const locs=expLocs(),insts=expInsts();
+  if(!locs.length&&!insts.length){toast('Keine Etiketten vorhanden.',false);return;}
+  const jobs=[];let cells='';
+  locs.forEach(l=>{const c=company(l.company),id='lq'+jobs.length;
+    cells+='<div class="lbl loc"><div class="ltag">Lagerort</div><div class="lqr" id="'+id+'"></div><div class="lname">'+l.name+'</div><div class="lsub">'+l.bereich+' · '+(c?c.name:'')+'</div><div class="lcode">LOC-'+String(l.id).slice(0,10).toUpperCase()+'</div></div>';
+    jobs.push([id,qrTextLoc(l)]);});
+  insts.forEach(i=>{const s=substance(i.sub),l=location_(i.loc),c=l?company(l.company):null,id='lq'+jobs.length;
+    cells+='<div class="lbl"><div class="ltag">Artikel</div><div class="lqr" id="'+id+'"></div><div class="lname">'+s.name+'</div><div class="lsub">'+(c?c.name+' · ':'')+(l?l.name:'')+' · '+mengeText(i)+'</div><div class="lcode">'+i.qr+'</div></div>';
+    jobs.push([id,qrTextInst(i)]);});
+  const html=prHeader('Etiketten-Druckbogen · '+scopeName())+
+    '<div class="pr-title">Etiketten · '+scopeName()+' ('+locs.length+' Lagerorte, '+insts.length+' Artikel)</div>'+
+    '<div class="lbl-grid">'+cells+'</div>'+prFooter();
+  doPrint(html,()=>{jobs.forEach(j=>renderRealQr(j[0],j[1]));});
+}
+
 async function initApp(){
   const {data:{session}}=await sbc.auth.getSession();
   AUTH.user=session?session.user:null;
