@@ -109,11 +109,12 @@ jetzt: ein **generisches, verkaufbares Mehrmandanten-SaaS** ohne Kundenbezug.
 
 ### Phase 2 – Produktreife
 **Ziel:** ein Betrieb kann eigenständig sauber arbeiten.
-- [ ] Rollen/Rechte serverseitig durchgesetzt
-- [ ] Firmen- & Benutzerverwaltung (Admin)
-- [ ] Export CSV / PDF je Firma & Lagerort
-- [ ] Etiketten-Druckbogen (Lagerort- + Artikel-QR als PDF)
-- [ ] Warnhinweis-Dashboard (SDB fehlt/veraltet, Pflichtfelder)
+- [x] Rollen/Rechte serverseitig durchgesetzt (RLS, Block 1)
+- [x] Firmen- & Benutzerverwaltung (Admin) inkl. Einladungen (Block B)
+- [x] Export CSV / PDF je Firma & Lagerort (Verwaltung → Export & Druck)
+- [x] Etiketten-Druckbogen (Lagerort- + Artikel-QR als A4-Bogen)
+- [x] Demo-Seed für `/live/` (Beispiel-Org mit Firmen/Lagerorten/Stoffen/Beständen)
+- [🟡] Warnhinweis-Dashboard: „Handlungsbedarf" vorhanden; serverseitige Alerts-Tabelle noch offen
 
 ### Phase 3 – Kommerziell
 **Ziel:** Kunde kann selbst buchen & bezahlen.
