@@ -603,6 +603,16 @@
   .pk-lbl{display:inline-block;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;padding:2px 8px;border-radius:5px}
   .pk-lbl.g{background:var(--danger-bg);color:var(--danger)}
   .pk-lbl.m{background:var(--ok-bg);color:var(--ok)}
+  /* ===== Feinschliff v2: Desktop-Fixes ===== */
+  .logo{background:var(--accent);color:#fff}
+  .kpi-grid{margin-bottom:0}
+  .hb-banner{margin:16px 0 0}
+  .dash-cols{margin-top:16px}
+  @media(min-width:980px){
+    .sb-item svg{width:20px;height:20px;color:var(--ink-3)}
+    .sb-item.active svg{color:var(--accent)}
+    .sb-item:hover{background:var(--surface-2)}
+  }
 </style>
 </head>
 <body>
@@ -636,7 +646,7 @@ const ICO={
   qr:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M20 14v.01M14 20h.01M17 20h.01M20 17v3"/></svg>',
   home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 11l8-7 8 7M6 10v9h12v-9"/></svg>',
   firma:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-4h6v4"/><path d="M9 9h.01M15 9h.01"/></svg>',
-  admin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M9 3h6v3l2 1 2-1 2 3-2 2v2l2 2-2 3-2-1-2 1v3H9v-3l-2-1-2 1-2-3 2-2v-2L1 9l2-3 2 1 2-1z"/><circle cx="12" cy="12" r="2.6"/></svg>',
+  admin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
   chev:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.1"><path d="M9 18l6-6-6-6"/></svg>',
   warn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>',
   ok:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path d="M20 6L9 17l-5-5"/></svg>',
@@ -1010,6 +1020,14 @@ function routeCode(raw){
   // unbekannter Barcode -> Erfassung mit Barcode
   state.scanPrefill={barcode:full,info:''};toast('Neuer Artikel – Barcode übernommen');goTo('erfassung',{reset:true,nav:'scan'});return true;
 }
+function modalReScan(){
+  openModal('Artikel-QR öffnen','<div class="notice info" style="margin-bottom:12px">'+ICO.info+'<div>Internen QR-Code (z. B. <b>INST-000123</b>), Lagerort-Code (<b>LOC-…</b>) oder externen Barcode eingeben – oder mit der Kamera scannen.</div></div>'+
+    '<div class="field"><label>Code</label><input id="reScanInput" placeholder="INST-… / LOC-… / Barcode" autocomplete="off" onkeydown="if(event.key===&#39;Enter&#39;){event.preventDefault();reScanGo();}"></div>'+
+    '<div class="btn-row" style="margin-top:2px"><button class="btn secondary" data-action="reScanCam">'+ICO.scan+' Kamera</button><button class="btn" data-action="reScanGo">'+ICO.qr+' Öffnen</button></div>');
+  setTimeout(function(){var i=document.getElementById('reScanInput');if(i)i.focus();},60);
+}
+function reScanGo(){var el=document.getElementById('reScanInput');var v=el?el.value.trim():'';if(!v){toast('Bitte einen Code eingeben.',false);if(el)el.focus();return;}closeModal();routeCode(v);}
+
 
 /* ---------- Echter Kamera-Scan (html5-qrcode) ---------- */
 let camInst=null;
@@ -1541,6 +1559,8 @@ document.addEventListener('click',e=>{
     case 'openSdbDoc':openSdbDoc(id);break;
     case 'uploadSdb':uploadSdbFromModal(id);break;
     case 'reScan':modalReScan();break;
+    case 'reScanGo':reScanGo();break;
+    case 'reScanCam':closeModal();goTo('scanArt',{reset:true,nav:'scan'});break;
     case 'switchUser':modalSwitchUser();break;
     case 'setUser':{state.currentUser=id;closeModal();const adm=isAdmin();if(!adm&&(state.view==='admin')){goTo('start',{reset:true,nav:'start'});}else{toast('Angemeldet als '+curUser().name);render();}break;}
     case 'simScanQr':{closeModal();const i=instance(id);state.activeLoc=i.loc;addHistory('Artikel-QR gescannt',substance(i.sub).name+' · '+location_(i.loc).name,location_(i.loc).company);toast('Stoffkarte geöffnet');goTo('detail',{sub:i.sub,inst:id,reset:true,nav:'start'});break;}
