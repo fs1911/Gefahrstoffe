@@ -154,10 +154,11 @@
   .feat p{margin:0;font-size:14.5px;color:var(--ink-2)}
 
   /* Branchen */
-  .tags{display:flex;flex-wrap:wrap;gap:11px}
-  .tag{display:inline-flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);
-    border-radius:12px;padding:11px 17px;font-size:15px;font-weight:600}
-  .tag .d{width:9px;height:9px;background:var(--brand);transform:rotate(45deg);border-radius:2px}
+  .tags{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:12px}
+  .tag{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);
+    border-radius:13px;padding:16px 17px;font-size:15px;font-weight:600;box-shadow:0 1px 2px rgba(18,42,32,.05),0 2px 8px rgba(18,42,32,.045);transition:transform .12s ease,box-shadow .12s ease}
+  .tag:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(18,42,32,.09)}
+  .tag .d{width:11px;height:11px;background:var(--brand);transform:rotate(45deg);border-radius:2px;flex:none}
 
   /* Compliance band (forest) */
   .band{background:var(--forest);color:#dfe8e2}

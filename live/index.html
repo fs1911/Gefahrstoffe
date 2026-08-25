@@ -355,6 +355,10 @@
   .mrow .mt{font-size:14.5px;font-weight:600;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .mrow .ms{font-size:12px;color:var(--ink-2);margin-top:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
   .del-btn{flex:none;width:42px;height:42px;border:1px solid var(--line);background:var(--surface);border-radius:8px;color:var(--danger);display:grid;place-items:center}
+  .edit-btn{flex:none;width:42px;height:42px;border:1px solid var(--line);background:var(--surface);border-radius:8px;color:var(--accent);display:grid;place-items:center}
+  .edit-btn:active{background:var(--surface-2)}
+  .edit-btn svg{width:18px;height:18px}
+  .row-actions{display:flex;gap:7px;flex:none;margin-left:auto}
   .del-btn:active{background:var(--danger-bg)}
   .del-btn svg{width:18px;height:18px}
   .role-tag{font-size:11px;font-weight:600;padding:2px 8px;border-radius:5px;background:var(--surface-2);border:1px solid var(--line);color:var(--ink-2)}
@@ -556,6 +560,39 @@
   .hs-item .ht{font-size:13px;color:var(--ink-2);line-height:1.45;flex:1}
   .hs-item .hl{flex:none}
   .hs-group{font-family:var(--display);font-weight:700;font-size:13px;color:var(--ink);margin:14px 0 4px}
+  /* ===== Design-Feinschliff ===== */
+  :root{
+    --sh-sm:0 1px 2px rgba(18,42,32,.05), 0 2px 6px rgba(18,42,32,.055);
+    --sh-md:0 4px 18px rgba(18,42,32,.09);
+    --bg:#eaeeea;
+  }
+  /* Tiefe statt flacher Ränder – Karten heben sich klar vom Hintergrund ab */
+  .card,.act,.kpi,.stat-box,.wk-card,.sk-hero,.bestand,details.stamm,.exp-btn,.lk-item,.mrow,.panel,.pick,.userline{
+    box-shadow:var(--sh-sm);border-color:var(--line-2);
+  }
+  .card{transition:box-shadow .15s ease, transform .1s ease}
+  .card:active,.arow:active,.mrow:active{transform:translateY(1px)}
+  /* Titel in der eleganten Display-Schrift, mehr Kontrast */
+  h2.title{font-family:var(--font-display);font-weight:700;font-size:23px;letter-spacing:-.018em;color:var(--ink);margin-bottom:3px}
+  p.sub{color:var(--ink-2)}
+  .sk-name,.loc-hero h2{font-family:var(--font-display);font-weight:700;letter-spacing:-.02em}
+  .ctitle{font-family:var(--font-display);font-weight:600;letter-spacing:-.01em;font-size:16.5px}
+  .panel-h > span:first-child,.bestand-h .where{font-weight:700}
+  /* GHS-Spalte in Listenkarten: feste Breite → Text startet immer bündig */
+  .ctap{gap:13px}
+  .ctap .ghs-row{width:72px;align-content:flex-start;gap:6px;row-gap:6px;justify-content:flex-start}
+  .ctap .ghs.mini svg{width:32px;height:32px}
+  /* Formularfelder: sichtbarer Fokus-Ring, weichere Optik */
+  .field select,.field input,.field textarea{border-color:var(--line);transition:border-color .12s, box-shadow .12s}
+  .field select:focus,.field input:focus,.field textarea:focus,.hs-search:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(12,107,79,.14)}
+  /* Chips: etwas kompakter, klarer */
+  .chip{height:40px}
+  /* Verwaltungs-Zeilen: mehr Luft, klare Aktionsflächen */
+  .mrow{border-radius:12px;padding:12px 12px 12px 13px}
+  .mrow .mt{font-weight:600}
+  /* Sekundär-Buttons/Chips mit dezentem Hover-Feedback auf Touch */
+  .btn{transition:background .12s, box-shadow .12s}
+  .btn:not(.ghost):not(.secondary){box-shadow:0 1px 2px rgba(10,85,64,.18)}
 </style>
 </head>
 <body>
@@ -596,6 +633,7 @@ const ICO={
   info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>',
   doc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>',
   plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 5v14M5 12h14"/></svg>',
+  edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
   print:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-4a2 2 0 012-2h16a2 2 0 012 2v4a2 2 0 01-2 2h-2M6 14h12v8H6z"/></svg>',
   box:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8"/></svg>',
   user:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>',
@@ -832,6 +870,7 @@ function psListHtml(q){
 }
 function wkFilterP(v){var el=document.getElementById('psList');if(el)el.innerHTML=psListHtml(v);}
 
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function scrWissen(){
   var tab=state.wkTab||'lk';
   var tabs=[['lk','Lagerklassen'],['matrix','Zusammenlagern'],['hsaetze','H-Sätze'],['psaetze','P-Sätze'],['praxis','Praxis']];
@@ -1276,14 +1315,14 @@ function scrAdmin(){
     const locs=DB.locations.filter(l=>!fc||l.company===fc);
     body=filterBar+'<button class="add-btn" data-action="addLocation">'+ICO.plus+' Lagerort hinzufügen</button>'+
       (locs.length?locs.map(l=>{const ins=instsAtLoc(l.id);const w=ins.filter(instWarn).length;
-      return '<div class="mrow"><button class="ag" style="all:unset;flex:1;min-width:0;display:flex;align-items:center;gap:11px;cursor:pointer" data-action="openLoc" data-id="'+l.id+'"><span class="mg">'+ICO.loc+'</span><span class="mm"><span class="mt">'+l.name+'</span><span class="ms">'+firmTag(l.company)+' '+l.bereich+' · '+ins.length+' Stoffe'+(w?' · <b style="color:var(--warn)">'+w+' offen</b>':'')+'</span></span></button><button class="del-btn" data-action="delLocation" data-id="'+l.id+'" aria-label="Löschen">'+ICO.trash+'</button></div>';}).join(''):'<div class="empty">'+ICO.loc+'<div>Keine Lagerorte.</div></div>');
+      return '<div class="mrow"><button class="ag" style="all:unset;flex:1;min-width:0;display:flex;align-items:center;gap:11px;cursor:pointer" data-action="openLoc" data-id="'+l.id+'"><span class="mg">'+ICO.loc+'</span><span class="mm"><span class="mt">'+l.name+'</span><span class="ms">'+firmTag(l.company)+' '+l.bereich+' · '+ins.length+' Stoffe'+(w?' · <b style="color:var(--warn)">'+w+' offen</b>':'')+'</span></span></button><span class="row-actions"><button class="edit-btn" data-action="editLocation" data-id="'+l.id+'" aria-label="Bearbeiten">'+ICO.edit+'</button><button class="del-btn" data-action="delLocation" data-id="'+l.id+'" aria-label="Löschen">'+ICO.trash+'</button></span></div>';}).join(''):'<div class="empty">'+ICO.loc+'<div>Keine Lagerorte.</div></div>');
   }else if(tab==='firmen'){
     body='<button class="add-btn" data-action="addCompany">'+ICO.plus+' Firma hinzufügen</button>'+
       DB.companies.filter(c=>!c.group).map(c=>{const n=DB.instances.filter(i=>location_(i.loc).company===c.id).length;const lc=DB.locations.filter(l=>l.company===c.id).length;
-      return '<div class="mrow"><span class="mg">'+ICO.firma+'</span><span class="mm"><span class="mt">'+c.name+'</span><span class="ms">'+lc+' Lagerorte · '+n+' Bestände</span></span><button class="del-btn" data-action="delCompany" data-id="'+c.id+'" aria-label="Löschen">'+ICO.trash+'</button></div>';}).join('');
+      return '<div class="mrow"><span class="mg">'+ICO.firma+'</span><span class="mm"><span class="mt">'+c.name+'</span><span class="ms">'+lc+' Lagerorte · '+n+' Bestände</span></span><span class="row-actions"><button class="edit-btn" data-action="editCompany" data-id="'+c.id+'" aria-label="Bearbeiten">'+ICO.edit+'</button><button class="del-btn" data-action="delCompany" data-id="'+c.id+'" aria-label="Löschen">'+ICO.trash+'</button></span></div>';}).join('');
   }else if(tab==='personen'){
     const users=DB.users.filter(u=>!fc||u.company===fc).map(u=>{const c=company(u.company);const self=AUTH.profile&&u.id===AUTH.profile.id;
-      return '<div class="mrow"><span class="mg">'+ICO.user+'</span><span class="mm"><span class="mt">'+u.name+(self?' (Sie)':'')+'</span><span class="ms">'+(c?firmTag(u.company):'')+' <span class="role-tag">'+u.role+'</span></span></span>'+(self?'':'<button class="del-btn" data-action="delUser" data-id="'+u.id+'" aria-label="Entfernen">'+ICO.trash+'</button>')+'</div>';}).join('');
+      return '<div class="mrow"><span class="mg">'+ICO.user+'</span><span class="mm"><span class="mt">'+u.name+(self?' (Sie)':'')+'</span><span class="ms">'+(c?firmTag(u.company):'')+' <span class="role-tag">'+u.role+'</span></span></span><span class="row-actions"><button class="edit-btn" data-action="editUser" data-id="'+u.id+'" aria-label="Bearbeiten">'+ICO.edit+'</button>'+(self?'':'<button class="del-btn" data-action="delUser" data-id="'+u.id+'" aria-label="Entfernen">'+ICO.trash+'</button>')+'</span></div>';}).join('');
     const invs=(DB.invites||[]).filter(iv=>!fc||iv.company===fc);
     const invHtml=invs.length?('<div class="label-h">Offene Einladungen <span class="cnt">'+invs.length+'</span></div>'+invs.map(iv=>{const c=company(iv.company);
       return '<div class="mrow"><span class="mg" style="color:var(--warn)">'+ICO.user+'</span><span class="mm"><span class="mt">'+iv.email+'</span><span class="ms">'+(c?firmTag(iv.company):'')+' <span class="role-tag">'+iv.role+'</span> · <b style="color:var(--warn)">wartet auf Registrierung</b></span></span><button class="del-btn" data-action="delInvite" data-id="'+iv.id+'" aria-label="Zurückziehen">'+ICO.trash+'</button></div>';}).join('')):'';
@@ -1463,9 +1502,13 @@ document.addEventListener('click',e=>{
     case 'addUser':modalAddUser();break;
     case 'addCompany':modalAddCompany();break;
     case 'addLocation':modalAddLocation();break;
+    case 'editCompany':modalEditCompany(id);break;
+    case 'editLocation':modalEditLocation(id);break;
+    case 'editUser':modalEditUser(id);break;
     case 'saveUser':saveUser();break;
-    case 'saveCompany':saveCompany();break;
-    case 'saveLocation':saveLocation();break;
+    case 'saveCompany':saveCompany(id);break;
+    case 'saveLocation':saveLocation(id);break;
+    case 'saveProfile':saveProfile(id);break;
     case 'delUser':{if(AUTH.profile&&id===AUTH.profile.id){toast('Sich selbst kann man nicht entfernen.',false);break;}confirmModal('Person entfernen','Zugriff dieser Person auf die Organisation entfernen? Das Login-Konto bleibt bestehen, verliert aber den Zugang.','doDelUser',id);break;}
     case 'delInvite':confirmModal('Einladung zurückziehen','Diese offene Einladung wirklich zurückziehen?','doDelInvite',id);break;
     case 'delCompany':{const n=DB.instances.filter(i=>location_(i.loc).company===id).length+DB.locations.filter(l=>l.company===id).length;
@@ -1505,15 +1548,43 @@ async function saveUser(){const f=document.getElementById('mForm');const email=(
   closeModal();await loadDB();toast('Einladung erstellt: '+email);render();}
 async function delInviteDo(id){const {error}=await sbc.from('invitations').delete().eq('id',id);closeModal();if(error){toast(error.message,false);return;}await loadDB();toast('Einladung zurückgezogen');render();}
 async function delUserDo(id){const {error}=await sbc.from('profiles').delete().eq('id',id);closeModal();if(error){toast(error.message,false);return;}await loadDB();toast('Person entfernt');render();}
-async function saveCompany(){const f=document.getElementById('mForm');const name=f.name.value.trim();if(!name){toast('Firmenname fehlt.',false);f.name.focus();return;}
-  const {error}=await sbc.from('companies').insert({organization_id:orgId(),name,short:f.short.value.trim()||name});
+async function saveCompany(id){const f=document.getElementById('mForm');const name=f.name.value.trim();if(!name){toast('Firmenname fehlt.',false);f.name.focus();return;}
+  const vals={name,short:f.short.value.trim()||name};
+  const {error}=id?await sbc.from('companies').update(vals).eq('id',id):await sbc.from('companies').insert(Object.assign({organization_id:orgId()},vals));
   if(error){toast(error.message,false);return;}
-  closeModal();await loadDB();toast('Firma hinzugefügt');render();}
-async function saveLocation(){const f=document.getElementById('mForm');const name=f.name.value.trim(),ber=f.bereich.value.trim();
+  closeModal();await loadDB();toast(id?'Firma gespeichert':'Firma hinzugefügt');render();}
+async function saveLocation(id){const f=document.getElementById('mForm');const name=f.name.value.trim(),ber=f.bereich.value.trim();
   if(!name){toast('Name fehlt.',false);f.name.focus();return;}if(!ber){toast('Bereich fehlt.',false);f.bereich.focus();return;}
-  const {error}=await sbc.from('storage_locations').insert({organization_id:orgId(),company_id:f.company.value,name,bereich:ber,typ:f.typ.value});
+  const vals={company_id:f.company.value,name,bereich:ber,typ:f.typ.value};
+  const {error}=id?await sbc.from('storage_locations').update(vals).eq('id',id):await sbc.from('storage_locations').insert(Object.assign({organization_id:orgId()},vals));
   if(error){toast(error.message,false);return;}
-  closeModal();await loadDB();toast('Lagerort hinzugefügt');render();}
+  closeModal();await loadDB();toast(id?'Lagerort gespeichert':'Lagerort hinzugefügt');render();}
+async function saveProfile(id){const f=document.getElementById('mForm');const role=ROLE_UI2DB[f.role.value]||'mitarbeitend';
+  const {error}=await sbc.from('profiles').update({role,company_id:f.company.value||null}).eq('id',id);
+  if(error){toast(error.message,false);return;}
+  closeModal();await loadDB();toast('Person gespeichert');render();}
+function modalEditCompany(id){const c=company(id);if(!c)return;
+  openModal('Firma bearbeiten','<form id="mForm">'+
+    '<div class="field"><label>Firmenname *</label><input name="name" value="'+esc(c.name)+'"></div>'+
+    '<div class="field"><label>Kurzname (für Tags)</label><input name="short" value="'+esc(c.short||'')+'"></div>'+
+    '<div class="btn-row" style="margin-top:0"><button type="button" class="btn ghost" data-action="closeModal">Abbrechen</button><button type="button" class="btn" data-action="saveCompany" data-id="'+id+'">Speichern</button></div></form>');}
+function modalEditLocation(id){const l=location_(id);if(!l)return;
+  const fOpts=DB.companies.filter(c=>!c.group).map(c=>'<option value="'+c.id+'"'+(c.id===l.company?' selected':'')+'>'+esc(c.name)+'</option>').join('');
+  const tOpts=['Werkhof','Baustelle','Magazin','Werkstatt','Containerlager','Zwischenlager','Sonderabfall'].map(t=>'<option'+(t===l.typ?' selected':'')+'>'+t+'</option>').join('');
+  openModal('Lagerort bearbeiten','<form id="mForm">'+
+    '<div class="field"><label>Firma *</label><select name="company">'+fOpts+'</select></div>'+
+    '<div class="field"><label>Standort / Name *</label><input name="name" value="'+esc(l.name)+'"></div>'+
+    '<div class="field"><label>Bereich *</label><input name="bereich" value="'+esc(l.bereich||'')+'"></div>'+
+    '<div class="field"><label>Typ</label><select name="typ">'+tOpts+'</select></div>'+
+    '<div class="btn-row" style="margin-top:0"><button type="button" class="btn ghost" data-action="closeModal">Abbrechen</button><button type="button" class="btn" data-action="saveLocation" data-id="'+id+'">Speichern</button></div></form>');}
+function modalEditUser(id){const u=DB.users.find(x=>x.id===id);if(!u)return;
+  const fOpts=DB.companies.map(c=>'<option value="'+c.id+'"'+(c.id===u.company?' selected':'')+'>'+esc(c.name)+'</option>').join('');
+  const rOpts=ROLES.map(r=>'<option'+(r===u.role?' selected':'')+'>'+r+'</option>').join('');
+  openModal('Person bearbeiten','<form id="mForm">'+
+    '<div class="field"><label>Name</label><input value="'+esc(u.name)+'" disabled style="opacity:.7"></div>'+
+    '<div class="field"><label>Rolle</label><select name="role">'+rOpts+'</select></div>'+
+    '<div class="field"><label>Firma</label><select name="company">'+fOpts+'</select></div>'+
+    '<div class="btn-row" style="margin-top:0"><button type="button" class="btn ghost" data-action="closeModal">Abbrechen</button><button type="button" class="btn" data-action="saveProfile" data-id="'+id+'">Speichern</button></div></form>');}
 async function delCompanyDo(id){const {error}=await sbc.from('companies').delete().eq('id',id);closeModal();if(error){toast(error.message,false);return;}await loadDB();toast('Firma gelöscht');render();}
 async function delLocationDo(id){const {error}=await sbc.from('storage_locations').delete().eq('id',id);if(state.activeLoc===id)state.activeLoc=null;closeModal();if(error){toast(error.message,false);return;}await loadDB();toast('Lagerort gelöscht');render();}
 
