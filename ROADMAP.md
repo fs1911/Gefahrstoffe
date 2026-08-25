@@ -114,7 +114,13 @@ jetzt: ein **generisches, verkaufbares Mehrmandanten-SaaS** ohne Kundenbezug.
 - [x] Export CSV / PDF je Firma & Lagerort (Verwaltung → Export & Druck)
 - [x] Etiketten-Druckbogen (Lagerort- + Artikel-QR als A4-Bogen)
 - [x] Demo-Seed für `/live/` (Beispiel-Org mit Firmen/Lagerorten/Stoffen/Beständen)
-- [🟡] Warnhinweis-Dashboard: „Handlungsbedarf" vorhanden; serverseitige Alerts-Tabelle noch offen
+- [x] **Zusammenlagerungs-Prüfung** (Leitfaden 2018, Beilage 2): Lagerklasse wird automatisch aus
+  H-Sätzen/GHS abgeleitet (Ablaufschema Beilage 1, „Auto + überschreibbar"), Konflikte werden an
+  Lagerorten geprüft (grün/gelb/rot) und gewarnt – im Erfassen-Formular (Live-Check), auf der
+  Stoffkarte, im Lagerort-Detail, im Dashboard-Banner und in der Verwaltung → Handlungsbedarf.
+- [x] **Wissensdatenbank** („Wissen"): Lagerklassen, interaktive Zusammenlagerungsmatrix,
+  durchsuchbarer H-Sätze-Katalog (CLP), Praxis-Grundsätze – Quellen: Leitfaden 2018 & SUVA.
+- [🟡] Warnhinweis-Dashboard: „Handlungsbedarf" (SDB/Menge/Zusammenlagerung) vorhanden; serverseitige Alerts-Tabelle noch offen
 
 ### Phase 3 – Kommerziell
 **Ziel:** Kunde kann selbst buchen & bezahlen.
@@ -131,7 +137,8 @@ jetzt: ein **generisches, verkaufbares Mehrmandanten-SaaS** ohne Kundenbezug.
 ### Phase 5 – Skalierung
 - [ ] Offline-Modus (schlecht abgedeckte Baustellen)
 - [ ] Mehrsprachig DE / FR / IT
-- [ ] SDB-Import von Lieferanten, Zusammenlagerungs-Prüflogik
+- [x] Zusammenlagerungs-Prüflogik (in Phase 2 vorgezogen umgesetzt)
+- [ ] SDB-Import von Lieferanten
 - [ ] Push-Erinnerungen für SDB-Prüfung
 
 ---
