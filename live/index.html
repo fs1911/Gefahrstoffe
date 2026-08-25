@@ -772,9 +772,69 @@ function zlMatrixHtml(){
     '<div class="zl-legend"><span><i style="background:#3a9b4e"></i>erlaubt</span><span><i style="background:#f2c200"></i>nur bedingt (SDB prüfen)</span><span><i style="background:#d5342b"></i>getrennt lagern</span><span>* zusätzliche Einzelfallprüfung</span></div>';
 }
 
+/* ---------- P-Sätze (Sicherheitshinweise, CLP-Verordnung EG 1272/2008) ---------- */
+const P_GROUPS=[
+ ['Allgemein',['P101','P102','P103']],
+ ['Prävention',['P201','P202','P210','P211','P220','P222','P223','P231','P232','P233','P234','P235','P240','P241','P242','P243','P244','P250','P251','P260','P261','P262','P263','P264','P270','P271','P272','P273','P280','P282','P283','P284']],
+ ['Reaktion',['P301','P302','P303','P304','P305','P306','P308','P310','P311','P312','P313','P314','P315','P320','P321','P330','P331','P332','P333','P334','P335','P336','P337','P338','P340','P342','P351','P352','P353','P360','P361','P362','P363','P364','P370','P371','P372','P373','P375','P376','P377','P378','P380','P381','P390','P391','P301+P310','P301+P312','P301+P330+P331','P302+P352','P303+P361+P353','P304+P340','P305+P351+P338','P306+P360','P308+P311','P332+P313','P333+P313','P337+P313','P342+P311','P370+P378']],
+ ['Lagerung',['P401','P402','P403','P404','P405','P406','P407','P410','P411','P412','P413','P420','P403+P233','P403+P235','P410+P403','P410+P412','P411+P235']],
+ ['Entsorgung',['P501','P502']]
+];
+const P_TEXT={
+ P101:'Ist ärztlicher Rat erforderlich, Verpackung oder Kennzeichnungsetikett bereithalten.',P102:'Darf nicht in die Hände von Kindern gelangen.',P103:'Vor Gebrauch Kennzeichnungsetikett lesen.',
+ P201:'Vor Gebrauch besondere Anweisungen einholen.',P202:'Vor Gebrauch alle Sicherheitshinweise lesen und verstehen.',P210:'Von Hitze, heißen Oberflächen, Funken, offenen Flammen und anderen Zündquellenarten fernhalten. Nicht rauchen.',P211:'Nicht gegen offene Flamme oder andere Zündquelle sprühen.',P220:'Von Kleidung und anderen brennbaren Materialien fernhalten.',P222:'Kontakt mit Luft nicht zulassen.',P223:'Kontakt mit Wasser vermeiden.',
+ P231:'Inhalt unter inertem Gas handhaben und aufbewahren.',P232:'Vor Feuchtigkeit schützen.',P233:'Behälter dicht verschlossen halten.',P234:'Nur im Originalbehälter aufbewahren.',P235:'Kühl halten.',
+ P240:'Behälter und zu befüllende Anlage erden und Potenzialausgleich durchführen.',P241:'Explosionsgeschützte elektrische Betriebsmittel / Lüftungsanlagen / Beleuchtung verwenden.',P242:'Funkenarmes Werkzeug verwenden.',P243:'Maßnahmen gegen elektrostatische Aufladungen treffen.',P244:'Ventile und Ausrüstungsteile öl- und fettfrei halten.',
+ P250:'Nicht schleifen / stoßen / reiben.',P251:'Nicht durchstechen oder verbrennen, auch nicht nach Gebrauch.',
+ P260:'Staub / Rauch / Gas / Nebel / Dampf / Aerosol nicht einatmen.',P261:'Einatmen von Staub / Rauch / Gas / Nebel / Dampf / Aerosol vermeiden.',P262:'Nicht in die Augen, auf die Haut oder auf die Kleidung gelangen lassen.',P263:'Kontakt während der Schwangerschaft und Stillzeit vermeiden.',P264:'Nach Gebrauch gründlich waschen.',
+ P270:'Bei Gebrauch nicht essen, trinken oder rauchen.',P271:'Nur im Freien oder in gut belüfteten Räumen verwenden.',P272:'Kontaminierte Arbeitskleidung nicht außerhalb des Arbeitsplatzes tragen.',P273:'Freisetzung in die Umwelt vermeiden.',
+ P280:'Schutzhandschuhe / Schutzkleidung / Augenschutz / Gesichtsschutz tragen.',P282:'Schutzhandschuhe mit Kälteisolierung und Gesichtsschild oder Augenschutz tragen.',P283:'Feuerbeständige oder flammhemmende Kleidung tragen.',P284:'Bei unzureichender Belüftung Atemschutz tragen.',
+ P301:'BEI VERSCHLUCKEN:',P302:'BEI BERÜHRUNG MIT DER HAUT:',P303:'BEI BERÜHRUNG MIT DER HAUT (oder dem Haar):',P304:'BEI EINATMEN:',P305:'BEI KONTAKT MIT DEN AUGEN:',P306:'BEI KONTAMINIERTER KLEIDUNG:',P308:'BEI Exposition oder falls betroffen:',
+ P310:'Sofort GIFTINFORMATIONSZENTRUM / Arzt anrufen.',P311:'GIFTINFORMATIONSZENTRUM / Arzt anrufen.',P312:'Bei Unwohlsein GIFTINFORMATIONSZENTRUM / Arzt anrufen.',P313:'Ärztlichen Rat einholen / ärztliche Hilfe hinzuziehen.',P314:'Bei Unwohlsein ärztlichen Rat einholen / ärztliche Hilfe hinzuziehen.',P315:'Sofort ärztlichen Rat einholen / ärztliche Hilfe hinzuziehen.',
+ P320:'Besondere Behandlung dringend erforderlich (siehe Angaben auf diesem Kennzeichnungsetikett).',P321:'Besondere Behandlung (siehe Angaben auf diesem Kennzeichnungsetikett).',P330:'Mund ausspülen.',P331:'KEIN Erbrechen herbeiführen.',
+ P332:'Bei Hautreizung:',P333:'Bei Hautreizung oder -ausschlag:',P334:'In kaltes Wasser tauchen / nassen Verband anlegen.',P335:'Lose Partikel von der Haut abbürsten.',P336:'Vereiste Bereiche mit lauwarmem Wasser auftauen. Betroffenen Bereich nicht reiben.',P337:'Bei anhaltender Augenreizung:',P338:'Eventuell vorhandene Kontaktlinsen nach Möglichkeit entfernen. Weiter ausspülen.',
+ P340:'Die betroffene Person an die frische Luft bringen und für ungehinderte Atmung sorgen.',P342:'Bei Symptomen der Atemwege:',P351:'Einige Minuten lang behutsam mit Wasser ausspülen.',P352:'Mit viel Wasser waschen.',P353:'Haut mit Wasser abwaschen / duschen.',
+ P360:'Kontaminierte Kleidung und Haut sofort mit viel Wasser abwaschen und danach Kleidung ausziehen.',P361:'Alle kontaminierten Kleidungsstücke sofort ausziehen.',P362:'Kontaminierte Kleidung ausziehen.',P363:'Kontaminierte Kleidung vor erneutem Tragen waschen.',P364:'Und vor erneutem Tragen waschen.',
+ P370:'Bei Brand:',P371:'Bei Großbrand und großen Mengen:',P372:'Explosionsgefahr bei Brand.',P373:'KEINE Brandbekämpfung, wenn das Feuer explosive Stoffe / Gemische / Erzeugnisse erreicht.',P375:'Wegen Explosionsgefahr Brand aus der Entfernung bekämpfen.',P376:'Undichtigkeit beseitigen, wenn gefahrlos möglich.',P377:'Brand von ausströmendem Gas: Nicht löschen, bis Undichtigkeit gefahrlos beseitigt werden kann.',P378:'Zum Löschen geeignetes Mittel verwenden.',
+ P380:'Umgebung räumen.',P381:'Alle Zündquellen entfernen, wenn gefahrlos möglich.',P390:'Verschüttete Mengen aufnehmen, um Materialschäden zu vermeiden.',P391:'Verschüttete Mengen aufnehmen.',
+ P401:'Gemäß den örtlichen Vorschriften aufbewahren.',P402:'An einem trockenen Ort aufbewahren.',P403:'An einem gut belüfteten Ort aufbewahren.',P404:'In einem geschlossenen Behälter aufbewahren.',P405:'Unter Verschluss aufbewahren.',P406:'In korrosionsbeständigem Behälter mit korrosionsbeständiger Auskleidung aufbewahren.',P407:'Luftspalt zwischen Stapeln / Paletten lassen.',
+ P410:'Vor Sonnenbestrahlung schützen.',P411:'Bei Temperaturen von nicht mehr als … °C aufbewahren.',P412:'Nicht Temperaturen über 50 °C aussetzen.',P413:'Schüttgut in großen Mengen bei Temperaturen von nicht mehr als … °C aufbewahren.',P420:'Getrennt aufbewahren.',
+ P501:'Inhalt / Behälter der Entsorgung gemäß den örtlichen Vorschriften zuführen.',P502:'Informationen zur Wiederverwendung / Wiederverwertung beim Hersteller / Lieferanten erfragen.',
+ 'P301+P310':'BEI VERSCHLUCKEN: Sofort GIFTINFORMATIONSZENTRUM / Arzt anrufen.',
+ 'P301+P312':'BEI VERSCHLUCKEN: Bei Unwohlsein GIFTINFORMATIONSZENTRUM / Arzt anrufen.',
+ 'P301+P330+P331':'BEI VERSCHLUCKEN: Mund ausspülen. KEIN Erbrechen herbeiführen.',
+ 'P302+P352':'BEI BERÜHRUNG MIT DER HAUT: Mit viel Wasser waschen.',
+ 'P303+P361+P353':'BEI BERÜHRUNG MIT DER HAUT (oder dem Haar): Alle kontaminierten Kleidungsstücke sofort ausziehen. Haut mit Wasser abwaschen / duschen.',
+ 'P304+P340':'BEI EINATMEN: Die betroffene Person an die frische Luft bringen und für ungehinderte Atmung sorgen.',
+ 'P305+P351+P338':'BEI KONTAKT MIT DEN AUGEN: Einige Minuten lang behutsam mit Wasser ausspülen. Eventuell vorhandene Kontaktlinsen nach Möglichkeit entfernen. Weiter ausspülen.',
+ 'P306+P360':'BEI KONTAMINIERTER KLEIDUNG: Kontaminierte Kleidung und Haut sofort mit viel Wasser abwaschen und danach Kleidung ausziehen.',
+ 'P308+P311':'BEI Exposition oder falls betroffen: GIFTINFORMATIONSZENTRUM / Arzt anrufen.',
+ 'P332+P313':'Bei Hautreizung: Ärztlichen Rat einholen / ärztliche Hilfe hinzuziehen.',
+ 'P333+P313':'Bei Hautreizung oder -ausschlag: Ärztlichen Rat einholen / ärztliche Hilfe hinzuziehen.',
+ 'P337+P313':'Bei anhaltender Augenreizung: Ärztlichen Rat einholen / ärztliche Hilfe hinzuziehen.',
+ 'P342+P311':'Bei Symptomen der Atemwege: GIFTINFORMATIONSZENTRUM / Arzt anrufen.',
+ 'P370+P378':'Bei Brand: Zum Löschen geeignetes Mittel verwenden.',
+ 'P403+P233':'An einem gut belüfteten Ort aufbewahren. Behälter dicht verschlossen halten.',
+ 'P403+P235':'An einem gut belüfteten Ort aufbewahren. Kühl halten.',
+ 'P410+P403':'Vor Sonnenbestrahlung schützen. An einem gut belüfteten Ort aufbewahren.',
+ 'P410+P412':'Vor Sonnenbestrahlung schützen. Nicht Temperaturen über 50 °C aussetzen.',
+ 'P411+P235':'Bei Temperaturen von nicht mehr als … °C aufbewahren. Kühl halten.'
+};
+function psListHtml(q){
+  q=(q||'').trim().toLowerCase();var out='';
+  P_GROUPS.forEach(function(grp){
+    var rows=grp[1].filter(function(code){if(!q)return true;return code.toLowerCase().indexOf(q)>=0||(P_TEXT[code]||'').toLowerCase().indexOf(q)>=0;});
+    if(!rows.length)return;
+    out+='<div class="hs-group">'+grp[0]+'</div>'+rows.map(function(code){
+      return '<div class="hs-item"><span class="hc" style="width:auto;min-width:46px;padding-right:6px">'+code+'</span><span class="ht">'+(P_TEXT[code]||'')+'</span></div>';}).join('');
+  });
+  return out||'<div class="empty" style="padding:16px">Kein P-Satz gefunden.</div>';
+}
+function wkFilterP(v){var el=document.getElementById('psList');if(el)el.innerHTML=psListHtml(v);}
+
 function scrWissen(){
   var tab=state.wkTab||'lk';
-  var tabs=[['lk','Lagerklassen'],['matrix','Zusammenlagern'],['hsaetze','H-Sätze'],['praxis','Praxis']];
+  var tabs=[['lk','Lagerklassen'],['matrix','Zusammenlagern'],['hsaetze','H-Sätze'],['psaetze','P-Sätze'],['praxis','Praxis']];
   var tabsHtml='<div class="wk-tabs">'+tabs.map(function(t){return '<button class="'+(tab===t[0]?'on':'')+'" data-action="wkTab" data-id="'+t[0]+'">'+t[1]+'</button>';}).join('')+'</div>';
   var body='';
   if(tab==='lk'){
@@ -793,6 +853,12 @@ function scrWissen(){
       '<input class="hs-search" type="search" placeholder="z. B. H225 oder «entzündbar»" oninput="wkFilter(this.value)">'+
       '<div id="hsList">'+hsListHtml('')+'</div>'+
       '<p class="src" style="margin-top:8px">Wortlaut nach CLP-Verordnung (EG 1272/2008). Weiterführend: SUVA, «H-Sätze».</p></div>';
+  }else if(tab==='psaetze'){
+    body='<div class="wk-card" style="padding-bottom:8px"><h3>P-Sätze (Sicherheitshinweise)</h3>'+
+      '<p>P-Sätze («Precautionary statements») empfehlen Massnahmen zu Prävention, Reaktion, Lagerung und Entsorgung. Sie stehen auf Etikett und Sicherheitsdatenblatt. Suchen nach Code oder Stichwort – auch kombinierte Sätze (z. B. P305+P351+P338).</p>'+
+      '<input class="hs-search" type="search" placeholder="z. B. P280 oder «Schutzhandschuhe»" oninput="wkFilterP(this.value)">'+
+      '<div id="psList">'+psListHtml('')+'</div>'+
+      '<p class="src" style="margin-top:8px">Wortlaut nach CLP-Verordnung (EG 1272/2008). Weiterführend: SUVA, «P-Sätze».</p></div>';
   }else{
     body='<div class="wk-card"><h3>Grundsätze der Lagerung</h3><ul>'+
       '<li>Schutzmassnahmen richten sich nach dem <b>gefährlichsten</b> gelagerten Stoff.</li>'+
@@ -806,7 +872,7 @@ function scrWissen(){
       '<p class="src">Quelle: Leitfaden «Lagerung gefährlicher Stoffe», 3. Aufl. 2018, Kap. 5.2 & Beilage 1.</p></div>'+
       '<div class="wk-card"><h3>Wichtiger Hinweis</h3><p>Diese Wissensdatenbank ist eine Zusammenfassung als betriebliche Unterstützung. Sie ersetzt weder den vollständigen Leitfaden noch die gesetzlichen Vorschriften, eine Gefährdungsbeurteilung oder die Beratung durch eine Fachperson.</p></div>';
   }
-  return '<div class="view"><h2 class="title">Wissen</h2><p class="sub">Lagerklassen, Zusammenlagerung und H-Sätze – kompakt nach dem Leitfaden 2018.</p>'+tabsHtml+body+disclaimer()+'</div>';
+  return '<div class="view"><h2 class="title">Wissen</h2><p class="sub">Lagerklassen, Zusammenlagerung, H- und P-Sätze – kompakt nach dem Leitfaden 2018.</p>'+tabsHtml+body+disclaimer()+'</div>';
 }
 function zlLocRow(e){
   var l=location_(e.loc);var red=e.cf.some(function(c){return c.rate==='r';});
