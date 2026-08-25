@@ -593,6 +593,16 @@
   /* Sekundär-Buttons/Chips mit dezentem Hover-Feedback auf Touch */
   .btn{transition:background .12s, box-shadow .12s}
   .btn:not(.ghost):not(.secondary){box-shadow:0 1px 2px rgba(10,85,64,.18)}
+  /* GHS-Piktogramm-Karten (Wissen) */
+  .pk-head{display:flex;align-items:center;gap:14px;padding-bottom:12px;margin-bottom:4px;border-bottom:1px solid var(--line-2)}
+  .pk-head .ghs.big{flex:none}
+  .pk-title b{font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--ink);display:block;line-height:1.2}
+  .pk-title small{font-family:var(--mono);font-size:11.5px;color:var(--ink-3);letter-spacing:.04em}
+  .pk-sec{margin-top:10px}
+  .pk-sec p{margin:5px 0 0;font-size:13px;line-height:1.55;color:var(--ink-2)}
+  .pk-lbl{display:inline-block;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;padding:2px 8px;border-radius:5px}
+  .pk-lbl.g{background:var(--danger-bg);color:var(--danger)}
+  .pk-lbl.m{background:var(--ok-bg);color:var(--ok)}
 </style>
 </head>
 <body>
@@ -871,9 +881,49 @@ function psListHtml(q){
 function wkFilterP(v){var el=document.getElementById('psList');if(el)el.innerHTML=psListHtml(v);}
 
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+/* ---------- GHS-Gefahrenpiktogramme (Gefährdung & Massnahmen) ---------- */
+const PIKTO=[
+ {k:'explosiv',code:'GHS01',name:'Explosiv',
+  g:'Kann explodieren durch Kontakt mit Flammen oder Funken, nach Schlägen, Reibung oder Erhitzung. Kann bei falscher Lagerung auch ohne Fremdeinwirkung zu Explosionen führen.',
+  m:'Nur von Fachleuten oder ausgebildetem Personal anzuwenden. Bei Lagerung und Anwendung Umgebungswärme beachten. Nach Gebrauch sorgfältig verschliessen.'},
+ {k:'flamm',code:'GHS02',name:'Entzündbar',
+  g:'Kann sich durch Kontakt mit Flammen und Funken, durch Schläge, Reibung, Erhitzung, Luft- oder Wasserkontakt entzünden. Kann sich bei falscher Lagerung auch ohne Fremdeinwirkung selbst entzünden.',
+  m:'Zündquellen vermeiden. Geeignete Löschmittel bereithalten. Auf die Lagertemperatur achten. Nach Gebrauch sorgfältig verschliessen.'},
+ {k:'oxid',code:'GHS03',name:'Brandfördernd (oxidierend)',
+  g:'Kann Brände verursachen oder beschleunigen. Setzt beim Brand Sauerstoff frei, lässt sich daher nur mit speziellen Mitteln löschen. Ein Ersticken der Flammen ist unmöglich.',
+  m:'Immer entfernt von brennbaren Materialien aufbewahren. Geeignete Löschpräparate bereithalten. Nach Gebrauch sorgfältig verschliessen.'},
+ {k:'druckgas',code:'GHS04',name:'Gase unter Druck',
+  g:'Enthält komprimierte, verflüssigte oder gelöste Gase. Geruchlose oder unsichtbare Gase können unbemerkt entweichen. Behälter mit komprimierten Gasen können durch Hitze oder Verformung zerplatzen.',
+  m:'Vor Sonneneinstrahlung schützen, an gut belüftetem Ort aufbewahren (nicht im Keller). Nach Gebrauch sorgfältig verschliessen.'},
+ {k:'aetz',code:'GHS05',name:'Korrosiv (ätzend)',
+  g:'Kann schwere Hautverätzungen und Augenschäden verursachen. Kann bestimmte Materialien auflösen (z. B. Textilien).',
+  m:'Beim Umgang geeigneten Augen- und Hautschutz verwenden. Nach Gebrauch sorgfältig verschliessen.'},
+ {k:'giftig',code:'GHS06',name:'Akute Toxizität (giftig)',
+  g:'Lebensgefahr bei Verschlucken, bei Hautkontakt, bei Einatmen. Kann giftig sein bei Verschlucken, bei Hautkontakt, bei Einatmen.',
+  m:'Mit grösster Vorsicht anwenden. Geeignete Schutzkleidung wie Handschuhe und geeigneten Atemschutz verwenden. Die Gefährdung Unbeteiligter ausschliessen. Nach Gebrauch sorgfältig verschliessen.'},
+ {k:'reiz',code:'GHS07',name:'Achtung – Gesundheitsgefahr',
+  g:'Kann die Haut irritieren, Allergien oder Ekzeme auslösen, Schläfrigkeit verursachen. Kann nach einmaligem Kontakt Vergiftungen auslösen. Kann die Ozonschicht schädigen.',
+  m:'Hautkontakt vermeiden. Nur die benötigte Menge verwenden. Nach Gebrauch sorgfältig verschliessen.'},
+ {k:'gesundheit',code:'GHS08',name:'Gesundheitsgefahr',
+  g:'Kann bestimmte Organe schädigen. Kann zu sofortiger und langfristiger massiver Beeinträchtigung der Gesundheit führen, Krebs erzeugen, das Erbgut, die Fruchtbarkeit, die Entwicklung oder die Organe schädigen.',
+  m:'Niemals einnehmen, jeden unnötigen Kontakt vermeiden, auch an langfristige Schädigungen denken. Nach Gebrauch sorgfältig verschliessen.'},
+ {k:'umwelt',code:'GHS09',name:'Gewässergefährdend',
+  g:'Kann Wasserorganismen wie Fische, Wasserinsekten und Wasserpflanzen in geringen Konzentrationen akut oder durch Langzeitwirkung schädigen.',
+  m:'Gefahren- und Sicherheitshinweise auf dem Etikett beachten sowie Gebrauchsanweisung / Dosiervorschriften befolgen. Produkte oder teilentleerte Gebinde an der Verkaufsstelle zurückgeben oder als Sonderabfall entsorgen.'}
+];
+function piktoHtml(){
+  return PIKTO.map(function(p){
+    return '<div class="wk-card pk-card">'+
+      '<div class="pk-head">'+ghsBadge(p.k,'big')+'<div class="pk-title"><b>'+p.name+'</b><small>'+p.code+'</small></div></div>'+
+      '<div class="pk-sec"><span class="pk-lbl g">Gefährdung</span><p>'+p.g+'</p></div>'+
+      '<div class="pk-sec"><span class="pk-lbl m">Massnahmen</span><p>'+p.m+'</p></div>'+
+    '</div>';
+  }).join('');
+}
+
 function scrWissen(){
   var tab=state.wkTab||'lk';
-  var tabs=[['lk','Lagerklassen'],['matrix','Zusammenlagern'],['hsaetze','H-Sätze'],['psaetze','P-Sätze'],['praxis','Praxis']];
+  var tabs=[['lk','Lagerklassen'],['pikto','Piktogramme'],['matrix','Zusammenlagern'],['hsaetze','H-Sätze'],['psaetze','P-Sätze'],['praxis','Praxis']];
   var tabsHtml='<div class="wk-tabs">'+tabs.map(function(t){return '<button class="'+(tab===t[0]?'on':'')+'" data-action="wkTab" data-id="'+t[0]+'">'+t[1]+'</button>';}).join('')+'</div>';
   var body='';
   if(tab==='lk'){
@@ -886,6 +936,8 @@ function scrWissen(){
       '<p>Die Matrix zeigt, welche Lagerklassen zusammen gelagert werden dürfen. Grundsatz: Die Zusammenlagerung von Stoffen, die <b>in gefährlicher Weise miteinander reagieren</b> können, ist nicht erlaubt. Schutzmassnahmen richten sich immer nach dem gefährlichsten Stoff.</p>'+
       zlMatrixHtml()+
       '<p class="src" style="margin-top:12px">Quelle: Leitfaden «Lagerung gefährlicher Stoffe», 3. Aufl. 2018, Beilage 2 («Generelle Zusammenlagerung»). Gefährliche Reaktionen können auch innerhalb derselben Lagerklasse auftreten – H-Sätze und SDB beachten.</p></div>';
+  }else if(tab==='pikto'){
+    body='<div class="wk-card"><h3>Gefahrenpiktogramme (GHS/CLP)</h3><p>Die neun GHS-Piktogramme signalisieren auf einen Blick, welche Gefahr von einem Stoff ausgeht. Hier je Symbol die <b>Gefährdung</b> und die wichtigsten <b>Schutzmassnahmen</b>.</p><p class="src">Quelle: «Gefahrenpiktogramme im Blick – Informieren. Erkennen. Handeln.» (Merkblatt 88353.d).</p></div>'+piktoHtml();
   }else if(tab==='hsaetze'){
     body='<div class="wk-card" style="padding-bottom:8px"><h3>H-Sätze (Gefahrenhinweise)</h3>'+
       '<p>H-Sätze («Hazard statements») beschreiben Art und Schweregrad der Gefahr eines Stoffs. Sie sind die Grundlage für die Einstufung in eine Lagerklasse. Suchen nach Code oder Stichwort.</p>'+
