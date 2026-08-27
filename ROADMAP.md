@@ -124,9 +124,9 @@ jetzt: ein **generisches, verkaufbares Mehrmandanten-SaaS** ohne Kundenbezug.
 
 ### Phase 3 – Kommerziell
 **Ziel:** Kunde kann selbst buchen & bezahlen.
-- [ ] Registrierung / Tenant-Onboarding (Self-Service)
-- [ ] Billing (Stripe), Abo-Logik nach Betriebsgrösse
+- [x] Registrierung / Tenant-Onboarding (Self-Service) — Signup + `create_org_and_profile`, Onboarding mit Planwahl & 14-Tage-Trial (2026-08-27)
 - [x] AGB, Datenschutzerklärung, Impressum (O4) — Rechtstexte-Seiten mit Musterangaben + Auftragsbearbeiter-Übersicht (2026-08-27)
+- 🟡 Billing (Stripe), Abo-Logik nach Betriebsgrösse — vorbereitet: Abo-Datenmodell (`0005_subscriptions.sql`), Abo-/Upgrade-Screen in der App, Edge-Function-Gerüst (`create-checkout-session`, `stripe-webhook`). **Offen:** Stripe-Konto + Keys/Produkte → Live-Schaltung (2026-08-27)
 
 ### Phase 4 – Go-to-Market
 **Ziel:** erste zahlende Referenzkunden.

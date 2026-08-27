@@ -202,6 +202,36 @@
   .legal-links a{color:var(--ink-3);font-weight:600}
   .legal-links a:hover{color:var(--accent)}
   .legal-links span{color:var(--ink-3);opacity:.45}
+  /* Abo / Plan */
+  .abo-status{display:flex;gap:10px;align-items:flex-start;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:13px;line-height:1.5}
+  .abo-status svg{width:18px;height:18px;color:var(--accent);flex:none;margin-top:1px}
+  .abo-status b{color:var(--ink)}
+  .plan-badge{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;color:var(--accent);background:var(--ok-bg);padding:2px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em}
+  .plan-card{position:relative;border:1px solid var(--line);border-radius:14px;padding:15px 15px 14px;margin-bottom:12px;background:var(--surface)}
+  .plan-card.cur{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+  .plan-card .pc-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+  .plan-card .pc-name{font-weight:700;font-size:16px;color:var(--ink)}
+  .plan-card .pc-price{font-weight:700;font-size:15px;color:var(--ink);white-space:nowrap;text-align:right}
+  .plan-card .pc-price small{font-weight:600;color:var(--ink-3);font-size:12px}
+  .plan-card .pc-note{font-size:11px;color:var(--ink-3);margin-top:2px}
+  .plan-card .pc-desc{font-size:12.5px;color:var(--ink-2);margin:7px 0 9px}
+  .plan-card ul.pc-feats{list-style:none;margin:0 0 13px;padding:0}
+  .plan-card ul.pc-feats li{font-size:12.5px;color:var(--ink-2);padding:3px 0 3px 21px;position:relative}
+  .plan-card ul.pc-feats li:before{content:"";position:absolute;left:3px;top:7px;width:9px;height:5px;border-left:2px solid var(--accent);border-bottom:2px solid var(--accent);transform:rotate(-45deg)}
+  .plan-tag{position:absolute;top:-9px;right:13px;background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;letter-spacing:.03em}
+  .plan-card .btn{width:100%;justify-content:center}
+  .plan-cur-btn{width:100%;justify-content:center;display:inline-flex;align-items:center;gap:6px;background:var(--ok-bg);color:var(--ok);border:0;border-radius:12px;padding:12px;font-weight:700;font-size:14px}
+  .plan-cur-btn svg{width:16px;height:16px;flex:none}
+  .plan-pick{display:flex;flex-direction:column;gap:8px;margin:2px 0 14px}
+  .plan-opt{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:11px;padding:11px 13px;cursor:pointer;background:var(--surface);text-align:left}
+  .plan-opt.sel{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+  .plan-opt .po-radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);flex:none;display:grid;place-items:center}
+  .plan-opt.sel .po-radio{border-color:var(--accent)}
+  .plan-opt.sel .po-radio:after{content:"";width:9px;height:9px;border-radius:50%;background:var(--accent)}
+  .plan-opt .po-txt{flex:1}
+  .plan-opt .po-txt b{font-size:14px;color:var(--ink)}
+  .plan-opt .po-txt small{display:block;font-size:11.5px;color:var(--ink-3)}
+  .plan-opt .po-price{font-size:13px;font-weight:700;color:var(--ink);white-space:nowrap}
 
   /* Felder/Filter */
   .field{display:flex;flex-direction:column;gap:5px;margin-bottom:11px}
@@ -645,6 +675,7 @@
 <script>
 /* ============================================================ StoffScan · Live (Supabase-Backend, Mandantentrennung via RLS) ============================================================ */
 const ICO={
+  card:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 9.5h19"/></svg>',
   loc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 21s-7-6.2-7-11a7 7 0 1114 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>',
   scan:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 7V5a1 1 0 011-1h2M20 7V5a1 1 0 00-1-1h-2M4 17v2a1 1 0 001 1h2M20 17v2a1 1 0 01-1 1h-2"/><path d="M3 12h18" stroke-width="2.1"/></svg>',
   search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>',
@@ -1062,6 +1093,45 @@ const SB_KEY='sb_publishable_dV_7ME6EOrTKbqHYlYlfcw_GV8e6XW_';
 const sbc=window.supabase.createClient(SB_URL,SB_KEY);
 const AUTH={user:null,profile:null};
 const LEGAL_HTML='<div class="legal-links"><a href="../impressum.html" target="_blank" rel="noopener">Impressum</a><span>·</span><a href="../datenschutz.html" target="_blank" rel="noopener">Datenschutz</a><span>·</span><a href="../agb.html" target="_blank" rel="noopener">AGB</a></div>';
+const PLANS=[
+ {id:'starter',name:'Starter',price:'CHF 49',per:'/Mt.',note:'pro Betrieb, jährlich abgerechnet',tag:'',desc:'Für den einzelnen Betrieb mit einem Standort.',feats:['1 Firma, mehrere Lagerorte','Scan-Erfassung & Stoffkarten','SDB-Ablage & QR-Etiketten','Bis 5 Benutzer']},
+ {id:'betrieb',name:'Betrieb',price:'CHF 149',per:'/Mt.',note:'pro Betrieb, jährlich abgerechnet',tag:'Am beliebtesten',desc:'Für Betriebe mit mehreren Standorten und Teams.',feats:['Alles aus Starter','Rollen & Rechte, Freigaben','Warnhinweise & Hinweis-Dashboard','Export CSV/PDF, Etiketten-Druck','Unbegrenzte Benutzer']},
+ {id:'gruppe',name:'Gruppe',price:'Auf Anfrage',per:'',note:'nach Anzahl Firmen & Standorten',tag:'',desc:'Für Firmengruppen mit mehreren Gesellschaften.',feats:['Alles aus Betrieb','Gruppenweite Gesamtsicht (IMS)','Zentraler Stoffstamm für alle Firmen','Onboarding & Support']}
+];
+const PLAN_BY={};PLANS.forEach(function(p){PLAN_BY[p.id]=p;});
+let ONB_PLAN='starter';
+function selectOnbPlan(id){ONB_PLAN=id;var ns=document.querySelectorAll('#onbPlans .plan-opt');for(var k=0;k<ns.length;k++){ns[k].classList.toggle('sel',ns[k].dataset.id===id);}}
+function planCardHtml(p,curPlan,btnHtml){
+  return '<div class="plan-card'+(p.id===curPlan?' cur':'')+'">'+(p.tag?'<span class="plan-tag">'+p.tag+'</span>':'')+
+    '<div class="pc-top"><span class="pc-name">'+p.name+'</span><span class="pc-price">'+p.price+(p.per?' <small>'+p.per+'</small>':'')+'</span></div>'+
+    '<div class="pc-note">'+p.note+'</div><div class="pc-desc">'+p.desc+'</div>'+
+    '<ul class="pc-feats">'+p.feats.map(function(f){return '<li>'+f+'</li>';}).join('')+'</ul>'+btnHtml+'</div>';
+}
+function modalAbo(){
+  var org=AUTH.org||{};var curPlan=org.plan||'starter';var status=org.subscription_status||'trialing';
+  var isAdmin=AUTH.profile&&(AUTH.profile.role==='firmenadmin'||AUTH.profile.role==='gruppenadmin');
+  var trialTxt='';
+  if(status==='trialing'&&org.trial_ends_at){var d=Math.ceil((new Date(org.trial_ends_at)-Date.now())/86400000);trialTxt=d>0?('Testphase – noch '+d+' Tag'+(d===1?'':'e')+'.'):'Testphase abgelaufen – bitte Plan buchen.';}
+  var statusLabel={trialing:'Testphase',active:'Aktiv',past_due:'Zahlung offen',canceled:'Gekündigt'}[status]||status;
+  var head='<div class="abo-status">'+ICO.info+'<div>Aktuelles Abo: <b>'+(PLAN_BY[curPlan]?PLAN_BY[curPlan].name:curPlan)+'</b> <span class="plan-badge">'+statusLabel+'</span>'+(trialTxt?'<br>'+trialTxt:'')+(isAdmin?'':'<br>Nur Admins können den Plan ändern.')+'</div></div>';
+  var cards=PLANS.map(function(p){
+    var btn;
+    if(p.id===curPlan){btn='<button class="plan-cur-btn">'+ICO.ok+' Aktueller Plan</button>';}
+    else if(!isAdmin){btn='';}
+    else if(p.id==='gruppe'){btn='<a class="btn secondary" href="../index.html#kontakt" target="_blank" rel="noopener">Kontakt aufnehmen</a>';}
+    else{btn='<button class="btn" data-action="choosePlan" data-id="'+p.id+'">Auf '+p.name+' wechseln</button>';}
+    return planCardHtml(p,curPlan,btn);
+  }).join('');
+  openModal('Abo &amp; Plan',head+cards+'<div style="font-size:11.5px;color:var(--ink-3);margin-top:2px">Online-Bezahlung via Stripe wird vorbereitet. Bis dahin wird der gewählte Plan vorgemerkt; die Verrechnung erfolgt nach Absprache.</div>');
+}
+async function choosePlan(plan){
+  if(!(AUTH.profile&&(AUTH.profile.role==='firmenadmin'||AUTH.profile.role==='gruppenadmin'))){toast('Nur Admins können den Plan ändern.',false);return;}
+  try{var r=await sbc.functions.invoke('create-checkout-session',{body:{plan:plan}});if(!r.error&&r.data&&r.data.url){location.href=r.data.url;return;}}catch(e){}
+  var res=await sbc.rpc('set_org_plan',{p_plan:plan});
+  if(res.error){toast(res.error.message,false);return;}
+  if(AUTH.org)AUTH.org.plan=plan;
+  closeModal();toast('Plan «'+PLAN_BY[plan].name+'» vorgemerkt.');
+}
 function orgId(){return AUTH.profile&&AUTH.profile.organization_id;}
 const ROLE_DB2UI={viewer:'Viewer',mitarbeitend:'Mitarbeitend',lagerverantwortlich:'Lagerverantwortlich',firmenadmin:'Firmenadmin',gruppenadmin:'Gruppenadmin / IMS'};
 const ROLE_UI2DB={'Viewer':'viewer','Mitarbeitend':'mitarbeitend','Lagerverantwortlich':'lagerverantwortlich','Firmenadmin':'firmenadmin','Gruppenadmin / IMS':'gruppenadmin'};
@@ -1078,7 +1148,7 @@ function sdbFrom(rows){ // neuestes SDB je Stoff -> {status,rev,link,path,url}
 function fmtTs(iso){const n=new Date(iso);return ('0'+n.getDate()).slice(-2)+'.'+('0'+(n.getMonth()+1)).slice(-2)+'. '+('0'+n.getHours()).slice(-2)+':'+('0'+n.getMinutes()).slice(-2);}
 
 async function loadDB(){
-  const [c,l,s,sd,i,p,h,iv]=await Promise.all([
+  const [c,l,s,sd,i,p,h,iv,og]=await Promise.all([
     sbc.from('companies').select('*').order('name'),
     sbc.from('storage_locations').select('*').order('name'),
     sbc.from('substances').select('*').order('produktname'),
@@ -1086,8 +1156,10 @@ async function loadDB(){
     sbc.from('substance_instances').select('*').order('created_at',{ascending:false}),
     sbc.from('profiles').select('*'),
     sbc.from('audit_logs').select('*').eq('entity_typ','history').order('created_at',{ascending:false}).limit(50),
-    sbc.from('invitations').select('*').is('accepted_at',null).order('created_at',{ascending:false})
+    sbc.from('invitations').select('*').is('accepted_at',null).order('created_at',{ascending:false}),
+    sbc.from('organizations').select('*').eq('id',orgId()).maybeSingle()
   ]);
+  AUTH.org=(og&&og.data)||AUTH.org||null;
   const err=c.error||l.error||s.error||sd.error||i.error||p.error||h.error;
   if(err){toast('Laden: '+err.message,false);}
   DB.companies=(c.data||[]).map(x=>({id:x.id,name:x.name,short:x.short||x.name,group:!!x.is_group}));
@@ -1495,6 +1567,7 @@ async function uploadSdbFromModal(subId){const inp=document.getElementById('sdbF
 function modalSwitchUser(){
   const u=curUser();const em=(AUTH.user&&AUTH.user.email)||'';
   openModal('Konto','<div class="notice info" style="margin-bottom:14px">'+ICO.user+'<div>Angemeldet als <b>'+u.name+'</b><br>'+em+' · Rolle: '+u.role+'</div></div>'+
+    '<button class="btn secondary" data-action="openAbo" style="width:100%;margin-bottom:10px">'+ICO.card+' Abo &amp; Plan</button>'+
     '<div class="btn-row" style="margin-top:0"><button class="btn ghost" data-action="closeModal">Schliessen</button><button class="btn danger" data-action="logout">'+ICO.user+' Abmelden</button></div>'+
     '<div style="margin-top:16px">'+LEGAL_HTML+'</div>');
 }
@@ -1571,6 +1644,9 @@ document.addEventListener('click',e=>{
     case 'reScanGo':reScanGo();break;
     case 'reScanCam':closeModal();goTo('scanArt',{reset:true,nav:'scan'});break;
     case 'switchUser':modalSwitchUser();break;
+    case 'openAbo':modalAbo();break;
+    case 'choosePlan':choosePlan(id);break;
+    case 'pickPlan':selectOnbPlan(id);break;
     case 'setUser':{state.currentUser=id;closeModal();const adm=isAdmin();if(!adm&&(state.view==='admin')){goTo('start',{reset:true,nav:'start'});}else{toast('Angemeldet als '+curUser().name);render();}break;}
     case 'simScanQr':{closeModal();const i=instance(id);state.activeLoc=i.loc;addHistory('Artikel-QR gescannt',substance(i.sub).name+' · '+location_(i.loc).name,location_(i.loc).company);toast('Stoffkarte geöffnet');goTo('detail',{sub:i.sub,inst:id,reset:true,nav:'start'});break;}
     case 'printQr':toast('Etikette an Drucker gesendet (simuliert)');break;
@@ -1713,11 +1789,14 @@ function renderOnboarding(){overlay('<div style="max-width:390px;margin:0 auto;p
   '<div class="card" style="padding:18px"><div id="authNote"></div>'+
   '<div class="field"><label>Organisation / Firma</label><input id="obOrg" placeholder="Muster Bau AG"></div>'+
   '<div class="field"><label>Dein Name</label><input id="obName" placeholder="Vorname Nachname"></div>'+
+  '<div class="field"><label>Plan</label><div class="plan-pick" id="onbPlans">'+PLANS.map(function(p){return '<button type="button" class="plan-opt'+(p.id===ONB_PLAN?' sel':'')+'" data-action="pickPlan" data-id="'+p.id+'"><span class="po-radio"></span><span class="po-txt"><b>'+p.name+'</b><small>'+p.desc+'</small></span><span class="po-price">'+p.price+(p.per?' '+p.per:'')+'</span></button>';}).join('')+'</div><div style="font-size:11.5px;color:var(--ink-3);margin-top:-6px">14 Tage gratis testen · jederzeit änderbar · Bezahlung später.</div></div>'+
   '<button class="btn" data-action="authCreateOrg">Organisation anlegen</button><div style="height:9px"></div>'+
   '<button class="btn ghost" data-action="logout">Abmelden</button></div></div>');}
 async function doLogin(){const em=(document.getElementById('aEmail').value||'').trim(),pw=document.getElementById('aPw').value||'';if(!em||!pw){authNote('E-Mail und Passwort eingeben.','danger');return;}authNote('Anmelden…');const {error}=await sbc.auth.signInWithPassword({email:em,password:pw});if(error){authNote(error.message,'danger');return;}initApp();}
 async function doSignup(){const em=(document.getElementById('aEmail').value||'').trim(),pw=document.getElementById('aPw').value||'';if(!em||pw.length<6){authNote('E-Mail angeben und Passwort mit mind. 6 Zeichen.','danger');return;}authNote('Konto wird erstellt…');const {data,error}=await sbc.auth.signUp({email:em,password:pw});if(error){authNote(error.message,'danger');return;}if(data.session){initApp();}else{authNote('Konto erstellt. Bitte E-Mail bestätigen und dann anmelden. (Für schnelle Tests: E-Mail-Bestätigung in Supabase → Auth deaktivieren.)','ok');}}
-async function doCreateOrg(){const on=(document.getElementById('obOrg').value||'').trim(),nm=(document.getElementById('obName').value||'').trim();if(!on){authNote('Organisationsname fehlt.','danger');return;}authNote('Wird angelegt…');const {error}=await sbc.rpc('create_org_and_profile',{p_org_name:on,p_user_name:nm});if(error){authNote(error.message,'danger');return;}initApp();}
+async function doCreateOrg(){const on=(document.getElementById('obOrg').value||'').trim(),nm=(document.getElementById('obName').value||'').trim();if(!on){authNote('Organisationsname fehlt.','danger');return;}authNote('Wird angelegt…');const {error}=await sbc.rpc('create_org_and_profile',{p_org_name:on,p_user_name:nm});if(error){authNote(error.message,'danger');return;}
+  if(ONB_PLAN&&ONB_PLAN!=='starter'){try{await sbc.rpc('set_org_plan',{p_plan:ONB_PLAN});}catch(e){}}
+  initApp();}
 /* ---------- Export & Druck (Phase 2) ---------- */
 function expScope(){return state.adminCompany||'';}
 function expInsts(){const fc=expScope();return DB.instances.filter(i=>{const l=location_(i.loc);return !fc||(l&&l.company===fc);});}
@@ -1803,6 +1882,9 @@ async function initApp(){
   try{await loadDB();}catch(e){toast('Daten laden fehlgeschlagen: '+(e&&e.message||e),false);}
   clearOverlay();
   render();
+  const qs=location.search||'';
+  if(qs.indexOf('abo=success')>-1){toast('Danke! Dein Abo ist aktiv.');history.replaceState(null,'',location.pathname);}
+  else if(qs.indexOf('abo=cancel')>-1){toast('Bezahlung abgebrochen – kein Plan gebucht.',false);history.replaceState(null,'',location.pathname);}
   const hsh=location.hash||'';if(hsh.indexOf('#open=')===0){setTimeout(()=>routeCode(hsh),80);}
 }
 initApp();

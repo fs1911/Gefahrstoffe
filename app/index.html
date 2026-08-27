@@ -201,6 +201,36 @@
   .legal-links a{color:var(--ink-3);font-weight:600}
   .legal-links a:hover{color:var(--accent)}
   .legal-links span{color:var(--ink-3);opacity:.45}
+  /* Abo / Plan */
+  .abo-status{display:flex;gap:10px;align-items:flex-start;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:13px;line-height:1.5}
+  .abo-status svg{width:18px;height:18px;color:var(--accent);flex:none;margin-top:1px}
+  .abo-status b{color:var(--ink)}
+  .plan-badge{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;color:var(--accent);background:var(--ok-bg);padding:2px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em}
+  .plan-card{position:relative;border:1px solid var(--line);border-radius:14px;padding:15px 15px 14px;margin-bottom:12px;background:var(--surface)}
+  .plan-card.cur{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+  .plan-card .pc-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+  .plan-card .pc-name{font-weight:700;font-size:16px;color:var(--ink)}
+  .plan-card .pc-price{font-weight:700;font-size:15px;color:var(--ink);white-space:nowrap;text-align:right}
+  .plan-card .pc-price small{font-weight:600;color:var(--ink-3);font-size:12px}
+  .plan-card .pc-note{font-size:11px;color:var(--ink-3);margin-top:2px}
+  .plan-card .pc-desc{font-size:12.5px;color:var(--ink-2);margin:7px 0 9px}
+  .plan-card ul.pc-feats{list-style:none;margin:0 0 13px;padding:0}
+  .plan-card ul.pc-feats li{font-size:12.5px;color:var(--ink-2);padding:3px 0 3px 21px;position:relative}
+  .plan-card ul.pc-feats li:before{content:"";position:absolute;left:3px;top:7px;width:9px;height:5px;border-left:2px solid var(--accent);border-bottom:2px solid var(--accent);transform:rotate(-45deg)}
+  .plan-tag{position:absolute;top:-9px;right:13px;background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;letter-spacing:.03em}
+  .plan-card .btn{width:100%;justify-content:center}
+  .plan-cur-btn{width:100%;justify-content:center;display:inline-flex;align-items:center;gap:6px;background:var(--ok-bg);color:var(--ok);border:0;border-radius:12px;padding:12px;font-weight:700;font-size:14px}
+  .plan-cur-btn svg{width:16px;height:16px;flex:none}
+  .plan-pick{display:flex;flex-direction:column;gap:8px;margin:2px 0 14px}
+  .plan-opt{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:11px;padding:11px 13px;cursor:pointer;background:var(--surface);text-align:left}
+  .plan-opt.sel{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+  .plan-opt .po-radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);flex:none;display:grid;place-items:center}
+  .plan-opt.sel .po-radio{border-color:var(--accent)}
+  .plan-opt.sel .po-radio:after{content:"";width:9px;height:9px;border-radius:50%;background:var(--accent)}
+  .plan-opt .po-txt{flex:1}
+  .plan-opt .po-txt b{font-size:14px;color:var(--ink)}
+  .plan-opt .po-txt small{display:block;font-size:11.5px;color:var(--ink-3)}
+  .plan-opt .po-price{font-size:13px;font-weight:700;color:var(--ink);white-space:nowrap}
 
   /* Felder/Filter */
   .field{display:flex;flex-direction:column;gap:5px;margin-bottom:11px}
@@ -644,6 +674,7 @@
 <script>
 /* ============================================================ StoffScan · Prototyp · Mock-Daten ============================================================ */
 const ICO={
+  card:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 9.5h19"/></svg>',
   loc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 21s-7-6.2-7-11a7 7 0 1114 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>',
   scan:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 7V5a1 1 0 011-1h2M20 7V5a1 1 0 00-1-1h-2M4 17v2a1 1 0 001 1h2M20 17v2a1 1 0 01-1 1h-2"/><path d="M3 12h18" stroke-width="2.1"/></svg>',
   search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>',
@@ -1138,7 +1169,7 @@ function signalBadge(s){return '<span class="badge b-signal '+(s.signal==='Gefah
 function firmTag(cid,alt){return '<span class="firmtag '+(alt?'alt':'')+'">'+company(cid).short+'</span>';}
 
 /* ---------- State / Router ---------- */
-const state={view:'start',stack:[],activeLoc:null,nav:'start',currentUser:'u1',scanPrefill:null,
+const state={view:'start',stack:[],activeLoc:null,nav:'start',currentUser:'u1',scanPrefill:null,plan:'starter',
   filter:{company:'',loc:'',status:'',hb:false},
   curSub:null,curInst:null,curLoc:null,adminTab:'hb',adminCompany:'',adminHbView:'all'};
 function curUser(){return DB.users.find(u=>u.id===state.currentUser)||DB.users[0];}
@@ -1168,6 +1199,31 @@ function renderLocband(){
 }
 function renderHeadSlot(){const el=document.getElementById('headSlot');if(!el)return;el.innerHTML=(state.view!=='start')?'<button class="head-cap" data-action="capture">'+ICO.plus+' Gefahrstoff aufnehmen</button>':'';}
 const LEGAL_HTML='<div class="legal-links"><a href="../impressum.html" target="_blank" rel="noopener">Impressum</a><span>·</span><a href="../datenschutz.html" target="_blank" rel="noopener">Datenschutz</a><span>·</span><a href="../agb.html" target="_blank" rel="noopener">AGB</a></div>';
+const PLANS=[
+ {id:'starter',name:'Starter',price:'CHF 49',per:'/Mt.',note:'pro Betrieb, jährlich abgerechnet',tag:'',desc:'Für den einzelnen Betrieb mit einem Standort.',feats:['1 Firma, mehrere Lagerorte','Scan-Erfassung & Stoffkarten','SDB-Ablage & QR-Etiketten','Bis 5 Benutzer']},
+ {id:'betrieb',name:'Betrieb',price:'CHF 149',per:'/Mt.',note:'pro Betrieb, jährlich abgerechnet',tag:'Am beliebtesten',desc:'Für Betriebe mit mehreren Standorten und Teams.',feats:['Alles aus Starter','Rollen & Rechte, Freigaben','Warnhinweise & Hinweis-Dashboard','Export CSV/PDF, Etiketten-Druck','Unbegrenzte Benutzer']},
+ {id:'gruppe',name:'Gruppe',price:'Auf Anfrage',per:'',note:'nach Anzahl Firmen & Standorten',tag:'',desc:'Für Firmengruppen mit mehreren Gesellschaften.',feats:['Alles aus Betrieb','Gruppenweite Gesamtsicht (IMS)','Zentraler Stoffstamm für alle Firmen','Onboarding & Support']}
+];
+const PLAN_BY={};PLANS.forEach(function(p){PLAN_BY[p.id]=p;});
+function planCardHtml(p,curPlan,btnHtml){
+  return '<div class="plan-card'+(p.id===curPlan?' cur':'')+'">'+(p.tag?'<span class="plan-tag">'+p.tag+'</span>':'')+
+    '<div class="pc-top"><span class="pc-name">'+p.name+'</span><span class="pc-price">'+p.price+(p.per?' <small>'+p.per+'</small>':'')+'</span></div>'+
+    '<div class="pc-note">'+p.note+'</div><div class="pc-desc">'+p.desc+'</div>'+
+    '<ul class="pc-feats">'+p.feats.map(function(f){return '<li>'+f+'</li>';}).join('')+'</ul>'+btnHtml+'</div>';
+}
+function modalAbo(){
+  var curPlan=state.plan||'starter';
+  var head='<div class="abo-status">'+ICO.info+'<div>Aktuelles Abo (Demo): <b>'+PLAN_BY[curPlan].name+'</b> <span class="plan-badge">Testphase</span><br>In der echten App wählt der Admin hier den Plan; die Bezahlung läuft über Stripe.</div></div>';
+  var cards=PLANS.map(function(p){
+    var btn;
+    if(p.id===curPlan){btn='<button class="plan-cur-btn">'+ICO.ok+' Aktueller Plan</button>';}
+    else if(p.id==='gruppe'){btn='<a class="btn secondary" href="../index.html#kontakt" target="_blank" rel="noopener">Kontakt aufnehmen</a>';}
+    else{btn='<button class="btn" data-action="choosePlan" data-id="'+p.id+'">Auf '+p.name+' wechseln</button>';}
+    return planCardHtml(p,curPlan,btn);
+  }).join('');
+  openModal('Abo &amp; Plan (Demo)',head+cards);
+}
+function choosePlan(plan){state.plan=plan;closeModal();toast('Plan «'+PLAN_BY[plan].name+'» gewählt (Demo).');}
 const NAVITEMS=[['start','start',ICO.home,'Dashboard'],['bestand','bestand',ICO.list,'Bestände'],['firmen','firmen',ICO.firma,'Firmen'],['wissen','wissen',ICO.doc,'Wissen'],['admin','admin',ICO.admin,'Verwaltung']];
 function renderNav(){
   const admin=isAdmin();
@@ -1543,7 +1599,8 @@ function modalSwitchUser(){
   const rows=DB.users.map(u=>{const c=company(u.company);const adm=(u.role==='Firmenadmin'||u.role==='Gruppenadmin / IMS');const on=u.id===state.currentUser;
     return '<button class="pick" data-action="setUser" data-id="'+u.id+'" style="'+(on?'border-color:var(--accent);background:var(--surface-2)':'')+'"><span class="qr-ico">'+ICO.user+'</span><span class="pm"><b>'+u.name+(on?' ✓':'')+'</b><small>'+u.role+(adm?' · Admin':'')+(c?' · '+c.short:'')+'</small></span></button>';}).join('');
   openModal('Benutzer wechseln (Demo)','<div class="notice info" style="margin-bottom:12px">'+ICO.info+'<div>In der echten App ergibt sich die Rolle aus dem Konto der Person – ohne separaten Login. Hier zum Ausprobieren: Wähle eine Person; nur Admins sehen die Verwaltung.</div></div>'+rows+
-    '<div style="margin-top:16px">'+LEGAL_HTML+'</div>');
+    '<button class="btn secondary" data-action="openAbo" style="width:100%;margin-top:14px">'+ICO.card+' Abo &amp; Plan (Demo)</button>'+
+    '<div style="margin-top:14px">'+LEGAL_HTML+'</div>');
 }
 
 function modalAddUser(){
@@ -1618,6 +1675,8 @@ document.addEventListener('click',e=>{
     case 'reScanGo':reScanGo();break;
     case 'reScanCam':closeModal();goTo('scanArt',{reset:true,nav:'scan'});break;
     case 'switchUser':modalSwitchUser();break;
+    case 'openAbo':modalAbo();break;
+    case 'choosePlan':choosePlan(id);break;
     case 'setUser':{state.currentUser=id;closeModal();const adm=isAdmin();if(!adm&&(state.view==='admin')){goTo('start',{reset:true,nav:'start'});}else{toast('Angemeldet als '+curUser().name);render();}break;}
     case 'simScanQr':{closeModal();const i=instance(id);state.activeLoc=i.loc;addHistory('Artikel-QR gescannt',substance(i.sub).name+' · '+location_(i.loc).name,location_(i.loc).company);toast('Stoffkarte geöffnet');goTo('detail',{sub:i.sub,inst:id,reset:true,nav:'start'});break;}
     case 'printQr':toast('Etikette an Drucker gesendet (simuliert)');break;
