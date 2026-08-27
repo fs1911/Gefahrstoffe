@@ -126,7 +126,7 @@ jetzt: ein **generisches, verkaufbares Mehrmandanten-SaaS** ohne Kundenbezug.
 **Ziel:** Kunde kann selbst buchen & bezahlen.
 - [ ] Registrierung / Tenant-Onboarding (Self-Service)
 - [ ] Billing (Stripe), Abo-Logik nach Betriebsgrösse
-- [ ] AGB, Datenschutzerklärung, Impressum (O4)
+- [x] AGB, Datenschutzerklärung, Impressum (O4) — Rechtstexte-Seiten mit Musterangaben + Auftragsbearbeiter-Übersicht (2026-08-27)
 
 ### Phase 4 – Go-to-Market
 **Ziel:** erste zahlende Referenzkunden.
