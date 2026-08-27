@@ -198,6 +198,10 @@
   .notice.ok{background:var(--ok-bg);border:1px solid var(--ok-line);color:#13452c}
   .notice b{font-weight:600}
   .disclaimer{font-size:11.5px;color:var(--ink-3);text-align:center;line-height:1.5;padding:18px 8px 2px}
+  .legal-links{display:flex;flex-wrap:wrap;gap:5px 8px;justify-content:center;align-items:center;font-size:11.5px}
+  .legal-links a{color:var(--ink-3);font-weight:600}
+  .legal-links a:hover{color:var(--accent)}
+  .legal-links span{color:var(--ink-3);opacity:.45}
 
   /* Felder/Filter */
   .field{display:flex;flex-direction:column;gap:5px;margin-bottom:11px}
@@ -1057,6 +1061,7 @@ const SB_URL='https://pvzjxzunhhbgfimirbkl.supabase.co';
 const SB_KEY='sb_publishable_dV_7ME6EOrTKbqHYlYlfcw_GV8e6XW_';
 const sbc=window.supabase.createClient(SB_URL,SB_KEY);
 const AUTH={user:null,profile:null};
+const LEGAL_HTML='<div class="legal-links"><a href="../impressum.html" target="_blank" rel="noopener">Impressum</a><span>·</span><a href="../datenschutz.html" target="_blank" rel="noopener">Datenschutz</a><span>·</span><a href="../agb.html" target="_blank" rel="noopener">AGB</a></div>';
 function orgId(){return AUTH.profile&&AUTH.profile.organization_id;}
 const ROLE_DB2UI={viewer:'Viewer',mitarbeitend:'Mitarbeitend',lagerverantwortlich:'Lagerverantwortlich',firmenadmin:'Firmenadmin',gruppenadmin:'Gruppenadmin / IMS'};
 const ROLE_UI2DB={'Viewer':'viewer','Mitarbeitend':'mitarbeitend','Lagerverantwortlich':'lagerverantwortlich','Firmenadmin':'firmenadmin','Gruppenadmin / IMS':'gruppenadmin'};
@@ -1162,7 +1167,8 @@ function renderNav(){
     '<button class="sb-item" data-action="reScan">'+ICO.qr+' Artikel-QR öffnen</button>'+
     '<div class="sb-sep"></div>'+
     '<button class="sb-user" data-action="switchUser">'+ICO.user+'<span class="su-txt"><b>'+u.name+'</b><small>'+u.role+(admin?' · Admin':'')+'</small></span></button>'+
-    '<div class="sb-foot">Angemeldet (Demo) · Rolle bestimmt den Zugriff. Verwaltung nur für Admin sichtbar.</div>';}
+    '<div class="sb-foot">Angemeldet · Rolle bestimmt den Zugriff. Verwaltung nur für Admin sichtbar.</div>'+
+    '<div style="padding:8px 8px 2px">'+LEGAL_HTML+'</div>';}
 }
 
 /* ============================================================ SCREENS ============================================================ */
@@ -1489,7 +1495,8 @@ async function uploadSdbFromModal(subId){const inp=document.getElementById('sdbF
 function modalSwitchUser(){
   const u=curUser();const em=(AUTH.user&&AUTH.user.email)||'';
   openModal('Konto','<div class="notice info" style="margin-bottom:14px">'+ICO.user+'<div>Angemeldet als <b>'+u.name+'</b><br>'+em+' · Rolle: '+u.role+'</div></div>'+
-    '<div class="btn-row" style="margin-top:0"><button class="btn ghost" data-action="closeModal">Schliessen</button><button class="btn danger" data-action="logout">'+ICO.user+' Abmelden</button></div>');
+    '<div class="btn-row" style="margin-top:0"><button class="btn ghost" data-action="closeModal">Schliessen</button><button class="btn danger" data-action="logout">'+ICO.user+' Abmelden</button></div>'+
+    '<div style="margin-top:16px">'+LEGAL_HTML+'</div>');
 }
 
 function modalAddUser(){
@@ -1699,7 +1706,8 @@ function renderLogin(){overlay('<div style="max-width:390px;margin:0 auto;paddin
   '<div class="field"><label>Passwort</label><input id="aPw" type="password" autocomplete="current-password" placeholder="••••••••"></div>'+
   '<button class="btn" data-action="authLogin">Anmelden</button><div style="height:9px"></div>'+
   '<button class="btn secondary" data-action="authSignup">Neues Konto erstellen</button></div>'+
-  '<div class="disclaimer" style="text-align:center">Betriebliche Unterstützung – ersetzt keine Beurteilung vor Ort.<br><a href="../app/" style="color:var(--accent)">Zur Login-freien Demo</a></div></div>');}
+  '<div class="disclaimer" style="text-align:center">Betriebliche Unterstützung – ersetzt keine Beurteilung vor Ort.<br><a href="../app/" style="color:var(--accent)">Zur Login-freien Demo</a></div>'+
+  '<div style="margin-top:12px">'+LEGAL_HTML+'</div></div>');}
 function renderOnboarding(){overlay('<div style="max-width:390px;margin:0 auto;padding:44px 20px">'+
   '<h2 class="title">Willkommen bei StoffScan</h2><p class="sub">Erstelle deine Organisation. Du wirst automatisch Gruppen-/IMS-Admin.</p>'+
   '<div class="card" style="padding:18px"><div id="authNote"></div>'+
