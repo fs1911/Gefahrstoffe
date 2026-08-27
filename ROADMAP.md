@@ -143,6 +143,70 @@ jetzt: ein **generisches, verkaufbares Mehrmandanten-SaaS** ohne Kundenbezug.
 
 ---
 
+## Phase «Differenzierung» – der Wow-Effekt
+
+**Leitsatz:** *Erfasst deine Gefahrstoffe in Sekunden, schreibt deine
+Pflicht-Dokumente selbst und macht dich mit einem Klick kontrollbereit – in
+jeder Sprache deiner Leute.* Ein Produkt, eine Aussage – kein EHS-Bauchladen.
+Jedes Feature muss drei Tests bestehen: (1) zahlt auf die Kernaussage ein,
+(2) der normale Nutzer (Polier/Chef) braucht es, (3) ein Handgriff, kein
+eigenes Modul. Bewertung 1–10 nach Wow × KMU-Nutzen × gesetzliche Relevanz.
+Parallel zu jedem Block wird die **Marketing-Seite interaktiv** erweitert,
+damit Kunden den Nutzen sehen (Ziel: Wow-Demo direkt auf der Website).
+
+**Baureihenfolge (von oben nach unten, immer eins nach dem anderen):**
+
+1. [x] **SDB → Stoffkarte füllt sich per KI selbst** (10) — Demo-Simulation + Live-Edge-Function `parse-sdb` (Claude) + interaktive Marketing-Demo (2026-08-27). **Offen:** `ANTHROPIC_API_KEY` setzen → Live-Schaltung
+2. [ ] **Betriebsanweisung auf Knopfdruck** (10) — aus H-/P-Sätzen, druck-/aushängefertig
+3. [ ] **Barcode → crowdsourced Schweizer Katalog** (9) — wird mit jedem Betrieb schlauer
+4. [x] Zusammenlagerungs-Warnung (9) — *bereits gebaut*
+5. [ ] **Instruktionsnachweis per QR** (9) — „gelesen" → Schulungsnachweis
+6. [ ] **Mehrsprachige Betriebsanweisung & Instruktion** (9) — DE/FR/IT (+PT/SQ/EN)
+7. [ ] **„Frag StoffScan" – KI-Chat auf eigenen Daten** (9)
+8. [ ] **„Kontrolle-morgen"-Knopf** (9) — komplettes prüffertiges Dossier als PDF
+9. [ ] **Gefährdungsbeurteilung generieren** (8)
+10. [ ] **Feuerwehr-Einsatzkarte pro Lager** (8) — QR am Eingang, auch für die Feuerwehr
+11. [ ] **Notfall-Modus** (8) — offline: Löschmittel, Erste Hilfe, „was tun bei Austritt"
+12. [ ] **Proaktiver Compliance-Lotse** (8)
+13. [ ] **Branchen-Starterkataloge** (8) — Maler/Sanitär/Werkhof, nicht bei null starten
+14. [ ] **Offline auf der Baustelle** (8) — PWA
+15. [ ] **Compliance-Ampel je Standort** (8) — der Chef-Hook
+16. [ ] **Beschäftigungsbeschränkungen** (7) — Schwangere/Stillende/Jugendliche, auto abgeleitet
+17. [ ] **Mengenschwellen-Frühwarnung (StFV)** (7)
+18. [ ] **PSA punktgenau je Stoff** (7) — welcher Handschuh-/Filtertyp
+19. [ ] **GHS-Eigenetikett beim Umfüllen** (7)
+20. [ ] **Lieferschein/Rechnung (PDF) → Bestand** (7)
+21. [ ] **VeVA-Entsorgungsbeleg** (7) — Abfallcode + Sonderabfall-Begleitschein
+22. [ ] **Revisionssicheres Audit-Log** (7)
+23. [ ] **Wareneingangs-Check** (7) — SDB aktuell? hier lagerbar?
+24. [ ] **Prüffristen – schlanke Erinnerung** (7) — kein Wartungsmodul; fliesst ins Audit-Dossier
+25. [ ] **Substitution – nur Flag „CMR: Ersatz prüfen"** (7) — keine Alternativen-Datenbank
+
+### Separat behandeln (Vertrieb/GTM, kein App-Feature)
+- [ ] Berater / Sicherheitsbeauftragte als Multiplikatoren (Mandanten-Ansicht)
+- [ ] Lieferanten-Portal für SDB-Updates
+- [ ] White-Label für Branchenverbände
+- [ ] Versicherungs-Nachweis (Argument für tiefere Prämien)
+
+### Später (gute Ideen, jetzt Ballast)
+- [ ] Visueller Lagerplan / Heatmap
+- [ ] Haltbarkeit / FIFO
+- [ ] Micro-Quiz statt „gelesen"
+- [ ] Sprach-Erfassung
+- [ ] Regal-Foto → Gebinde zählen
+- [ ] Verbrauch → Nachbestell-Schwelle
+- [ ] Benchmarking (anonymisiert, braucht Skala)
+- [ ] Freigabe-Workflow neuer Stoff
+- [ ] Vorfall-/Beinahe-Unfall-Meldung
+
+### Gestrichen (würde die App überladen / Gimmick)
+Auffangvolumen-/Löschwasser-Rechner · Standortübergreifend „wer hat X" ·
+Kostentransparenz pro Baustelle · Schulungs-/Ausweisverwaltung · ADR/Gefahrgut ·
+AR-Brille · Blockchain · IoT-Füllstandsensoren · VOC-Bilanz · ESG/CO₂-Report ·
+Leergebinde-/Retouren-Handling
+
+---
+
 ## 7. Ziel-Architektur (Supabase)
 
 **Mandantenmodell:** `organization` = Kunde (ein Einzelbetrieb *oder* eine

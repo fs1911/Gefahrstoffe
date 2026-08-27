@@ -9,6 +9,16 @@ läuft die echte Bezahlung.
 |---|---|
 | `create-checkout-session` | erzeugt eine Stripe-Checkout-Session für den gewählten Plan → gibt die Bezahl-URL zurück |
 | `stripe-webhook` | empfängt Stripe-Ereignisse und schreibt `plan` / `subscription_status` zurück in `organizations` |
+| `parse-sdb` | liest ein Sicherheitsdatenblatt (PDF/Foto) per Claude aus → Produktname, Signalwort, GHS, H-/P-Sätze, UN-Nr., Lagerklasse |
+
+### `parse-sdb` aktivieren (SDB → Stoffkarte per KI)
+```bash
+supabase secrets set ANTHROPIC_API_KEY=sk-ant-...
+supabase functions deploy parse-sdb
+```
+Ohne Key liefert die Funktion `{ configured:false }` – die App füllt die Stoffkarte
+dann wie bisher manuell aus. Die öffentliche Demo (`/app/`) zeigt den KI-Ablauf als
+Simulation mit Beispiel-SDB (kein Key nötig).
 
 Das Datenmodell dazu liegt in `supabase/migrations/0005_subscriptions.sql`
 (Felder auf `organizations` + RPC `set_org_plan`).

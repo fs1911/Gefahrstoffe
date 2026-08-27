@@ -234,6 +234,37 @@
   .disclaimer svg{color:#e0b054;flex:none;margin-top:2px}
   @media(max-width:760px){footer .wrap{grid-template-columns:1fr 1fr}}
 
+  /* KI-Demo: SDB → Stoffkarte */
+  #kidemo-sec{background:var(--surface-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .kidemo{display:grid;grid-template-columns:1fr auto 1.15fr;gap:24px;align-items:center;margin-top:8px}
+  .kidemo-sdb{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 10px 28px -16px rgba(16,36,28,.4);overflow:hidden;min-height:210px}
+  .kidemo-sdb .doc-badge{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;font-weight:600;color:var(--brand);text-transform:uppercase;letter-spacing:.09em;margin-bottom:14px}
+  .kidemo-sdb .ln{height:9px;border-radius:5px;background:var(--line-2);margin:9px 0}
+  .kidemo-sdb .ln.s{width:62%}.kidemo-sdb .ln.m{width:88%}.kidemo-sdb .ln.l{width:74%}
+  .kidemo-sdb .scan{position:absolute;left:0;right:0;height:44px;top:-44px;background:linear-gradient(180deg,transparent,rgba(12,107,79,.16),transparent);border-top:2px solid var(--brand);opacity:0}
+  .kidemo.play .kidemo-sdb .scan{animation:kiScan 1.5s ease-in-out}
+  @keyframes kiScan{0%{top:-10px;opacity:1}88%{opacity:1}100%{top:100%;opacity:0}}
+  .kidemo-mid{display:flex;flex-direction:column;align-items:center;gap:9px}
+  .kidemo-mid .pulse{width:48px;height:48px;border-radius:50%;background:var(--brand-soft);display:grid;place-items:center;color:var(--brand)}
+  .kidemo.play .kidemo-mid .pulse{animation:kiPulse 1s ease-in-out infinite}
+  @keyframes kiPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+  .kidemo-mid small{font-family:var(--mono);font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3)}
+  .kidemo-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 10px 28px -16px rgba(16,36,28,.4)}
+  .kidemo-card h4{font-family:var(--display);font-size:17px;margin:0 0 1px;letter-spacing:-.01em}
+  .kidemo-name{opacity:0;transform:translateY(6px);transition:opacity .45s,transform .45s}
+  .kidemo-name.in{opacity:1;transform:none}
+  .ki-row{opacity:0;transform:translateY(6px);transition:opacity .4s,transform .4s;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line-2);font-size:14px}
+  .ki-row.in{opacity:1;transform:none}
+  .ki-row:last-child{border-bottom:0}
+  .ki-row .k{color:var(--ink-2)}.ki-row .v{font-weight:600;text-align:right}
+  .ki-badge{background:var(--danger-bg);color:var(--danger);border-radius:6px;padding:2px 9px;font-size:12px;font-weight:700}
+  .ki-chip{display:inline-block;background:var(--brand-soft);color:var(--brand-ink);border-radius:20px;padding:2px 9px;font-size:11.5px;font-weight:600;margin-left:5px}
+  .ki-done{display:flex;align-items:center;gap:7px;color:var(--ok);font-weight:600;font-size:13px;margin-top:13px;opacity:0;transition:opacity .45s}
+  .ki-done.in{opacity:1}
+  .ki-replay{margin-top:18px;background:transparent;border:1px solid var(--line);border-radius:11px;padding:10px 18px;font-family:var(--font);font-weight:600;font-size:14px;cursor:pointer;display:inline-flex;gap:8px;align-items:center;color:var(--ink);transition:border-color .15s,color .15s}
+  .ki-replay:hover{border-color:var(--brand);color:var(--brand)}
+  @media(max-width:760px){.kidemo{grid-template-columns:1fr;gap:16px}.kidemo-mid{flex-direction:row}.kidemo-sdb{min-height:0}}
+
   @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -372,6 +403,40 @@
         <p>Menge, SDB, GHS-Piktogramme und ein interner QR-Code – sofort dokumentiert und für die ganze Firma sichtbar.</p>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- KI-DEMO: SDB → Stoffkarte -->
+<section id="kidemo-sec">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Neu · mit KI</div>
+      <h2>SDB rein. Stoffkarte fertig.</h2>
+      <p class="lead">Sicherheitsdatenblatt hochladen oder Etikett fotografieren – die KI liest Produktname, Signalwort, GHS-Piktogramme, H-/P-Sätze, UN-Nummer und Lagerklasse heraus und füllt die Stoffkarte selbst aus. Kein Abtippen mehr.</p>
+    </div>
+    <div class="kidemo" id="kidemo">
+      <div class="kidemo-sdb">
+        <div class="doc-badge"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg> Sicherheitsdatenblatt.pdf</div>
+        <div class="ln m"></div><div class="ln l"></div><div class="ln s"></div><div class="ln m"></div><div class="ln l"></div><div class="ln s"></div><div class="ln m"></div>
+        <div class="scan"></div>
+      </div>
+      <div class="kidemo-mid">
+        <div class="pulse"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 4.6L18.5 9.5 13.9 11.4 12 16l-1.9-4.6L5.5 9.5l4.6-1.9z"/><path d="M19 15l.7 1.8L21.5 17.5l-1.8.7L19 20l-.7-1.8L16.5 17.5l1.8-.7z"/></svg></div>
+        <small>KI liest…</small>
+      </div>
+      <div class="kidemo-card">
+        <div class="kidemo-name" id="kiName"><h4>Aceton technisch</h4><div style="color:var(--ink-3);font-size:12.5px">Muster Chemie AG</div></div>
+        <div style="margin-top:8px">
+          <div class="ki-row" data-ki="0"><span class="k">Signalwort</span><span class="v"><span class="ki-badge">Gefahr</span></span></div>
+          <div class="ki-row" data-ki="1"><span class="k">GHS</span><span class="v"><span class="ki-chip">entzündbar</span><span class="ki-chip">reizend</span></span></div>
+          <div class="ki-row" data-ki="2"><span class="k">H-Sätze</span><span class="v">H225, H319, H336</span></div>
+          <div class="ki-row" data-ki="3"><span class="k">UN-Nummer</span><span class="v">UN 1090</span></div>
+          <div class="ki-row" data-ki="4"><span class="k">Lagerklasse</span><span class="v">LK 3</span></div>
+        </div>
+        <div class="ki-done" id="kiDone"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> In Sekunden erfasst – bereit zum Speichern.</div>
+      </div>
+    </div>
+    <button class="ki-replay" id="kiReplay"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg> Nochmal abspielen</button>
   </div>
 </section>
 
@@ -567,6 +632,26 @@
     </div>
   </div>
 </footer>
-<script>document.getElementById('yr').textContent=new Date().getFullYear();</script>
+<script>document.getElementById('yr').textContent=new Date().getFullYear();
+(function(){
+  var d=document.getElementById('kidemo');if(!d)return;
+  var rows=[].slice.call(d.querySelectorAll('.ki-row'));
+  var name=document.getElementById('kiName'),done=document.getElementById('kiDone');
+  var timers=[];
+  function clear(){timers.forEach(clearTimeout);timers=[];}
+  function reset(){d.classList.remove('play');if(name)name.classList.remove('in');if(done)done.classList.remove('in');rows.forEach(function(r){r.classList.remove('in');});clear();}
+  function play(){reset();void d.offsetWidth;d.classList.add('play');
+    timers.push(setTimeout(function(){if(name)name.classList.add('in');},1500));
+    rows.forEach(function(r,i){timers.push(setTimeout(function(){r.classList.add('in');},1750+i*300));});
+    timers.push(setTimeout(function(){if(done)done.classList.add('in');},1850+rows.length*300));
+  }
+  var seen=false;
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting&&!seen){seen=true;play();}});},{threshold:.4});
+    io.observe(d);
+  } else { play(); }
+  var rb=document.getElementById('kiReplay');if(rb)rb.addEventListener('click',play);
+})();
+</script>
 </body>
 </html>

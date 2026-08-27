@@ -232,6 +232,12 @@
   .plan-opt .po-txt b{font-size:14px;color:var(--ink)}
   .plan-opt .po-txt small{display:block;font-size:11.5px;color:var(--ink-3)}
   .plan-opt .po-price{font-size:13px;font-weight:700;color:var(--ink);white-space:nowrap}
+  /* SDB → KI */
+  .ai-work{display:flex;gap:14px;align-items:center;padding:14px 4px}
+  .ai-work b{color:var(--ink);display:block;font-size:15px}
+  .ai-work small{color:var(--ink-3);font-size:13px}
+  .ai-spin{width:30px;height:30px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--accent);flex:none;animation:aiSpin .7s linear infinite}
+  @keyframes aiSpin{to{transform:rotate(360deg)}}
 
   /* Felder/Filter */
   .field{display:flex;flex-direction:column;gap:5px;margin-bottom:11px}
@@ -1501,15 +1507,19 @@ function scrErfassung(){
   const l=state.activeLoc?location_(state.activeLoc):null;
   const ctx=l?(l.name+' · '+l.bereich+' · '+company(l.company).name):'kein Lagerort';
   const pf=state.scanPrefill||{};
-  const haz=['flamm','aetz','giftig','umwelt','druckgas','reiz'].map(h=>'<button type="button" class="chip" data-haz="'+h+'" onclick="this.classList.toggle(\'on\');zlCheckErf()">'+GHS_LABEL[h]+'</button>').join('');
+  const haz=['flamm','aetz','giftig','umwelt','druckgas','reiz'].map(h=>'<button type="button" class="chip'+((pf.haz&&pf.haz.indexOf(h)>-1)?' on':'')+'" data-haz="'+h+'" onclick="this.classList.toggle(\'on\');zlCheckErf()">'+GHS_LABEL[h]+'</button>').join('');
   const scanInfo=(pf.barcode||pf.info)?'<div class="notice ok">'+ICO.ok+'<div>Aus dem Scan übernommen:'+(pf.barcode?' Barcode <b>'+pf.barcode+'</b>':'')+(pf.info?'<br>Infoseite wird verlinkt.':'')+'</div></div>':'';
+  const aiSum=pf.ai?'<div class="notice ok">'+ICO.ok+'<div><b>KI hat aus dem SDB erkannt:</b><br>'+esc(pf.ai.h||'–')+' · '+esc(pf.ai.un||'–')+(pf.ai.lk?' · Lagerklasse '+esc(pf.ai.lk):'')+'<br><small>Bitte kurz prüfen und speichern.</small></div></div>':'';
+  const aiBtn='<input type="file" id="aiFile" accept="application/pdf,image/*" style="display:none" onchange="aiAnalyze(this.files&&this.files[0])">'+
+    '<button type="button" class="act-primary" onclick="document.getElementById(\'aiFile\').click()" style="margin-bottom:14px">'+ICO.doc+'<span><b>SDB analysieren (KI)</b><span style="display:block;font-weight:500;opacity:.92;font-size:13px">PDF/Foto hochladen – Felder füllen sich selbst</span></span></button>';
+  const sigAon=pf.sig==='Gefahr'?'':' on',sigGon=pf.sig==='Gefahr'?' on':'';
   return '<div class="view"><h2 class="title">Stoff erfassen</h2><p class="sub">Nur das Nötigste. Lagerort: <b>'+ctx+'</b></p>'+
-    (!l?'<div class="notice warn">'+ICO.warn+'<div>Kein Lagerort gesetzt – Datensatz wird ohne Lagerort gespeichert.</div></div>':'')+scanInfo+
+    (!l?'<div class="notice warn">'+ICO.warn+'<div>Kein Lagerort gesetzt – Datensatz wird ohne Lagerort gespeichert.</div></div>':'')+aiBtn+scanInfo+aiSum+
     '<form id="erfForm">'+
-    '<div class="field"><label>Produktname *</label><input name="name" placeholder="z. B. Spezialkleber X"></div>'+
+    '<div class="field"><label>Produktname *</label><input name="name" placeholder="z. B. Spezialkleber X" value="'+esc(pf.name||'')+'"></div>'+
     '<div class="field"><label>Menge *</label><div style="display:flex;gap:9px"><input name="menge" type="number" inputmode="decimal" placeholder="z. B. 5" style="flex:2"><select name="einheit" style="flex:1"><option>l</option><option>kg</option><option>Stk</option><option>ml</option></select></div></div>'+
     '<div class="field"><label>Gebinde</label><div style="display:flex;gap:9px"><input name="anzahl" type="number" inputmode="numeric" value="1" style="flex:1"><select name="gebinde" style="flex:2"><option>Kanister</option><option>Dose</option><option>Flasche</option><option>Fass</option><option>Gebinde</option></select></div></div>'+
-    '<div class="field"><label>Signalwort</label><div class="chips" style="margin:0"><button type="button" class="chip on" id="sigA" onclick="setSig(\'Achtung\')">Achtung</button><button type="button" class="chip" id="sigG" onclick="setSig(\'Gefahr\')">Gefahr</button></div></div>'+
+    '<div class="field"><label>Signalwort</label><div class="chips" style="margin:0"><button type="button" class="chip'+sigAon+'" id="sigA" onclick="setSig(\'Achtung\')">Achtung</button><button type="button" class="chip'+sigGon+'" id="sigG" onclick="setSig(\'Gefahr\')">Gefahr</button></div></div>'+
     '<div class="field"><label>Gefahrmerkmale (GHS)</label><div class="chips" style="margin:0">'+haz+'</div></div>'+
     '<div id="zlCheck"></div>'+
     '<div class="field"><label>Externer Barcode (optional)</label><input name="barcode" placeholder="EAN / Barcode" value="'+(pf.barcode||'')+'"></div>'+
@@ -1519,6 +1529,25 @@ function scrErfassung(){
     '<div class="btn-row"><button type="button" class="btn ghost" data-action="back">Abbrechen</button><button type="button" class="btn" data-action="saveErf">Speichern</button></div></form>'+disclaimer()+'</div>';
 }
 window.setSig=function(v){state._sig=v;document.getElementById('sigA').classList.toggle('on',v==='Achtung');document.getElementById('sigG').classList.toggle('on',v==='Gefahr');};
+function fileToB64(file){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){var s=String(r.result||'');res(s.slice(s.indexOf(',')+1));};r.onerror=rej;r.readAsDataURL(file);});}
+window.aiAnalyze=async function(file){
+  if(!file)return;
+  state.aiFile=file;
+  openModal('SDB analysieren (KI)','<div class="ai-work"><div class="ai-spin"></div><div><b>KI liest das Sicherheitsdatenblatt…</b><small>Produktname, GHS, H-/P-Sätze, UN-Nr., Lagerklasse</small></div></div>');
+  try{
+    const b64=await fileToB64(file);
+    const isPdf=/pdf/i.test(file.type)||/\.pdf$/i.test(file.name||'');
+    const body=isPdf?{pdf_base64:b64}:{image_base64:b64,media_type:file.type||'image/jpeg'};
+    const r=await sbc.functions.invoke('parse-sdb',{body:body});
+    if(r.error){closeModal();toast('KI-Analyse fehlgeschlagen – bitte manuell ausfüllen.',false);return;}
+    const d=r.data||{};
+    if(d.configured===false){closeModal();toast('KI-Analyse noch nicht aktiviert – Datei wird trotzdem angehängt.',false);return;}
+    state.aiExtract={hersteller:d.hersteller||'',h:d.h_saetze||'',p:d.p_saetze||'',un:d.un_nummer||'',lk:d.lagerklasse||''};
+    if(d.signalwort)state._sig=d.signalwort;
+    state.scanPrefill={barcode:(state.scanPrefill&&state.scanPrefill.barcode)||'',info:'',name:d.produktname||'',sig:d.signalwort||'',haz:Array.isArray(d.ghs)?d.ghs:[],ai:{h:d.h_saetze,un:d.un_nummer,lk:d.lagerklasse}};
+    closeModal();toast('KI hat das SDB erkannt – bitte prüfen und speichern.');render();
+  }catch(e){closeModal();toast('Analyse fehlgeschlagen: '+(e&&e.message||e),false);}
+};
 
 function render(){
   const map={start:scrStart,scanLoc:scrScanLoc,scanArt:scrScanArt,detail:scrDetail,locDetail:scrLocDetail,bestand:scrBestand,firmen:scrFirmen,wissen:scrWissen,admin:scrAdmin,erfassung:scrErfassung};
@@ -1748,11 +1777,12 @@ async function delLocationDo(id){const {error}=await sbc.from('storage_locations
 function defaultCompanyId(){const g=DB.companies.find(c=>c.group);return (g||DB.companies[0]||{}).id;}
 async function saveErf(){const f=document.getElementById('erfForm');const name=f.name.value.trim();if(!name){toast('Produktname fehlt.',false);f.name.focus();return;}
   const mr=f.menge.value.trim();if(!mr){toast('Menge fehlt.',false);f.menge.focus();return;}
-  const haz=[...f.querySelectorAll('.chip.on[data-haz]')].map(c=>c.dataset.haz);const sdb=f.sdb.value.trim();const sdbfile=f.sdbfile&&f.sdbfile.files&&f.sdbfile.files[0];const bc=(f.barcode&&f.barcode.value.trim())||'';const sig=state._sig||'Achtung';
+  const haz=[...f.querySelectorAll('.chip.on[data-haz]')].map(c=>c.dataset.haz);const sdb=f.sdb.value.trim();const sdbfile=(state.aiFile)||(f.sdbfile&&f.sdbfile.files&&f.sdbfile.files[0]);const bc=(f.barcode&&f.barcode.value.trim())||'';const sig=state._sig||'Achtung';
+  const ex=state.aiExtract||{};
   const compId=state.activeLoc?location_(state.activeLoc).company:defaultCompanyId();
   if(!compId){toast('Keine Firma vorhanden – zuerst in der Verwaltung anlegen.',false);return;}
   try{
-    const {data:sub,error:e1}=await sbc.from('substances').insert({organization_id:orgId(),produktname:name,hersteller:'unbekannt',signalwort:sig,ghs_piktogramme:haz,h_saetze:'– (manuell, bitte ergänzen)',p_saetze:'–',externer_barcode:bc||null,info_link:(/^https?:\/\//i.test(sdb)?sdb:null)}).select().single();
+    const {data:sub,error:e1}=await sbc.from('substances').insert({organization_id:orgId(),produktname:name,hersteller:ex.hersteller||'unbekannt',signalwort:sig,ghs_piktogramme:haz,h_saetze:ex.h||'– (manuell, bitte ergänzen)',p_saetze:ex.p||'–',un_nummer:ex.un||null,lagerklasse:ex.lk||null,externer_barcode:bc||null,info_link:(/^https?:\/\//i.test(sdb)?sdb:null)}).select().single();
     if(e1){toast('Stoff: '+e1.message,false);return;}
     if(sdbfile){try{await uploadSdbFile(sub.id,sdbfile);}catch(err){toast('SDB-Upload: '+(err&&err.message||err),false);}}
     else if(sdb){await sbc.from('sds_documents').insert({organization_id:orgId(),substance_id:sub.id,external_link:sdb,revisionsdatum:new Date().toISOString().slice(0,10),uploaded_by:AUTH.profile.id});}
@@ -1760,7 +1790,7 @@ async function saveErf(){const f=document.getElementById('erfForm');const name=f
     const {data:inst,error:e2}=await sbc.from('substance_instances').insert({organization_id:orgId(),substance_id:sub.id,company_id:compId,storage_location_id:state.activeLoc||null,gebindeart:f.gebinde.value,anzahl_gebinde:parseInt(f.anzahl.value||'1',10),menge_aktuell:parseFloat(mr),mengeneinheit:f.einheit.value,status:'Lager',internal_qr:qr}).select().single();
     if(e2){toast('Bestand: '+e2.message,false);return;}
     addHistory('Bestand erfasst',name+(state.activeLoc?' · '+location_(state.activeLoc).name:''),state.activeLoc?location_(state.activeLoc).company:'');
-    state._sig=null;state.scanPrefill=null;
+    state._sig=null;state.scanPrefill=null;state.aiExtract=null;state.aiFile=null;
     await loadDB();toast('Bestand erfasst · QR erstellt');goTo('detail',{sub:sub.id,inst:inst.id,reset:true,nav:'start'});setTimeout(()=>modalQr(inst.id),350);
   }catch(e){toast('Fehler: '+e.message,false);}}
 
