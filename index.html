@@ -365,6 +365,32 @@
   .lang-doc .emo{margin-top:16px;font-weight:700;color:var(--danger);font-size:13.5px}
   @media(max-width:760px){.lang-doc{padding:20px}}
 
+  /* Marketing: Frag StoffScan (KI-Chat) */
+  #ask-sec{background:var(--brand-soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .ask-demo{max-width:440px;margin:8px auto 0;background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:0 14px 34px -18px rgba(16,36,28,.5);overflow:hidden;display:flex;flex-direction:column;height:452px}
+  .ask-hd{display:flex;align-items:center;gap:10px;padding:13px 15px;border-bottom:1px solid var(--line);background:var(--surface)}
+  .ask-ci{width:32px;height:32px;flex:none;border-radius:9px;background:var(--brand);color:#fff;display:grid;place-items:center}
+  .ask-ci svg{width:18px;height:18px}
+  .ask-hd b{font-size:14.5px;display:block}
+  .ask-hd small{color:var(--ink-3);font-size:11.5px}
+  .ask-msgs{flex:1;overflow:hidden;padding:15px;display:flex;flex-direction:column;gap:9px;background:var(--surface-2)}
+  .ask-msg{max-width:88%;padding:10px 13px;border-radius:13px;font-size:13.5px;line-height:1.5;opacity:0;transform:translateY(6px);transition:opacity .3s,transform .3s}
+  .ask-msg.in{opacity:1;transform:none}
+  .ask-msg.u{align-self:flex-end;background:var(--brand);color:#fff;border-bottom-right-radius:4px}
+  .ask-msg.b{align-self:flex-start;background:var(--surface);border:1px solid var(--line);color:var(--ink);border-bottom-left-radius:4px}
+  .ask-msg.b b{color:var(--brand-ink)}
+  .ask-msg.typing{display:inline-flex;gap:4px;align-items:center}
+  .ask-msg.typing span{width:6px;height:6px;border-radius:50%;background:var(--ink-3);animation:chatBlink 1s infinite}
+  .ask-msg.typing span:nth-child(2){animation-delay:.2s}.ask-msg.typing span:nth-child(3){animation-delay:.4s}
+  @keyframes chatBlink{0%,60%,100%{opacity:.3}30%{opacity:1}}
+  .ask-inp{display:flex;gap:8px;padding:11px 13px;border-top:1px solid var(--line);background:var(--surface);align-items:center}
+  .ask-inp .fake{flex:1;border:1px solid var(--line);border-radius:11px;padding:10px 13px;background:var(--surface-2);color:var(--ink);font-size:13.5px;min-height:20px;text-align:left}
+  .ask-inp .fake:empty::before,.ask-inp .fake .ph{color:var(--ink-3)}
+  .caret{display:inline-block;width:2px;height:15px;background:var(--brand);vertical-align:-3px;animation:askCaret 1s step-end infinite}
+  @keyframes askCaret{50%{opacity:0}}
+  .ask-send{width:42px;height:42px;flex:none;border-radius:11px;background:var(--brand);color:#fff;display:grid;place-items:center}
+  .ask-send svg{width:18px;height:18px}
+
   /* Marketing: Betriebsanweisung */
   .ba-mkt{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
   .ba-mkt-list{list-style:none;margin:22px 0 0;padding:0}
@@ -699,6 +725,22 @@
   </div>
 </section>
 
+<!-- FRAG STOFFSCAN -->
+<section id="ask-sec">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Neu · mit KI</div>
+      <h2>Frag StoffScan. Antwort aus deinen Daten.</h2>
+      <p class="lead">«Wo steht mein Aceton?», «Erste Hilfe bei Augenkontakt?», «Welche Stoffe haben kein SDB?» – StoffScan beantwortet Fragen direkt aus deinem eigenen Kataster. Keine Ordner, kein Suchen.</p>
+    </div>
+    <div class="ask-demo" id="askDemo">
+      <div class="ask-hd"><span class="ask-ci"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.9 4.6L18.5 8.5 13.9 10.4 12 15l-1.9-4.6L5.5 8.5l4.6-1.9z"/></svg></span><div><b>Frag StoffScan</b><small>Antworten aus deinen Gefahrstoff-Daten</small></div></div>
+      <div class="ask-msgs" id="askMsgs"></div>
+      <div class="ask-inp"><div class="fake" id="askFake"><span class="caret"></span></div><span class="ask-send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg></span></div>
+    </div>
+  </div>
+</section>
+
 <!-- BRANCHEN -->
 <section id="branchen" style="background:var(--surface-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
   <div class="wrap">
@@ -987,6 +1029,30 @@
   var seen=false;
   function auto(){autoOn=true;timers.push(setTimeout(function(){if(autoOn)set('fr');},1500));timers.push(setTimeout(function(){if(autoOn)set('it');},3300));}
   if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting&&!seen){seen=true;auto();}});},{threshold:.4});io.observe(sec);}
+})();
+(function(){
+  var demo=document.getElementById('askDemo'),msgs=document.getElementById('askMsgs'),fake=document.getElementById('askFake'),sec=document.getElementById('ask-sec');
+  if(!demo||!msgs||!fake||!sec)return;
+  var QA=[
+    {q:'Wo steht Aceton?',a:'<b>Aceton</b> steht an 2 Orten:<br>• Werkhof Nord · Gefahrstoffschrank A – 10 l<br>• Werkstatt Technik · Chemikalienschrank – 2 l'},
+    {q:'Erste Hilfe bei Augenkontakt mit Natronlauge?',a:'Augen sofort 15+ Minuten mit Wasser spülen (Lid offen), Kontaktlinsen entfernen. <b>Ätzend</b> – sofort Arzt.<br>Notfall: 144 · 145 Tox Info Suisse'},
+    {q:'Welche Stoffe haben kein SDB?',a:'<b>2 Stoffe</b> ohne Sicherheitsdatenblatt:<br>• Entkalker sauer · Hagerty<br>• Leim / Lösemittelreiniger · Henkel'}
+  ];
+  function escM(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+  var timers=[],running=false,qi=0;
+  function addMsg(cls,html){var d=document.createElement('div');d.className='ask-msg '+cls;d.innerHTML=html;msgs.appendChild(d);void d.offsetWidth;d.classList.add('in');return d;}
+  function type(txt,done){var i=0;(function tick(){if(i<txt.length){i++;fake.innerHTML=escM(txt.slice(0,i))+'<span class="caret"></span>';timers.push(setTimeout(tick,40));}else{timers.push(setTimeout(done,380));}})();}
+  function cycle(){
+    var qa=QA[qi%QA.length];qi++;msgs.innerHTML='';fake.innerHTML='<span class="caret"></span>';
+    type(qa.q,function(){
+      fake.innerHTML='<span class="caret"></span>';addMsg('u',escM(qa.q));
+      var t=addMsg('b typing','<span></span><span></span><span></span>');
+      timers.push(setTimeout(function(){t.remove();addMsg('b',qa.a);},900));
+      timers.push(setTimeout(cycle,3800));
+    });
+  }
+  function start(){if(running)return;running=true;timers.push(setTimeout(cycle,500));}
+  if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)start();});},{threshold:.35});io.observe(sec);}else start();
 })();
 </script>
 </body>

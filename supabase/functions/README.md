@@ -10,6 +10,19 @@ läuft die echte Bezahlung.
 | `create-checkout-session` | erzeugt eine Stripe-Checkout-Session für den gewählten Plan → gibt die Bezahl-URL zurück |
 | `stripe-webhook` | empfängt Stripe-Ereignisse und schreibt `plan` / `subscription_status` zurück in `organizations` |
 | `parse-sdb` | liest ein Sicherheitsdatenblatt (PDF/Foto) per Claude aus → Produktname, Signalwort, GHS, H-/P-Sätze, UN-Nr., Lagerklasse |
+| `ask-stoffscan` | «Frag StoffScan» – beantwortet Fragen (wo steht ein Stoff, Erste Hilfe, fehlende SDB, Zusammenlagerung) geerdet auf die mitgeschickten Betriebsdaten |
+
+### `ask-stoffscan` aktivieren (KI-Chat auf den eigenen Daten)
+```bash
+supabase secrets set ANTHROPIC_API_KEY=sk-ant-...   # (falls noch nicht gesetzt)
+supabase functions deploy ask-stoffscan
+```
+Ohne Key liefert die Funktion `{ configured:false }` – die App fällt dann auf die
+lokale, regelbasierte Antwort-Engine zurück (funktioniert offline, ohne Kosten). Der
+Client schickt die Frage plus einen kompakten JSON-Kontext der eigenen Organisation
+(Stoffe, Bestände, Lagerorte); Claude antwortet ausschliesslich daraus. Modell in
+`index.ts`: `claude-opus-5` (z. B. auf `claude-sonnet-5`/`claude-haiku-4-5` umstellbar
+für weniger Kosten).
 
 ### `parse-sdb` aktivieren (SDB → Stoffkarte per KI)
 ```bash

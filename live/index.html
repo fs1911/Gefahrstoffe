@@ -722,6 +722,43 @@
     .sb-item.active svg{color:var(--accent)}
     .sb-item:hover{background:var(--surface-2)}
   }
+  .fab-ask{position:fixed;right:16px;bottom:80px;z-index:150;display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#fff;border:0;border-radius:26px;padding:12px 18px 12px 14px;font-family:var(--font);font-weight:700;font-size:14.5px;box-shadow:0 8px 22px -6px rgba(12,107,79,.5);cursor:pointer}
+  .fab-ask svg{width:20px;height:20px;flex:none}
+  .fab-ask:active{transform:scale(.97)}
+  @media(min-width:980px){.fab-ask{bottom:24px}}
+  .chat-overlay{position:fixed;inset:0;z-index:340;background:rgba(13,18,22,.5);display:flex;align-items:flex-end;justify-content:center;animation:fade .15s}
+  @media(min-width:680px){.chat-overlay{align-items:center}}
+  .chat-panel{background:var(--surface);width:100%;max-width:560px;height:84vh;border-radius:18px 18px 0 0;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 -10px 40px rgba(0,0,0,.25)}
+  @media(min-width:680px){.chat-panel{border-radius:16px;height:640px;max-height:88vh}}
+  .chat-head{display:flex;align-items:center;gap:11px;padding:14px 16px;border-bottom:1px solid var(--line);background:var(--surface)}
+  .chat-ci{width:34px;height:34px;flex:none;border-radius:9px;background:var(--accent);color:#fff;display:grid;place-items:center}
+  .chat-ci svg{width:19px;height:19px}
+  .chat-hd b{font-size:15px;display:block}
+  .chat-hd small{color:var(--ink-3);font-size:12px}
+  .chat-x{margin-left:auto;background:transparent;border:0;font-size:24px;line-height:1;color:var(--ink-3);cursor:pointer;padding:2px 6px}
+  .chat-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--surface-2)}
+  .chat-msg{max-width:88%;padding:11px 13px;border-radius:13px;font-size:14px;line-height:1.5}
+  .chat-msg.user{align-self:flex-end;background:var(--accent);color:#fff;border-bottom-right-radius:4px}
+  .chat-msg.bot{align-self:flex-start;background:var(--surface);border:1px solid var(--line);color:var(--ink);border-bottom-left-radius:4px}
+  .chat-dim{color:var(--ink-3);font-size:12.5px}
+  .chat-ul{margin:7px 0 3px;padding-left:18px}
+  .chat-ul li{margin:3px 0}
+  .chat-emo{display:block;margin-top:8px;font-weight:700;color:var(--danger);font-size:12.5px}
+  .chat-act{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .chat-abtn{background:var(--surface-2);border:1px solid var(--line);color:var(--accent);border-radius:9px;padding:7px 11px;font-family:var(--font);font-weight:600;font-size:12.5px;cursor:pointer}
+  .chat-abtn:active{background:var(--line-2)}
+  .chat-typing{display:inline-flex;gap:4px;align-items:center}
+  .chat-typing span{width:7px;height:7px;border-radius:50%;background:var(--ink-3);animation:chatBlink 1s infinite}
+  .chat-typing span:nth-child(2){animation-delay:.2s}.chat-typing span:nth-child(3){animation-delay:.4s}
+  @keyframes chatBlink{0%,60%,100%{opacity:.3}30%{opacity:1}}
+  .chat-chips{display:flex;gap:8px;overflow-x:auto;padding:10px 14px;border-top:1px solid var(--line);background:var(--surface)}
+  .chat-chip{flex:none;background:var(--surface-2);border:1px solid var(--line);border-radius:16px;padding:8px 12px;font-family:var(--font);font-size:12.5px;color:var(--ink-2);cursor:pointer;white-space:nowrap}
+  .chat-chip:active{background:var(--line-2)}
+  .chat-input{display:flex;gap:9px;padding:12px 14px;border-top:1px solid var(--line);background:var(--surface)}
+  .chat-input input{flex:1;border:1px solid var(--line);border-radius:11px;padding:12px 14px;font-family:var(--font);font-size:15px;background:var(--surface-2);color:var(--ink)}
+  .chat-input input:focus{outline:0;border-color:var(--accent)}
+  .chat-send{flex:none;width:46px;border:0;border-radius:11px;background:var(--accent);color:#fff;cursor:pointer;display:grid;place-items:center}
+  .chat-send svg{width:19px;height:19px}
 </style>
 </head>
 <body>
@@ -742,6 +779,7 @@
   </div>
   <nav class="bottom" id="bottomNav"></nav>
 </div>
+<button class="fab-ask" data-action="openChat" aria-label="Frag StoffScan"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.7 4.2L18 7.9l-4.3 1.8L12 14l-1.7-4.3L6 7.9l4.3-1.7z"/><path d="M18.5 13l.9 2.2 2.1.8-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.8z"/></svg><span>Frag StoffScan</span></button>
 <div id="toast"></div>
 <div id="printArea"></div>
 
@@ -1564,6 +1602,107 @@ function psaMap(l){return l==='fr'?BA_PSA_FR:l==='it'?BA_PSA_IT:BA_PSA;}
 function baTextL(code,l,kind){var m=(kind==='p'?pMap(l):hMap(l));if(m[code])return m[code];if(code.indexOf('+')>-1){return code.split('+').map(function(c){return m[c]||'';}).filter(Boolean).join(' ');}return '';}
 function baListL(codes,l,kind){return codes.length?('<ul>'+codes.map(function(c){var t=baTextL(c,l,kind);return '<li><b>'+c+'</b>'+(t?' '+esc(t):'')+'</li>';}).join('')+'</ul>'):'<p class="ba-empty">'+BA_I18N[l].noData+'</p>';}
 
+/* ---------- «Frag StoffScan» – Chat auf den eigenen Daten (Block 7) ---------- */
+const CHAT_SUG=['Wo steht Aceton?','Erste Hilfe bei Hautkontakt mit Bremsenreiniger','Welche Stoffe haben kein SDB?','Was darf ich nicht zusammenlagern?'];
+function chatEsc(s){return esc(s);}
+function chatFindSubs(q){q=' '+q.toLowerCase()+' ';var out=[];DB.substances.forEach(function(s){var n=s.name.toLowerCase();var hit=q.indexOf(n)>=0;if(!hit){var ws=n.split(/[\s\/,()]+/).filter(function(w){return w.length>3;});hit=ws.some(function(w){return q.indexOf(w)>=0;});}if(hit)out.push(s);});return out;}
+function chatLocLabel(locId){var l=location_(locId);if(!l)return 'ohne Lagerort';var c=company(l.company);return l.name+' · '+l.bereich+(c?' · '+c.name:'');}
+function chatMenge(i){return (i.menge==null?'?':i.menge)+' '+(i.einheit||'')+' · '+i.anzahl+'× '+i.gebinde;}
+function chatGhsWords(s){return (s.ghs||[]).map(function(g){return GHS_LABEL[g]||g;}).join(', ');}
+function chatSubActions(s){return '<div class="chat-act"><button class="chat-abtn" data-action="chatOpenSub" data-id="'+s.id+'">Stoffkarte</button><button class="chat-abtn" data-action="chatOpenBA" data-id="'+s.id+'">Betriebsanweisung</button></div>';}
+function chatSubCard(s){var insts=DB.instances.filter(function(i){return i.sub===s.id;});
+  var loc=insts.length?insts.map(function(i){return '<li>'+chatEsc(chatLocLabel(i.loc))+' – '+chatEsc(chatMenge(i))+'</li>';}).join(''):'<li>kein Bestand erfasst</li>';
+  return '<b>'+chatEsc(s.name)+'</b> · '+chatEsc(s.hersteller||'unbekannt')+'<br><span class="chat-dim">'+chatEsc(s.signal||'')+(chatGhsWords(s)?' · '+chatEsc(chatGhsWords(s)):'')+(s.un&&s.un!=='–'?' · UN '+chatEsc(s.un):'')+(lkOf(s)?' · LK '+lkOf(s):'')+' · SDB '+(s.sdb.status==='ok'?'vorhanden':s.sdb.status)+'</span><ul class="chat-ul">'+loc+'</ul>'+chatSubActions(s);}
+function chatFirstAid(s){var ghs=s?(s.ghs||[]):[];var extra='';
+  if(ghs.indexOf('aetz')>-1)extra='<li><b>Ätzend:</b> Augen/Haut sofort 15+ Minuten spülen, kontaminierte Kleidung entfernen, sofort Arzt.</li>';
+  else if(ghs.indexOf('giftig')>-1||ghs.indexOf('gesundheit')>-1)extra='<li><b>Giftig:</b> bei Unwohlsein sofort 145 Tox Info Suisse anrufen, SDB/Etikett bereithalten.</li>';
+  else if(ghs.indexOf('flamm')>-1)extra='<li><b>Entzündbar:</b> Dämpfe nicht einatmen, für Frischluft sorgen.</li>';
+  return (s?'Erste Hilfe für <b>'+chatEsc(s.name)+'</b>'+(chatGhsWords(s)?' ('+chatEsc(chatGhsWords(s))+')':'')+':':'Allgemeine Erste Hilfe:')+
+    '<ul class="chat-ul"><li><b>Augen:</b> 10–15 Min. bei geöffnetem Lid mit Wasser spülen, Arzt.</li><li><b>Haut:</b> benetzte Kleidung entfernen, mit Wasser und Seife reinigen.</li><li><b>Einatmen:</b> an die frische Luft bringen, bei Beschwerden Arzt.</li><li><b>Verschlucken:</b> Mund ausspülen, kein Erbrechen, sofort Arzt.</li>'+extra+'</ul><span class="chat-emo">Notfall: 144 Sanität · 145 Tox Info Suisse · 118 Feuerwehr</span>'+(s?chatSubActions(s):'');}
+function askLocal(qraw){
+  var q=(qraw||'').toLowerCase().trim();
+  if(!q)return 'Stell mir eine Frage zu deinen Gefahrstoffen.';
+  var subs=chatFindSubs(q);var s=subs[0];
+  var isAid=/erste hilfe|hautkontakt|\bhaut\b|\bauge|augen|eingeatmet|einatmen|verschluck|notfall|spritzer|verätz/.test(q);
+  var isWhere=/\bwo\b|steht|befindet|lagert|standort|welchem lager|welcher lager/.test(q);
+  var isSdb=/sdb|sicherheitsdatenblatt|datenblatt/.test(q);
+  var isZl=/zusammen|zusammenlager|gemeinsam lagern|darf ich .*lagern|nicht lagern|neben/.test(q);
+  var isDisp=/entsorg|abfall|wegwerfen|veva/.test(q);
+  var isCount=/wie viele|anzahl|übersicht|overview|wie viel/.test(q);
+  var isBA=/betriebsanweisung|anweisung/.test(q);
+  if(isAid)return chatFirstAid(s);
+  if(isBA&&s)return 'Die Betriebsanweisung für <b>'+chatEsc(s.name)+'</b> ist auf Knopfdruck erzeugt – aus H-/P-Sätzen und GHS.'+chatSubActions(s);
+  if(isWhere){
+    if(!s)return 'Zu welchem Stoff? Nenne mir den Produktnamen, z. B. «Wo steht Aceton?».';
+    var insts=DB.instances.filter(function(i){return i.sub===s.id;});
+    if(!insts.length)return '<b>'+chatEsc(s.name)+'</b> ist im Stoffstamm erfasst, aber aktuell ohne Bestand an einem Lagerort.'+chatSubActions(s);
+    return '<b>'+chatEsc(s.name)+'</b> steht an '+insts.length+' Ort'+(insts.length>1?'en':'')+':<ul class="chat-ul">'+insts.map(function(i){return '<li>'+chatEsc(chatLocLabel(i.loc))+' – '+chatEsc(chatMenge(i))+' · '+chatEsc(i.status)+'</li>';}).join('')+'</ul>'+chatSubActions(s);
+  }
+  if(isSdb){
+    var miss=DB.instances.map(function(i){return substance(i.sub);}).filter(function(x,ix,arr){return x.sdb.status==='fehlt'&&arr.indexOf(x)===ix;});
+    if(s&&/\b(hat|von|für)\b/.test(q)&&!/welche|alle|liste/.test(q))return '<b>'+chatEsc(s.name)+'</b>: SDB '+(s.sdb.status==='ok'?'vorhanden (Stand '+s.sdb.rev+')':s.sdb.status==='alt'?'älter als 3 Jahre (Stand '+s.sdb.rev+') – prüfen':'fehlt – bitte ergänzen')+'.'+chatSubActions(s);
+    if(!miss.length)return 'Alle Stoffe mit Bestand haben ein hinterlegtes Sicherheitsdatenblatt. 👍';
+    return miss.length+' Stoff'+(miss.length>1?'e':'')+' ohne SDB:<ul class="chat-ul">'+miss.map(function(x){return '<li>'+chatEsc(x.name)+' · '+chatEsc(x.hersteller||'')+'</li>';}).join('')+'</ul>';
+  }
+  if(isZl){
+    if(subs.length>=2){var a=lkOf(subs[0]),b=lkOf(subs[1]);var r=(a&&b)?zlRate(a,b):null;
+      var verd=r==='g'?'dürfen zusammen gelagert werden':r==='y'?'nur bedingt – SDB prüfen und Einzelfall beurteilen':r==='r'?'müssen getrennt gelagert werden':'– Lagerklasse unklar';
+      return '<b>'+chatEsc(subs[0].name)+'</b> (LK '+(a||'?')+') und <b>'+chatEsc(subs[1].name)+'</b> (LK '+(b||'?')+') '+verd+'.';}
+    var zc=allZlConflicts();
+    if(!zc.length)return 'Aktuell keine Zusammenlagerungs-Konflikte an deinen Lagerorten. 👍';
+    return zc.length+' Lagerort'+(zc.length>1?'e':'')+' mit Konflikt. Nenne zwei Stoffe für eine konkrete Prüfung, z. B. «Darf ich Aceton neben Natronlauge lagern?».';
+  }
+  if(isDisp)return (s?'<b>'+chatEsc(s.name)+'</b>: ':'')+'Reste und leere, nicht gereinigte Gebinde als Sonderabfall gemäss VeVA entsorgen – nicht in Kanalisation oder Hauskehricht. Details in Abschnitt 13 des SDB.'+(s?chatSubActions(s):'');
+  if(isCount){var noSdb=DB.instances.map(function(i){return substance(i.sub);}).filter(function(x,ix,arr){return x.sdb.status==='fehlt'&&arr.indexOf(x)===ix;}).length;
+    return 'Übersicht: <b>'+DB.instances.length+'</b> Bestände, <b>'+DB.substances.length+'</b> Stoffe im Stamm, <b>'+DB.locations.length+'</b> Lagerorte, <b>'+noSdb+'</b> ohne SDB.';}
+  if(s)return chatSubCard(s);
+  return 'Dazu finde ich nichts Passendes. Ich helfe bei: <b>wo</b> ein Stoff steht, <b>Erste Hilfe</b>, fehlende <b>SDB</b>, <b>Zusammenlagerung</b> und Mengen-Übersichten. Beispiel: «Wo steht Aceton?».';
+}
+/* ---- Chat-UI ---- */
+var chatBusy=false;
+function chatScroll(){var m=document.getElementById('chatMsgs');if(m)m.scrollTop=m.scrollHeight;}
+function chatAddUser(t){var m=document.getElementById('chatMsgs');if(!m)return;m.insertAdjacentHTML('beforeend','<div class="chat-msg user">'+chatEsc(t)+'</div>');chatScroll();}
+function chatAddBot(html){var m=document.getElementById('chatMsgs');if(!m)return;m.insertAdjacentHTML('beforeend','<div class="chat-msg bot">'+html+'</div>');chatScroll();}
+function chatTyping(on){var m=document.getElementById('chatMsgs');if(!m)return;var ex=document.getElementById('chatTyping');if(on){if(!ex)m.insertAdjacentHTML('beforeend','<div class="chat-msg bot chat-typing" id="chatTyping"><span></span><span></span><span></span></div>');}else if(ex)ex.remove();chatScroll();}
+function openChat(prefill){
+  if(document.getElementById('chatOverlay'))return;
+  var send='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg>';
+  var el=document.createElement('div');el.className='chat-overlay';el.id='chatOverlay';
+  el.innerHTML='<div class="chat-panel"><div class="chat-head"><span class="chat-ci"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.9 4.6L18.5 8.5 13.9 10.4 12 15l-1.9-4.6L5.5 8.5l4.6-1.9z"/></svg></span><div class="chat-hd"><b>Frag StoffScan</b><small>Antworten aus deinen Gefahrstoff-Daten</small></div><button class="chat-x" data-action="closeChat" aria-label="Schliessen">×</button></div>'+
+    '<div class="chat-msgs" id="chatMsgs"></div>'+
+    '<div class="chat-chips" id="chatChips">'+CHAT_SUG.map(function(x){return '<button type="button" class="chat-chip" data-action="chatChip" data-q="'+encodeURIComponent(x)+'">'+chatEsc(x)+'</button>';}).join('')+'</div>'+
+    '<form class="chat-input" id="chatForm"><input id="chatInput" placeholder="Frage eingeben…" autocomplete="off"><button class="chat-send" type="submit" aria-label="Senden">'+send+'</button></form></div>';
+  document.body.appendChild(el);
+  el.addEventListener('click',function(e){if(e.target===el)closeChat();});
+  document.getElementById('chatForm').addEventListener('submit',function(e){e.preventDefault();chatSend();});
+  chatAddBot('Hallo! Ich beantworte Fragen zu deinen Gefahrstoffen – wo ein Stoff steht, Erste Hilfe, fehlende SDB oder Zusammenlagerung. Frag einfach.');
+  setTimeout(function(){var i=document.getElementById('chatInput');if(i)i.focus();},60);
+  if(prefill)chatSend(prefill);
+}
+function closeChat(){var el=document.getElementById('chatOverlay');if(el)el.remove();}
+function chatSend(forced){
+  if(chatBusy)return;
+  var inp=document.getElementById('chatInput');
+  var t=(forced!=null?forced:(inp?inp.value:'')).trim();
+  if(!t)return;
+  if(inp)inp.value='';
+  var chips=document.getElementById('chatChips');if(chips)chips.style.display='none';
+  chatAddUser(t);chatBusy=true;chatTyping(true);
+  chatAnswer(t,function(html){chatTyping(false);chatAddBot(html);chatBusy=false;});
+}
+
+function chatContext(){
+  var subs=DB.substances.map(function(s){var insts=DB.instances.filter(function(i){return i.sub===s.id;}).map(function(i){var l=location_(i.loc);return {ort:l?(l.name+' · '+l.bereich):'ohne Lagerort',firma:l?((company(l.company)||{}).name||''):'',menge:i.menge,einheit:i.einheit,gebinde:i.anzahl+'x '+i.gebinde,status:i.status};});
+    return {name:s.name,hersteller:s.hersteller,signal:s.signal,ghs:(s.ghs||[]).map(function(g){return GHS_LABEL[g]||g;}),h_saetze:s.h,p_saetze:s.p,un:s.un,lagerklasse:lkOf(s),sdb:s.sdb.status,bestand:insts};});
+  return {stoffe:subs,lagerorte:DB.locations.map(function(l){return {name:l.name,bereich:l.bereich,firma:(company(l.company)||{}).name||''};})};
+}
+function chatMdToHtml(t){return chatEsc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n{2,}/g,'<br><br>').replace(/\n[-•]\s?/g,'<br>• ').replace(/\n/g,'<br>');}
+async function chatAnswer(q,cb){
+  try{const {data,error}=await sbc.functions.invoke('ask-stoffscan',{body:{question:q,context:chatContext()}});
+    if(!error&&data&&data.configured!==false&&data.answer){cb(chatMdToHtml(String(data.answer)));return;}
+  }catch(e){}
+  setTimeout(function(){cb(askLocal(q));},250);
+}
 function baCodes(str){var out=[];(String(str||'').match(/[HP]\d{3}(?:\s*\+\s*[HP]\d{3})*/g)||[]).forEach(function(c){out.push(c.replace(/\s+/g,''));});return out;}
 function baText(code,map){if(map[code])return map[code];if(code.indexOf('+')>-1){return code.split('+').map(function(c){return map[c]||c;}).join(' ');}return code;}
 function baList(codes,map){return codes.length?('<ul>'+codes.map(function(c){return '<li><b>'+c+'</b> '+esc(baText(c,map))+'</li>';}).join('')+'</ul>'):'<p class="ba-empty">Keine Angaben hinterlegt.</p>';}
@@ -2005,6 +2144,11 @@ document.addEventListener('click',e=>{
     case 'reScanCam':closeModal();goTo('scanArt',{reset:true,nav:'scan'});break;
     case 'switchUser':modalSwitchUser();break;
     case 'genBA':openBA(id);break;
+    case 'openChat':openChat();break;
+    case 'closeChat':closeChat();break;
+    case 'chatChip':chatSend(decodeURIComponent(el.dataset.q||''));break;
+    case 'chatOpenSub':closeChat();goTo('detail',{sub:id,inst:null,reset:true,nav:'start'});break;
+    case 'chatOpenBA':closeChat();openBA(id);break;
     case 'closeBA':closeBA();break;
     case 'baLang':setBaLang(id);break;
     case 'rmOrgLogo':rmOrgLogo();break;
