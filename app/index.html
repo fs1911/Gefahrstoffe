@@ -316,6 +316,21 @@
   .cat-chip b{display:block;font-size:13px;color:var(--ink)}
   .cat-chip small{font-family:var(--mono);font-size:11px;color:var(--ink-3)}
   .cat-chip:active{background:var(--surface-2);border-color:var(--accent)}
+  .instr-card{margin-top:12px;border:1px solid var(--line);border-radius:14px;padding:14px 15px;background:var(--surface)}
+  .instr-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .instr-head b{font-size:14.5px;color:var(--ink)}
+  .instr-head small{display:block;color:var(--ink-3);font-size:12.5px;margin-top:2px}
+  .instr-badge{flex:none;font-size:11.5px;font-weight:700;border-radius:20px;padding:3px 10px;white-space:nowrap}
+  .instr-badge.due{background:var(--danger-bg,#fdecea);color:var(--danger,#b3261e)}
+  .instr-badge.ok{background:var(--ok-bg,#e6f4ea);color:var(--ok,#137333)}
+  .instr-li{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid var(--line-2)}
+  .instr-li:last-of-type{border-bottom:0}
+  .instr-li b{font-size:14px;color:var(--ink)}
+  .instr-li small{display:block;color:var(--ink-3);font-size:12px;margin-top:1px}
+  .instr-check{display:flex;gap:9px;align-items:flex-start;font-size:13.5px;color:var(--ink);line-height:1.4;margin:4px 2px 2px;cursor:pointer}
+  .instr-check input{margin-top:2px;flex:none;width:17px;height:17px;accent-color:var(--accent)}
+  .instr-hint{display:flex;gap:10px;align-items:flex-start;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:0 auto 14px;max-width:760px;font-size:13.5px;color:var(--ink-2)}
+  .instr-hint svg{flex:none;width:18px;height:18px;margin-top:1px}
   .pick .qr-ico{width:30px;height:30px;flex:none;color:var(--accent)}
   .pick .pm{flex:1;min-width:0}.pick .pm b{font-size:15px;display:block}.pick .pm small{font-size:12.5px;color:var(--ink-2)}
   .pick.new{border:2px dashed var(--accent);color:var(--accent)}.pick.new b{color:var(--accent)}
@@ -1087,6 +1102,9 @@ function renderRealQr(boxId,text){const el=document.getElementById(boxId);if(!el
   el.innerHTML=pseudoQr(text,150);}
 function routeCode(raw){
   let full=String(raw||'').trim();
+  // 0) Instruktions-QR -> Betriebsanweisung im Bestätigen-Modus
+  const hi=full.indexOf('#instr=');
+  if(hi>=0){const sid=full.slice(hi+7).trim();if(substance(sid)){toast('Betriebsanweisung geöffnet');openBA(sid,true);return true;}}
   // 1) Eigener Deep-Link (App-QR)
   const h=full.indexOf('#open=');
   if(h>=0){const t=full.slice(h+6).trim();
@@ -1152,9 +1170,9 @@ function startCamera(){
 }
 
 /* ---------- Persistenz (localStorage, mit Fallback) ---------- */
-function saveDB(){try{localStorage.setItem('stoffscan_v3',JSON.stringify({c:DB.companies,l:DB.locations,s:DB.substances,i:DB.instances,u:DB.users,h:DB.history,q:qrCounter}));}catch(e){}}
+function saveDB(){try{localStorage.setItem('stoffscan_v3',JSON.stringify({c:DB.companies,l:DB.locations,s:DB.substances,i:DB.instances,u:DB.users,h:DB.history,n:DB.instructions,q:qrCounter}));}catch(e){}}
 function saveLkDo(id){const sel=document.getElementById('lkForm');const v=(sel&&sel.lk.value)||null;const s=substance(id);if(s)s.lk=v;saveDB();closeModal();toast('Lagerklasse gespeichert');render();}
-function loadDB(){try{const r=localStorage.getItem('stoffscan_v3');if(!r)return;const d=JSON.parse(r);if(d.c)DB.companies=d.c;if(d.l)DB.locations=d.l;if(d.s)DB.substances=d.s;if(d.i)DB.instances=d.i;if(d.u)DB.users=d.u;if(d.h)DB.history=d.h;if(d.q)qrCounter=d.q;}catch(e){}}
+function loadDB(){try{const r=localStorage.getItem('stoffscan_v3');if(!r)return;const d=JSON.parse(r);if(d.c)DB.companies=d.c;if(d.l)DB.locations=d.l;if(d.s)DB.substances=d.s;if(d.i)DB.instances=d.i;if(d.u)DB.users=d.u;if(d.h)DB.history=d.h;if(d.n)DB.instructions=d.n;if(d.q)qrCounter=d.q;}catch(e){}}
 function resetDB(){try{localStorage.removeItem('stoffscan_v3');}catch(e){}location.hash='';location.reload();}
 
 /* ---------- MOCK-DATEN ---------- */
@@ -1208,6 +1226,12 @@ const DB={
     {t:'29.05. 07:15',who:'K. Roth',a:'Gasflasche gescannt',m:'Propan · Lager Recycling',cid:'c8',alert:false},
     {t:'29.05. 14:03',who:'A. Frei (SIBE)',a:'Hinweis: SDB fehlt',m:'Entkalker sauer · Lager Recycling',cid:'c8',alert:true},
     {t:'26.05. 16:20',who:'R. Meier',a:'Menge angepasst',m:'Entkalker sauer · Werkstatt Technik',cid:'c7',alert:false}
+  ],
+  instructions:[
+    {id:'in1',sub:'s2',name:'M. Brunner',date:'2026-06-14'},
+    {id:'in2',sub:'s2',name:'K. Roth',date:'2026-06-14'},
+    {id:'in3',sub:'s8',name:'K. Roth',date:'2026-07-20'},
+    {id:'in4',sub:'s3',name:'M. Brunner',date:'2025-03-02'}
   ],
   users:[
     {id:'u1',name:'A. Frei',role:'Gruppenadmin / IMS',company:'c1'},
@@ -1437,7 +1461,39 @@ function baHtml(s){
     '<div class="ba-note">Automatisch erstellt mit StoffScan aus H-/P-Sätzen und GHS-Einstufung. Ersetzt keine betriebsspezifische Gefährdungsbeurteilung; vor Aushang prüfen und Arbeitsbereich/PSA konkretisieren.</div>'+
   '</div>';
 }
-function openBA(subId){var s=substance(subId);if(!s)return;var el=document.createElement('div');el.className='ba-overlay';el.id='baOverlay';el.innerHTML='<div class="ba-toolbar"><button class="btn ghost" data-action="closeBA">Schliessen</button><button class="btn" onclick="window.print()">'+ICO.print+' Drucken / PDF</button></div><div class="ba-scroll">'+baHtml(s)+'</div>';document.body.appendChild(el);}
+/* ---------- Instruktionsnachweis (Block 5) ---------- */
+function instrFor(subId){return (DB.instructions||[]).filter(function(x){return x.sub===subId;}).slice().sort(function(a,b){return b.date.localeCompare(a.date);});}
+function instrLast(subId){var a=instrFor(subId);return a.length?a[0].date:null;}
+function daysSince(iso){return Math.floor((Date.now()-new Date(iso+'T00:00:00').getTime())/864e5);}
+function instrDue(subId){var l=instrLast(subId);return !l||daysSince(l)>365;}
+function fmtDate(iso){var p=String(iso).split('-');return p.length===3?(p[2]+'.'+p[1]+'.'+p[0]):iso;}
+function qrTextInstr(subId){return baseUrl()+'#instr='+subId;}
+function modalInstrConfirm(subId){var s=substance(subId);if(!s)return;
+  openModal('Instruktion bestätigen','<div class="notice info" style="margin-bottom:12px">'+ICO.info+'<div>Mit der Bestätigung entsteht ein <b>Instruktionsnachweis</b> für <b>'+esc(s.name)+'</b> (Datum + Name). Empfohlen jährlich zu wiederholen.</div></div>'+
+    '<div class="field"><label>Name der instruierten Person</label><input id="instrName" placeholder="Vor- und Nachname" value="'+esc(curUser().name)+'"></div>'+
+    '<label class="instr-check"><input type="checkbox" id="instrOk"> Ich habe die Betriebsanweisung gelesen und verstanden.</label>'+
+    '<div class="btn-row"><button class="btn ghost" data-action="closeModal">Abbrechen</button><button class="btn" data-action="saveInstr" data-id="'+subId+'">'+ICO.ok+' Bestätigen</button></div>');}
+function saveInstr(subId){var s=substance(subId);if(!s)return;
+  var el=document.getElementById('instrName'),ck=document.getElementById('instrOk');
+  var n=(el&&el.value||'').trim();
+  if(!n){toast('Bitte Namen eingeben.',false);if(el)el.focus();return;}
+  if(!ck||!ck.checked){toast('Bitte Bestätigung ankreuzen.',false);return;}
+  DB.instructions.unshift({id:'in_'+Date.now(),sub:subId,name:n,date:new Date().toISOString().slice(0,10)});
+  saveDB();addHistory('Instruktion bestätigt',s.name+' · '+n,'');closeModal();toast('Instruktionsnachweis gespeichert.');
+  if(state.view==='detail')render();}
+function modalInstrList(subId){var s=substance(subId);if(!s)return;var a=instrFor(subId);
+  var rows=a.length?a.map(function(x){var due=daysSince(x.date)>365;return '<div class="instr-li"><div><b>'+esc(x.name)+'</b><small>'+fmtDate(x.date)+(due?' · über 12 Monate':'')+'</small></div>'+(due?'<span class="instr-badge due">fällig</span>':'<span class="instr-badge ok">aktuell</span>')+'</div>';}).join(''):'<div class="empty" style="padding:16px">'+ICO.info+'<div>Noch keine Instruktion erfasst.</div></div>';
+  openModal('Nachweise · '+esc(s.name),rows+'<div class="notice info" style="margin-top:12px">'+ICO.info+'<div>Instruktionen sind jährlich zu wiederholen. Nach 12 Monaten wird ein Eintrag als <b>fällig</b> markiert.</div></div>'+
+    '<div class="btn-row"><button class="btn secondary" data-action="instrQr" data-id="'+subId+'">'+ICO.qr+' Instruktions-QR</button><button class="btn" data-action="instrConfirm" data-id="'+subId+'">'+ICO.ok+' Bestätigen</button></div>');}
+function modalInstrQr(subId){var s=substance(subId);if(!s)return;
+  openModal('Instruktions-QR · '+esc(s.name),'<div class="qr-wrap"><div class="qr-frame" id="qrBox"></div><div class="qr-sub">Scannen → Betriebsanweisung lesen → «gelesen» bestätigen</div></div>'+
+    '<div class="notice info" style="margin-top:15px">'+ICO.info+'<div>QR neben dem Gefahrstoff oder auf der ausgehängten Betriebsanweisung anbringen. Mitarbeitende scannen, lesen und bestätigen – der Nachweis entsteht automatisch.</div></div>'+
+    '<div class="btn-row"><button class="btn secondary" data-action="printQr">'+ICO.print+' Etikette drucken</button><button class="btn" data-action="simInstrScan" data-id="'+subId+'">'+ICO.qr+' Öffnen (simulieren)</button></div>');
+  renderRealQr('qrBox',qrTextInstr(subId));}
+function openBA(subId,confirm){var s=substance(subId);if(!s)return;var el=document.createElement('div');el.className='ba-overlay';el.id='baOverlay';
+  el.innerHTML='<div class="ba-toolbar"><button class="btn ghost" data-action="closeBA">Schliessen</button><button class="btn secondary" data-action="instrConfirm" data-id="'+subId+'">'+ICO.ok+' Als gelesen bestätigen</button><button class="btn" onclick="window.print()">'+ICO.print+' Drucken / PDF</button></div>'+
+    '<div class="ba-scroll">'+(confirm?'<div class="instr-hint">'+ICO.info+'<div>Bitte die Betriebsanweisung lesen und anschliessend oben <b>«Als gelesen bestätigen»</b>.</div></div>':'')+baHtml(s)+'</div>';
+  document.body.appendChild(el);}
 function closeBA(){var el=document.getElementById('baOverlay');if(el)el.remove();}
 function scrDetail(){
 
@@ -1501,7 +1557,12 @@ function scrDetail(){
       others.map(i=>{const l=location_(i.loc);return '<button class="arow" data-action="openInst" data-id="'+i.id+'"><span class="ag">'+firmTag(l.company)+'</span><span class="am"><span class="at">'+l.name+'</span><span class="as">'+l.bereich+' · <b>'+(i.menge==null?'Menge offen':i.menge+' '+i.einheit)+'</b> · '+i.status+'</span></span><span class="chev">'+ICO.chev+'</span></button>';}).join('');
   }
 
-  return '<div class="view">'+hero+notes+bestand+stamm+'<button class="btn secondary" data-action="genBA" data-id="'+s.id+'" style="width:100%;margin-top:14px">'+ICO.doc+' Betriebsanweisung erstellen</button>'+oth+disclaimer()+'</div>';
+  const iLast=instrLast(s.id),iCount=instrFor(s.id).length,iDue=instrDue(s.id);
+  const instrBlock='<div class="instr-card">'+
+    '<div class="instr-head"><div><b>Instruktionsnachweis</b><small>'+(iCount?('Instruiert: '+iCount+' · zuletzt '+fmtDate(iLast)):'Noch keine Instruktion erfasst')+'</small></div>'+(iDue?'<span class="instr-badge due">fällig</span>':'<span class="instr-badge ok">aktuell</span>')+'</div>'+
+    '<div class="btn-row" style="margin-top:11px"><button class="btn secondary" data-action="instrList" data-id="'+s.id+'">Nachweise</button><button class="btn secondary" data-action="instrQr" data-id="'+s.id+'">'+ICO.qr+' Instruktions-QR</button></div>'+
+    '<button class="btn" data-action="instrConfirm" data-id="'+s.id+'" style="width:100%;margin-top:9px">'+ICO.ok+' Instruktion bestätigen</button></div>';
+  return '<div class="view">'+hero+notes+bestand+stamm+'<button class="btn secondary" data-action="genBA" data-id="'+s.id+'" style="width:100%;margin-top:14px">'+ICO.doc+' Betriebsanweisung erstellen</button>'+instrBlock+oth+disclaimer()+'</div>';
 }
 
 /* ===== LAGERORTDETAIL (nützlicher) ===== */
@@ -1815,6 +1876,11 @@ document.addEventListener('click',e=>{
     case 'switchUser':modalSwitchUser();break;
     case 'genBA':openBA(id);break;
     case 'closeBA':closeBA();break;
+    case 'instrConfirm':modalInstrConfirm(id);break;
+    case 'saveInstr':saveInstr(id);break;
+    case 'instrList':modalInstrList(id);break;
+    case 'instrQr':modalInstrQr(id);break;
+    case 'simInstrScan':closeModal();openBA(id,true);break;
     case 'openAbo':modalAbo();break;
     case 'choosePlan':choosePlan(id);break;
     case 'aiSdb':modalAiSdb();break;
@@ -1906,7 +1972,7 @@ function saveErf(){const f=document.getElementById('erfForm');const name=f.name.
 
 loadDB();
 render();
-(function(){var hsh=location.hash||'';if(hsh.indexOf('#open=')===0){setTimeout(function(){routeCode(hsh);},60);}})();
+(function(){var hsh=location.hash||'';if(hsh.indexOf('#open=')===0||hsh.indexOf('#instr=')===0){setTimeout(function(){routeCode(hsh);},60);}})();
 </script>
 </body>
 </html>

@@ -160,7 +160,7 @@ damit Kunden den Nutzen sehen (Ziel: Wow-Demo direkt auf der Website).
 2. [x] **Betriebsanweisung auf Knopfdruck** (10) — aus H-/P-Sätzen + GHS erzeugte, druck-/aushängefertige Betriebsanweisung (Gefahren, Schutz, Erste Hilfe, Entsorgung) direkt aus der Stoffkarte; Print/PDF; interaktive Marketing-Sektion (2026-08-27)
 3. [x] **Barcode → crowdsourced Schweizer Katalog** (9) — mandantenübergreifende `product_catalog`-Tabelle (0006); Barcode-Scan trifft den gemeinsamen Katalog → Stoffkarte kommt vorausgefüllt zurück, jeder Speichern-Vorgang gibt anonym zurück (`catalog_find`/`catalog_contribute`, RPC-only, Beitragende nie exponiert). Demo-Simulation im `/app/`, Live an Supabase, kuratierte CH-Grunddaten, interaktive Marketing-Sektion „Einmal erfasst. Von allen erkannt." (2026-08-28)
 4. [x] Zusammenlagerungs-Warnung (9) — *bereits gebaut*
-5. [ ] **Instruktionsnachweis per QR** (9) — „gelesen" → Schulungsnachweis
+5. [x] **Instruktionsnachweis per QR** (9) — QR beim Gefahrstoff → Betriebsanweisung im Bestätigen-Modus (`#instr=<id>`) → „gelesen & verstanden" erzeugt Nachweis (Name + Datum). Stoffkarte zeigt Status (instruiert / fällig nach 12 Monaten), Nachweis-Liste, Instruktions-QR. Live: Tabelle `instructions` (0007, RLS pro Org), Demo mit Seed, interaktive Marketing-Sektion „Instruktion. Ein Scan, ein Nachweis." (2026-08-28)
 6. [ ] **Mehrsprachige Betriebsanweisung & Instruktion** (9) — DE/FR/IT (+PT/SQ/EN)
 7. [ ] **„Frag StoffScan" – KI-Chat auf eigenen Daten** (9)
 8. [ ] **„Kontrolle-morgen"-Knopf** (9) — komplettes prüffertiges Dossier als PDF
