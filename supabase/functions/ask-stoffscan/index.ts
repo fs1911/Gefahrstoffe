@@ -46,9 +46,10 @@ Deno.serve(async (req) => {
 
     const anthropic = new Anthropic({ apiKey: key });
     const msg = await anthropic.messages.create({
-      model: "claude-opus-5",
+      // Bewusst das günstigste/schnellste Modell – ein geerdeter Q&A-Chat über
+      // wenig Kontext braucht kein Opus. Bei Bedarf auf "claude-sonnet-5" anheben.
+      model: "claude-haiku-4-5",
       max_tokens: 700,
-      output_config: { effort: "low" },
       system: SYSTEM,
       messages: [{
         role: "user",

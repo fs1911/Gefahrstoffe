@@ -21,8 +21,8 @@ Ohne Key liefert die Funktion `{ configured:false }` – die App fällt dann auf
 lokale, regelbasierte Antwort-Engine zurück (funktioniert offline, ohne Kosten). Der
 Client schickt die Frage plus einen kompakten JSON-Kontext der eigenen Organisation
 (Stoffe, Bestände, Lagerorte); Claude antwortet ausschliesslich daraus. Modell in
-`index.ts`: `claude-opus-5` (z. B. auf `claude-sonnet-5`/`claude-haiku-4-5` umstellbar
-für weniger Kosten).
+`index.ts`: `claude-haiku-4-5` (günstig & schnell – reicht für geerdete Q&A; bei Bedarf
+auf `claude-sonnet-5` anheben).
 
 ### `parse-sdb` aktivieren (SDB → Stoffkarte per KI)
 ```bash
