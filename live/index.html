@@ -218,8 +218,12 @@
   .instr-check input{margin-top:2px;flex:none;width:17px;height:17px;accent-color:var(--accent)}
   .instr-hint{display:flex;gap:10px;align-items:flex-start;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:0 auto 14px;max-width:820px;font-size:13.5px;color:var(--ink-2)}
   .instr-hint svg{flex:none;width:18px;height:18px;margin-top:1px}
+  .ba-lang{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;margin-right:auto;align-self:center}
+  .ba-lang-b{border:0;background:var(--surface);color:var(--ink-2);font-family:var(--font);font-weight:700;font-size:12.5px;padding:8px 12px;cursor:pointer;border-left:1px solid var(--line)}
+  .ba-lang-b:first-child{border-left:0}
+  .ba-lang-b.on{background:var(--accent);color:#fff}
   .ba-overlay{position:fixed;inset:0;z-index:200;background:var(--bg);overflow:auto}
-  .ba-toolbar{position:sticky;top:0;display:flex;gap:10px;justify-content:flex-end;padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--line);z-index:2}
+  .ba-toolbar{position:sticky;top:0;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:flex-end;padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--line);z-index:2}
   .ba-toolbar .btn{width:auto}
   .ba-scroll{padding:20px 14px 60px}
   .ba-doc{max-width:820px;margin:0 auto;background:#fff;color:#17201c;border:1px solid var(--line);border-radius:10px;padding:30px 34px;font-size:13.5px;line-height:1.5}
@@ -1079,7 +1083,11 @@ function zlLocRow(e){
   return '<button class="arow '+flag+'" data-action="openLoc" data-id="'+e.loc+'"><span class="ag">'+firmTag(l.company)+'</span><span class="am"><span class="at">'+l.name+'</span><span class="as">'+txt+'</span></span><span class="reason '+(red?'d':'w')+'">'+(red?'nicht zusammen':'bedingt')+'</span><span class="chev">'+ICO.chev+'</span></button>';
 }
 
-function ghsBadge(k,cls){return '<span class="ghs '+(cls||'')+'">'+(GHS_SVG[k]||'')+'<small>'+(GHS_LABEL[k]||'')+'</small></span>';}
+
+const GHS_LABEL_FR={flamm:'inflammable',oxid:'comburant',explosiv:'explosif',druckgas:'gaz pressur.',aetz:'corrosif',giftig:'toxique',reiz:'irritant',gesundheit:'danger santé',umwelt:'danger env.'};
+const GHS_LABEL_IT={flamm:'infiammabile',oxid:'comburente',explosiv:'esplosivo',druckgas:'gas compresso',aetz:'corrosivo',giftig:'tossico',reiz:'irritante',gesundheit:'pericolo salute',umwelt:'pericolo amb.'};
+function ghsLabelL(k,l){return (l==='fr'?GHS_LABEL_FR:l==='it'?GHS_LABEL_IT:GHS_LABEL)[k]||GHS_LABEL[k]||'';}
+function ghsBadge(k,cls,lang){return '<span class="ghs '+(cls||'')+'">'+(GHS_SVG[k]||'')+'<small>'+ghsLabelL(k,lang||'de')+'</small></span>';}
 function pseudoQr(seed,size){size=size||140;const n=21,m=size/n;let h=0;for(let i=0;i<seed.length;i++)h=(h*31+seed.charCodeAt(i))>>>0;
   function fnd(x,y){return '<rect x="'+(x*m)+'" y="'+(y*m)+'" width="'+(7*m)+'" height="'+(7*m)+'" fill="#13171b"/><rect x="'+((x+1)*m)+'" y="'+((y+1)*m)+'" width="'+(5*m)+'" height="'+(5*m)+'" fill="#fff"/><rect x="'+((x+2)*m)+'" y="'+((y+2)*m)+'" width="'+(3*m)+'" height="'+(3*m)+'" fill="#13171b"/>';}
   let c='';for(let y=0;y<n;y++)for(let x=0;x<n;x++){if((x<8&&y<8)||(x>n-9&&y<8)||(x<8&&y>n-9))continue;h=(h*1103515245+12345)>>>0;if(h>>16&1)c+='<rect x="'+(x*m)+'" y="'+(y*m)+'" width="'+m+'" height="'+m+'" fill="#13171b"/>';}
@@ -1382,30 +1390,199 @@ function scrScanArt(){
 /* ===== STOFFKARTE (neu strukturiert) ===== */
 /* ---------- Betriebsanweisung auf Knopfdruck (Differenzierung Block 2) ---------- */
 const BA_PSA={aetz:'Chemikalienschutzbrille, beständige Schutzhandschuhe, bei Spritzgefahr Schürze/Gesichtsschutz.',giftig:'Geeignete Schutzhandschuhe und Atemschutz; Haut-/Augenkontakt und Einatmen vermeiden.',reiz:'Schutzhandschuhe und Schutzbrille; Hautkontakt vermeiden.',gesundheit:'Schutzhandschuhe und Atemschutz; Exposition so gering wie möglich halten.',flamm:'Von Zündquellen fernhalten; für gute Belüftung sorgen; funkenarme, antistatische Ausrüstung.',oxid:'Von brennbaren Materialien fernhalten; nur saubere, öl- und fettfreie Ausrüstung.',druckgas:'Behälter gegen Umfallen sichern; vor Erwärmung schützen; nur gut belüftet lagern.',umwelt:'Freisetzung in Gewässer, Boden und Kanalisation vermeiden; Auffangwanne verwenden.',explosiv:'Nur durch geschultes Personal; Schlag, Reibung, Hitze und Funken vermeiden.'};
+/* ---------- Mehrsprachige Betriebsanweisung & Instruktion (Block 6): DE / FR / IT ----------
+   H-/P-Sätze in offizieller CLP-Formulierung (EG 1272/2008, Anhang III/IV).
+   Nicht übersetzte Codes fallen auf den international gültigen Code zurück.        */
+const H_TEXT_FR={
+ H200:'Explosif instable.',H201:'Explosif; danger d’explosion en masse.',H202:'Explosif; danger sérieux de projection.',H203:'Explosif; danger d’incendie, d’effet de souffle ou de projection.',H204:'Danger d’incendie ou de projection.',H205:'Danger d’explosion en masse en cas d’incendie.',
+ H220:'Gaz extrêmement inflammable.',H221:'Gaz inflammable.',H222:'Aérosol extrêmement inflammable.',H223:'Aérosol inflammable.',H224:'Liquide et vapeurs extrêmement inflammables.',H225:'Liquide et vapeurs très inflammables.',H226:'Liquide et vapeurs inflammables.',H228:'Matière solide inflammable.',H229:'Récipient sous pression: peut éclater sous l’effet de la chaleur.',
+ H240:'Peut exploser sous l’effet de la chaleur.',H241:'Peut s’enflammer ou exploser sous l’effet de la chaleur.',H242:'Peut s’enflammer sous l’effet de la chaleur.',H250:'S’enflamme spontanément au contact de l’air.',H251:'Matière auto-échauffante; peut s’enflammer.',H252:'Matière auto-échauffante en grandes quantités; peut s’enflammer.',
+ H260:'Dégage au contact de l’eau des gaz inflammables qui peuvent s’enflammer spontanément.',H261:'Dégage au contact de l’eau des gaz inflammables.',H270:'Peut provoquer ou aggraver un incendie; comburant.',H271:'Peut provoquer un incendie ou une explosion; comburant puissant.',H272:'Peut aggraver un incendie; comburant.',
+ H280:'Contient un gaz sous pression; peut exploser sous l’effet de la chaleur.',H281:'Contient un gaz réfrigéré; peut causer des brûlures ou blessures cryogéniques.',H290:'Peut être corrosif pour les métaux.',
+ H300:'Mortel en cas d’ingestion.',H301:'Toxique en cas d’ingestion.',H302:'Nocif en cas d’ingestion.',H304:'Peut être mortel en cas d’ingestion et de pénétration dans les voies respiratoires.',H310:'Mortel par contact cutané.',H311:'Toxique par contact cutané.',H312:'Nocif par contact cutané.',
+ H314:'Provoque des brûlures de la peau et des lésions oculaires graves.',H315:'Provoque une irritation cutanée.',H317:'Peut provoquer une allergie cutanée.',H318:'Provoque des lésions oculaires graves.',H319:'Provoque une sévère irritation des yeux.',
+ H330:'Mortel par inhalation.',H331:'Toxique par inhalation.',H332:'Nocif par inhalation.',H334:'Peut provoquer des symptômes allergiques ou d’asthme ou des difficultés respiratoires par inhalation.',H335:'Peut irriter les voies respiratoires.',H336:'Peut provoquer somnolence ou vertiges.',
+ H340:'Peut induire des anomalies génétiques.',H341:'Susceptible d’induire des anomalies génétiques.',H350:'Peut provoquer le cancer.',H351:'Susceptible de provoquer le cancer.',H360:'Peut nuire à la fertilité ou au fœtus.',H361:'Susceptible de nuire à la fertilité ou au fœtus.',H362:'Peut être nocif pour les bébés nourris au lait maternel.',
+ H370:'Risque avéré d’effets graves pour les organes.',H371:'Risque présumé d’effets graves pour les organes.',H372:'Risque avéré d’effets graves pour les organes à la suite d’expositions répétées ou prolongées.',H373:'Risque présumé d’effets graves pour les organes à la suite d’expositions répétées ou prolongées.',
+ H400:'Très toxique pour les organismes aquatiques.',H410:'Très toxique pour les organismes aquatiques, entraîne des effets néfastes à long terme.',H411:'Toxique pour les organismes aquatiques, entraîne des effets néfastes à long terme.',H412:'Nocif pour les organismes aquatiques, entraîne des effets néfastes à long terme.',H413:'Peut être nocif à long terme pour les organismes aquatiques.'
+};
+const H_TEXT_IT={
+ H200:'Esplosivo instabile.',H201:'Esplosivo; pericolo di esplosione di massa.',H202:'Esplosivo; grave pericolo di proiezione.',H203:'Esplosivo; pericolo di incendio, di spostamento d’aria o di proiezione.',H204:'Pericolo di incendio o di proiezione.',H205:'Pericolo di esplosione di massa in caso d’incendio.',
+ H220:'Gas altamente infiammabile.',H221:'Gas infiammabile.',H222:'Aerosol altamente infiammabile.',H223:'Aerosol infiammabile.',H224:'Liquido e vapori altamente infiammabili.',H225:'Liquido e vapori facilmente infiammabili.',H226:'Liquido e vapori infiammabili.',H228:'Solido infiammabile.',H229:'Contenitore pressurizzato: può esplodere se riscaldato.',
+ H240:'Rischio di esplosione per riscaldamento.',H241:'Rischio d’incendio o di esplosione per riscaldamento.',H242:'Rischio d’incendio per riscaldamento.',H250:'Spontaneamente infiammabile all’aria.',H251:'Autoriscaldante; può infiammarsi.',H252:'Autoriscaldante in grandi quantità; può infiammarsi.',
+ H260:'A contatto con l’acqua libera gas infiammabili che possono infiammarsi spontaneamente.',H261:'A contatto con l’acqua libera gas infiammabili.',H270:'Può provocare o aggravare un incendio; comburente.',H271:'Può provocare un incendio o un’esplosione; molto comburente.',H272:'Può aggravare un incendio; comburente.',
+ H280:'Contiene gas sotto pressione; può esplodere se riscaldato.',H281:'Contiene gas refrigerato; può provocare ustioni o lesioni criogeniche.',H290:'Può essere corrosivo per i metalli.',
+ H300:'Letale se ingerito.',H301:'Tossico se ingerito.',H302:'Nocivo se ingerito.',H304:'Può essere letale in caso di ingestione e di penetrazione nelle vie respiratorie.',H310:'Letale per contatto con la pelle.',H311:'Tossico per contatto con la pelle.',H312:'Nocivo per contatto con la pelle.',
+ H314:'Provoca gravi ustioni cutanee e gravi lesioni oculari.',H315:'Provoca irritazione cutanea.',H317:'Può provocare una reazione allergica cutanea.',H318:'Provoca gravi lesioni oculari.',H319:'Provoca grave irritazione oculare.',
+ H330:'Letale se inalato.',H331:'Tossico se inalato.',H332:'Nocivo se inalato.',H334:'Può provocare sintomi allergici o asmatici o difficoltà respiratorie se inalato.',H335:'Può irritare le vie respiratorie.',H336:'Può provocare sonnolenza o vertigini.',
+ H340:'Può provocare alterazioni genetiche.',H341:'Sospettato di provocare alterazioni genetiche.',H350:'Può provocare il cancro.',H351:'Sospettato di provocare il cancro.',H360:'Può nuocere alla fertilità o al feto.',H361:'Sospettato di nuocere alla fertilità o al feto.',H362:'Può essere nocivo per i lattanti allattati al seno.',
+ H370:'Provoca danni agli organi.',H371:'Può provocare danni agli organi.',H372:'Provoca danni agli organi in caso di esposizione prolungata o ripetuta.',H373:'Può provocare danni agli organi in caso di esposizione prolungata o ripetuta.',
+ H400:'Molto tossico per gli organismi acquatici.',H410:'Molto tossico per gli organismi acquatici con effetti di lunga durata.',H411:'Tossico per gli organismi acquatici con effetti di lunga durata.',H412:'Nocivo per gli organismi acquatici con effetti di lunga durata.',H413:'Può essere nocivo per gli organismi acquatici con effetti di lunga durata.'
+};
+const P_TEXT_FR={
+ P101:'En cas de consultation d’un médecin, garder à disposition le récipient ou l’étiquette.',P102:'Tenir hors de portée des enfants.',P103:'Lire l’étiquette avant utilisation.',
+ P201:'Se procurer les instructions avant utilisation.',P202:'Ne pas manipuler avant d’avoir lu et compris toutes les précautions de sécurité.',P210:'Tenir à l’écart de la chaleur, des surfaces chaudes, des étincelles, des flammes nues et de toute autre source d’inflammation. Ne pas fumer.',P211:'Ne pas vaporiser sur une flamme nue ou toute autre source d’inflammation.',P220:'Tenir à l’écart des vêtements et d’autres matières combustibles.',P222:'Ne pas laisser au contact de l’air.',P223:'Éviter tout contact avec l’eau.',
+ P231:'Manipuler et stocker le contenu sous gaz inerte.',P232:'Protéger de l’humidité.',P233:'Maintenir le récipient fermé de manière étanche.',P234:'Conserver uniquement dans le récipient d’origine.',P235:'Tenir au frais.',
+ P240:'Mise à la terre et liaison équipotentielle du récipient et du matériel de réception.',P241:'Utiliser du matériel électrique, de ventilation, d’éclairage antidéflagrant.',P242:'Utiliser des outils ne produisant pas d’étincelles.',P243:'Prendre des mesures contre les décharges électrostatiques.',P244:'Maintenir les valves et raccords exempts d’huile et de graisse.',
+ P250:'Éviter les abrasions, les chocs, les frottements.',P251:'Ne pas perforer ni brûler, même après usage.',
+ P260:'Ne pas respirer les poussières, fumées, gaz, brouillards, vapeurs, aérosols.',P261:'Éviter de respirer les poussières, fumées, gaz, brouillards, vapeurs, aérosols.',P262:'Éviter tout contact avec les yeux, la peau ou les vêtements.',P263:'Éviter tout contact avec la substance au cours de la grossesse et de l’allaitement.',P264:'Se laver soigneusement après manipulation.',
+ P270:'Ne pas manger, boire ou fumer en manipulant ce produit.',P271:'Utiliser seulement en plein air ou dans un endroit bien ventilé.',P272:'Les vêtements de travail contaminés ne doivent pas sortir du lieu de travail.',P273:'Éviter le rejet dans l’environnement.',
+ P280:'Porter des gants de protection, des vêtements de protection, un équipement de protection des yeux, du visage.',P282:'Porter des gants isolant contre le froid et un écran facial ou des lunettes de protection.',P283:'Porter des vêtements résistant au feu ou aux flammes.',P284:'En cas de ventilation insuffisante, porter un appareil de protection respiratoire.',
+ P301:'EN CAS D’INGESTION:',P302:'EN CAS DE CONTACT AVEC LA PEAU:',P303:'EN CAS DE CONTACT AVEC LA PEAU (ou les cheveux):',P304:'EN CAS D’INHALATION:',P305:'EN CAS DE CONTACT AVEC LES YEUX:',P306:'EN CAS DE CONTACT AVEC LES VÊTEMENTS:',P308:'EN CAS d’exposition prouvée ou suspectée:',
+ P310:'Appeler immédiatement un CENTRE ANTIPOISON ou un médecin.',P311:'Appeler un CENTRE ANTIPOISON ou un médecin.',P312:'Appeler un CENTRE ANTIPOISON ou un médecin en cas de malaise.',P313:'Consulter un médecin.',P314:'Consulter un médecin en cas de malaise.',P315:'Consulter immédiatement un médecin.',
+ P320:'Un traitement spécifique est urgent (voir les indications sur cette étiquette).',P321:'Traitement spécifique (voir les indications sur cette étiquette).',P330:'Rincer la bouche.',P331:'NE PAS faire vomir.',
+ P332:'En cas d’irritation cutanée:',P333:'En cas d’irritation ou d’éruption cutanée:',P334:'Rincer à l’eau fraîche ou poser une compresse humide.',P335:'Enlever avec précaution les particules déposées sur la peau.',P336:'Dégeler les parties gelées avec de l’eau tiède. Ne pas frotter la zone touchée.',P337:'Si l’irritation oculaire persiste:',P338:'Enlever les lentilles de contact si la victime en porte et si elles peuvent être facilement enlevées. Continuer à rincer.',
+ P340:'Transporter la personne à l’air libre et la maintenir dans une position où elle peut confortablement respirer.',P342:'En cas de symptômes respiratoires:',P351:'Rincer avec précaution à l’eau pendant plusieurs minutes.',P352:'Laver abondamment à l’eau.',P353:'Rincer la peau à l’eau ou se doucher.',
+ P360:'Rincer immédiatement et abondamment à l’eau les vêtements contaminés et la peau avant de les enlever.',P361:'Enlever immédiatement tous les vêtements contaminés.',P362:'Enlever les vêtements contaminés.',P363:'Laver les vêtements contaminés avant réutilisation.',P364:'Et les laver avant réutilisation.',
+ P370:'En cas d’incendie:',P371:'En cas d’incendie important et s’il s’agit de grandes quantités:',P372:'Risque d’explosion en cas d’incendie.',P373:'NE PAS combattre l’incendie lorsque le feu atteint les explosifs.',P375:'Combattre l’incendie à distance à cause du risque d’explosion.',P376:'Colmater la fuite si cela peut se faire sans danger.',P377:'Fuite de gaz enflammé: ne pas éteindre si la fuite ne peut pas être arrêtée sans danger.',P378:'Utiliser un moyen d’extinction approprié.',
+ P380:'Évacuer la zone.',P381:'Éliminer toutes les sources d’inflammation si cela peut se faire sans danger.',P390:'Absorber toute substance répandue pour éviter qu’elle attaque les matériaux environnants.',P391:'Recueillir le produit répandu.',
+ P401:'Stocker conformément à la réglementation locale.',P402:'Stocker dans un endroit sec.',P403:'Stocker dans un endroit bien ventilé.',P404:'Stocker dans un récipient fermé.',P405:'Garder sous clef.',P406:'Stocker dans un récipient résistant à la corrosion avec doublure intérieure résistante.',P407:'Maintenir un intervalle d’air entre les piles ou les palettes.',
+ P410:'Protéger du rayonnement solaire.',P411:'Stocker à une température ne dépassant pas … °C.',P412:'Ne pas exposer à une température supérieure à 50 °C.',P413:'Stocker les quantités en vrac à une température ne dépassant pas … °C.',P420:'Stocker séparément.',
+ P501:'Éliminer le contenu et le récipient conformément à la réglementation locale.',P502:'Se reporter au fabricant ou au fournisseur pour des informations concernant la récupération ou le recyclage.',
+ 'P301+P310':'EN CAS D’INGESTION: Appeler immédiatement un CENTRE ANTIPOISON ou un médecin.',
+ 'P301+P312':'EN CAS D’INGESTION: Appeler un CENTRE ANTIPOISON ou un médecin en cas de malaise.',
+ 'P301+P330+P331':'EN CAS D’INGESTION: Rincer la bouche. NE PAS faire vomir.',
+ 'P302+P352':'EN CAS DE CONTACT AVEC LA PEAU: Laver abondamment à l’eau.',
+ 'P303+P361+P353':'EN CAS DE CONTACT AVEC LA PEAU (ou les cheveux): Enlever immédiatement tous les vêtements contaminés. Rincer la peau à l’eau ou se doucher.',
+ 'P304+P340':'EN CAS D’INHALATION: Transporter la personne à l’air libre et la maintenir dans une position où elle peut confortablement respirer.',
+ 'P305+P351+P338':'EN CAS DE CONTACT AVEC LES YEUX: Rincer avec précaution à l’eau pendant plusieurs minutes. Enlever les lentilles de contact si la victime en porte et si elles peuvent être facilement enlevées. Continuer à rincer.',
+ 'P306+P360':'EN CAS DE CONTACT AVEC LES VÊTEMENTS: Rincer immédiatement et abondamment à l’eau les vêtements contaminés et la peau avant de les enlever.',
+ 'P308+P311':'EN CAS d’exposition prouvée ou suspectée: Appeler un CENTRE ANTIPOISON ou un médecin.',
+ 'P332+P313':'En cas d’irritation cutanée: Consulter un médecin.',
+ 'P333+P313':'En cas d’irritation ou d’éruption cutanée: Consulter un médecin.',
+ 'P337+P313':'Si l’irritation oculaire persiste: Consulter un médecin.',
+ 'P342+P311':'En cas de symptômes respiratoires: Appeler un CENTRE ANTIPOISON ou un médecin.',
+ 'P370+P378':'En cas d’incendie: Utiliser un moyen d’extinction approprié.',
+ 'P403+P233':'Stocker dans un endroit bien ventilé. Maintenir le récipient fermé de manière étanche.',
+ 'P403+P235':'Stocker dans un endroit bien ventilé. Tenir au frais.',
+ 'P410+P403':'Protéger du rayonnement solaire. Stocker dans un endroit bien ventilé.',
+ 'P410+P412':'Protéger du rayonnement solaire. Ne pas exposer à une température supérieure à 50 °C.',
+ 'P411+P235':'Stocker à une température ne dépassant pas … °C. Tenir au frais.'
+};
+const P_TEXT_IT={
+ P101:'In caso di consultazione di un medico, tenere a disposizione il contenitore o l’etichetta.',P102:'Tenere fuori dalla portata dei bambini.',P103:'Leggere l’etichetta prima dell’uso.',
+ P201:'Procurarsi istruzioni specifiche prima dell’uso.',P202:'Non manipolare prima di aver letto e compreso tutte le avvertenze.',P210:'Tenere lontano da fonti di calore, superfici calde, scintille, fiamme libere o altre fonti di accensione. Non fumare.',P211:'Non vaporizzare su una fiamma libera o altra fonte di accensione.',P220:'Tenere lontano da indumenti e altri materiali combustibili.',P222:'Evitare il contatto con l’aria.',P223:'Evitare qualsiasi contatto con l’acqua.',
+ P231:'Manipolare e conservare in atmosfera di gas inerte.',P232:'Proteggere dall’umidità.',P233:'Tenere il recipiente ben chiuso.',P234:'Conservare soltanto nel contenitore originale.',P235:'Conservare in luogo fresco.',
+ P240:'Mettere a terra e mettere in equipotenziale il contenitore e il dispositivo ricevente.',P241:'Utilizzare impianti elettrici, di ventilazione, d’illuminazione a prova di esplosione.',P242:'Utilizzare utensili antiscintillamento.',P243:'Prendere precauzioni contro le scariche elettrostatiche.',P244:'Mantenere le valvole e i raccordi liberi da olio e grasso.',
+ P250:'Evitare le abrasioni, gli urti, gli attriti.',P251:'Non perforare né bruciare, neppure dopo l’uso.',
+ P260:'Non respirare la polvere, i fumi, i gas, la nebbia, i vapori, gli aerosol.',P261:'Evitare di respirare la polvere, i fumi, i gas, la nebbia, i vapori, gli aerosol.',P262:'Evitare il contatto con gli occhi, la pelle o gli indumenti.',P263:'Evitare il contatto durante la gravidanza e l’allattamento.',P264:'Lavare accuratamente dopo l’uso.',
+ P270:'Non mangiare, né bere, né fumare durante l’uso.',P271:'Utilizzare soltanto all’aperto o in luogo ben ventilato.',P272:'Gli indumenti di lavoro contaminati non devono essere portati fuori dal luogo di lavoro.',P273:'Non disperdere nell’ambiente.',
+ P280:'Indossare guanti, indumenti protettivi, proteggere gli occhi, il viso.',P282:'Utilizzare guanti termici e uno schermo o occhiali di protezione.',P283:'Indossare indumenti resistenti al fuoco o alla fiamma.',P284:'In caso di ventilazione insufficiente, utilizzare un apparecchio respiratorio.',
+ P301:'IN CASO DI INGESTIONE:',P302:'IN CASO DI CONTATTO CON LA PELLE:',P303:'IN CASO DI CONTATTO CON LA PELLE (o con i capelli):',P304:'IN CASO DI INALAZIONE:',P305:'IN CASO DI CONTATTO CON GLI OCCHI:',P306:'IN CASO DI CONTATTO CON GLI INDUMENTI:',P308:'IN CASO di esposizione o di possibile esposizione:',
+ P310:'Contattare immediatamente un CENTRO ANTIVELENI o un medico.',P311:'Contattare un CENTRO ANTIVELENI o un medico.',P312:'In caso di malessere contattare un CENTRO ANTIVELENI o un medico.',P313:'Consultare un medico.',P314:'In caso di malessere consultare un medico.',P315:'Consultare immediatamente un medico.',
+ P320:'Trattamento specifico urgente (vedere le indicazioni su questa etichetta).',P321:'Trattamento specifico (vedere le indicazioni su questa etichetta).',P330:'Sciacquare la bocca.',P331:'NON provocare il vomito.',
+ P332:'In caso di irritazione della pelle:',P333:'In caso di irritazione o eruzione della pelle:',P334:'Immergere in acqua fredda o applicare un impacco umido.',P335:'Rimuovere le particelle depositate sulla pelle.',P336:'Sgelare le parti congelate con acqua tiepida. Non sfregare la parte interessata.',P337:'Se l’irritazione degli occhi persiste:',P338:'Togliere le eventuali lenti a contatto se è agevole farlo. Continuare a sciacquare.',
+ P340:'Trasportare la persona all’aria aperta e mantenerla a riposo in posizione che favorisca la respirazione.',P342:'In caso di sintomi respiratori:',P351:'Sciacquare accuratamente per parecchi minuti.',P352:'Lavare abbondantemente con acqua.',P353:'Sciacquare la pelle o fare una doccia.',
+ P360:'Sciacquare immediatamente e abbondantemente gli indumenti contaminati e la pelle prima di togliersi gli indumenti.',P361:'Togliere immediatamente tutti gli indumenti contaminati.',P362:'Togliere gli indumenti contaminati.',P363:'Lavare gli indumenti contaminati prima di indossarli nuovamente.',P364:'E lavarli prima di indossarli nuovamente.',
+ P370:'In caso di incendio:',P371:'In caso di incendio grave e di quantità rilevanti:',P372:'Rischio di esplosione in caso di incendio.',P373:'NON utilizzare mezzi estinguenti se il fuoco raggiunge gli esplosivi.',P375:'Rischio di esplosione: spegnere l’incendio a distanza.',P376:'Bloccare la perdita se non c’è pericolo.',P377:'Perdita di gas infiammato: non estinguere a meno che non sia possibile bloccare la perdita in modo sicuro.',P378:'Utilizzare un mezzo estinguente idoneo.',
+ P380:'Evacuare la zona.',P381:'Eliminare ogni fonte di accensione se non c’è pericolo.',P390:'Assorbire la fuoriuscita per evitare danni materiali.',P391:'Raccogliere la fuoriuscita.',
+ P401:'Conservare secondo la regolamentazione locale.',P402:'Conservare in luogo asciutto.',P403:'Conservare in luogo ben ventilato.',P404:'Conservare in un recipiente chiuso.',P405:'Conservare sotto chiave.',P406:'Conservare in recipiente resistente alla corrosione con rivestimento interno resistente.',P407:'Lasciare uno spazio d’aria tra le cataste o i pallet.',
+ P410:'Proteggere dai raggi solari.',P411:'Conservare a temperature non superiori a … °C.',P412:'Non esporre a temperature superiori a 50 °C.',P413:'Conservare le rinfuse a temperature non superiori a … °C.',P420:'Conservare separatamente.',
+ P501:'Smaltire il prodotto e il recipiente secondo la regolamentazione locale.',P502:'Chiedere informazioni al produttore o al fornitore sul recupero o il riciclaggio.',
+ 'P301+P310':'IN CASO DI INGESTIONE: contattare immediatamente un CENTRO ANTIVELENI o un medico.',
+ 'P301+P312':'IN CASO DI INGESTIONE: in caso di malessere contattare un CENTRO ANTIVELENI o un medico.',
+ 'P301+P330+P331':'IN CASO DI INGESTIONE: sciacquare la bocca. NON provocare il vomito.',
+ 'P302+P352':'IN CASO DI CONTATTO CON LA PELLE: lavare abbondantemente con acqua.',
+ 'P303+P361+P353':'IN CASO DI CONTATTO CON LA PELLE (o con i capelli): togliere immediatamente tutti gli indumenti contaminati. Sciacquare la pelle o fare una doccia.',
+ 'P304+P340':'IN CASO DI INALAZIONE: trasportare la persona all’aria aperta e mantenerla a riposo in posizione che favorisca la respirazione.',
+ 'P305+P351+P338':'IN CASO DI CONTATTO CON GLI OCCHI: sciacquare accuratamente per parecchi minuti. Togliere le eventuali lenti a contatto se è agevole farlo. Continuare a sciacquare.',
+ 'P306+P360':'IN CASO DI CONTATTO CON GLI INDUMENTI: sciacquare immediatamente e abbondantemente gli indumenti contaminati e la pelle prima di togliersi gli indumenti.',
+ 'P308+P311':'IN CASO di esposizione o di possibile esposizione: contattare un CENTRO ANTIVELENI o un medico.',
+ 'P332+P313':'In caso di irritazione della pelle: consultare un medico.',
+ 'P333+P313':'In caso di irritazione o eruzione della pelle: consultare un medico.',
+ 'P337+P313':'Se l’irritazione degli occhi persiste: consultare un medico.',
+ 'P342+P311':'In caso di sintomi respiratori: contattare un CENTRO ANTIVELENI o un medico.',
+ 'P370+P378':'In caso di incendio: utilizzare un mezzo estinguente idoneo.',
+ 'P403+P233':'Conservare in luogo ben ventilato. Tenere il recipiente ben chiuso.',
+ 'P403+P235':'Conservare in luogo ben ventilato. Conservare in luogo fresco.',
+ 'P410+P403':'Proteggere dai raggi solari. Conservare in luogo ben ventilato.',
+ 'P410+P412':'Proteggere dai raggi solari. Non esporre a temperature superiori a 50 °C.',
+ 'P411+P235':'Conservare a temperature non superiori a … °C. Conservare in luogo fresco.'
+};
+const BA_PSA_FR={aetz:'Lunettes de protection chimique, gants résistants; en cas de projection, tablier / écran facial.',giftig:'Gants de protection et protection respiratoire adaptés; éviter le contact cutané/oculaire et l’inhalation.',reiz:'Gants et lunettes de protection; éviter le contact cutané.',gesundheit:'Gants et protection respiratoire; réduire l’exposition au minimum.',flamm:'Tenir à l’écart des sources d’inflammation; assurer une bonne ventilation; équipement antistatique et anti-étincelles.',oxid:'Tenir à l’écart des matières combustibles; équipement propre, exempt d’huile et de graisse.',druckgas:'Sécuriser les récipients contre les chutes; protéger de la chaleur; stocker uniquement dans un endroit bien ventilé.',umwelt:'Éviter le rejet dans les eaux, le sol et les égouts; utiliser un bac de rétention.',explosiv:'Uniquement par du personnel formé; éviter les chocs, frottements, chaleur et étincelles.'};
+const BA_PSA_IT={aetz:'Occhiali di protezione chimica, guanti resistenti; in caso di spruzzi, grembiule / visiera.',giftig:'Guanti e protezione respiratoria idonei; evitare il contatto con pelle/occhi e l’inalazione.',reiz:'Guanti e occhiali di protezione; evitare il contatto con la pelle.',gesundheit:'Guanti e protezione respiratoria; ridurre al minimo l’esposizione.',flamm:'Tenere lontano da fonti di accensione; garantire una buona ventilazione; attrezzatura antistatica e antiscintilla.',oxid:'Tenere lontano da materiali combustibili; attrezzatura pulita, priva di olio e grasso.',druckgas:'Assicurare i contenitori contro le cadute; proteggere dal calore; conservare solo in luogo ben ventilato.',umwelt:'Evitare il rilascio in acque, suolo e canalizzazione; utilizzare una vasca di raccolta.',explosiv:'Solo da personale formato; evitare urti, attriti, calore e scintille.'};
+const PIKTO_NAME={
+ de:{explosiv:'Explosiv',flamm:'Entzündbar',oxid:'Brandfördernd (oxidierend)',druckgas:'Gase unter Druck',aetz:'Ätzend / korrosiv',giftig:'Giftig',reiz:'Reizend / gesundheitsschädlich',gesundheit:'Schwere Gesundheitsgefahr',umwelt:'Gewässergefährdend'},
+ fr:{explosiv:'Explosif',flamm:'Inflammable',oxid:'Comburant',druckgas:'Gaz sous pression',aetz:'Corrosif',giftig:'Toxique',reiz:'Irritant / nocif',gesundheit:'Danger grave pour la santé',umwelt:'Dangereux pour le milieu aquatique'},
+ it:{explosiv:'Esplosivo',flamm:'Infiammabile',oxid:'Comburente',druckgas:'Gas sotto pressione',aetz:'Corrosivo',giftig:'Tossico',reiz:'Irritante / nocivo',gesundheit:'Grave pericolo per la salute',umwelt:'Pericoloso per l’ambiente acquatico'}
+};
+const SIGNAL_L={de:{Gefahr:'GEFAHR',Achtung:'ACHTUNG'},fr:{Gefahr:'DANGER',Achtung:'ATTENTION'},it:{Gefahr:'PERICOLO',Achtung:'ATTENZIONE'}};
+const BA_I18N={
+ de:{kick:'Betriebsanweisung',sub:'gemäss Chemikalienrecht – Tätigkeiten mit Gefahrstoffen',betrieb:'Betrieb',bereich:'Arbeitsbereich',allg:'allgemein',stoff:'Gefahrstoff',stand:'Stand',
+  s1:'1 · Gefahrstoffbezeichnung',s2:'2 · Gefahren für Mensch und Umwelt',s3:'3 · Schutzmassnahmen und Verhaltensregeln',s4:'4 · Verhalten im Gefahrfall',s5:'5 · Erste Hilfe',s6:'6 · Sachgerechte Entsorgung',
+  hersteller:'Hersteller',lk:'Lagerklasse',noData:'Keine Angaben hinterlegt.',
+  loeschF:'Geeignete Löschmittel: Schaum, Kohlendioxid (CO₂), Löschpulver oder Sprühwasser. Keinen Wasservollstrahl verwenden.',loeschN:'Löschmassnahmen der Umgebung anpassen. Behälter aus dem Gefahrenbereich bringen oder mit Wasser kühlen.',
+  spillPre:'Zündquellen sofort entfernen, ',spill:'Bei Austritt: %Bereich lüften und sichern, mit flüssigkeitsbindendem Material aufnehmen, nicht in die Kanalisation gelangen lassen. Vorgesetzte informieren.',
+  eye:'Augen',skin:'Haut',inhale:'Einatmen',swallow:'Verschlucken',important:'Wichtig',
+  eyeT:'sofort 10–15 Minuten bei geöffnetem Lid mit Wasser spülen, Arzt aufsuchen.',skinT:'benetzte Kleidung entfernen, Haut mit Wasser und Seife reinigen.',inhaleT:'an die frische Luft bringen, bei Beschwerden Arzt.',swallowT:'Mund ausspülen, kein Erbrechen herbeiführen, sofort Arzt.',importantT:'bei Unwohlsein sofort ärztliche Hilfe – SDB/Etikett vorzeigen.',
+  emo:'Notfall: 144 Sanität · 145 Tox Info Suisse · 118 Feuerwehr',
+  disp:'Reste und leere, nicht gereinigte Gebinde als Sonderabfall gemäss VeVA entsorgen. Nicht in Kanalisation oder Hauskehricht. Angaben im Sicherheitsdatenblatt (Abschnitt 13) beachten.',
+  fDate:'Datum',fSup:'Unterschrift Vorgesetzte(r)',fEmp:'Unterschrift Mitarbeiter(in)',
+  note:'Automatisch erstellt mit StoffScan aus H-/P-Sätzen und GHS-Einstufung. Ersetzt keine betriebsspezifische Gefährdungsbeurteilung; vor Aushang prüfen und Arbeitsbereich/PSA konkretisieren.',
+  codeNote:'',
+  iTitle:'Instruktion bestätigen',iIntro:'Mit der Bestätigung entsteht ein <b>Instruktionsnachweis</b> für <b>%</b> (Datum + Name). Empfohlen jährlich zu wiederholen.',iName:'Name der instruierten Person',iCheck:'Ich habe die Betriebsanweisung gelesen und verstanden.',iBtn:'Bestätigen',iRead:'Als gelesen bestätigen'},
+ fr:{kick:'Instructions de service',sub:'selon le droit des produits chimiques – activités avec des substances dangereuses',betrieb:'Entreprise',bereich:'Zone de travail',allg:'général',stoff:'Substance dangereuse',stand:'État au',
+  s1:'1 · Désignation de la substance',s2:'2 · Dangers pour l’homme et l’environnement',s3:'3 · Mesures de protection et règles de comportement',s4:'4 · Conduite en cas de danger',s5:'5 · Premiers secours',s6:'6 · Élimination conforme',
+  hersteller:'Fabricant',lk:'Classe de stockage',noData:'Aucune indication enregistrée.',
+  loeschF:'Moyens d’extinction appropriés: mousse, dioxyde de carbone (CO₂), poudre ou eau pulvérisée. Ne pas utiliser de jet d’eau plein.',loeschN:'Adapter les moyens d’extinction à l’environnement. Éloigner les récipients de la zone de danger ou les refroidir avec de l’eau.',
+  spillPre:'Éliminer immédiatement les sources d’inflammation, ',spill:'En cas de fuite: %aérer et sécuriser la zone, absorber avec un matériau liant, ne pas laisser pénétrer dans les égouts. Informer le supérieur.',
+  eye:'Yeux',skin:'Peau',inhale:'Inhalation',swallow:'Ingestion',important:'Important',
+  eyeT:'rincer immédiatement 10–15 minutes à l’eau, paupière ouverte, consulter un médecin.',skinT:'retirer les vêtements souillés, nettoyer la peau à l’eau et au savon.',inhaleT:'amener à l’air frais, consulter un médecin en cas de troubles.',swallowT:'rincer la bouche, ne pas faire vomir, consulter immédiatement un médecin.',importantT:'en cas de malaise, appeler immédiatement un médecin – présenter la FDS/l’étiquette.',
+  emo:'Urgence: 144 Ambulance · 145 Tox Info Suisse · 118 Pompiers',
+  disp:'Éliminer les restes et les emballages vides non nettoyés comme déchets spéciaux selon l’OMoD. Pas dans les égouts ni les ordures ménagères. Respecter les indications de la fiche de données de sécurité (section 13).',
+  fDate:'Date',fSup:'Signature du supérieur',fEmp:'Signature du collaborateur',
+  note:'Généré automatiquement avec StoffScan à partir des mentions H/P et du classement GHS. Ne remplace pas une évaluation des risques propre à l’entreprise; vérifier avant l’affichage et préciser la zone de travail / l’EPI.',
+  codeNote:'Les mentions H/P sans traduction apparaissent par leur code international.',
+  iTitle:'Confirmer l’instruction',iIntro:'La confirmation crée une <b>preuve d’instruction</b> pour <b>%</b> (date + nom). À renouveler chaque année.',iName:'Nom de la personne instruite',iCheck:'J’ai lu et compris les instructions de service.',iBtn:'Confirmer',iRead:'Confirmer la lecture'},
+ it:{kick:'Istruzioni operative',sub:'secondo il diritto sui prodotti chimici – attività con sostanze pericolose',betrieb:'Azienda',bereich:'Area di lavoro',allg:'generale',stoff:'Sostanza pericolosa',stand:'Aggiornato',
+  s1:'1 · Denominazione della sostanza',s2:'2 · Pericoli per l’uomo e l’ambiente',s3:'3 · Misure di protezione e regole di comportamento',s4:'4 · Comportamento in caso di pericolo',s5:'5 · Primo soccorso',s6:'6 · Smaltimento corretto',
+  hersteller:'Produttore',lk:'Classe di stoccaggio',noData:'Nessuna indicazione registrata.',
+  loeschF:'Mezzi di estinzione idonei: schiuma, anidride carbonica (CO₂), polvere o acqua nebulizzata. Non usare getti d’acqua pieni.',loeschN:'Adattare le misure di estinzione all’ambiente. Allontanare i contenitori dalla zona di pericolo o raffreddarli con acqua.',
+  spillPre:'Eliminare subito le fonti di accensione, ',spill:'In caso di fuoriuscita: %aerare e mettere in sicurezza l’area, assorbire con materiale legante, non far defluire nella canalizzazione. Informare il superiore.',
+  eye:'Occhi',skin:'Pelle',inhale:'Inalazione',swallow:'Ingestione',important:'Importante',
+  eyeT:'sciacquare subito 10–15 minuti con acqua a palpebra aperta, consultare un medico.',skinT:'togliere gli indumenti contaminati, lavare la pelle con acqua e sapone.',inhaleT:'portare all’aria fresca, in caso di disturbi consultare un medico.',swallowT:'sciacquare la bocca, non indurre il vomito, consultare subito un medico.',importantT:'in caso di malessere consultare subito un medico – mostrare la SDS/l’etichetta.',
+  emo:'Emergenza: 144 Ambulanza · 145 Tox Info Suisse · 118 Pompieri',
+  disp:'Smaltire i residui e i contenitori vuoti non puliti come rifiuti speciali secondo l’OTRif. Non nella canalizzazione o nei rifiuti domestici. Osservare le indicazioni della scheda di dati di sicurezza (sezione 13).',
+  fDate:'Data',fSup:'Firma del superiore',fEmp:'Firma del collaboratore',
+  note:'Generato automaticamente con StoffScan dalle indicazioni H/P e dalla classificazione GHS. Non sostituisce una valutazione dei rischi specifica dell’azienda; verificare prima dell’affissione e precisare l’area di lavoro / i DPI.',
+  codeNote:'Le indicazioni H/P senza traduzione appaiono con il loro codice internazionale.',
+  iTitle:'Conferma istruzione',iIntro:'La conferma genera una <b>prova di istruzione</b> per <b>%</b> (data + nome). Da rinnovare ogni anno.',iName:'Nome della persona istruita',iCheck:'Ho letto e compreso le istruzioni operative.',iBtn:'Conferma',iRead:'Conferma lettura'}
+};
+function baLangCur(){return state.baLang||'de';}
+function hMap(l){return l==='fr'?H_TEXT_FR:l==='it'?H_TEXT_IT:H_TEXT;}
+function pMap(l){return l==='fr'?P_TEXT_FR:l==='it'?P_TEXT_IT:P_TEXT;}
+function psaMap(l){return l==='fr'?BA_PSA_FR:l==='it'?BA_PSA_IT:BA_PSA;}
+function baTextL(code,l,kind){var m=(kind==='p'?pMap(l):hMap(l));if(m[code])return m[code];if(code.indexOf('+')>-1){return code.split('+').map(function(c){return m[c]||'';}).filter(Boolean).join(' ');}return '';}
+function baListL(codes,l,kind){return codes.length?('<ul>'+codes.map(function(c){var t=baTextL(c,l,kind);return '<li><b>'+c+'</b>'+(t?' '+esc(t):'')+'</li>';}).join('')+'</ul>'):'<p class="ba-empty">'+BA_I18N[l].noData+'</p>';}
+
 function baCodes(str){var out=[];(String(str||'').match(/[HP]\d{3}(?:\s*\+\s*[HP]\d{3})*/g)||[]).forEach(function(c){out.push(c.replace(/\s+/g,''));});return out;}
 function baText(code,map){if(map[code])return map[code];if(code.indexOf('+')>-1){return code.split('+').map(function(c){return map[c]||c;}).join(' ');}return code;}
 function baList(codes,map){return codes.length?('<ul>'+codes.map(function(c){return '<li><b>'+c+'</b> '+esc(baText(c,map))+'</li>';}).join('')+'</ul>'):'<p class="ba-empty">Keine Angaben hinterlegt.</p>';}
 function baHtml(s){
+  var l=baLangCur(),T=BA_I18N[l];
   var orgName=(typeof AUTH!=='undefined'&&AUTH.org&&AUTH.org.name)?AUTH.org.name:'Ihr Betrieb';
   var hc=baCodes(s.h),pc=baCodes(s.p),ghs=s.ghs||[];
-  var lk=lkOf(s),lkName=lk?LK_INFO[lk].name:'unbestimmt';
-  var pikto=ghs.length?('<div class="ba-ghs">'+ghs.map(function(g){return ghsBadge(g,'big');}).join('')+'</div>'):'';
-  var gefahr=ghs.map(function(g){var p=PIKTO.filter(function(x){return x.k===g;})[0];return p?('<li>'+p.g+'</li>'):'';}).join('');
-  var psa=ghs.map(function(g){return BA_PSA[g]?('<li>'+BA_PSA[g]+'</li>'):'';}).join('');
-  var loesch=(ghs.indexOf('flamm')>-1||ghs.indexOf('oxid')>-1)?'Geeignete Löschmittel: Schaum, Kohlendioxid (CO₂), Löschpulver oder Sprühwasser. Keinen Wasservollstrahl verwenden.':'Löschmassnahmen der Umgebung anpassen. Behälter aus dem Gefahrenbereich bringen oder mit Wasser kühlen.';
+  var lk=lkOf(s),lkName=lk?LK_INFO[lk].name:'–';
+  var pikto=ghs.length?('<div class="ba-ghs">'+ghs.map(function(g){return ghsBadge(g,'big',l);}).join('')+'</div>'):'';
+  var gefahr=ghs.map(function(g){if(l==='de'){var p=PIKTO.filter(function(x){return x.k===g;})[0];return p?('<li>'+p.g+'</li>'):'';}return '<li>'+esc(PIKTO_NAME[l][g]||g)+'</li>';}).join('');
+  var pm=psaMap(l);var psa=ghs.map(function(g){return pm[g]?('<li>'+esc(pm[g])+'</li>'):'';}).join('');
+  var loesch=(ghs.indexOf('flamm')>-1||ghs.indexOf('oxid')>-1)?T.loeschF:T.loeschN;
+  var spill=T.spill.replace('%',(ghs.indexOf('flamm')>-1?T.spillPre:''));
+  var imp=(ghs.indexOf('giftig')>-1||ghs.indexOf('gesundheit')>-1)?'<li><b>'+T.important+':</b> '+T.importantT+'</li>':'';
   var sig=s.signal||'Achtung',today=new Date().toLocaleDateString('de-CH');
+  var codeNote=(l!=='de'&&T.codeNote)?'<div class="ba-note" style="margin-top:6px">'+T.codeNote+'</div>':'';
   return '<div class="ba-doc" id="baDoc">'+
-    '<div class="ba-top"><div><div class="ba-kick">Betriebsanweisung</div><div class="ba-sub">gemäss Chemikalienrecht – Tätigkeiten mit Gefahrstoffen</div></div><div class="ba-logo"><span class="logo">St</span>StoffScan</div></div>'+
-    '<table class="ba-meta"><tr><td><span>Betrieb</span>'+esc(orgName)+'</td><td><span>Arbeitsbereich</span>allgemein</td></tr><tr><td><span>Gefahrstoff</span><b>'+esc(s.name)+'</b></td><td><span>Stand</span>'+today+'</td></tr></table>'+
-    '<div class="ba-sigbar sig-'+(sig==='Gefahr'?'danger':'warn')+'"><b>'+esc(sig.toUpperCase())+'</b>'+pikto+'</div>'+
-    '<div class="ba-sec"><h3>1 · Gefahrstoffbezeichnung</h3><p><b>'+esc(s.name)+'</b> · Hersteller: '+esc(s.hersteller||'unbekannt')+((s.un&&s.un!=='–')?' · UN '+esc(s.un):'')+'<br>Lagerklasse '+(lk||'–')+' ('+esc(lkName)+')</p></div>'+
-    '<div class="ba-sec ba-gef"><h3>2 · Gefahren für Mensch und Umwelt</h3>'+baList(hc,H_TEXT)+(gefahr?'<ul class="ba-plain">'+gefahr+'</ul>':'')+'</div>'+
-    '<div class="ba-sec ba-schutz"><h3>3 · Schutzmassnahmen und Verhaltensregeln</h3>'+(psa?'<ul class="ba-plain">'+psa+'</ul>':'')+baList(pc,P_TEXT)+'</div>'+
-    '<div class="ba-sec ba-fall"><h3>4 · Verhalten im Gefahrfall</h3><p>'+loesch+'</p><p>Bei Austritt: '+(ghs.indexOf('flamm')>-1?'Zündquellen sofort entfernen, ':'')+'Bereich lüften und sichern, mit flüssigkeitsbindendem Material aufnehmen, nicht in die Kanalisation gelangen lassen. Vorgesetzte informieren.</p></div>'+
-    '<div class="ba-sec ba-hilfe"><h3>5 · Erste Hilfe</h3><ul><li><b>Augen:</b> sofort 10–15 Minuten bei geöffnetem Lid mit Wasser spülen, Arzt aufsuchen.</li><li><b>Haut:</b> benetzte Kleidung entfernen, Haut mit Wasser und Seife reinigen.</li><li><b>Einatmen:</b> an die frische Luft bringen, bei Beschwerden Arzt.</li><li><b>Verschlucken:</b> Mund ausspülen, kein Erbrechen herbeiführen, sofort Arzt.</li>'+((ghs.indexOf('giftig')>-1||ghs.indexOf('gesundheit')>-1)?'<li><b>Wichtig:</b> bei Unwohlsein sofort ärztliche Hilfe – SDB/Etikett vorzeigen.</li>':'')+'</ul><p class="ba-emo">Notfall: 144 Sanität · 145 Tox Info Suisse · 118 Feuerwehr</p></div>'+
-    '<div class="ba-sec ba-ent"><h3>6 · Sachgerechte Entsorgung</h3><p>Reste und leere, nicht gereinigte Gebinde als Sonderabfall gemäss VeVA entsorgen. Nicht in Kanalisation oder Hauskehricht. Angaben im Sicherheitsdatenblatt (Abschnitt 13) beachten.</p></div>'+
-    '<div class="ba-foot"><div><span>Datum</span>'+today+'</div><div><span>Unterschrift Vorgesetzte(r)</span></div><div><span>Unterschrift Mitarbeiter(in)</span></div></div>'+
-    '<div class="ba-note">Automatisch erstellt mit StoffScan aus H-/P-Sätzen und GHS-Einstufung. Ersetzt keine betriebsspezifische Gefährdungsbeurteilung; vor Aushang prüfen und Arbeitsbereich/PSA konkretisieren.</div>'+
+    '<div class="ba-top"><div><div class="ba-kick">'+T.kick+'</div><div class="ba-sub">'+T.sub+'</div></div><div class="ba-logo"><span class="logo">St</span>StoffScan</div></div>'+
+    '<table class="ba-meta"><tr><td><span>'+T.betrieb+'</span>'+esc(orgName)+'</td><td><span>'+T.bereich+'</span>'+T.allg+'</td></tr><tr><td><span>'+T.stoff+'</span><b>'+esc(s.name)+'</b></td><td><span>'+T.stand+'</span>'+today+'</td></tr></table>'+
+    '<div class="ba-sigbar sig-'+(sig==='Gefahr'?'danger':'warn')+'"><b>'+esc((SIGNAL_L[l][sig]||sig))+'</b>'+pikto+'</div>'+
+    '<div class="ba-sec"><h3>'+T.s1+'</h3><p><b>'+esc(s.name)+'</b> · '+T.hersteller+': '+esc(s.hersteller||'–')+((s.un&&s.un!=='–')?' · UN '+esc(s.un):'')+'<br>'+T.lk+' '+(lk||'–')+' ('+esc(lkName)+')</p></div>'+
+    '<div class="ba-sec ba-gef"><h3>'+T.s2+'</h3>'+baListL(hc,l,'h')+(gefahr?'<ul class="ba-plain">'+gefahr+'</ul>':'')+'</div>'+
+    '<div class="ba-sec ba-schutz"><h3>'+T.s3+'</h3>'+(psa?'<ul class="ba-plain">'+psa+'</ul>':'')+baListL(pc,l,'p')+'</div>'+
+    '<div class="ba-sec ba-fall"><h3>'+T.s4+'</h3><p>'+loesch+'</p><p>'+spill+'</p></div>'+
+    '<div class="ba-sec ba-hilfe"><h3>'+T.s5+'</h3><ul><li><b>'+T.eye+':</b> '+T.eyeT+'</li><li><b>'+T.skin+':</b> '+T.skinT+'</li><li><b>'+T.inhale+':</b> '+T.inhaleT+'</li><li><b>'+T.swallow+':</b> '+T.swallowT+'</li>'+imp+'</ul><p class="ba-emo">'+T.emo+'</p></div>'+
+    '<div class="ba-sec ba-ent"><h3>'+T.s6+'</h3><p>'+T.disp+'</p></div>'+
+    '<div class="ba-foot"><div><span>'+T.fDate+'</span>'+today+'</div><div><span>'+T.fSup+'</span></div><div><span>'+T.fEmp+'</span></div></div>'+
+    '<div class="ba-note">'+T.note+'</div>'+codeNote+
   '</div>';
 }
 /* ---------- Instruktionsnachweis (Block 5) ---------- */
@@ -1415,11 +1592,11 @@ function daysSince(iso){return Math.floor((Date.now()-new Date(iso+'T00:00:00').
 function instrDue(subId){var l=instrLast(subId);return !l||daysSince(l)>365;}
 function fmtDate(iso){var p=String(iso).split('-');return p.length===3?(p[2]+'.'+p[1]+'.'+p[0]):iso;}
 function qrTextInstr(subId){return baseUrl()+'#instr='+subId;}
-function modalInstrConfirm(subId){var s=substance(subId);if(!s)return;
-  openModal('Instruktion bestätigen','<div class="notice info" style="margin-bottom:12px">'+ICO.info+'<div>Mit der Bestätigung entsteht ein <b>Instruktionsnachweis</b> für <b>'+esc(s.name)+'</b> (Datum + Name). Empfohlen jährlich zu wiederholen.</div></div>'+
-    '<div class="field"><label>Name der instruierten Person</label><input id="instrName" placeholder="Vor- und Nachname" value="'+esc((AUTH.profile&&AUTH.profile.name)||'')+'"></div>'+
-    '<label class="instr-check"><input type="checkbox" id="instrOk"> Ich habe die Betriebsanweisung gelesen und verstanden.</label>'+
-    '<div class="btn-row"><button class="btn ghost" data-action="closeModal">Abbrechen</button><button class="btn" data-action="saveInstr" data-id="'+subId+'">'+ICO.ok+' Bestätigen</button></div>');}
+function modalInstrConfirm(subId){var s=substance(subId);if(!s)return;var T=BA_I18N[baLangCur()];
+  openModal(T.iTitle,'<div class="notice info" style="margin-bottom:12px">'+ICO.info+'<div>'+T.iIntro.replace('%',esc(s.name))+'</div></div>'+
+    '<div class="field"><label>'+T.iName+'</label><input id="instrName" placeholder="Vor- und Nachname" value="'+esc((AUTH.profile&&AUTH.profile.name)||'')+'"></div>'+
+    '<label class="instr-check"><input type="checkbox" id="instrOk"> '+T.iCheck+'</label>'+
+    '<div class="btn-row"><button class="btn ghost" data-action="closeModal">Abbrechen</button><button class="btn" data-action="saveInstr" data-id="'+subId+'">'+ICO.ok+' '+T.iBtn+'</button></div>');}
 async function saveInstr(subId){var s=substance(subId);if(!s)return;
   var el=document.getElementById('instrName'),ck=document.getElementById('instrOk');
   var n=(el&&el.value||'').trim();
@@ -1438,10 +1615,15 @@ function modalInstrQr(subId){var s=substance(subId);if(!s)return;
     '<div class="notice info" style="margin-top:15px">'+ICO.info+'<div>QR neben dem Gefahrstoff oder auf der ausgehängten Betriebsanweisung anbringen. Mitarbeitende scannen, lesen und bestätigen – der Nachweis entsteht automatisch.</div></div>'+
     '<div class="btn-row"><button class="btn secondary" data-action="printQr">'+ICO.print+' Etikette drucken</button><button class="btn" data-action="simInstrScan" data-id="'+subId+'">'+ICO.qr+' Öffnen</button></div>');
   renderRealQr('qrBox',qrTextInstr(subId));}
-function openBA(subId,confirm){var s=substance(subId);if(!s)return;var el=document.createElement('div');el.className='ba-overlay';el.id='baOverlay';
-  el.innerHTML='<div class="ba-toolbar"><button class="btn ghost" data-action="closeBA">Schliessen</button><button class="btn secondary" data-action="instrConfirm" data-id="'+subId+'">'+ICO.ok+' Als gelesen bestätigen</button><button class="btn" onclick="window.print()">'+ICO.print+' Drucken / PDF</button></div>'+
-    '<div class="ba-scroll">'+(confirm?'<div class="instr-hint">'+ICO.info+'<div>Bitte die Betriebsanweisung lesen und anschliessend oben <b>«Als gelesen bestätigen»</b>.</div></div>':'')+baHtml(s)+'</div>';
+function baHintText(l){return {de:'Bitte die Betriebsanweisung lesen und anschliessend oben «Als gelesen bestätigen».',fr:'Veuillez lire les instructions de service, puis confirmer la lecture ci-dessus.',it:'Leggere le istruzioni operative e confermare la lettura qui sopra.'}[l]||'';}
+function openBA(subId,confirm){var s=substance(subId);if(!s)return;closeBA();state.baSub=subId;state.baConfirm=!!confirm;
+  var l=baLangCur(),T=BA_I18N[l];
+  var langBtns='<div class="ba-lang">'+['de','fr','it'].map(function(L){return '<button class="ba-lang-b'+(L===l?' on':'')+'" data-action="baLang" data-id="'+L+'">'+L.toUpperCase()+'</button>';}).join('')+'</div>';
+  var el=document.createElement('div');el.className='ba-overlay';el.id='baOverlay';
+  el.innerHTML='<div class="ba-toolbar"><button class="btn ghost" data-action="closeBA">Schliessen</button>'+langBtns+'<button class="btn secondary" data-action="instrConfirm" data-id="'+subId+'">'+ICO.ok+' '+T.iRead+'</button><button class="btn" onclick="window.print()">'+ICO.print+' PDF</button></div>'+
+    '<div class="ba-scroll">'+(confirm?'<div class="instr-hint">'+ICO.info+'<div>'+baHintText(l)+'</div></div>':'')+baHtml(s)+'</div>';
   document.body.appendChild(el);}
+function setBaLang(l){state.baLang=l;if(state.baSub)openBA(state.baSub,state.baConfirm);}
 function closeBA(){var el=document.getElementById('baOverlay');if(el)el.remove();}
 function scrDetail(){
 
@@ -1814,6 +1996,7 @@ document.addEventListener('click',e=>{
     case 'switchUser':modalSwitchUser();break;
     case 'genBA':openBA(id);break;
     case 'closeBA':closeBA();break;
+    case 'baLang':setBaLang(id);break;
     case 'instrConfirm':modalInstrConfirm(id);break;
     case 'saveInstr':saveInstr(id);break;
     case 'instrList':modalInstrList(id);break;

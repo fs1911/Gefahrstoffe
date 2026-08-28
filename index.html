@@ -335,6 +335,26 @@
   .imk-row .dt{font-family:var(--mono);font-size:12px;color:var(--ink-3)}
   @media(max-width:760px){.imk{grid-template-columns:1fr;gap:16px}}
 
+  /* Marketing: Mehrsprachigkeit DE/FR/IT */
+  .lang-demo{max-width:560px;margin:8px auto 0;text-align:center}
+  .lang-toggle{display:inline-flex;border:1px solid var(--line);border-radius:11px;overflow:hidden;margin-bottom:16px;background:var(--surface)}
+  .lang-toggle button{border:0;background:transparent;color:var(--ink-2);font-family:var(--font);font-weight:700;font-size:14px;padding:10px 22px;cursor:pointer;border-left:1px solid var(--line);transition:background .15s,color .15s}
+  .lang-toggle button:first-child{border-left:0}
+  .lang-toggle button.on{background:var(--brand);color:#fff}
+  .lang-doc{text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px 28px;box-shadow:0 10px 28px -16px rgba(16,36,28,.4);transition:opacity .3s,transform .3s}
+  .lang-doc.sw{opacity:0;transform:translateY(6px)}
+  .lang-doc .lk{font-family:var(--display);font-size:20px;font-weight:700;letter-spacing:-.01em}
+  .lang-doc .lsub{color:var(--ink-3);font-size:12.5px;margin-top:2px}
+  .lang-doc .sig{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:16px 0;background:var(--danger-bg);border-radius:10px;padding:12px 14px}
+  .lang-doc .sig b{color:var(--danger);font-family:var(--display);font-weight:700;font-size:17px}
+  .lang-doc .dia{display:flex;gap:8px}
+  .lang-doc .ghs-d2{width:30px;height:30px;transform:rotate(45deg);border:2px solid var(--danger);border-radius:5px;background:#fff;display:grid;place-items:center;flex:none}
+  .lang-doc .ghs-d2 svg{transform:rotate(-45deg);color:#111;width:14px;height:14px}
+  .lang-doc h5{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--brand);margin:16px 0 5px}
+  .lang-doc p{margin:0;font-size:14.5px;color:var(--ink-2);line-height:1.5}
+  .lang-doc .emo{margin-top:16px;font-weight:700;color:var(--danger);font-size:13.5px}
+  @media(max-width:760px){.lang-doc{padding:20px}}
+
   /* Marketing: Betriebsanweisung */
   .ba-mkt{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
   .ba-mkt-list{list-style:none;margin:22px 0 0;padding:0}
@@ -651,6 +671,21 @@
   </div>
 </section>
 
+<!-- MEHRSPRACHIG -->
+<section id="lang-sec">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">DE · FR · IT</div>
+      <h2>Betriebsanweisung in der Sprache der Mannschaft.</h2>
+      <p class="lead">Dieselbe Betriebsanweisung und Instruktion auf Knopfdruck in Deutsch, Französisch und Italienisch – H-/P-Sätze in offizieller CLP-Formulierung. Damit jede und jeder auf der Baustelle die Gefahren wirklich versteht.</p>
+    </div>
+    <div class="lang-demo">
+      <div class="lang-toggle" id="langToggle"></div>
+      <div class="lang-doc" id="langDoc"></div>
+    </div>
+  </div>
+</section>
+
 <!-- BRANCHEN -->
 <section id="branchen" style="background:var(--surface-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
   <div class="wrap">
@@ -904,6 +939,34 @@
     var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting&&!seen){seen=true;setTimeout(confirm,900);}});},{threshold:.4});
     io.observe(sec);
   }
+})();
+(function(){
+  var tg=document.getElementById('langToggle'),doc=document.getElementById('langDoc'),sec=document.getElementById('lang-sec');
+  if(!tg||!doc||!sec)return;
+  var flame='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 3-1 4-2 6-1.5 3 .5 4 .5 4s-2-.5-2-3c-2 1.5-3 4-3 6a6.5 6.5 0 1 0 13 0c0-3-2-5.5-3.5-7.5C10 10 14 7 12 2z"/></svg>';
+  var excl='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 6v7"/><circle cx="12" cy="17.5" r="1.1" fill="currentColor" stroke="none"/></svg>';
+  var L={
+   de:{lab:'Deutsch',kick:'Betriebsanweisung',sub:'Tätigkeiten mit Gefahrstoffen',sig:'GEFAHR',h5a:'Gefahren',ha:'H225 Flüssigkeit und Dampf leicht entzündbar. H319 Verursacht schwere Augenreizung.',h5b:'Erste Hilfe',hb:'Augen: sofort 10–15 Minuten bei geöffnetem Lid mit Wasser spülen, Arzt aufsuchen.',emo:'Notfall: 144 Sanität · 145 Tox Info Suisse · 118 Feuerwehr'},
+   fr:{lab:'Français',kick:'Instructions de service',sub:'activités avec des substances dangereuses',sig:'DANGER',h5a:'Dangers',ha:'H225 Liquide et vapeurs très inflammables. H319 Provoque une sévère irritation des yeux.',h5b:'Premiers secours',hb:'Yeux: rincer immédiatement 10–15 minutes à l’eau, paupière ouverte, consulter un médecin.',emo:'Urgence: 144 Ambulance · 145 Tox Info Suisse · 118 Pompiers'},
+   it:{lab:'Italiano',kick:'Istruzioni operative',sub:'attività con sostanze pericolose',sig:'PERICOLO',h5a:'Pericoli',ha:'H225 Liquido e vapori facilmente infiammabili. H319 Provoca grave irritazione oculare.',h5b:'Primo soccorso',hb:'Occhi: sciacquare subito 10–15 minuti con acqua a palpebra aperta, consultare un medico.',emo:'Emergenza: 144 Ambulanza · 145 Tox Info Suisse · 118 Pompieri'}
+  };
+  var order=['de','fr','it'],cur='de';
+  function render(){var d=L[cur];
+   doc.innerHTML='<div class="lk">Aceton</div><div class="lsub">'+d.kick+' · '+d.sub+'</div>'+
+    '<div class="sig"><b>'+d.sig+'</b><div class="dia"><span class="ghs-d2">'+flame+'</span><span class="ghs-d2">'+excl+'</span></div></div>'+
+    '<h5>'+d.h5a+'</h5><p>'+d.ha+'</p>'+
+    '<h5>'+d.h5b+'</h5><p>'+d.hb+'</p>'+
+    '<div class="emo">'+d.emo+'</div>';
+  }
+  tg.innerHTML=order.map(function(k){return '<button type="button" data-l="'+k+'"'+(k===cur?' class="on"':'')+'>'+L[k].lab+'</button>';}).join('');
+  var timers=[],autoOn=false;
+  function stop(){autoOn=false;timers.forEach(clearTimeout);timers=[];}
+  function set(k){if(k===cur)return;cur=k;[].forEach.call(tg.children,function(b){b.classList.toggle('on',b.getAttribute('data-l')===k);});doc.classList.add('sw');timers.push(setTimeout(function(){render();doc.classList.remove('sw');},300));}
+  [].forEach.call(tg.children,function(b){b.addEventListener('click',function(){stop();set(b.getAttribute('data-l'));});});
+  render();
+  var seen=false;
+  function auto(){autoOn=true;timers.push(setTimeout(function(){if(autoOn)set('fr');},1500));timers.push(setTimeout(function(){if(autoOn)set('it');},3300));}
+  if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting&&!seen){seen=true;auto();}});},{threshold:.4});io.observe(sec);}
 })();
 </script>
 </body>
