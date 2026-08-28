@@ -431,6 +431,30 @@
   .gbm-stop.on .gbm-b{background:var(--brand)}
   .gbm-ready{margin-top:15px;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--brand-soft);color:var(--brand-ink);border-radius:10px;padding:11px;font-weight:700;font-size:13px;opacity:0;transform:translateY(4px);transition:opacity .35s,transform .35s}
   .gbm-ready.on{opacity:1;transform:none}
+  .fw-mkt{position:relative;display:flex;flex-direction:column;align-items:center;gap:15px;min-height:360px;justify-content:center}
+  .fwm-door{display:inline-flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--line);border-radius:30px;padding:7px 16px 7px 8px;font-size:12.5px;color:var(--ink-2);font-weight:600;box-shadow:0 6px 16px -10px rgba(16,36,28,.4)}
+  .fwm-door .fwm-qr{width:28px;height:28px;display:grid;place-items:center;background:var(--forest);border-radius:7px;color:#fff}
+  .fwm-door .fwm-qr svg{width:17px;height:17px}
+  .fwm-card{position:relative;width:322px;max-width:100%;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 20px 44px -20px rgba(16,36,28,.55)}
+  .fwm-scan{position:absolute;left:0;right:0;top:0;height:52px;background:linear-gradient(180deg,rgba(192,38,31,.30),rgba(192,38,31,0));opacity:0;pointer-events:none;z-index:3}
+  .fwm-scan.run{animation:fwmSweep 1.15s ease-in-out}
+  @keyframes fwmSweep{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(320px)}}
+  .fwm-band{background:#c0261f;color:#fff;padding:13px 16px;display:flex;align-items:baseline;gap:8px}
+  .fwm-band b{font-family:var(--display);font-weight:800;font-size:17px}
+  .fwm-band small{opacity:.9;font-size:11px}
+  .fwm-emerg{background:var(--forest);color:#fff;font-family:var(--mono);font-size:14px;padding:8px 16px;letter-spacing:.03em}
+  .fwm-emerg span{font-size:10px;opacity:.7;letter-spacing:.14em;text-transform:uppercase;margin-right:7px}
+  .fwm-piktos{display:flex;gap:9px;flex-wrap:wrap;padding:15px 16px 5px}
+  .fwm-pik{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--ink);opacity:0;transform:translateY(6px);transition:opacity .35s,transform .35s}
+  .fwm-pik.on{opacity:1;transform:none}
+  .fwm-dia{width:27px;height:27px;flex:none;display:grid;place-items:center;border:2px solid var(--danger);background:#fff;transform:rotate(45deg);border-radius:5px}
+  .fwm-dia svg{transform:rotate(-45deg);width:15px;height:15px;color:var(--danger)}
+  .fwm-loesch{margin:9px 16px 0;padding:10px 12px;border:1px solid var(--line);border-left:3px solid #1f6f8b;border-radius:8px;font-size:12.5px;color:var(--ink-2);line-height:1.5;opacity:0;transform:translateY(6px);transition:opacity .35s,transform .35s}
+  .fwm-loesch.on{opacity:1;transform:none}
+  .fwm-loesch b{color:var(--ink);margin-right:5px}
+  .fwm-x{display:block;color:var(--danger);font-weight:700;margin-top:3px}
+  .fwm-ready{margin:12px 16px 16px;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--brand-soft);color:var(--brand-ink);border-radius:10px;padding:10px;font-weight:700;font-size:13px;opacity:0;transform:translateY(4px);transition:opacity .35s,transform .35s}
+  .fwm-ready.on{opacity:1;transform:none}
   .dos-ready svg{width:15px;height:15px}
   @media(max-width:820px){.dos-mkt{min-height:0;margin-top:8px}}
 
@@ -840,6 +864,37 @@
   </div>
 </section>
 
+<!-- FEUERWEHR-EINSATZKARTE (Block 10) -->
+<section id="fw-sec">
+  <div class="wrap ba-mkt">
+    <div class="ba-mkt-copy">
+      <div class="eyebrow">Für den Ernstfall</div>
+      <h2>Ein QR am Lager – auch für die Feuerwehr.</h2>
+      <p class="lead">Am Lagereingang hängt ein QR-Code. Wer scannt – Mitarbeitende wie Rettungskräfte – sieht sofort die Einsatzkarte: was gelagert ist, in welcher Menge, womit gelöscht wird und was zu meiden ist. Direkt aus dem Kataster, immer aktuell.</p>
+      <ul class="ba-mkt-list">
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Löschmittel &amp; besondere Gefahren auf einen Blick</li>
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Gelagerte Stoffe, Mengen &amp; Lagerklassen</li>
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Notrufnummern 118 · 144 · 145 direkt auf der Karte</li>
+      </ul>
+    </div>
+    <div class="fw-mkt" id="fwMkt">
+      <div class="fwm-door"><span class="fwm-qr"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="3" height="3"/><rect x="18" y="18" width="3" height="3"/><rect x="18" y="14" width="3" height="3"/><rect x="14" y="18" width="3" height="3"/></svg></span>QR am Lagereingang</div>
+      <div class="fwm-card">
+        <div class="fwm-scan" id="fwmScan"></div>
+        <div class="fwm-band"><b>Gefahrstofflager</b><small>Einsatzkarte</small></div>
+        <div class="fwm-emerg"><span>Notruf</span><b>118</b> · <b>144</b> · <b>145</b></div>
+        <div class="fwm-piktos" id="fwmPiktos">
+          <span class="fwm-pik"><span class="fwm-dia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1 3 4 4 4 8a4 4 0 0 1-8 0c0-1 .4-2 1-2.5 0 1 .5 1.5 1 1.5 1 0 1-1 .5-2.5C10.5 5 12 3.5 12 2z"/></svg></span>Entzündbar</span>
+          <span class="fwm-pik"><span class="fwm-dia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h6"/><path d="M6 5l3 6.5a2.5 2.5 0 1 1-5 0L6 5z"/><path d="M13 20l3.5-4 3.5 4"/><path d="M17 12v3"/></svg></span>Ätzend</span>
+          <span class="fwm-pik"><span class="fwm-dia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="5" width="6" height="15" rx="3"/><path d="M12 5V3"/><path d="M10 3h4"/></svg></span>Druckgas</span>
+        </div>
+        <div class="fwm-loesch" id="fwmLoesch"><b>Löschmittel</b> Schaum · Pulver · CO₂<span class="fwm-x">⚠ Kein Wasser-Vollstrahl auf brennende Flüssigkeiten</span></div>
+        <div class="fwm-ready" id="fwmReady"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Einsatzkarte bereit</div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- BRANCHEN -->
 <section id="branchen" style="background:var(--surface-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
   <div class="wrap">
@@ -1187,6 +1242,23 @@
     timers.push(setTimeout(run,650+stops.length*620+3000));
   }
   function start(){if(running)return;running=true;timers.push(setTimeout(run,400));}
+  if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)start();});},{threshold:.35});io.observe(sec);}else start();
+})();
+(function(){
+  var sec=document.getElementById('fw-sec'),scan=document.getElementById('fwmScan'),
+      piktos=[].slice.call(document.querySelectorAll('#fwmPiktos .fwm-pik')),
+      loesch=document.getElementById('fwmLoesch'),ready=document.getElementById('fwmReady');
+  if(!sec||!scan||!loesch||!ready)return;
+  var timers=[],running=false;
+  function reset(){piktos.forEach(function(p){p.classList.remove('on');});loesch.classList.remove('on');ready.classList.remove('on');scan.classList.remove('run');}
+  function run(){
+    reset();void scan.offsetWidth;scan.classList.add('run');
+    piktos.forEach(function(p,i){timers.push(setTimeout(function(){p.classList.add('on');},950+i*300));});
+    timers.push(setTimeout(function(){loesch.classList.add('on');},950+piktos.length*300+250));
+    timers.push(setTimeout(function(){ready.classList.add('on');},950+piktos.length*300+750));
+    timers.push(setTimeout(run,950+piktos.length*300+3300));
+  }
+  function start(){if(running)return;running=true;timers.push(setTimeout(run,350));}
   if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)start();});},{threshold:.35});io.observe(sec);}else start();
 })();
 </script>

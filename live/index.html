@@ -602,6 +602,38 @@
   .exp-btn small{display:block;font-size:12px;color:var(--ink-2);margin-top:2px}
 
   /* Druckansicht (Bericht + Etiketten) */
+  .fw-card{max-width:720px;margin:0 auto;color:#17201c;font-size:13px}
+  .fw-band{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#c0261f;color:#fff;border-radius:10px 10px 0 0;padding:14px 18px}
+  .fw-band .fw-t{font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:-.01em;line-height:1}
+  .fw-band .fw-s{font-size:12px;opacity:.92;margin-top:3px}
+  .fw-badge{flex:none;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.55);border-radius:20px;padding:4px 12px;font-weight:700;font-size:12px}
+  .fw-emerg{background:#17201c;color:#fff;padding:9px 18px;font-size:13px;display:flex;gap:6px;align-items:baseline;flex-wrap:wrap}
+  .fw-emerg span{font-size:10px;letter-spacing:.14em;text-transform:uppercase;opacity:.7;margin-right:4px;align-self:center}
+  .fw-emerg b{font-size:16px;font-family:var(--mono)}
+  .fw-meta{width:100%;border-collapse:collapse;margin:14px 0}
+  .fw-meta td{padding:6px 10px;border:1px solid #e0e4db;font-size:12.5px;vertical-align:top}
+  .fw-meta td:first-child{width:88px;background:#f5f7f2;font-weight:700;color:#4b554e}
+  .fw-piktos{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;padding:10px 0 6px}
+  .fw-pik{display:flex;flex-direction:column;align-items:center;width:80px;text-align:center}
+  .fw-pik svg{width:54px;height:54px}
+  .fw-pik small{font-size:10px;color:#4b554e;margin-top:2px;line-height:1.15}
+  .fw-none{color:#7c857d;font-size:12px;text-align:center;padding:10px 0}
+  .fw-dim{color:#7c857d;font-size:12px}
+  .fw-row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+  .fw-blk h4,.fw-loesch h4,.fw-gefahr h4{font-family:var(--display);font-size:13px;margin:0 0 6px;color:#17201c}
+  .fw-lk{display:inline-block;color:#fff;border-radius:6px;padding:3px 8px;font-size:11px;font-weight:700;margin:0 4px 4px 0}
+  .fw-qty{font-size:18px;font-weight:800;font-family:var(--display);line-height:1.1}
+  .fw-loesch{border:1px solid #e0e4db;border-left:4px solid #1f6f8b;border-radius:8px;padding:10px 13px;margin:10px 0}
+  .fw-loesch p{margin:0}
+  .fw-warn{color:#c0261f;font-weight:700;margin-top:6px!important}
+  .fw-gefahr{border:1px solid #f3d2ce;background:#fbe9e7;border-radius:8px;padding:10px 13px;margin:10px 0}
+  .fw-gefahr ul{margin:0;padding-left:18px}
+  .fw-gefahr li{margin:3px 0}
+  .fw-tbl{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}
+  .fw-tbl th{background:#eee;text-align:left;padding:5px 7px;border:1px solid #cfd4c9;font-weight:700}
+  .fw-tbl td{padding:5px 7px;border:1px solid #e0e4db;vertical-align:top}
+  .fw-mfr{color:#7c857d;font-size:10.5px}
+  .fw-foot{margin-top:14px;font-size:10.5px;color:#7c857d;border-top:1px solid #e0e4db;padding-top:9px}
   #printArea{display:none}
   @media print{
     @page{size:A4;margin:12mm}
@@ -1203,6 +1235,8 @@ function routeCode(raw){
   // 0) Instruktions-QR -> Betriebsanweisung im Bestätigen-Modus
   const hi=full.indexOf('#instr=');
   if(hi>=0){const sid=full.slice(hi+7).trim();if(substance(sid)){toast('Betriebsanweisung geöffnet');openBA(sid,true);return true;}}
+  const he=full.indexOf('#einsatz=');
+  if(he>=0){const lid=full.slice(he+9).trim();if(location_(lid)){toast('Einsatzkarte geöffnet');openEinsatz(lid);return true;}}
   // 1) Eigener Deep-Link (App-QR)
   const h=full.indexOf('#open=');
   if(h>=0){const t=full.slice(h+6).trim();
@@ -1973,6 +2007,74 @@ function gbGenerate(subId){var s=substance(subId);if(!s)return;
   var sel=document.getElementById('gbAct');var act=gbAct(sel?sel.value:'verarbeiten');
   closeModal();if(typeof addHistory==='function')addHistory('Gefährdungsbeurteilung erstellt',s.name+' · '+act.name,'');
   doPrint(gbHtml(s,act));}
+/* ---------- Feuerwehr-Einsatzkarte pro Lager (Block 10) ---------- */
+function einsatzData(locId){
+  var l=location_(locId);if(!l)return null;var c=company(l.company);
+  var insts=instsAtLoc(locId);
+  var subMap={};insts.forEach(function(i){(subMap[i.sub]=subMap[i.sub]||{s:substance(i.sub),insts:[]}).insts.push(i);});
+  var subs=Object.keys(subMap).map(function(k){return subMap[k];}).sort(function(a,b){return a.s.name.localeCompare(b.s.name);});
+  var ghsAll={};subs.forEach(function(o){(o.s.ghs||[]).forEach(function(g){ghsAll[g]=1;});});
+  var ghs=PIKTO.map(function(p){return p.k;}).filter(function(k){return ghsAll[k];});
+  var lks={};subs.forEach(function(o){var lk=lkOf(o.s);if(lk)lks[lk]=1;});
+  var lkList=Object.keys(lks).sort();
+  var byUnit={},gebinde=0;insts.forEach(function(i){gebinde+=(i.anzahl||0);if(i.menge!=null)byUnit[i.einheit||'']=(byUnit[i.einheit||'']||0)+i.menge;});
+  var codes={};subs.forEach(function(o){hCodes(o.s.h).forEach(function(cd){codes[cd]=1;});});
+  function g(k){return !!ghsAll[k];}
+  var flamm=g('flamm')||['H220','H221','H222','H223','H224','H225','H226'].some(function(x){return codes[x];});
+  var druck=g('druckgas');
+  var aetz=g('aetz')||codes['H314']||codes['H318'];
+  var tox=g('giftig')||g('gesundheit')||codes['H330']||codes['H331'];
+  var oxid=g('oxid');
+  var umwelt=g('umwelt')||['H400','H410','H411','H412','H413'].some(function(x){return codes[x];});
+  var wreact=['H260','H261'].some(function(x){return codes[x];});
+  var loesch,loeschWarn='';
+  if(wreact){loesch='KEIN Wasser – reagiert mit Wasser. Mit Metallbrandpulver / trocken löschen, Behälter kühlen.';}
+  else if(flamm){loesch='Schaum, Löschpulver, CO₂; Sprühwasser zum Kühlen der Gebinde.';loeschWarn='Kein Wasser-Vollstrahl auf brennende Flüssigkeiten – Verspritzen und Brandausbreitung.';}
+  else if(oxid){loesch='Viel Wasser / Sprühwasser (brandfördernd – Ersticken nicht möglich).';}
+  else{loesch='Wasser, Schaum, Löschpulver oder CO₂.';}
+  var gefahr=[];
+  if(flamm)gefahr.push('Entzündbare Flüssigkeiten/Dämpfe – Explosionsgefahr, alle Zündquellen fernhalten.');
+  if(druck)gefahr.push('Druckgasflaschen – Berstgefahr bei Erwärmung (BLEVE); aus Deckung kühlen, Bereich weiträumig absperren.');
+  if(aetz)gefahr.push('Ätzende Stoffe – Verätzungsgefahr für Haut und Augen; Körper- und Augenschutz.');
+  if(tox)gefahr.push('Giftige Brand- und Zersetzungsgase möglich – umluftunabhängiger Atemschutz tragen.');
+  if(umwelt)gefahr.push('Gewässergefährdend – Löschwasser zurückhalten, Eintrag in Kanalisation/Gewässer verhindern.');
+  if(wreact)gefahr.push('Reagiert mit Wasser – kein Wasser einsetzen.');
+  if(!gefahr.length)gefahr.push('Keine besonderen Gefahren aus den erfassten Einstufungen – Angaben vor Ort verifizieren.');
+  return {l:l,c:c,insts:insts,subs:subs,ghs:ghs,lkList:lkList,byUnit:byUnit,gebinde:gebinde,loesch:loesch,loeschWarn:loeschWarn,gefahr:gefahr};
+}
+function fwNum(v){return (Math.round(v*10)/10);}
+function einsatzHtml(locId){
+  var d=einsatzData(locId);if(!d)return '<div class="fw-card"><div class="fw-band"><div class="fw-t">Kein Lager</div></div></div>';
+  var l=d.l,c=d.c,today=new Date().toLocaleDateString('de-CH');
+  var piktos=d.ghs.length?('<div class="fw-piktos">'+d.ghs.map(function(k){return '<span class="fw-pik">'+(GHS_SVG[k]||'')+'<small>'+esc(GHS_LABEL[k]||k)+'</small></span>';}).join('')+'</div>'):'<div class="fw-none">Keine GHS-Einstufung erfasst.</div>';
+  var lks=d.lkList.length?d.lkList.map(function(lk){return '<span class="fw-lk" style="background:'+LK_INFO[lk].c+'">LK '+lk+' · '+esc(LK_INFO[lk].name)+'</span>';}).join(''):'<span class="fw-dim">keine</span>';
+  var qty=Object.keys(d.byUnit).map(function(u){return fwNum(d.byUnit[u])+' '+esc(u);}).join(' · ');
+  var rows=d.subs.map(function(o){var s=o.s;var m=o.insts.reduce(function(a,i){return a+(i.menge||0);},0);var unit=o.insts[0].einheit||'';var geb=o.insts.reduce(function(a,i){return a+(i.anzahl||0);},0);var lk=lkOf(s);
+    return '<tr><td><b>'+esc(s.name)+'</b><br><span class="fw-mfr">'+esc(s.hersteller||'')+'</span></td><td>'+(m?(fwNum(m)+' '+esc(unit)):'–')+'<br><span class="fw-mfr">'+geb+' Gebinde</span></td><td>'+(lk||'–')+'</td><td>'+((s.ghs||[]).map(function(x){return esc(GHS_LABEL[x]||x);}).join(', ')||'–')+'</td><td>'+esc(s.un||'–')+'</td></tr>';}).join('');
+  return '<div class="fw-card">'+
+    '<div class="fw-band"><div><div class="fw-t">Gefahrstofflager</div><div class="fw-s">Einsatzkarte für Rettungskräfte</div></div><div class="fw-badge">'+d.subs.length+' Stoffe</div></div>'+
+    '<div class="fw-emerg"><span>Notruf</span><b>118</b>&nbsp;Feuerwehr · <b>144</b>&nbsp;Sanität · <b>145</b>&nbsp;Tox&nbsp;Info&nbsp;Suisse</div>'+
+    '<table class="fw-meta"><tr><td>Standort</td><td><b>'+esc(l.name)+'</b> · '+esc(l.bereich||'')+'</td></tr><tr><td>Betrieb</td><td>'+esc(c?c.name:'')+(l.typ?' · '+esc(l.typ):'')+'</td></tr><tr><td>Stand</td><td>'+today+'</td></tr></table>'+
+    piktos+
+    '<div class="fw-row2"><div class="fw-blk"><h4>Lagerklassen</h4><div class="fw-lks">'+lks+'</div></div><div class="fw-blk"><h4>Menge im Lager</h4><div class="fw-qty">'+(qty||'–')+'</div><div class="fw-dim">'+d.gebinde+' Gebinde gesamt</div></div></div>'+
+    '<div class="fw-loesch"><h4>Löschmittel</h4><p>'+esc(d.loesch)+'</p>'+(d.loeschWarn?'<p class="fw-warn">⚠ '+esc(d.loeschWarn)+'</p>':'')+'</div>'+
+    '<div class="fw-gefahr"><h4>Besondere Gefahren</h4><ul>'+d.gefahr.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul></div>'+
+    '<div class="fw-blk"><h4>Gelagerte Stoffe</h4><table class="fw-tbl"><thead><tr><th>Produkt</th><th>Menge</th><th>LK</th><th>GHS</th><th>UN</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
+    '<div class="fw-foot">Automatisch aus dem StoffScan-Kataster erstellt · Stand '+today+'. Momentaufnahme – vor dem Einsatz vor Ort verifizieren. Erstellt mit StoffScan.</div>'+
+  '</div>';
+}
+function openEinsatz(locId){var l=location_(locId);if(!l)return;if(typeof closeBA==='function')closeBA();
+  var el=document.createElement('div');el.className='ba-overlay';el.id='baOverlay';
+  el.innerHTML='<div class="ba-toolbar"><button class="btn ghost" data-action="closeBA">Schliessen</button><button class="btn secondary" data-action="einsatzQr" data-id="'+locId+'">'+ICO.qr+' Feuerwehr-QR</button><button class="btn" onclick="window.print()">'+ICO.print+' PDF</button></div>'+
+    '<div class="ba-scroll">'+einsatzHtml(locId)+'</div>';
+  document.body.appendChild(el);
+  if(typeof addHistory==='function')addHistory('Feuerwehr-Einsatzkarte geöffnet',l.name,l.company);}
+function qrTextEinsatz(l){return baseUrl()+'#einsatz='+l.id;}
+function modalEinsatzQr(locId){var l=location_(locId);if(!l)return;var c=company(l.company);
+  openModal('Feuerwehr-QR · '+esc(l.name),'<div class="qr-wrap"><div class="qr-frame" id="qrBox"></div><div class="qr-sub">'+esc(l.name)+' · '+esc(l.bereich||'')+' · '+esc(c?c.name:'')+'</div></div>'+
+    '<div class="notice info" style="margin-top:15px">'+ICO.info+'<div>Am Lagereingang anbringen. Wer scannt – auch Feuerwehr und Sanität – sieht sofort die Einsatzkarte: gelagerte Stoffe, Mengen, Lagerklassen, Löschmittel und besondere Gefahren.</div></div>'+
+    '<div class="btn-row"><button class="btn secondary" data-action="printQr">'+ICO.print+' Etikette drucken</button><button class="btn" data-action="simEinsatzScan" data-id="'+locId+'">'+ICO.qr+' Öffnen (simulieren)</button></div>');
+  renderRealQr('qrBox',qrTextEinsatz(l));}
 function baCodes(str){var out=[];(String(str||'').match(/[HP]\d{3}(?:\s*\+\s*[HP]\d{3})*/g)||[]).forEach(function(c){out.push(c.replace(/\s+/g,''));});return out;}
 function baText(code,map){if(map[code])return map[code];if(code.indexOf('+')>-1){return code.split('+').map(function(c){return map[c]||c;}).join(' ');}return code;}
 function baList(codes,map){return codes.length?('<ul>'+codes.map(function(c){return '<li><b>'+c+'</b> '+esc(baText(c,map))+'</li>';}).join('')+'</ul>'):'<p class="ba-empty">Keine Angaben hinterlegt.</p>';}
@@ -2132,7 +2234,7 @@ function scrLocDetail(){
        '<button class="btn ghost" data-action="clearLoc">'+ICO.warn.replace('width="13"','')+' Kontext aufheben</button></div>'
     :'<div class="btn-row" style="margin-top:0"><button class="btn" data-action="setLocFromDetail" data-id="'+l.id+'">'+ICO.scan+' Diesen Lagerort aktivieren</button><button class="btn secondary" data-action="showLocQr" data-id="'+l.id+'">'+ICO.qr+' QR</button></div>';
   const cards=insts.length?insts.map(instCard).join(''):'<div class="empty">'+ICO.box+'<div>Noch keine Stoffe erfasst.</div></div>';
-  return '<div class="view">'+hero+action+zlNoticeForLoc(l.id)+'<div class="label-h">Stoffe an diesem Lagerort <span class="cnt">'+insts.length+'</span></div>'+cards+disclaimer()+'</div>';
+  return '<div class="view">'+hero+action+zlNoticeForLoc(l.id)+(insts.length?'<button class="btn secondary" data-action="einsatz" data-id="'+l.id+'" style="width:100%;margin:2px 0 6px">'+ICO.doc+' Feuerwehr-Einsatzkarte</button>':'')+'<div class="label-h">Stoffe an diesem Lagerort <span class="cnt">'+insts.length+'</span></div>'+cards+disclaimer()+'</div>';
 }
 
 function instCard(i){
@@ -2406,6 +2508,9 @@ document.addEventListener('click',e=>{
     case 'addBestand':goTo('erfassung',{});break;
     case 'showQr':modalQr(id);break;
     case 'showLocQr':modalLocQr(id);break;
+    case 'einsatz':openEinsatz(id);break;
+    case 'einsatzQr':modalEinsatzQr(id);break;
+    case 'simEinsatzScan':closeModal();openEinsatz(id);break;
     case 'showSdb':modalSdb(id);break;
     case 'openSdbDoc':openSdbDoc(id);break;
     case 'uploadSdb':uploadSdbFromModal(id);break;
@@ -2694,7 +2799,7 @@ async function initApp(){
   const qs=location.search||'';
   if(qs.indexOf('abo=success')>-1){toast('Danke! Dein Abo ist aktiv.');history.replaceState(null,'',location.pathname);}
   else if(qs.indexOf('abo=cancel')>-1){toast('Bezahlung abgebrochen – kein Plan gebucht.',false);history.replaceState(null,'',location.pathname);}
-  const hsh=location.hash||'';if(hsh.indexOf('#open=')===0||hsh.indexOf('#instr=')===0){setTimeout(()=>routeCode(hsh),80);}
+  const hsh=location.hash||'';if(hsh.indexOf('#open=')===0||hsh.indexOf('#instr=')===0||hsh.indexOf('#einsatz=')===0){setTimeout(()=>routeCode(hsh),80);}
 }
 initApp();
 </script>
