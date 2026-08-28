@@ -236,8 +236,10 @@
 
   /* KI-Demo: SDB → Stoffkarte */
   #kidemo-sec{background:var(--surface-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-  .kidemo{display:grid;grid-template-columns:1fr auto 1.15fr;gap:24px;align-items:center;margin-top:8px}
-  .kidemo-sdb{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 28px -16px rgba(16,36,28,.4);overflow:hidden}
+  .kidemo{display:grid;grid-template-columns:1fr auto 1.15fr;gap:24px;align-items:stretch;margin-top:8px}
+  .kidemo-mid{align-self:center}
+  .kidemo-card{display:flex;flex-direction:column;justify-content:center}
+  .kidemo-sdb{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 28px -16px rgba(16,36,28,.4);overflow:hidden;display:flex;flex-direction:column;justify-content:center}
   .kidemo-sdb .scan{position:absolute;left:0;right:0;height:44px;top:-44px;z-index:3;background:linear-gradient(180deg,transparent,rgba(12,107,79,.16),transparent);border-top:2px solid var(--brand);opacity:0;pointer-events:none}
   .kidemo.play .kidemo-sdb .scan{animation:kiScan 1.5s ease-in-out}
   @keyframes kiScan{0%{top:-10px;opacity:1}88%{opacity:1}100%{top:100%;opacity:0}}
@@ -311,12 +313,20 @@
   .imk{display:grid;grid-template-columns:1fr 1.1fr;gap:26px;align-items:stretch;margin-top:8px}
   .imk-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:0 10px 28px -16px rgba(16,36,28,.4);display:flex;flex-direction:column}
   .imk-badgeqr{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;font-weight:600;color:var(--brand);text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px}
-  .imk-ba{border:1px solid var(--line);border-radius:12px;padding:16px;background:var(--surface-2);flex:1}
-  .imk-ba .sig{display:flex;align-items:center;gap:8px;font-family:var(--display);font-weight:700;color:var(--danger);font-size:15px;margin-bottom:12px}
-  .imk-ba .l{height:8px;border-radius:5px;background:var(--line-2);margin:9px 0}
-  .imk-ba .l.s{width:58%}.imk-ba .l.m{width:84%}
+  .imk-ba{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:12px;padding:16px;background:var(--surface-2);flex:1}
+  .imk-ba .sig{display:flex;align-items:center;gap:8px;font-family:var(--display);font-weight:700;color:var(--danger);font-size:15px;margin-bottom:6px}
+  .imk-ba-row{font-size:13.5px;color:var(--ink-2);padding:7px 0;border-top:1px solid var(--line-2);line-height:1.4}
+  .imk-ba-row:first-of-type{border-top:0}
+  .imk-ba-row b{color:var(--ink);font-family:var(--mono);font-size:12.5px;margin-right:5px}
+  .imk-scan{position:absolute;left:0;right:0;height:40px;top:-40px;background:linear-gradient(180deg,transparent,rgba(12,107,79,.16),transparent);border-top:2px solid var(--brand);opacity:0;pointer-events:none}
+  .imk-card.reading .imk-scan{animation:imkScan 1.2s ease-in-out}
+  @keyframes imkScan{0%{top:-10px;opacity:1}100%{top:100%;opacity:0}}
   .imk-btn{margin-top:16px;width:100%;background:var(--brand);color:#fff;border:0;border-radius:12px;padding:15px;font-family:var(--font);font-weight:700;font-size:15.5px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;transition:transform .1s,background .15s}
   .imk-btn svg{width:18px;height:18px;flex:none}
+  .imk-btn .ring{position:absolute;inset:0;border-radius:12px;opacity:0;pointer-events:none}
+  .imk-btn.press{transform:scale(.97)}
+  .imk-btn.press .ring{animation:imkRing .55s ease-out}
+  @keyframes imkRing{0%{box-shadow:0 0 0 0 rgba(255,255,255,.5);opacity:1}100%{box-shadow:0 0 0 24px rgba(255,255,255,0);opacity:0}}
   .imk-btn:hover{background:var(--brand-ink)}
   .imk-btn:active{transform:scale(.98)}
   .imk-btn.done{background:var(--brand-ink)}
@@ -655,13 +665,16 @@
       <p class="lead">QR beim Gefahrstoff scannen, Betriebsanweisung lesen, «gelesen» tippen – fertig ist der Instruktionsnachweis mit Name und Datum. Wer wann instruiert wurde, steht sofort im System. Kein Papier, keine Unterschriftenliste.</p>
     </div>
     <div class="imk">
-      <div class="imk-card">
+      <div class="imk-card" id="imkCard">
         <div class="imk-badgeqr"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M20 14v.01M14 20h.01M17 20h.01M20 17v3"/></svg> QR gescannt · Bremsenreiniger</div>
         <div class="imk-ba">
           <div class="sig"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg> GEFAHR · Betriebsanweisung</div>
-          <div class="l m"></div><div class="l s"></div><div class="l"></div><div class="l m"></div><div class="l s"></div>
+          <div class="imk-ba-row"><b>H222</b> Extrem entzündbares Aerosol.</div>
+          <div class="imk-ba-row"><b>H319</b> Verursacht schwere Augenreizung.</div>
+          <div class="imk-ba-row"><b>PSA</b> Schutzbrille &amp; Handschuhe tragen.</div>
+          <div class="imk-scan"></div>
         </div>
-        <button class="imk-btn" id="imkBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Gelesen &amp; verstanden</button>
+        <button class="imk-btn" id="imkBtn" type="button" tabindex="-1"><span class="ring"></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Gelesen &amp; verstanden</button>
       </div>
       <div class="imk-proof">
         <div class="imk-proof-hd"><div><h4>Instruktionsnachweise</h4><small>Bremsenreiniger · jährlich zu erneuern</small></div><span class="imk-badge due" id="imkBadge">fällig</span></div>
@@ -914,31 +927,38 @@
   }
 })();
 (function(){
-  var btn=document.getElementById('imkBtn'),list=document.getElementById('imkList'),badge=document.getElementById('imkBadge'),sec=document.getElementById('instr-sec');
-  if(!btn||!list||!sec)return;
+  var card=document.getElementById('imkCard'),btn=document.getElementById('imkBtn'),list=document.getElementById('imkList'),badge=document.getElementById('imkBadge'),sec=document.getElementById('instr-sec');
+  if(!card||!btn||!list||!sec)return;
   var check='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
-  var btnLabel='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Gelesen &amp; verstanden';
   var rows=[{nm:'M. Brunner',dt:'14.03.2025'},{nm:'K. Roth',dt:'02.02.2025'}];
-  var pool=['Sie','A. Frei','R. Meier','S. Kaya','T. Fischer'],pi=0;
+  var pool=['A. Frei','R. Meier','S. Kaya','T. Fischer','L. Bianchi','D. Weber'],pi=0;
   function paint(animateTop){
     list.innerHTML=rows.map(function(r,i){return '<div class="imk-row'+((animateTop&&i===0)?'':' in')+'"><span class="nm">'+check+r.nm+'</span><span class="dt">'+r.dt+'</span></div>';}).join('');
     if(animateTop){var first=list.querySelector('.imk-row');if(first){void first.offsetWidth;first.classList.add('in');}}
   }
   function today(){return new Date().toLocaleDateString('de-CH');}
-  function confirm(){
-    var nm=pool[pi%pool.length];pi++;
-    rows.unshift({nm:nm,dt:today()});paint(true);
-    badge.textContent='aktuell';badge.className='imk-badge ok';
-    btn.classList.add('done');btn.innerHTML=check+' Nachweis gespeichert';
-    setTimeout(function(){btn.classList.remove('done');btn.innerHTML=btnLabel;},1600);
+  var timers=[],running=false;
+  function step(){
+    // 1) Betriebsanweisung wird "gelesen"
+    card.classList.remove('reading');void card.offsetWidth;card.classList.add('reading');
+    // 2) Button drückt sich selbst
+    timers.push(setTimeout(function(){btn.classList.add('press');},1150));
+    timers.push(setTimeout(function(){btn.classList.remove('press');},1700));
+    // 3) Nachweis erscheint, Badge auf aktuell
+    timers.push(setTimeout(function(){
+      rows.unshift({nm:pool[pi%pool.length],dt:today()});pi++;
+      if(rows.length>4)rows.pop();
+      paint(true);badge.textContent='aktuell';badge.className='imk-badge ok';
+    },1300));
+    // 4) nächster Durchgang
+    timers.push(setTimeout(step,3400));
   }
+  function start(){if(running)return;running=true;timers.push(setTimeout(step,700));}
   paint(false);
-  btn.addEventListener('click',confirm);
-  var seen=false;
   if('IntersectionObserver' in window){
-    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting&&!seen){seen=true;setTimeout(confirm,900);}});},{threshold:.4});
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)start();});},{threshold:.35});
     io.observe(sec);
-  }
+  } else { start(); }
 })();
 (function(){
   var tg=document.getElementById('langToggle'),doc=document.getElementById('langDoc'),sec=document.getElementById('lang-sec');
