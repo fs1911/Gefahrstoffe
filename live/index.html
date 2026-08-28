@@ -644,6 +644,23 @@
     .dos-ul li{margin:2px 0}
     .dos-dim{color:#777;font-size:10px}
     .dos-legend{font-size:10px;color:#666;margin-top:8px}
+    .gb-doc .gb-lead{font-size:11px;color:#555;margin:2px 0 12px;max-width:640px}
+    .gb-meta td:nth-child(odd){width:118px;background:#f3f3f3;font-weight:700;color:#333}
+    .pr-tbl .mono{font-family:var(--mono);font-size:9.5px}
+    .gb-band{margin:8px 0 2px;font-size:11px;color:#333}
+    .gb-band b{color:#111}
+    .gb-amp{display:inline-block;padding:2px 10px;border-radius:5px;font-weight:700;color:#fff;font-size:11px}
+    .gb-amp.r{background:#c0261f}.gb-amp.y{background:#a85e05}.gb-amp.g{background:#1f7a4d}
+    .gb-dim{color:#666;font-weight:400}
+    .gb-stop{border:1px solid #ccc;border-radius:6px;padding:8px 11px;margin:7px 0;page-break-inside:avoid}
+    .gb-stop h4{margin:0 0 5px;font-size:12px;display:flex;align-items:center;gap:8px}
+    .gb-stop p{margin:0;font-size:11px;line-height:1.35}
+    .gb-stop .gb-l{display:inline-flex;width:20px;height:20px;align-items:center;justify-content:center;background:#0c6b4f;color:#fff;border-radius:5px;font-family:var(--display);font-weight:700;font-size:12px}
+    .gb-ul{margin:0;padding-left:16px;font-size:11px}
+    .gb-ul li{margin:2px 0}
+    .gb-pers{font-size:11px;margin:6px 0}
+    .gb-sig{display:flex;gap:18px;margin:18px 0 4px}
+    .gb-sig div{flex:1;border-top:1px solid #333;padding-top:5px;font-size:10px;color:#333}
     .lbl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8mm}
     .lbl{border:1px solid #111;border-radius:6px;padding:8px;display:flex;flex-direction:column;align-items:center;
       text-align:center;break-inside:avoid;page-break-inside:avoid}
@@ -1824,6 +1841,138 @@ function dossierPdf(){
   doPrint(html);
 }
 
+/* ---------- Gefährdungsbeurteilung nach STOP-Prinzip (Block 9) ---------- */
+var GB_ACTS=[
+  {id:'verarbeiten',name:'Verarbeiten / Auftragen (Pinsel, Rolle, Spachtel)',w:3,aero:0},
+  {id:'spritzen',name:'Sprühen / Spritzen (Aerosol)',w:4,aero:1},
+  {id:'umfuellen',name:'Umfüllen / Abfüllen / Dosieren',w:3,aero:0},
+  {id:'mischen',name:'Mischen / Ansetzen',w:3,aero:0},
+  {id:'reinigen',name:'Reinigen / Entfetten',w:2,aero:0},
+  {id:'lagern',name:'Lagern / Transport (geschlossenes Gebinde)',w:1,aero:0}
+];
+function gbAct(id){for(var i=0;i<GB_ACTS.length;i++)if(GB_ACTS[i].id===id)return GB_ACTS[i];return GB_ACTS[0];}
+function gbCodes(s){var out=[];baCodes(s.h).forEach(function(c){c.split('+').forEach(function(x){if(/^H\d/.test(x))out.push(x);});});return out;}
+function gbAssess(s,act){
+  var hc=gbCodes(s),ghs=s.ghs||[];
+  function any(set){return hc.some(function(c){return set.indexOf(c)>-1;});}
+  var CMR1=['H340','H350','H350i','H360','H360F','H360D','H360FD','H360Fd','H360Df'];
+  var CMR2=['H341','H351','H361','H361f','H361d','H361fd'];
+  var ACUTE4=['H300','H310','H330'],ACUTE3=['H301','H311','H331'];
+  var CORR=['H314'],EYE=['H318'],IRRIT=['H315','H319','H320','H335'];
+  var SENS_SKIN=['H317'],SENS_RESP=['H334'];
+  var STOT_S=['H370','H372'],STOT_L=['H371','H373'],ASP=['H304'];
+  var FLAM_HI=['H220','H221','H222','H223','H224','H225'],FLAM_LO=['H226','H227','H228'];
+  var OXID=['H270','H271','H272'],ENV=['H400','H410','H411','H412','H413'];
+  var cmr=any(CMR1)||any(CMR2);
+  var flamm=any(FLAM_HI)||any(FLAM_LO)||ghs.indexOf('flamm')>-1;
+  var volatile=flamm||any(['H330','H331','H335','H336'])||any(SENS_RESP);
+  // Schweregrad S (1–4)
+  var S=1;
+  if(any(CMR1)||any(ACUTE4)||any(CORR))S=4;
+  else if(any(CMR2)||any(ACUTE3)||any(SENS_RESP)||any(STOT_S)||any(ASP)||any(EYE)||any(FLAM_HI)||any(OXID))S=3;
+  else if(any(IRRIT)||any(SENS_SKIN)||any(STOT_L)||any(FLAM_LO)||any(['H362']))S=2;
+  // Eintretenswahrscheinlichkeit W (1–4) aus Tätigkeit
+  var W=act.w;if(act.aero&&volatile)W=4;if(!volatile&&act.id==='spritzen')W=3;
+  var score=S*W,band=score>=9?'hoch':score>=4?'mittel':'tief';
+  var restBand=band==='hoch'?'mittel':band==='mittel'?'tief':'tief';
+  // Gefährdungen (Kategorien)
+  var gefahr=[];
+  if(cmr)gefahr.push(['Krebserzeugend / erbgutverändernd / fortpflanzungsgefährdend (CMR)',hc.filter(function(c){return CMR1.concat(CMR2).indexOf(c)>-1;}).join(', ')]);
+  if(any(ACUTE4)||any(ACUTE3))gefahr.push(['Akute Toxizität (giftig beim Einatmen, Verschlucken oder Hautkontakt)',hc.filter(function(c){return ACUTE4.concat(ACUTE3).indexOf(c)>-1;}).join(', ')]);
+  if(any(CORR))gefahr.push(['Ätzwirkung – schwere Verätzungen der Haut und Augenschäden','H314']);
+  if(any(EYE)&&!any(CORR))gefahr.push(['Schwere Augenschädigung','H318']);
+  if(any(SENS_RESP))gefahr.push(['Sensibilisierung der Atemwege (Asthmagefahr)','H334']);
+  if(any(SENS_SKIN))gefahr.push(['Hautsensibilisierung (Allergiegefahr)','H317']);
+  if(any(STOT_S)||any(STOT_L))gefahr.push(['Schädigung von Organen',hc.filter(function(c){return STOT_S.concat(STOT_L).indexOf(c)>-1;}).join(', ')]);
+  if(any(ASP))gefahr.push(['Aspirationsgefahr (Lungenschädigung beim Verschlucken)','H304']);
+  if(any(IRRIT))gefahr.push(['Reizung von Haut, Augen oder Atemwegen',hc.filter(function(c){return IRRIT.indexOf(c)>-1;}).join(', ')]);
+  if(any(FLAM_HI)||any(FLAM_LO))gefahr.push(['Brand- und Explosionsgefahr (entzündbar)',hc.filter(function(c){return FLAM_HI.concat(FLAM_LO).indexOf(c)>-1;}).join(', ')]);
+  if(any(OXID))gefahr.push(['Brandfördernd (Oxidationsmittel)',hc.filter(function(c){return OXID.indexOf(c)>-1;}).join(', ')]);
+  if(any(['H336']))gefahr.push(['Benommenheit / Schläfrigkeit möglich','H336']);
+  if(any(ENV)||ghs.indexOf('umwelt')>-1)gefahr.push(['Gewässergefährdend',hc.filter(function(c){return ENV.indexOf(c)>-1;}).join(', ')||'umweltgefährlich']);
+  if(!gefahr.length)gefahr.push(['Nach hinterlegten Daten keine eingestuften Gefahren – Angaben trotzdem am SDB prüfen.','']);
+  // Expositionswege
+  var wege=[];
+  if(volatile||any(['H330','H331','H335','H334','H336'])||act.aero)wege.push(['Einatmen','Dämpfe / Aerosole'+(act.aero?' – bei Sprüharbeiten erhöht':'')]);
+  if(any(CORR)||any(IRRIT)||any(SENS_SKIN)||any(['H310','H311'])||cmr||act.id!=='lagern')wege.push(['Hautkontakt','Spritzer / benetzte Oberflächen']);
+  if(any(EYE)||any(CORR)||any(IRRIT)||act.id==='spritzen')wege.push(['Augen','Spritzer / Aerosol']);
+  if(any(ASP)||any(ACUTE4)||any(ACUTE3))wege.push(['Verschlucken','Hand-zu-Mund, verunreinigte Gebinde']);
+  if(!wege.length)wege.push(['Gering','geschlossener Umgang – Exposition unwahrscheinlich']);
+  // STOP-Massnahmen
+  var sub=cmr
+    ?'Ersatz ist gesetzlich vorrangig: Für CMR-Stoffe muss geprüft und dokumentiert werden, ob ein weniger gefährliches Produkt oder Verfahren die Aufgabe erfüllt (Substitutionspflicht, SUVA/EKAS).'
+    :'Prüfen, ob ein weniger gefährliches Produkt (tiefere Einstufung, wasserbasiert, nicht entzündbar) die gleiche Aufgabe erfüllt.';
+  var tech=[];
+  if(flamm)tech.push('Zündquellen fernhalten: Rauchverbot, keine offene Flamme/Funken; explosionsgeschützte Betriebsmittel; Behälter geerdet.');
+  if(volatile||act.aero||any(['H335','H336']))tech.push('Für gute Lüftung sorgen, wo möglich Absaugung an der Entstehungsstelle; wenn machbar geschlossen arbeiten.');
+  if(any(CORR)||any(IRRIT)||ghs.indexOf('aetz')>-1)tech.push('Auffangwanne unter Gebinde und Arbeitsplatz; Spritzschutz vorsehen.');
+  tech.push('Nur die benötigte Tagesmenge am Arbeitsplatz; Gebinde ausserhalb des Gebrauchs verschlossen halten.');
+  var lk=lkOf(s),lkName=lk?LK_INFO[lk].name:'unbestimmt';
+  var org=['Betriebsanweisung aushängen und Mitarbeitende vor Aufnahme der Tätigkeit instruieren (jährlich wiederholen).',
+    'Sicherheitsdatenblatt griffbereit halten.',
+    'Essen, Trinken und Rauchen am Arbeitsplatz verboten; nach der Arbeit Hände waschen; Hautschutzplan beachten.',
+    'Getrennte Lagerung gemäss Lagerklasse '+(lk||'–')+' ('+lkName+').'];
+  if(band==='hoch')org.push('Expositionsdauer und Anzahl exponierter Personen so gering wie möglich halten.');
+  var psa=[];
+  if(any(CORR)||any(IRRIT)||any(SENS_SKIN)||cmr||any(['H310','H311'])||act.id!=='lagern')psa.push('Chemikalienbeständige Schutzhandschuhe (Typ und Durchbruchzeit gemäss SDB Abschnitt 8).');
+  if(any(EYE)||any(CORR)||any(IRRIT)||act.id==='spritzen')psa.push('Schutzbrille; bei Spritzgefahr Gesichtsschutz.');
+  if(any(['H330','H331','H334','H335','H336'])||volatile||act.aero)psa.push('Atemschutz mit passendem Filter (gemäss SDB) bei Sprüharbeiten oder unzureichender Lüftung.');
+  if(any(CORR))psa.push('Chemikalienschutzschürze / -kleidung.');
+  if(!psa.length)psa.push((typeof psaMap==='function'?(psaMap('de')[ghs[0]]||''):'')||'Schutzhandschuhe und Schutzbrille gemäss SDB.');
+  var pers=(cmr||any(['H360','H361','H361f','H361d','H362','H370','H372','H334']))
+    ?'Beschäftigungsbeschränkung: Für Schwangere/Stillende und Jugendliche ist diese Tätigkeit nur nach gesonderter Beurteilung zulässig – bei CMR- und fortpflanzungsgefährdenden Stoffen grundsätzlich nicht (Mutterschutz, ArGV 3/5).'
+    :'Jugendliche nur nach Instruktion und unter Aufsicht beschäftigen.';
+  return {S:S,W:W,score:score,band:band,restBand:restBand,cmr:cmr,gefahr:gefahr,wege:wege,
+    sub:sub,tech:tech,org:org,psa:psa,pers:pers,lk:lk,lkName:lkName};
+}
+function gbAmp(band){var c=band==='hoch'?'r':band==='mittel'?'y':'g',t=band==='hoch'?'Hoch':band==='mittel'?'Mittel':'Tief';return '<span class="gb-amp '+c+'">'+t+'</span>';}
+function gbHtml(s,act){
+  var a=gbAssess(s,act);
+  var today=new Date().toLocaleDateString('de-CH');
+  var next=new Date(Date.now()+365*864e5).toLocaleDateString('de-CH');
+  var who=(typeof curUser==='function'&&curUser())?curUser().name:'';
+  var head='<div class="pr-h"><div>'+prLogoHtml()+'<div style="font-family:var(--mono);font-size:11px;color:#333;margin-top:5px">'+esc(orgName())+'</div></div>'+
+    '<div class="pr-meta">Gefährdungsbeurteilung<br>'+today+'</div></div>';
+  var meta='<table class="pr-tbl gb-meta"><tbody>'+
+    '<tr><td>Betrieb</td><td>'+esc(orgName())+'</td><td>Stoff / Produkt</td><td><b>'+esc(s.name)+'</b></td></tr>'+
+    '<tr><td>Tätigkeit</td><td>'+esc(act.name)+'</td><td>Hersteller</td><td>'+esc(s.hersteller||'–')+'</td></tr>'+
+    '<tr><td>Signalwort</td><td>'+esc(s.signal||'–')+'</td><td>Lagerklasse</td><td>'+(a.lk||'–')+' ('+esc(a.lkName)+')</td></tr>'+
+    '<tr><td>Erstellt am</td><td>'+today+'</td><td>Erstellt von</td><td>'+esc(who||'–')+'</td></tr>'+
+    '<tr><td>Nächste Überprüfung</td><td>'+next+'</td><td>Grundlage</td><td>SDB '+(s.sdb&&s.sdb.status!=='fehlt'?('Stand '+(s.sdb.rev||'–')):'– fehlt, dringend beschaffen')+'</td></tr>'+
+    '</tbody></table>';
+  var gef='<div class="pr-title" style="margin-top:14px">1 · Gefährdungen</div>'+
+    '<table class="pr-tbl"><thead><tr><th style="width:70%">Gefährdung</th><th>H-Sätze</th></tr></thead><tbody>'+
+    a.gefahr.map(function(g){return '<tr><td>'+esc(g[0])+'</td><td class="mono">'+esc(g[1]||'–')+'</td></tr>';}).join('')+'</tbody></table>';
+  var expo='<div class="pr-title" style="margin-top:14px">2 · Exposition &amp; Risiko (vor Massnahmen)</div>'+
+    '<table class="pr-tbl"><thead><tr><th style="width:26%">Aufnahmeweg</th><th>Quelle bei dieser Tätigkeit</th></tr></thead><tbody>'+
+    a.wege.map(function(w){return '<tr><td><b>'+esc(w[0])+'</b></td><td>'+esc(w[1])+'</td></tr>';}).join('')+'</tbody></table>'+
+    '<div class="gb-band">Schweregrad <b>'+a.S+'/4</b> · Wahrscheinlichkeit <b>'+a.W+'/4</b> · Risiko '+gbAmp(a.band)+'</div>';
+  function stop(letter,title,body){return '<div class="gb-stop"><h4><span class="gb-l">'+letter+'</span>'+title+'</h4>'+body+'</div>';}
+  var maB='<div class="pr-title" style="margin-top:14px">3 · Schutzmassnahmen nach STOP-Prinzip</div>'+
+    stop('S','Substitution','<p>'+esc(a.sub)+'</p>')+
+    stop('T','Technische Massnahmen','<ul class="gb-ul">'+a.tech.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>')+
+    stop('O','Organisatorische Massnahmen','<ul class="gb-ul">'+a.org.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>')+
+    stop('P','Persönliche Schutzausrüstung','<ul class="gb-ul">'+a.psa.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>');
+  var rest='<div class="pr-title" style="margin-top:14px">4 · Restrisiko &amp; besondere Personen</div>'+
+    '<div class="gb-band">Restrisiko bei umgesetzten Massnahmen '+gbAmp(a.restBand)+' <span class="gb-dim">– tragbar, sofern die Massnahmen eingehalten werden.'+(a.cmr?' Solange kein Ersatz möglich ist, Exposition minimieren und dokumentieren.':'')+'</span></div>'+
+    '<p class="gb-pers"><b>Schwangere / Stillende / Jugendliche:</b> '+esc(a.pers)+'</p>'+
+    '<p class="gb-pers"><b>Notfall:</b> Erste Hilfe gemäss Betriebsanweisung / SDB. Notruf 144 (Sanität), 145 (Tox Info Suisse), 118 (Feuerwehr).</p>';
+  var sig='<div class="gb-sig"><div>Erstellt (Name / Datum)</div><div>Geprüft / Vorgesetzte(r)</div><div>Nächste Überprüfung: '+next+'</div></div>';
+  return '<div class="gb-doc">'+head+
+    '<div class="pr-title">Gefährdungsbeurteilung – '+esc(s.name)+'</div>'+
+    '<div class="gb-lead">Automatisch aus der Stoffkarte abgeleitet (Einstufung, Lagerklasse, Tätigkeit). Vor Ort prüfen und mit den tatsächlichen Bedingungen (Menge, Dauer, Lüftung) abgleichen.</div>'+
+    meta+gef+expo+maB+rest+sig+prFooter()+'</div>';
+}
+function modalGb(subId){var s=substance(subId);if(!s)return;
+  var opts=GB_ACTS.map(function(x){return '<option value="'+x.id+'">'+esc(x.name)+'</option>';}).join('');
+  openModal('Gefährdungsbeurteilung · '+esc(s.name),
+    '<div class="notice info" style="margin-bottom:12px">'+ICO.info+'<div>StoffScan erzeugt aus der Stoffkarte eine prüffertige Gefährdungsbeurteilung nach dem STOP-Prinzip. Wähle die Haupttätigkeit – die Exposition und die Massnahmen richten sich danach.</div></div>'+
+    '<div class="field"><label>Tätigkeit / Verwendung</label><select id="gbAct">'+opts+'</select></div>'+
+    '<div class="btn-row"><button class="btn ghost" data-action="closeModal">Abbrechen</button><button class="btn" data-action="gbGo" data-id="'+subId+'">'+ICO.doc+' Beurteilung erstellen</button></div>');}
+function gbGenerate(subId){var s=substance(subId);if(!s)return;
+  var sel=document.getElementById('gbAct');var act=gbAct(sel?sel.value:'verarbeiten');
+  closeModal();if(typeof addHistory==='function')addHistory('Gefährdungsbeurteilung erstellt',s.name+' · '+act.name,'');
+  doPrint(gbHtml(s,act));}
 function baCodes(str){var out=[];(String(str||'').match(/[HP]\d{3}(?:\s*\+\s*[HP]\d{3})*/g)||[]).forEach(function(c){out.push(c.replace(/\s+/g,''));});return out;}
 function baText(code,map){if(map[code])return map[code];if(code.indexOf('+')>-1){return code.split('+').map(function(c){return map[c]||c;}).join(' ');}return code;}
 function baList(codes,map){return codes.length?('<ul>'+codes.map(function(c){return '<li><b>'+c+'</b> '+esc(baText(c,map))+'</li>';}).join('')+'</ul>'):'<p class="ba-empty">Keine Angaben hinterlegt.</p>';}
@@ -1962,7 +2111,7 @@ function scrDetail(){
     '<div class="instr-head"><div><b>Instruktionsnachweis</b><small>'+(iCount?('Instruiert: '+iCount+' · zuletzt '+fmtDate(iLast)):'Noch keine Instruktion erfasst')+'</small></div>'+(iDue?'<span class="instr-badge due">fällig</span>':'<span class="instr-badge ok">aktuell</span>')+'</div>'+
     '<div class="btn-row" style="margin-top:11px"><button class="btn secondary" data-action="instrList" data-id="'+s.id+'">Nachweise</button><button class="btn secondary" data-action="instrQr" data-id="'+s.id+'">'+ICO.qr+' Instruktions-QR</button></div>'+
     '<button class="btn" data-action="instrConfirm" data-id="'+s.id+'" style="width:100%;margin-top:9px">'+ICO.ok+' Instruktion bestätigen</button></div>';
-  return '<div class="view">'+hero+notes+bestand+stamm+'<button class="btn secondary" data-action="genBA" data-id="'+s.id+'" style="width:100%;margin-top:14px">'+ICO.doc+' Betriebsanweisung erstellen</button>'+instrBlock+oth+disclaimer()+'</div>';
+  return '<div class="view">'+hero+notes+bestand+stamm+'<button class="btn secondary" data-action="genBA" data-id="'+s.id+'" style="width:100%;margin-top:14px">'+ICO.doc+' Betriebsanweisung erstellen</button>'+'<button class="btn secondary" data-action="gbOpen" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Gefährdungsbeurteilung erstellen</button>'+instrBlock+oth+disclaimer()+'</div>';
 }
 
 /* ===== LAGERORTDETAIL (nützlicher) ===== */
@@ -2265,6 +2414,8 @@ document.addEventListener('click',e=>{
     case 'reScanCam':closeModal();goTo('scanArt',{reset:true,nav:'scan'});break;
     case 'switchUser':modalSwitchUser();break;
     case 'genBA':openBA(id);break;
+    case 'gbOpen':modalGb(id);break;
+    case 'gbGo':gbGenerate(id);break;
     case 'dossier':dossierPdf();break;
     case 'openChat':openChat();break;
     case 'closeChat':closeChat();break;
