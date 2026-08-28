@@ -275,6 +275,37 @@
   .ki-replay:hover{border-color:var(--brand);color:var(--brand)}
   @media(max-width:760px){.kidemo{grid-template-columns:1fr;gap:16px}.kidemo-mid{flex-direction:row}.kidemo-sdb{min-height:0}}
 
+  /* Marketing: crowdsourced Schweizer Katalog */
+  #katalog-sec{background:var(--surface-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .kat{display:grid;grid-template-columns:1fr 1.1fr;gap:26px;align-items:stretch;margin-top:8px}
+  .kat-scan{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:0 10px 28px -16px rgba(16,36,28,.4);display:flex;flex-direction:column;overflow:hidden}
+  .kat-scanhd{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px}
+  .kat-barcode{display:flex;align-items:stretch;gap:3px;height:74px;padding:0 4px;position:relative}
+  .kat-barcode i{flex:1;background:var(--ink);border-radius:1px;opacity:.9}
+  .kat-num{font-family:var(--mono);font-size:14px;letter-spacing:.14em;color:var(--ink-2);text-align:center;margin:9px 0 2px}
+  .kat-beam{position:absolute;left:22px;right:22px;height:38px;top:52px;background:linear-gradient(180deg,transparent,rgba(12,107,79,.14),transparent);border-top:2px solid var(--brand);opacity:0}
+  .kat.scan .kat-beam{animation:katBeam 1.05s ease-in-out}
+  @keyframes katBeam{0%{top:52px;opacity:1}100%{top:118px;opacity:0}}
+  .kat-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto;padding-top:18px}
+  .kat-chip{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 11px;cursor:pointer;text-align:left;line-height:1.3;transition:border-color .15s,background .15s;font-family:var(--font)}
+  .kat-chip b{display:block;font-size:12.5px;color:var(--ink)}
+  .kat-chip small{font-family:var(--mono);font-size:10.5px;color:var(--ink-3)}
+  .kat-chip.on,.kat-chip:hover{border-color:var(--brand);background:var(--brand-soft)}
+  .kat-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:0 10px 28px -16px rgba(16,36,28,.4);position:relative;transition:opacity .35s,transform .35s}
+  .kat-card.swap{opacity:0;transform:translateY(8px)}
+  .kat-badge{display:inline-flex;align-items:center;gap:6px;background:var(--brand-soft);color:var(--brand-ink);border-radius:20px;padding:4px 11px;font-size:12px;font-weight:700;margin-bottom:12px}
+  .kat-badge svg{width:13px;height:13px}
+  .kat-card h4{font-family:var(--display);font-size:20px;margin:0 0 1px;letter-spacing:-.01em}
+  .kat-mfr{color:var(--ink-3);font-size:13px;margin-bottom:12px}
+  .kat-pik{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+  .kat-pik .ki-chip{margin-left:0}
+  .kat-krow{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line-2);font-size:14px}
+  .kat-krow:last-of-type{border-bottom:0}
+  .kat-krow .k{color:var(--ink-2)}.kat-krow .v{font-weight:600;text-align:right}
+  .kat-src{display:flex;align-items:center;gap:7px;color:var(--ok);font-weight:600;font-size:13px;margin-top:13px}
+  .kat-src svg{width:16px;height:16px}
+  @media(max-width:760px){.kat{grid-template-columns:1fr;gap:16px}}
+
   /* Marketing: Betriebsanweisung */
   .ba-mkt{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
   .ba-mkt-list{list-style:none;margin:22px 0 0;padding:0}
@@ -520,6 +551,27 @@
   </div>
 </section>
 
+<!-- KATALOG: crowdsourced Schweizer Katalog -->
+<section id="katalog-sec">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Netzwerk-Effekt</div>
+      <h2>Einmal erfasst. Von allen erkannt.</h2>
+      <p class="lead">Legt ein Betrieb ein Produkt sauber an, kennt StoffScan es für alle. Barcode scannen – und die Stoffkarte kommt fertig zurück, bestätigt aus dem gemeinsamen Schweizer Katalog. Je mehr mitmachen, desto weniger tippt jeder ab.</p>
+    </div>
+    <div class="kat" id="kat">
+      <div class="kat-scan">
+        <div class="kat-scanhd">Barcode gescannt</div>
+        <div class="kat-barcode" id="katBar"></div>
+        <div class="kat-num" id="katNum">5032227400221</div>
+        <div class="kat-beam"></div>
+        <div class="kat-chips" id="katChips"></div>
+      </div>
+      <div class="kat-card" id="katCard"></div>
+    </div>
+  </div>
+</section>
+
 <!-- BETRIEBSANWEISUNG -->
 <section id="ba-sec">
   <div class="wrap ba-mkt">
@@ -731,6 +783,46 @@
     io.observe(d);
   } else { play(); }
   var rb=document.getElementById('kiReplay');if(rb)rb.addEventListener('click',play);
+})();
+(function(){
+  var wrap=document.getElementById('kat');if(!wrap)return;
+  var GHSL={flamm:'entzündbar',reiz:'reizend',aetz:'ätzend',umwelt:'gewässergefährdend',giftig:'giftig',druckgas:'Druckgas'};
+  var KATALOG=[
+    {bc:'5032227400221',short:'WD-40',name:'WD-40 Multifunktionsspray',mfr:'WD-40 Company',n:63,ghs:['flamm'],h:'H222, H229',un:'UN 1950',lk:'2B'},
+    {bc:'7640140630012',short:'Isopropanol',name:'Isopropanol 99,9 %',mfr:'Kisling AG',n:14,ghs:['flamm','reiz'],h:'H225, H319, H336',un:'UN 1219',lk:'3'},
+    {bc:'7610827411006',short:'Natriumhypochlorit',name:'Natriumhypochlorit 12 %',mfr:'Sigma AG',n:9,ghs:['aetz','umwelt'],h:'H314, H400',un:'UN 1791',lk:'8B'}
+  ];
+  var bar=document.getElementById('katBar'),num=document.getElementById('katNum'),card=document.getElementById('katCard'),chips=document.getElementById('katChips');
+  var check='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
+  function bars(bc){var s='';for(var i=0;i<bc.length*3;i++){var d=+bc[i%bc.length];var g=1+((d+i)%3);s+='<i style="flex:'+g+'"></i>';}return s;}
+  function cardHtml(p){
+    return '<div class="kat-badge">'+check+' von '+p.n+' Betrieben bestätigt</div>'+
+      '<h4>'+p.name+'</h4><div class="kat-mfr">'+p.mfr+'</div>'+
+      '<div class="kat-pik">'+p.ghs.map(function(g){return '<span class="ki-chip">'+(GHSL[g]||g)+'</span>';}).join('')+'</div>'+
+      '<div class="kat-krow"><span class="k">H-Sätze</span><span class="v">'+p.h+'</span></div>'+
+      '<div class="kat-krow"><span class="k">UN-Nummer</span><span class="v">'+p.un+'</span></div>'+
+      '<div class="kat-krow"><span class="k">Lagerklasse</span><span class="v">LK '+p.lk+'</span></div>'+
+      '<div class="kat-src">'+check+' Aus dem Schweizer Katalog übernommen</div>';
+  }
+  var cur=0,timers=[];
+  function show(i){
+    if(i===cur)return;cur=i;
+    [].forEach.call(chips.children,function(c,ix){c.classList.toggle('on',ix===i);});
+    num.textContent=KATALOG[i].bc;bar.innerHTML=bars(KATALOG[i].bc);
+    wrap.classList.remove('scan');void wrap.offsetWidth;wrap.classList.add('scan');
+    card.classList.add('swap');
+    timers.push(setTimeout(function(){card.innerHTML=cardHtml(KATALOG[i]);card.classList.remove('swap');},520));
+  }
+  chips.innerHTML=KATALOG.map(function(p,i){return '<button type="button" class="kat-chip'+(i===0?' on':'')+'" data-i="'+i+'"><b>'+p.short+'</b><small>'+p.bc+'</small></button>';}).join('');
+  [].forEach.call(chips.children,function(c){c.addEventListener('click',function(){stopAuto();show(+c.dataset.i);});});
+  bar.innerHTML=bars(KATALOG[0].bc);num.textContent=KATALOG[0].bc;card.innerHTML=cardHtml(KATALOG[0]);
+  var seen=false,autoOn=false;
+  function stopAuto(){autoOn=false;timers.forEach(clearTimeout);timers=[];}
+  function startAuto(){autoOn=true;timers.push(setTimeout(function(){if(autoOn)show(1);},1800));timers.push(setTimeout(function(){if(autoOn)show(2);},4400));}
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting&&!seen){seen=true;startAuto();}});},{threshold:.4});
+    io.observe(wrap);
+  }
 })();
 </script>
 </body>

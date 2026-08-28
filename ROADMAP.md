@@ -158,7 +158,7 @@ damit Kunden den Nutzen sehen (Ziel: Wow-Demo direkt auf der Website).
 
 1. [x] **SDB → Stoffkarte füllt sich per KI selbst** (10) — Demo-Simulation + Live-Edge-Function `parse-sdb` (Claude) + interaktive Marketing-Demo (2026-08-27). **Offen:** `ANTHROPIC_API_KEY` setzen → Live-Schaltung
 2. [x] **Betriebsanweisung auf Knopfdruck** (10) — aus H-/P-Sätzen + GHS erzeugte, druck-/aushängefertige Betriebsanweisung (Gefahren, Schutz, Erste Hilfe, Entsorgung) direkt aus der Stoffkarte; Print/PDF; interaktive Marketing-Sektion (2026-08-27)
-3. [ ] **Barcode → crowdsourced Schweizer Katalog** (9) — wird mit jedem Betrieb schlauer
+3. [x] **Barcode → crowdsourced Schweizer Katalog** (9) — mandantenübergreifende `product_catalog`-Tabelle (0006); Barcode-Scan trifft den gemeinsamen Katalog → Stoffkarte kommt vorausgefüllt zurück, jeder Speichern-Vorgang gibt anonym zurück (`catalog_find`/`catalog_contribute`, RPC-only, Beitragende nie exponiert). Demo-Simulation im `/app/`, Live an Supabase, kuratierte CH-Grunddaten, interaktive Marketing-Sektion „Einmal erfasst. Von allen erkannt." (2026-08-28)
 4. [x] Zusammenlagerungs-Warnung (9) — *bereits gebaut*
 5. [ ] **Instruktionsnachweis per QR** (9) — „gelesen" → Schulungsnachweis
 6. [ ] **Mehrsprachige Betriebsanweisung & Instruktion** (9) — DE/FR/IT (+PT/SQ/EN)

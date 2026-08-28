@@ -311,6 +311,11 @@
   .scanner p{font-size:13px;margin:0;color:#9fb4c0}
   .pick{width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:13px;display:flex;align-items:center;gap:12px;margin-bottom:9px;min-height:60px}
   .pick:active{background:var(--surface-2)}
+  .cat-ex{display:flex;flex-wrap:wrap;gap:8px}
+  .cat-chip{flex:1 1 auto;min-width:120px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:9px 11px;cursor:pointer;line-height:1.35}
+  .cat-chip b{display:block;font-size:13px;color:var(--ink)}
+  .cat-chip small{font-family:var(--mono);font-size:11px;color:var(--ink-3)}
+  .cat-chip:active{background:var(--surface-2);border-color:var(--accent)}
   .pick .qr-ico{width:30px;height:30px;flex:none;color:var(--accent)}
   .pick .pm{flex:1;min-width:0}.pick .pm b{font-size:15px;display:block}.pick .pm small{font-size:12.5px;color:var(--ink-2)}
   .pick.new{border:2px dashed var(--accent);color:var(--accent)}.pick.new b{color:var(--accent)}
@@ -1102,16 +1107,27 @@ function routeCode(raw){
   // 4) Externer Barcode -> bekannter Artikel oder Neuanlage mit übernommenem Barcode
   const sub=DB.substances.find(s=>s.barcode&&s.barcode===full);
   if(sub){const i=state.activeLoc?DB.instances.find(x=>x.sub===sub.id&&x.loc===state.activeLoc):null;toast('Artikel erkannt: '+sub.name);goTo('detail',{sub:sub.id,inst:i?i.id:null,reset:true,nav:'start'});return true;}
+  // 5) Externer Barcode im Schweizer Katalog? -> Stoffkarte kommt fertig zurück
+  const cat=catalogFind(full);
+  if(cat){
+    state.aiExtract={hersteller:cat.hersteller,h:cat.h,p:cat.p,un:cat.un,lk:cat.lk};state._sig=cat.sig;
+    state.scanPrefill={barcode:full,info:'',name:cat.name,sig:cat.sig,haz:cat.haz.slice(),catalog:cat};
+    toast('Aus dem Schweizer Katalog übernommen');goTo('erfassung',{reset:true,nav:'scan'});return true;
+  }
   // unbekannter Barcode -> Erfassung mit Barcode
   state.scanPrefill={barcode:full,info:''};toast('Neuer Artikel – Barcode übernommen');goTo('erfassung',{reset:true,nav:'scan'});return true;
 }
 function modalReScan(){
   openModal('Artikel-QR öffnen','<div class="notice info" style="margin-bottom:12px">'+ICO.info+'<div>Internen QR-Code (z. B. <b>INST-000123</b>), Lagerort-Code (<b>LOC-…</b>) oder externen Barcode eingeben – oder mit der Kamera scannen.</div></div>'+
     '<div class="field"><label>Code</label><input id="reScanInput" placeholder="INST-… / LOC-… / Barcode" autocomplete="off" onkeydown="if(event.key===&#39;Enter&#39;){event.preventDefault();reScanGo();}"></div>'+
-    '<div class="btn-row" style="margin-top:2px"><button class="btn secondary" data-action="reScanCam">'+ICO.scan+' Kamera</button><button class="btn" data-action="reScanGo">'+ICO.qr+' Öffnen</button></div>');
+    '<div class="btn-row" style="margin-top:2px"><button class="btn secondary" data-action="reScanCam">'+ICO.scan+' Kamera</button><button class="btn" data-action="reScanGo">'+ICO.qr+' Öffnen</button></div>'+
+    '<div class="label-h" style="margin-top:14px">Beispiel aus dem Schweizer Katalog</div>'+
+    '<div class="cat-ex">'+CATALOG.slice(0,3).map(c=>'<button type="button" class="cat-chip" onclick="reScanFill(\''+c.barcode+'\')"><b>'+esc(c.name)+'</b><small>'+c.barcode+'</small></button>').join('')+'</div>'+
+    '<p style="margin:8px 2px 0;font-size:12px;color:var(--ink-3)">Diese Produkte hat bereits ein anderer Betrieb erfasst – Barcode wählen und «Öffnen».</p>');
   setTimeout(function(){var i=document.getElementById('reScanInput');if(i)i.focus();},60);
 }
 function reScanGo(){var el=document.getElementById('reScanInput');var v=el?el.value.trim():'';if(!v){toast('Bitte einen Code eingeben.',false);if(el)el.focus();return;}closeModal();routeCode(v);}
+window.reScanFill=function(bc){var el=document.getElementById('reScanInput');if(el){el.value=bc;el.focus();}};
 
 
 /* ---------- Echter Kamera-Scan (html5-qrcode) ---------- */
@@ -1280,6 +1296,21 @@ const AI_SAMPLES=[
  {name:'Bremsenreiniger Spray',hersteller:'AutoTec AG',sig:'Gefahr',haz:['flamm'],h:'H222, H229, H315, H336',p:'P210, P251, P261, P271',un:'UN 1950',lk:'2B',barcode:'7610000000024'},
  {name:'Natronlauge 30%',hersteller:'ChemSwiss GmbH',sig:'Gefahr',haz:['aetz'],h:'H290, H314',p:'P280, P305+P351+P338, P310',un:'UN 1824',lk:'8B',barcode:'7610000000031'}
 ];
+
+/* ---------- Schweizer Produkt-Katalog (crowdsourced, Demo) ----------
+   Ein Produkt, das ein Betrieb einmal sauber erfasst, erkennt die App für
+   alle anderen wieder: Barcode scannen → Stoffkarte kommt fertig zurück.
+   In der Live-Version ist das eine mandantenübergreifende Tabelle in
+   Supabase; hier eine Simulation mit bekannten CH-Handelsprodukten.        */
+const CATALOG=[
+ {barcode:'7640140630012',name:'Isopropanol 99,9 %',hersteller:'Kisling AG',sig:'Gefahr',haz:['flamm','reiz'],h:'H225, H319, H336',p:'P210, P233, P280, P305+P351+P338',un:'UN 1219',lk:'3',n:14},
+ {barcode:'5032227400221',name:'WD-40 Multifunktionsspray',hersteller:'WD-40 Company',sig:'Gefahr',haz:['flamm'],h:'H222, H229',p:'P210, P211, P251, P410+P412',un:'UN 1950',lk:'2B',n:63},
+ {barcode:'7610827411006',name:'Natriumhypochlorit 12 %',hersteller:'Sigma AG',sig:'Gefahr',haz:['aetz','umwelt'],h:'H314, H400',p:'P280, P305+P351+P338, P310, P273',un:'UN 1791',lk:'8B',n:9},
+ {barcode:'7612345000019',name:'Nitroverdünner',hersteller:'Colorex AG',sig:'Gefahr',haz:['flamm','reiz'],h:'H225, H319, H336',p:'P210, P240, P280, P303+P361+P353',un:'UN 1993',lk:'3',n:21},
+ {barcode:'4011750017707',name:'Silikonentferner Spray',hersteller:'Presto',sig:'Gefahr',haz:['flamm'],h:'H222, H229, H336',p:'P210, P251, P260, P271',un:'UN 1950',lk:'2B',n:7},
+ {barcode:'7610000999015',name:'Rostlöser MoS₂',hersteller:'Motorex',sig:'Achtung',haz:['flamm'],h:'H222, H229',p:'P210, P211, P251',un:'UN 1950',lk:'2B',n:32}
+];
+function catalogFind(bc){bc=(bc||'').replace(/\s/g,'');return CATALOG.find(c=>c.barcode===bc)||null;}
 function aiFileHtml(){return '<div class="ai-drop">'+ICO.doc+'<div><b>SDB als PDF hier ablegen</b><small>oder Etikett fotografieren – die KI liest die Angaben heraus</small></div></div>';}
 function modalAiSdb(){
   const rows=AI_SAMPLES.map((s,i)=>'<button class="pick" data-action="aiPick" data-id="'+i+'"><span class="qr-ico">'+ICO.doc+'</span><span class="pm"><b>'+s.name+'</b><small>'+s.hersteller+' · '+s.un+'</small></span><span class="chg">lesen</span></button>').join('');
@@ -1603,12 +1634,13 @@ function scrErfassung(){
   const ctx=l?(l.name+' · '+l.bereich+' · '+company(l.company).name):'kein Lagerort';
   const pf=state.scanPrefill||{};
   const haz=['flamm','aetz','giftig','umwelt','druckgas','reiz'].map(h=>'<button type="button" class="chip'+((pf.haz&&pf.haz.indexOf(h)>-1)?' on':'')+'" data-haz="'+h+'" onclick="this.classList.toggle(\'on\');zlCheckErf()">'+GHS_LABEL[h]+'</button>').join('');
-  const scanInfo=(pf.barcode||pf.info)?'<div class="notice ok">'+ICO.ok+'<div>Aus dem Scan übernommen:'+(pf.barcode?' Barcode <b>'+pf.barcode+'</b>':'')+(pf.info?'<br>Infoseite wird verlinkt.':'')+'</div></div>':'';
+  const scanInfo=((pf.barcode||pf.info)&&!pf.catalog)?'<div class="notice ok">'+ICO.ok+'<div>Aus dem Scan übernommen:'+(pf.barcode?' Barcode <b>'+pf.barcode+'</b>':'')+(pf.info?'<br>Infoseite wird verlinkt.':'')+'</div></div>':'';
   const aiSum=pf.ai?'<div class="notice ok">'+ICO.ok+'<div><b>KI hat aus dem SDB erkannt:</b><br>'+pf.ai.h+' · '+pf.ai.un+' · Lagerklasse '+pf.ai.lk+'<br><small>Bitte kurz prüfen und speichern.</small></div></div>':'';
-  const aiBtn='<button type="button" class="act-primary" data-action="aiSdb" style="margin-bottom:14px">'+ICO.doc+'<span><b>SDB analysieren (KI)</b><span style="display:block;font-weight:500;opacity:.92;font-size:13px">PDF hochladen – Felder füllen sich selbst</span></span></button>';
+  const catSum=pf.catalog?'<div class="notice ok">'+ICO.ok+'<div><b>Aus dem Schweizer Katalog übernommen.</b> Ein anderer Betrieb hat dieses Produkt bereits erfasst:<br>'+esc(pf.catalog.hersteller)+' · '+esc(pf.catalog.h)+' · '+esc(pf.catalog.un)+' · Lagerklasse '+esc(pf.catalog.lk)+'<br><small>Von '+pf.catalog.n+' Betrieben bestätigt · bitte kurz prüfen und speichern.</small></div></div>':'';
+  const aiBtn='<button type="button" class="act-primary" data-action="aiSdb" style="margin-bottom:14px"><span class="ico">'+ICO.doc+'</span><span><b>SDB analysieren (KI)</b><span style="display:block;font-weight:500;opacity:.92;font-size:13px">PDF hochladen – Felder füllen sich selbst</span></span></button>';
   const sigAon=pf.sig==='Gefahr'?'':' on',sigGon=pf.sig==='Gefahr'?' on':'';
   return '<div class="view"><h2 class="title">Stoff erfassen</h2><p class="sub">Nur das Nötigste. Lagerort: <b>'+ctx+'</b></p>'+
-    (!l?'<div class="notice warn">'+ICO.warn+'<div>Kein Lagerort gesetzt – Datensatz wird ohne Lagerort gespeichert.</div></div>':'')+aiBtn+scanInfo+aiSum+
+    (!l?'<div class="notice warn">'+ICO.warn+'<div>Kein Lagerort gesetzt – Datensatz wird ohne Lagerort gespeichert.</div></div>':'')+aiBtn+scanInfo+aiSum+catSum+
     '<form id="erfForm">'+
     '<div class="field"><label>Produktname *</label><input name="name" placeholder="z. B. Spezialkleber X" value="'+(pf.name||'').replace(/"/g,'&quot;')+'"></div>'+
     '<div class="field"><label>Menge *</label><div style="display:flex;gap:9px"><input name="menge" type="number" inputmode="decimal" placeholder="z. B. 5" style="flex:2"><select name="einheit" style="flex:1"><option>l</option><option>kg</option><option>Stk</option><option>ml</option></select></div></div>'+

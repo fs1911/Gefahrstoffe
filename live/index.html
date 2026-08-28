@@ -1099,8 +1099,18 @@ function routeCode(raw){
   // 4) Externer Barcode -> bekannter Artikel oder Neuanlage mit übernommenem Barcode
   const sub=DB.substances.find(s=>s.barcode&&s.barcode===full);
   if(sub){const i=state.activeLoc?DB.instances.find(x=>x.sub===sub.id&&x.loc===state.activeLoc):null;toast('Artikel erkannt: '+sub.name);goTo('detail',{sub:sub.id,inst:i?i.id:null,reset:true,nav:'start'});return true;}
-  // unbekannter Barcode -> Erfassung mit Barcode
-  state.scanPrefill={barcode:full,info:''};toast('Neuer Artikel – Barcode übernommen');goTo('erfassung',{reset:true,nav:'scan'});return true;
+  // 5) Externer Barcode -> Schweizer Katalog abfragen (mandantenübergreifend), sonst Neuanlage
+  catalogRoute(full);return true;
+}
+async function catalogRoute(full){
+  let cat=null;
+  try{const {data}=await sbc.rpc('catalog_find',{p_barcode:full});cat=(data&&data.length)?data[0]:(data&&data.produktname?data:null);}catch(e){}
+  if(cat){
+    state.aiExtract={hersteller:cat.hersteller,h:cat.h_saetze,p:cat.p_saetze,un:cat.un_nummer,lk:cat.lagerklasse};state._sig=cat.signalwort||'Achtung';
+    state.scanPrefill={barcode:full,info:'',name:cat.produktname,sig:cat.signalwort,haz:(cat.ghs_piktogramme||[]).slice(),catalog:{hersteller:cat.hersteller,h:cat.h_saetze,un:cat.un_nummer,lk:cat.lagerklasse,n:cat.bestaetigungen||1}};
+    toast('Aus dem Schweizer Katalog übernommen');goTo('erfassung',{reset:true,nav:'scan'});return;
+  }
+  state.scanPrefill={barcode:full,info:''};toast('Neuer Artikel – Barcode übernommen');goTo('erfassung',{reset:true,nav:'scan'});
 }
 function modalReScan(){
   openModal('Artikel-QR öffnen','<div class="notice info" style="margin-bottom:12px">'+ICO.info+'<div>Internen QR-Code (z. B. <b>INST-000123</b>), Lagerort-Code (<b>LOC-…</b>) oder externen Barcode eingeben – oder mit der Kamera scannen.</div></div>'+
@@ -1578,13 +1588,14 @@ function scrErfassung(){
   const ctx=l?(l.name+' · '+l.bereich+' · '+company(l.company).name):'kein Lagerort';
   const pf=state.scanPrefill||{};
   const haz=['flamm','aetz','giftig','umwelt','druckgas','reiz'].map(h=>'<button type="button" class="chip'+((pf.haz&&pf.haz.indexOf(h)>-1)?' on':'')+'" data-haz="'+h+'" onclick="this.classList.toggle(\'on\');zlCheckErf()">'+GHS_LABEL[h]+'</button>').join('');
-  const scanInfo=(pf.barcode||pf.info)?'<div class="notice ok">'+ICO.ok+'<div>Aus dem Scan übernommen:'+(pf.barcode?' Barcode <b>'+pf.barcode+'</b>':'')+(pf.info?'<br>Infoseite wird verlinkt.':'')+'</div></div>':'';
+  const scanInfo=((pf.barcode||pf.info)&&!pf.catalog)?'<div class="notice ok">'+ICO.ok+'<div>Aus dem Scan übernommen:'+(pf.barcode?' Barcode <b>'+pf.barcode+'</b>':'')+(pf.info?'<br>Infoseite wird verlinkt.':'')+'</div></div>':'';
   const aiSum=pf.ai?'<div class="notice ok">'+ICO.ok+'<div><b>KI hat aus dem SDB erkannt:</b><br>'+esc(pf.ai.h||'–')+' · '+esc(pf.ai.un||'–')+(pf.ai.lk?' · Lagerklasse '+esc(pf.ai.lk):'')+'<br><small>Bitte kurz prüfen und speichern.</small></div></div>':'';
+  const catSum=pf.catalog?'<div class="notice ok">'+ICO.ok+'<div><b>Aus dem Schweizer Katalog übernommen.</b> Ein anderer Betrieb hat dieses Produkt bereits erfasst:<br>'+esc(pf.catalog.hersteller||'–')+' · '+esc(pf.catalog.h||'–')+' · '+esc(pf.catalog.un||'–')+(pf.catalog.lk?' · Lagerklasse '+esc(pf.catalog.lk):'')+'<br><small>Von '+(pf.catalog.n||1)+' Betrieben bestätigt · bitte kurz prüfen und speichern.</small></div></div>':'';
   const aiBtn='<input type="file" id="aiFile" accept="application/pdf,image/*" style="display:none" onchange="aiAnalyze(this.files&&this.files[0])">'+
-    '<button type="button" class="act-primary" onclick="document.getElementById(\'aiFile\').click()" style="margin-bottom:14px">'+ICO.doc+'<span><b>SDB analysieren (KI)</b><span style="display:block;font-weight:500;opacity:.92;font-size:13px">PDF/Foto hochladen – Felder füllen sich selbst</span></span></button>';
+    '<button type="button" class="act-primary" onclick="document.getElementById(\'aiFile\').click()" style="margin-bottom:14px"><span class="ico">'+ICO.doc+'</span><span><b>SDB analysieren (KI)</b><span style="display:block;font-weight:500;opacity:.92;font-size:13px">PDF/Foto hochladen – Felder füllen sich selbst</span></span></button>';
   const sigAon=pf.sig==='Gefahr'?'':' on',sigGon=pf.sig==='Gefahr'?' on':'';
   return '<div class="view"><h2 class="title">Stoff erfassen</h2><p class="sub">Nur das Nötigste. Lagerort: <b>'+ctx+'</b></p>'+
-    (!l?'<div class="notice warn">'+ICO.warn+'<div>Kein Lagerort gesetzt – Datensatz wird ohne Lagerort gespeichert.</div></div>':'')+aiBtn+scanInfo+aiSum+
+    (!l?'<div class="notice warn">'+ICO.warn+'<div>Kein Lagerort gesetzt – Datensatz wird ohne Lagerort gespeichert.</div></div>':'')+aiBtn+scanInfo+aiSum+catSum+
     '<form id="erfForm">'+
     '<div class="field"><label>Produktname *</label><input name="name" placeholder="z. B. Spezialkleber X" value="'+esc(pf.name||'')+'"></div>'+
     '<div class="field"><label>Menge *</label><div style="display:flex;gap:9px"><input name="menge" type="number" inputmode="decimal" placeholder="z. B. 5" style="flex:2"><select name="einheit" style="flex:1"><option>l</option><option>kg</option><option>Stk</option><option>ml</option></select></div></div>'+
@@ -1856,6 +1867,8 @@ async function saveErf(){const f=document.getElementById('erfForm');const name=f
   try{
     const {data:sub,error:e1}=await sbc.from('substances').insert({organization_id:orgId(),produktname:name,hersteller:ex.hersteller||'unbekannt',signalwort:sig,ghs_piktogramme:haz,h_saetze:ex.h||'– (manuell, bitte ergänzen)',p_saetze:ex.p||'–',un_nummer:ex.un||null,lagerklasse:ex.lk||null,externer_barcode:bc||null,info_link:(/^https?:\/\//i.test(sdb)?sdb:null)}).select().single();
     if(e1){toast('Stoff: '+e1.message,false);return;}
+    // Beitrag in den mandantenübergreifenden Schweizer Katalog (anonym, nur wenn Barcode vorhanden)
+    if(bc){try{sbc.rpc('catalog_contribute',{p_barcode:bc,p_produktname:name,p_hersteller:ex.hersteller||null,p_signalwort:sig,p_ghs:haz,p_h:ex.h||null,p_p:ex.p||null,p_un:ex.un||null,p_lk:ex.lk||null,p_quelle:(state.scanPrefill&&state.scanPrefill.catalog)?'bestaetigt':'neu'}).then(()=>{},()=>{});}catch(_){}}
     if(sdbfile){try{await uploadSdbFile(sub.id,sdbfile);}catch(err){toast('SDB-Upload: '+(err&&err.message||err),false);}}
     else if(sdb){await sbc.from('sds_documents').insert({organization_id:orgId(),substance_id:sub.id,external_link:sdb,revisionsdatum:new Date().toISOString().slice(0,10),uploaded_by:AUTH.profile.id});}
     const qr='INST-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,5).toUpperCase();
