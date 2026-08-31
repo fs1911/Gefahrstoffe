@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>StoffScan – Gefahrstoff-Kataster</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0c6b4f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="StoffScan">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Schibsted+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -746,6 +754,24 @@
   .sr-main b{font-size:13.5px;color:var(--ink)}
   .sr-main small{display:block;color:var(--ink-3);font-size:11.5px}
   .sr-dup{flex:none;font-size:10px;font-weight:700;color:var(--ink-3);background:var(--surface-2);border-radius:20px;padding:3px 9px}
+  .offline-bar{background:#b26a00;color:#fff;font-size:12.5px;font-weight:600;text-align:center;padding:7px 14px;display:flex;align-items:center;justify-content:center;gap:7px}
+  .offline-bar svg{width:15px;height:15px;flex:none}
+  .pwa-inst{display:none;align-items:center;gap:6px;background:var(--ok-bg);color:var(--accent);border:0;border-radius:9px;padding:9px 12px;font-family:var(--font);font-weight:700;font-size:13px;cursor:pointer;flex:none}
+  .pwa-inst svg{width:15px;height:15px}
+  body.can-install .pwa-inst{display:inline-flex}
+  @media(max-width:600px){.pwa-inst .pi-lbl{display:none}.pwa-inst{padding:9px}}
+  .pwa-card{display:flex;align-items:center;gap:13px;border:1px solid var(--line);background:var(--surface);border-radius:13px;padding:14px 15px;margin-bottom:14px}
+  .pwa-ic{width:40px;height:40px;border-radius:10px;background:var(--ok-bg);color:var(--accent);display:grid;place-items:center;flex:none}
+  .pwa-ic svg{width:20px;height:20px}
+  .pwa-tx{flex:1;min-width:0}
+  .pwa-tx b{font-size:14.5px}
+  .pwa-tx small{display:block;color:var(--ink-3);font-size:12px;margin-top:2px;line-height:1.4}
+  .pwa-card .btn{flex:none;width:auto;display:inline-flex;align-items:center;gap:7px}
+  .pwa-card .btn svg{width:15px;height:15px}
+  @media(max-width:560px){.pwa-card{flex-wrap:wrap}.pwa-card .btn{width:100%;justify-content:center}}
+  .pwa-steps{display:flex;flex-direction:column;gap:10px;font-size:13.5px;color:var(--ink-2);line-height:1.5}
+  .pwa-steps b{color:var(--ink)}
+  .pwa-note{margin-top:13px;font-size:12.5px;color:var(--ink-3);line-height:1.5}
   #printArea{display:none}
   @media print{
     @page{size:A4;margin:12mm}
@@ -964,8 +990,10 @@
       <div class="brand"><div class="logo">St</div><div><h1>StoffScan</h1><small>Gefahrstoff-Kataster · Demo</small></div></div>
       <div id="headSlot"></div>
       <button class="notfall-btn" data-action="notfall" aria-label="Notfall"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.2 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.2a2 2 0 0 0-3.4 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg><span class="nb-lbl">Notfall</span></button>
+      <button class="pwa-inst" data-action="pwaInstall" aria-label="App installieren"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg><span class="pi-lbl">Installieren</span></button>
     </div>
   </header>
+  <div class="offline-bar" id="offlineBar" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l22 22"/><path d="M16.7 11.2A6 6 0 0 0 8 8.8"/><path d="M5 12.5a10 10 0 0 1 2.3-1.7"/><path d="M12 20h.01"/></svg>Offline – Stoffkarten, Betriebsanweisungen &amp; Notfall funktionieren weiter.</div>
   <div class="shell">
     <aside class="sidebar" id="sidebar"></aside>
     <div class="content">
@@ -2386,6 +2414,24 @@ function starterAddSubs(rows,cb){
     DB.substances.push({id:'s_'+Date.now().toString(36)+'_'+(added++),name:r.name,hersteller:r.hersteller||'–',signal:r.signal||'Achtung',ghs:(r.ghs||[]).slice(),h:r.h||'',p:r.p||'',un:r.un||'–',lk:r.lk||null,sdb:{status:'fehlt',rev:null,link:null}});});
   if(added)saveDB();cb(added);
 }
+/* ---------- PWA / Offline (Block 14) ---------- */
+var ICO_DL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>';
+var __pwaPrompt=null;
+if('serviceWorker' in navigator){window.addEventListener('load',function(){try{navigator.serviceWorker.register('sw.js',{scope:'./'}).then(function(){},function(){});}catch(e){}});}
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();__pwaPrompt=e;document.body.classList.add('can-install');if(typeof state!=='undefined'&&state&&state.view==='admin'&&typeof render==='function')render();});
+window.addEventListener('appinstalled',function(){__pwaPrompt=null;document.body.classList.remove('can-install');if(typeof toast==='function')toast('StoffScan wurde installiert.');});
+function pwaInstall(){
+  if(__pwaPrompt){var p=__pwaPrompt;__pwaPrompt=null;p.prompt();p.userChoice.then(function(){document.body.classList.remove('can-install');});return;}
+  openModal('App installieren','<div class="notice info" style="margin-bottom:12px">'+ICO.info+'<div>So legst du StoffScan als App auf den Startbildschirm:</div></div>'+
+    '<div class="pwa-steps"><div><b>iPhone / iPad (Safari):</b> Teilen-Symbol antippen → «Zum Home-Bildschirm».</div><div><b>Android (Chrome):</b> Menü ⋮ → «App installieren» bzw. «Zum Startbildschirm hinzufügen».</div><div><b>Desktop (Chrome/Edge):</b> Installations-Symbol rechts in der Adressleiste.</div></div>'+
+    '<p class="pwa-note">Danach startet StoffScan wie eine App – und Stoffkarten, Betriebsanweisungen und der Notfall-Modus funktionieren auch ohne Internet.</p>');
+}
+function pwaUpdateOnline(){var b=document.getElementById('offlineBar');var off=!navigator.onLine;if(b)b.hidden=!off;document.body.classList.toggle('is-offline',off);}
+window.addEventListener('online',pwaUpdateOnline);
+window.addEventListener('offline',pwaUpdateOnline);
+function pwaInstallCard(){return '<div class="pwa-card"><div class="pwa-ic">'+ICO_DL+'</div><div class="pwa-tx"><b>Als App installieren</b><small>StoffScan auf den Startbildschirm legen – läuft dann wie eine App und funktioniert auch offline: Stoffkarten, Betriebsanweisungen &amp; Notfall.</small></div><button class="btn secondary" data-action="pwaInstall">'+ICO_DL+' Installieren</button></div>';}
+
+if(document.readyState!=="loading")pwaUpdateOnline();else window.addEventListener("DOMContentLoaded",pwaUpdateOnline);
 function baCodes(str){var out=[];(String(str||'').match(/[HP]\d{3}(?:\s*\+\s*[HP]\d{3})*/g)||[]).forEach(function(c){out.push(c.replace(/\s+/g,''));});return out;}
 function baText(code,map){if(map[code])return map[code];if(code.indexOf('+')>-1){return code.split('+').map(function(c){return map[c]||c;}).join(' ');}return code;}
 function baList(codes,map){return codes.length?('<ul>'+codes.map(function(c){return '<li><b>'+c+'</b> '+esc(baText(c,map))+'</li>';}).join('')+'</ul>'):'<p class="ba-empty">Keine Angaben hinterlegt.</p>';}
@@ -2641,7 +2687,7 @@ function scrAdmin(){
       '<button class="exp-btn" data-action="printReport">'+ICO.doc+'<span><b>Bericht als PDF</b><small>Druckansicht · «Als PDF speichern»</small></span></button>'+
       '<button class="exp-btn" data-action="printLabels">'+ICO.qr+'<span><b>Etiketten-Druckbogen</b><small>Lagerort- &amp; Artikel-QR</small></span></button>'+
     '</div>';
-  return '<div class="view"><h2 class="title">Verwaltung</h2><p class="sub">Arbeitsübersicht: was ist offen, wo und in welcher Firma.</p>'+logoCardHtml()+'<div class="dossier-card"><div class="dossier-ic">'+ICO.doc+'</div><div class="dossier-tx"><b>Prüf-Dossier</b><small>Alles für die Kontrolle auf einen Klick: Gefahrstoffliste, SDB-Status, Zusammenlagerung, Instruktionsnachweise und offene Punkte – als PDF.</small></div><button class="btn" data-action="dossier">'+ICO.print+' Erstellen</button></div>'+starterCardHtml()+tabsHtml+body+exportBar+
+  return '<div class="view"><h2 class="title">Verwaltung</h2><p class="sub">Arbeitsübersicht: was ist offen, wo und in welcher Firma.</p>'+logoCardHtml()+'<div class="dossier-card"><div class="dossier-ic">'+ICO.doc+'</div><div class="dossier-tx"><b>Prüf-Dossier</b><small>Alles für die Kontrolle auf einen Klick: Gefahrstoffliste, SDB-Status, Zusammenlagerung, Instruktionsnachweise und offene Punkte – als PDF.</small></div><button class="btn" data-action="dossier">'+ICO.print+' Erstellen</button></div>'+starterCardHtml()+pwaInstallCard()+tabsHtml+body+exportBar+
     '<div style="height:14px"></div><button class="btn ghost" data-action="resetDB">'+ICO.trash+' Demo-Daten zurücksetzen</button>'+disclaimer()+'</div>';
 }
 function adminHbRow(i){
@@ -2866,6 +2912,7 @@ document.addEventListener('click',e=>{
     case 'starterOpen':modalStarter();break;
     case 'starterPreview':modalStarterPreview(id);break;
     case 'starterApply':starterApply(id);break;
+    case 'pwaInstall':pwaInstall();break;
     case 'openChat':openChat();break;
     case 'closeChat':closeChat();break;
     case 'chatChip':chatSend(decodeURIComponent(el.dataset.q||''));break;
