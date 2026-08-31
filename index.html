@@ -500,6 +500,26 @@
   .lo-task.done .lo-badge{opacity:.4}
   .lo-ready{margin-top:14px;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--brand-soft);color:var(--brand-ink);border-radius:10px;padding:11px;font-weight:700;font-size:13px;opacity:0;transform:translateY(4px);transition:opacity .35s,transform .35s}
   .lo-ready.on{opacity:1;transform:none}
+  .st-mkt{display:flex;justify-content:center;align-items:center;min-height:360px}
+  .st-card{width:322px;max-width:100%;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 20px 44px -20px rgba(16,36,28,.55)}
+  .st-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:13px}
+  .st-tab{font-size:12px;font-weight:600;background:var(--surface-2);border:1px solid var(--line);border-radius:20px;padding:6px 11px;color:var(--ink-2);transition:background .3s,color .3s,border-color .3s}
+  .st-tab.on{background:var(--brand);border-color:var(--brand);color:#fff}
+  .st-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:9px}
+  .st-head b{font-family:var(--display);font-size:16px;color:var(--ink)}
+  .st-cnt{font-size:12px;color:var(--ink-3);font-weight:600}
+  .st-list{min-height:184px}
+  .st-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line-2);opacity:0;transform:translateY(6px);transition:opacity .3s,transform .3s}
+  .st-row:first-child{border-top:0}
+  .st-row.in{opacity:1;transform:none}
+  .st-dot{width:9px;height:9px;border-radius:50%;flex:none}
+  .st-dot.d{background:var(--danger)}.st-dot.w{background:var(--sun)}
+  .st-rn{flex:1;min-width:0;font-size:13.5px;color:var(--ink)}
+  .st-sig{flex:none;font-size:10px;font-weight:700;border-radius:20px;padding:2px 9px}
+  .st-sig.d{background:var(--danger-bg);color:var(--danger)}
+  .st-sig.w{background:var(--sun-bg);color:var(--sun)}
+  .st-added{margin-top:11px;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--brand-soft);color:var(--brand-ink);border-radius:10px;padding:10px;font-weight:700;font-size:13px;opacity:0;transform:translateY(4px);transition:opacity .35s,transform .35s}
+  .st-added.on{opacity:1;transform:none}
   .dos-ready svg{width:15px;height:15px}
   @media(max-width:820px){.dos-mkt{min-height:0;margin-top:8px}}
 
@@ -1002,6 +1022,36 @@
   </div>
 </section>
 
+<!-- BRANCHEN-STARTERKATALOG (Block 13) -->
+<section id="starter-sec">
+  <div class="wrap ba-mkt">
+    <div class="ba-mkt-copy">
+      <div class="eyebrow">Sofort startklar</div>
+      <h2>Nicht bei null anfangen.</h2>
+      <p class="lead">Wähle deine Branche – Maler, Sanitär, Werkhof, Reinigung oder Bau – und die typischen Gefahrstoffe stehen sofort im Stoffstamm: mit H-/P-Sätzen, GHS-Piktogrammen und Lagerklasse. SDB und Mengen ergänzt du in Minuten statt Tagen.</p>
+      <ul class="ba-mkt-list">
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Fünf kuratierte Branchen-Sets</li>
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> H-/P-Sätze, GHS &amp; Lagerklasse schon vorbefüllt</li>
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Bereits erfasste Stoffe werden erkannt und übersprungen</li>
+      </ul>
+    </div>
+    <div class="st-mkt" id="stMkt">
+      <div class="st-card">
+        <div class="st-tabs" id="stTabs">
+          <button class="st-tab on">🎨 Maler</button>
+          <button class="st-tab">🔧 Sanitär</button>
+          <button class="st-tab">🚜 Werkhof</button>
+          <button class="st-tab">🧴 Reinigung</button>
+          <button class="st-tab">🧱 Bau</button>
+        </div>
+        <div class="st-head"><b id="stName">Maler / Gipser</b><span class="st-cnt" id="stCnt">4 Stoffe</span></div>
+        <div class="st-list" id="stList"></div>
+        <div class="st-added" id="stAdded"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> In den Stoffstamm übernommen</div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- BRANCHEN -->
 <section id="branchen" style="background:var(--surface-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
   <div class="wrap">
@@ -1398,6 +1448,30 @@
     timers.push(setTimeout(run,950+tasks.length*780+3200));
   }
   function start(){if(running)return;running=true;timers.push(setTimeout(run,400));}
+  if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)start();});},{threshold:.35});io.observe(sec);}else start();
+})();
+(function(){
+  var sec=document.getElementById('starter-sec'),tabs=[].slice.call(document.querySelectorAll('#stTabs .st-tab')),
+      list=document.getElementById('stList'),nm=document.getElementById('stName'),cnt=document.getElementById('stCnt'),added=document.getElementById('stAdded');
+  if(!sec||!list)return;
+  var B=[
+   {n:'Maler / Gipser',items:[['Nitroverdünnung','Gefahr'],['Kunstharzlack','Gefahr'],['Abbeizer','Gefahr'],['Pinselreiniger','Achtung']]},
+   {n:'Sanitär / Heizung',items:[['PU-Montageschaum','Gefahr'],['Lötwasser / Flussmittel','Gefahr'],['Rohrreiniger alkalisch','Gefahr'],['Silikonentferner','Gefahr']]},
+   {n:'Werkhof / Gemeinde',items:[['Diesel / Heizöl','Gefahr'],['Benzin bleifrei','Gefahr'],['Kettenhaftöl','Achtung'],['Herbizid','Achtung']]},
+   {n:'Reinigung / Hauswartung',items:[['Sanitärreiniger sauer','Gefahr'],['Grundreiniger alkalisch','Gefahr'],['Javelwasser','Gefahr'],['Flächendesinfektion','Gefahr']]},
+   {n:'Bau / Beton',items:[['Zement / Frischbeton','Gefahr'],['Epoxid-Härter','Gefahr'],['Bitumen-Voranstrich','Gefahr'],['Epoxidharz A','Achtung']]}
+  ];
+  var bi=0,timers=[],running=false;
+  function fill(k){
+    nm.textContent=B[k].n;cnt.textContent=B[k].items.length+' Stoffe';added.classList.remove('on');
+    list.innerHTML=B[k].items.map(function(it){var d=it[1]==='Gefahr'?'d':'w';return '<div class="st-row"><span class="st-dot '+d+'"></span><span class="st-rn">'+it[0]+'</span><span class="st-sig '+d+'">'+it[1]+'</span></div>';}).join('');
+    var rows=[].slice.call(list.children);
+    rows.forEach(function(r,i){timers.push(setTimeout(function(){r.classList.add('in');},120+i*150));});
+    timers.push(setTimeout(function(){added.classList.add('on');},120+rows.length*150+250));
+    tabs.forEach(function(t,ti){t.classList.toggle('on',ti===k);});
+  }
+  function cycle(){bi=(bi+1)%B.length;fill(bi);timers.push(setTimeout(cycle,3500));}
+  function start(){if(running)return;running=true;fill(0);timers.push(setTimeout(cycle,3200));}
   if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)start();});},{threshold:.35});io.observe(sec);}else start();
 })();
 </script>

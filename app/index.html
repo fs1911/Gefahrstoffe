@@ -720,6 +720,32 @@
   .lotse-all svg{width:15px;height:15px}
   .lotse-card.done .lotse-ok{display:flex;align-items:center;gap:9px;background:var(--ok-bg);color:var(--ok);border-radius:11px;padding:12px 13px;font-weight:700;font-size:13.5px}
   .lotse-card.done .lotse-ok svg{width:18px;height:18px;flex:none}
+  .starter-card{display:flex;align-items:center;gap:13px;border:1px solid var(--line);background:var(--surface);border-radius:13px;padding:14px 15px;margin-bottom:14px}
+  .starter-ic{width:40px;height:40px;border-radius:10px;background:var(--ok-bg);color:var(--accent);display:grid;place-items:center;flex:none}
+  .starter-ic svg{width:20px;height:20px}
+  .starter-tx{flex:1;min-width:0}
+  .starter-tx b{font-size:14.5px}
+  .starter-tx small{display:block;color:var(--ink-3);font-size:12px;margin-top:2px;line-height:1.4}
+  .starter-card .btn{flex:none;width:auto}
+  @media(max-width:560px){.starter-card{flex-wrap:wrap}.starter-card .btn{width:100%}}
+  .starter-branches{display:flex;flex-direction:column;gap:8px}
+  .starter-b{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 13px;cursor:pointer;font-family:var(--font)}
+  .starter-b:active{transform:scale(.99)}
+  .sb-ic{font-size:22px;flex:none;width:34px;text-align:center}
+  .sb-tx{flex:1;min-width:0}
+  .sb-tx b{font-size:14.5px;color:var(--ink)}
+  .sb-tx small{display:block;color:var(--ink-3);font-size:12px;margin-top:1px}
+  .starter-b .chev{flex:none;color:var(--ink-3);display:flex}
+  .starter-b .chev svg{width:18px;height:18px}
+  .starter-list{display:flex;flex-direction:column;gap:8px;max-height:52vh;overflow-y:auto}
+  .starter-row{display:flex;align-items:center;gap:11px;border:1px solid var(--line);border-radius:11px;padding:9px 11px}
+  .starter-row.dup{opacity:.55}
+  .sr-ghs{display:flex;gap:3px;flex:none}
+  .sr-ghs .ghs.mini svg{width:24px;height:24px}
+  .sr-main{flex:1;min-width:0}
+  .sr-main b{font-size:13.5px;color:var(--ink)}
+  .sr-main small{display:block;color:var(--ink-3);font-size:11.5px}
+  .sr-dup{flex:none;font-size:10px;font-weight:700;color:var(--ink-3);background:var(--surface-2);border-radius:20px;padding:3px 9px}
   #printArea{display:none}
   @media print{
     @page{size:A4;margin:12mm}
@@ -2291,6 +2317,75 @@ function lotseCard(){
   var rest=items.slice(1,5).map(function(it){return '<button class="lotse-li" data-action="'+it.act+'" data-id="'+it.id+'"><span class="ll-badge p'+it.p+'">'+it.kind+'</span><span class="ll-tx">'+esc(it.txt)+'</span><span class="chev">'+ICO.chev+'</span></button>';}).join('');
   return '<div class="lotse-card">'+head+next+(rest?'<div class="lotse-list">'+rest+'</div>':'')+(items.length>5?'<a class="lotse-all" data-action="goAdminHB">Alle '+items.length+' Punkte ansehen '+ICO.chev+'</a>':'')+'</div>';
 }
+/* ---------- Branchen-Starterkataloge (Block 13) ---------- */
+var STARTER_CATALOGS=[
+ {id:'maler',name:'Maler / Gipser',icon:'🎨',desc:'Lacke, Verdünner, Abbeizer',subs:[
+   {name:'Nitroverdünnung',hersteller:'Branchenüblich',signal:'Gefahr',ghs:['flamm','reiz','gesundheit'],h:'H225 leicht entzündbar · H319 Augenreizung · H336 Benommenheit',p:'P210 · P261 · P280',un:'1263',lk:'3'},
+   {name:'Kunstharzlack (lösemittelhaltig)',hersteller:'Branchenüblich',signal:'Gefahr',ghs:['flamm','gesundheit','umwelt'],h:'H226 entzündbar · H304 Aspiration · H336 · H411',p:'P210 · P301+P310 · P273',un:'1263',lk:'3'},
+   {name:'Pinselreiniger / Verdünner',hersteller:'Branchenüblich',signal:'Achtung',ghs:['flamm','reiz'],h:'H226 entzündbar · H315 Hautreizung',p:'P210 · P280',un:'1300',lk:'3'},
+   {name:'Abbeizer (lösemittelhaltig)',hersteller:'Branchenüblich',signal:'Gefahr',ghs:['aetz','gesundheit'],h:'H314 Verätzung · H335 · H373',p:'P280 · P305+P351+P338',un:'1760',lk:'8'},
+   {name:'Tiefgrund / Grundierung lösemittelhaltig',hersteller:'Branchenüblich',signal:'Achtung',ghs:['flamm','reiz'],h:'H226 entzündbar · H336 Benommenheit',p:'P210 · P261',un:'1866',lk:'3'},
+   {name:'Acryl-Dichtstoff / Fugendichtmasse',hersteller:'Branchenüblich',signal:'Achtung',ghs:['reiz'],h:'H317 Sensibilisierung · H319 Augenreizung',p:'P280',un:'–'}
+ ]},
+ {id:'sanitaer',name:'Sanitär / Heizung',icon:'🔧',desc:'Bauschaum, Lötwasser, Reiniger',subs:[
+   {name:'PU-Montageschaum (Bauschaum)',hersteller:'Branchenüblich',signal:'Gefahr',ghs:['flamm','druckgas','gesundheit'],h:'H222 extrem entzündbar · H229 unter Druck · H334 Atemwegssensibilisierung · H351 · H373 · H315 · H319',p:'P210 · P260 · P280 · P304+P340',un:'1950',lk:'2'},
+   {name:'Lötwasser / Flussmittel',hersteller:'Branchenüblich',signal:'Gefahr',ghs:['aetz'],h:'H314 schwere Verätzung · H290 metallkorrosiv',p:'P280 · P305+P351+P338',un:'1760',lk:'8'},
+   {name:'Silikonentferner',hersteller:'Branchenüblich',signal:'Gefahr',ghs:['flamm','reiz'],h:'H225 leicht entzündbar · H336 Benommenheit',p:'P210 · P261',un:'1993',lk:'3'},
+   {name:'Rohrreiniger alkalisch',hersteller:'Branchenüblich',signal:'Gefahr',ghs:['aetz'],h:'H314 schwere Verätzung · H290',p:'P280 · P305+P351+P338',un:'1824',lk:'8'},
+   {name:'Gewindedichtmittel (anaerob)',hersteller:'Branchenüblich',signal:'Achtung',ghs:['reiz'],h:'H315 · H319 · H335 · H317',p:'P280 · P261',un:'–'}
+ ]},
+ {id:'werkhof',name:'Werkhof / Gemeinde',icon:'🚜',desc:'Treibstoffe, Öle, Herbizid',subs:[
+   {name:'Dieselkraftstoff / Heizöl',hersteller:'Branchenüblich',signal:'Gefahr',ghs:['flamm','gesundheit','umwelt'],h:'H226 entzündbar · H304 Aspiration · H351 · H373 · H411',p:'P210 · P301+P310 · P273',un:'1202',lk:'3'},
+   {name:'Benzin (bleifrei)',hersteller:'Branchenüblich',signal:'Gefahr',ghs:['flamm','gesundheit','umwelt'],h:'H224 extrem entzündbar · H304 Aspiration · H340 · H350 · H361 · H336 · H411',p:'P210 · P201 · P273',un:'1203',lk:'3'},
+   {name:'Kettenhaftöl / Sägekettenöl',hersteller:'Branchenüblich',signal:'Achtung',ghs:['umwelt'],h:'H411 schädlich für Wasserorganismen',p:'P273',un:'–'},
+   {name:'2-Takt-Mischöl',hersteller:'Branchenüblich',signal:'Achtung',ghs:['umwelt'],h:'H412 schädlich für Wasserorganismen (langfristig)',p:'P273',un:'–'},
+   {name:'Unkrautvernichter (Herbizid)',hersteller:'Branchenüblich',signal:'Achtung',ghs:['reiz','umwelt'],h:'H319 Augenreizung · H411',p:'P280 · P273',un:'–'},
+   {name:'Kaltreiniger / Entfetter',hersteller:'Branchenüblich',signal:'Gefahr',ghs:['flamm','gesundheit','umwelt'],h:'H226 entzündbar · H304 Aspiration · H336 · H411',p:'P210 · P301+P310 · P273',un:'1993',lk:'3'}
+ ]},
+ {id:'reinigung',name:'Reinigung / Hauswartung',icon:'🧴',desc:'Sanitär-, Grund-, Desinfektion',subs:[
+   {name:'Sanitärreiniger sauer',hersteller:'Branchenüblich',signal:'Gefahr',ghs:['aetz'],h:'H314 schwere Verätzung',p:'P280 · P305+P351+P338',un:'1789',lk:'8'},
+   {name:'Grundreiniger alkalisch',hersteller:'Branchenüblich',signal:'Gefahr',ghs:['aetz'],h:'H314 schwere Verätzung · H290',p:'P280 · P305+P351+P338',un:'1719',lk:'8'},
+   {name:'Chlorbleiche / Javelwasser',hersteller:'Branchenüblich',signal:'Gefahr',ghs:['aetz','umwelt'],h:'H314 Verätzung · H400 · EUH031 (mit Säure Chlorgas)',p:'P280 · P273 · P305+P351+P338',un:'1791',lk:'8'},
+   {name:'Flächendesinfektion (alkoholisch)',hersteller:'Branchenüblich',signal:'Gefahr',ghs:['flamm','reiz'],h:'H225 leicht entzündbar · H319 Augenreizung',p:'P210 · P305+P351+P338',un:'1170',lk:'3'},
+   {name:'Kalklöser',hersteller:'Branchenüblich',signal:'Achtung',ghs:['reiz'],h:'H315 Hautreizung · H319 Augenreizung',p:'P280',un:'–'}
+ ]},
+ {id:'bau',name:'Bau / Beton',icon:'🧱',desc:'Zement, Epoxid, Voranstrich',subs:[
+   {name:'Zement / Frischbeton',hersteller:'Branchenüblich',signal:'Gefahr',ghs:['aetz','reiz'],h:'H318 schwere Augenschäden · H315 · H317 · H335',p:'P280 · P305+P351+P338',un:'–',lk:'13'},
+   {name:'Betonzusatz / Beschleuniger alkalisch',hersteller:'Branchenüblich',signal:'Gefahr',ghs:['aetz'],h:'H314 schwere Verätzung',p:'P280 · P305+P351+P338',un:'–',lk:'8'},
+   {name:'Epoxidharz Komponente A',hersteller:'Branchenüblich',signal:'Achtung',ghs:['reiz','umwelt'],h:'H315 · H317 Sensibilisierung · H319 · H411',p:'P280 · P273',un:'–'},
+   {name:'Epoxid-Härter Komponente B',hersteller:'Branchenüblich',signal:'Gefahr',ghs:['aetz','umwelt'],h:'H314 Verätzung · H317 · H411',p:'P280 · P305+P351+P338 · P273',un:'2735',lk:'8'},
+   {name:'Bitumen-Voranstrich (lösemittelhaltig)',hersteller:'Branchenüblich',signal:'Gefahr',ghs:['flamm','gesundheit'],h:'H226 entzündbar · H304 Aspiration · H336',p:'P210 · P301+P310',un:'1999',lk:'3'}
+ ]}
+];
+function starterCat(id){for(var i=0;i<STARTER_CATALOGS.length;i++)if(STARTER_CATALOGS[i].id===id)return STARTER_CATALOGS[i];return null;}
+function starterCardHtml(){return '<div class="starter-card"><div class="starter-ic">'+ICO.box+'</div><div class="starter-tx"><b>Branchen-Starterkatalog</b><small>Nicht bei null anfangen: typische Gefahrstoffe für Maler, Sanitär, Werkhof, Reinigung oder Bau auf einen Klick in den Stoffstamm übernehmen.</small></div><button class="btn secondary" data-action="starterOpen">'+ICO.plus+' Katalog wählen</button></div>';}
+function modalStarter(){
+  var cards=STARTER_CATALOGS.map(function(b){return '<button class="starter-b" data-action="starterPreview" data-id="'+b.id+'"><span class="sb-ic">'+b.icon+'</span><span class="sb-tx"><b>'+esc(b.name)+'</b><small>'+b.subs.length+' typische Stoffe · '+esc(b.desc)+'</small></span><span class="chev">'+ICO.chev+'</span></button>';}).join('');
+  openModal('Branchen-Starterkatalog','<div class="notice info" style="margin-bottom:12px">'+ICO.info+'<div>Wähle deine Branche – die typischen Gefahrstoffe kommen vorbefüllt in den Stoffstamm (H-/P-Sätze, GHS, Lagerklasse). SDB und Mengen ergänzt du danach.</div></div><div class="starter-branches">'+cards+'</div>');
+}
+function modalStarterPreview(id){var b=starterCat(id);if(!b)return;
+  var have={};DB.substances.forEach(function(s){have[(s.name||'').toLowerCase()]=1;});
+  var rows=b.subs.map(function(r){var dup=have[r.name.toLowerCase()];return '<div class="starter-row'+(dup?' dup':'')+'"><div class="sr-ghs">'+(r.ghs||[]).map(function(g){return ghsBadge(g,'mini');}).join('')+'</div><div class="sr-main"><b>'+esc(r.name)+'</b><small>'+esc(r.signal||'')+(r.un&&r.un!=='–'?' · UN '+esc(r.un):'')+(r.lk?' · LK '+esc(r.lk):'')+'</small></div>'+(dup?'<span class="sr-dup">bereits erfasst</span>':'')+'</div>';}).join('');
+  var newCount=b.subs.filter(function(r){return !have[r.name.toLowerCase()];}).length;
+  openModal(b.icon+' '+b.name,'<div class="starter-list">'+rows+'</div>'+
+    '<div class="btn-row" style="margin-top:12px"><button class="btn ghost" data-action="starterOpen">Zurück</button><button class="btn" data-action="starterApply" data-id="'+b.id+'"'+(newCount?'':' disabled')+'>'+ICO.plus+' '+(newCount?(newCount+' Stoff'+(newCount>1?'e':'')+' übernehmen'):'Alle bereits erfasst')+'</button></div>');
+}
+function starterApply(id){var b=starterCat(id);if(!b)return;
+  starterAddSubs(b.subs,function(added){
+    closeModal();
+    if(added<0)return;
+    if(added===0){toast('Alle Stoffe aus «'+b.name+'» sind bereits erfasst.');return;}
+    toast(added+' Stoff'+(added>1?'e':'')+' aus «'+b.name+'» übernommen.');
+    if(typeof addHistory==='function')addHistory('Starterkatalog übernommen',b.name+' · '+added+' Stoffe','');
+    if(typeof render==='function')render();
+  });
+}
+function starterAddSubs(rows,cb){
+  var have={};DB.substances.forEach(function(s){have[(s.name||'').toLowerCase()]=1;});
+  var added=0;rows.forEach(function(r){if(have[r.name.toLowerCase()])return;have[r.name.toLowerCase()]=1;
+    DB.substances.push({id:'s_'+Date.now().toString(36)+'_'+(added++),name:r.name,hersteller:r.hersteller||'–',signal:r.signal||'Achtung',ghs:(r.ghs||[]).slice(),h:r.h||'',p:r.p||'',un:r.un||'–',lk:r.lk||null,sdb:{status:'fehlt',rev:null,link:null}});});
+  if(added)saveDB();cb(added);
+}
 function baCodes(str){var out=[];(String(str||'').match(/[HP]\d{3}(?:\s*\+\s*[HP]\d{3})*/g)||[]).forEach(function(c){out.push(c.replace(/\s+/g,''));});return out;}
 function baText(code,map){if(map[code])return map[code];if(code.indexOf('+')>-1){return code.split('+').map(function(c){return map[c]||c;}).join(' ');}return code;}
 function baList(codes,map){return codes.length?('<ul>'+codes.map(function(c){return '<li><b>'+c+'</b> '+esc(baText(c,map))+'</li>';}).join('')+'</ul>'):'<p class="ba-empty">Keine Angaben hinterlegt.</p>';}
@@ -2546,7 +2641,7 @@ function scrAdmin(){
       '<button class="exp-btn" data-action="printReport">'+ICO.doc+'<span><b>Bericht als PDF</b><small>Druckansicht · «Als PDF speichern»</small></span></button>'+
       '<button class="exp-btn" data-action="printLabels">'+ICO.qr+'<span><b>Etiketten-Druckbogen</b><small>Lagerort- &amp; Artikel-QR</small></span></button>'+
     '</div>';
-  return '<div class="view"><h2 class="title">Verwaltung</h2><p class="sub">Arbeitsübersicht: was ist offen, wo und in welcher Firma.</p>'+logoCardHtml()+'<div class="dossier-card"><div class="dossier-ic">'+ICO.doc+'</div><div class="dossier-tx"><b>Prüf-Dossier</b><small>Alles für die Kontrolle auf einen Klick: Gefahrstoffliste, SDB-Status, Zusammenlagerung, Instruktionsnachweise und offene Punkte – als PDF.</small></div><button class="btn" data-action="dossier">'+ICO.print+' Erstellen</button></div>'+tabsHtml+body+exportBar+
+  return '<div class="view"><h2 class="title">Verwaltung</h2><p class="sub">Arbeitsübersicht: was ist offen, wo und in welcher Firma.</p>'+logoCardHtml()+'<div class="dossier-card"><div class="dossier-ic">'+ICO.doc+'</div><div class="dossier-tx"><b>Prüf-Dossier</b><small>Alles für die Kontrolle auf einen Klick: Gefahrstoffliste, SDB-Status, Zusammenlagerung, Instruktionsnachweise und offene Punkte – als PDF.</small></div><button class="btn" data-action="dossier">'+ICO.print+' Erstellen</button></div>'+starterCardHtml()+tabsHtml+body+exportBar+
     '<div style="height:14px"></div><button class="btn ghost" data-action="resetDB">'+ICO.trash+' Demo-Daten zurücksetzen</button>'+disclaimer()+'</div>';
 }
 function adminHbRow(i){
@@ -2768,6 +2863,9 @@ document.addEventListener('click',e=>{
     case 'gbOpen':modalGb(id);break;
     case 'gbGo':gbGenerate(id);break;
     case 'dossier':dossierPdf();break;
+    case 'starterOpen':modalStarter();break;
+    case 'starterPreview':modalStarterPreview(id);break;
+    case 'starterApply':starterApply(id);break;
     case 'openChat':openChat();break;
     case 'closeChat':closeChat();break;
     case 'chatChip':chatSend(decodeURIComponent(el.dataset.q||''));break;
