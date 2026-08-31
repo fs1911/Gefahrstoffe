@@ -455,6 +455,25 @@
   .fwm-x{display:block;color:var(--danger);font-weight:700;margin-top:3px}
   .fwm-ready{margin:12px 16px 16px;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--brand-soft);color:var(--brand-ink);border-radius:10px;padding:10px;font-weight:700;font-size:13px;opacity:0;transform:translateY(4px);transition:opacity .35s,transform .35s}
   .fwm-ready.on{opacity:1;transform:none}
+  .nf-mkt{display:flex;justify-content:center;align-items:center;min-height:360px}
+  .nfm-phone{width:300px;max-width:100%;background:#1a1210;border:1px solid #3a2a26;border-radius:18px;overflow:hidden;box-shadow:0 22px 48px -20px rgba(16,36,28,.6)}
+  .nfm-bar{background:#c0261f;color:#fff;font-family:var(--display);font-weight:800;font-size:16px;padding:12px 16px;display:flex;align-items:center;gap:8px}
+  .nfm-bar svg{width:18px;height:18px}
+  .nfm-calls{display:flex;gap:8px;padding:14px 16px 6px}
+  .nfm-calls span{flex:1;text-align:center;background:#2a1d1a;border:1px solid #4a2f2a;border-radius:9px;padding:9px 0;font-family:var(--mono);font-size:17px;color:#ff6b5e;font-weight:700}
+  .nfm-calls span:nth-child(2){color:#ffb454}
+  .nfm-calls span:nth-child(3){color:#fff}
+  .nfm-chips{display:flex;gap:7px;padding:8px 16px 4px;flex-wrap:wrap}
+  .nfm-chip{background:#241a17;border:1px solid #4a2f2a;color:#f0e6e3;border-radius:18px;padding:6px 12px;font-size:12.5px;font-weight:600;transition:background .3s,color .3s,border-color .3s}
+  .nfm-chip.on{background:#c0261f;border-color:#c0261f;color:#fff}
+  .nfm-card{margin:8px 16px 16px;transition:opacity .3s}
+  .nfm-card.fade{opacity:0}
+  .nfm-h{font-family:var(--display);font-weight:800;font-size:16px;color:#fff;margin-bottom:9px}
+  .nfm-row{display:flex;gap:10px;padding:9px 11px;border-radius:10px;background:#241a17;border:1px solid #4a2f2a;margin-bottom:8px;font-size:12.5px}
+  .nfm-row b{flex:none;width:56px;color:#fff}
+  .nfm-row span{color:#e6ddd9;line-height:1.45}
+  .nfm-row.eh{border-left:3px solid #4aa3ff}
+  .nfm-row.fire{border-left:3px solid #ff6b5e}
   .dos-ready svg{width:15px;height:15px}
   @media(max-width:820px){.dos-mkt{min-height:0;margin-top:8px}}
 
@@ -895,6 +914,37 @@
   </div>
 </section>
 
+<!-- NOTFALL-MODUS (Block 11) -->
+<section id="notfall-sec">
+  <div class="wrap ba-mkt">
+    <div class="ba-mkt-copy">
+      <div class="eyebrow">Wenn es zählt</div>
+      <h2>Der Notfall-Knopf. Immer griffbereit.</h2>
+      <p class="lead">Ein Tippen – und die App zeigt sofort Notrufnummern, Erste Hilfe, Löschmittel und was bei Austritt zu tun ist. Stoffbezogen, ohne Suchen, ohne Nachladen. Genau dann, wenn keine Zeit für Handbücher bleibt.</p>
+      <ul class="ba-mkt-list">
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Notruf 144 · 145 · 118 · 1414 auf einen Tipp</li>
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Erste Hilfe je Aufnahmeweg (Augen, Haut, Einatmen, Verschlucken)</li>
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Löschmittel &amp; Massnahmen bei Austritt – pro Stoff</li>
+      </ul>
+    </div>
+    <div class="nf-mkt" id="nfMkt">
+      <div class="nfm-phone">
+        <div class="nfm-bar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.2 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.2a2 2 0 0 0-3.4 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg> Notfall</div>
+        <div class="nfm-calls"><span>144</span><span>145</span><span>118</span></div>
+        <div class="nfm-chips" id="nfmChips">
+          <button class="nfm-chip on">Aceton</button>
+          <button class="nfm-chip">Entkalker sauer</button>
+        </div>
+        <div class="nfm-card" id="nfmCard">
+          <div class="nfm-h" id="nfmName">Aceton</div>
+          <div class="nfm-row eh"><b>Augen</b><span id="nfmEye">15 Minuten mit Wasser spülen, dann zum Arzt.</span></div>
+          <div class="nfm-row fire"><b>Löschen</b><span id="nfmFire">Schaum, Pulver, CO₂ – kein Wasser-Vollstrahl.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- BRANCHEN -->
 <section id="branchen" style="background:var(--surface-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
   <div class="wrap">
@@ -1259,6 +1309,19 @@
     timers.push(setTimeout(run,950+piktos.length*300+3300));
   }
   function start(){if(running)return;running=true;timers.push(setTimeout(run,350));}
+  if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)start();});},{threshold:.35});io.observe(sec);}else start();
+})();
+(function(){
+  var sec=document.getElementById('notfall-sec'),card=document.getElementById('nfmCard'),
+      nm=document.getElementById('nfmName'),eye=document.getElementById('nfmEye'),fire=document.getElementById('nfmFire'),
+      chips=[].slice.call(document.querySelectorAll('#nfmChips .nfm-chip'));
+  if(!sec||!card||!nm)return;
+  var D=[{n:'Aceton',e:'15 Minuten mit Wasser spülen, dann zum Arzt.',f:'Schaum, Pulver, CO₂ – kein Wasser-Vollstrahl.'},
+         {n:'Entkalker sauer',e:'Ätzend – sofort 15 Minuten spülen, dann zum Arzt.',f:'Wasser oder Schaum – dem Umfeld anpassen.'}];
+  var i=0,timers=[],running=false;
+  function show(k){nm.textContent=D[k].n;eye.textContent=D[k].e;fire.textContent=D[k].f;chips.forEach(function(c,ci){c.classList.toggle('on',ci===k);});}
+  function cycle(){i=(i+1)%D.length;card.classList.add('fade');timers.push(setTimeout(function(){show(i);card.classList.remove('fade');},320));timers.push(setTimeout(cycle,3200));}
+  function start(){if(running)return;running=true;show(0);timers.push(setTimeout(cycle,2000));}
   if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)start();});},{threshold:.35});io.observe(sec);}else start();
 })();
 </script>

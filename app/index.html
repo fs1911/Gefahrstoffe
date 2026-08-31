@@ -642,6 +642,53 @@
   .fw-tbl td{padding:5px 7px;border:1px solid #e0e4db;vertical-align:top}
   .fw-mfr{color:#7c857d;font-size:10.5px}
   .fw-foot{margin-top:14px;font-size:10.5px;color:#7c857d;border-top:1px solid #e0e4db;padding-top:9px}
+  .notfall-btn{display:inline-flex;align-items:center;gap:6px;background:var(--danger);color:#fff;border:0;border-radius:9px;padding:9px 13px;font-family:var(--font);font-weight:700;font-size:13.5px;cursor:pointer;flex:none}
+  .notfall-btn svg{width:16px;height:16px}
+  .notfall-btn:active{transform:scale(.97)}
+  @media(max-width:560px){.notfall-btn .nb-lbl{display:none}.notfall-btn{padding:9px}}
+  .nf-overlay{position:fixed;inset:0;z-index:360;background:#1a1210;color:#fff;display:flex;flex-direction:column;overscroll-behavior:contain}
+  .nf-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#c0261f;position:sticky;top:0;z-index:2}
+  .nf-ttl{font-family:var(--display);font-weight:800;font-size:19px;display:flex;align-items:center;gap:9px}
+  .nf-ttl svg{width:22px;height:22px}
+  .nf-close{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:9px;padding:8px 14px;font-weight:700;font-size:14px;cursor:pointer;font-family:var(--font)}
+  .nf-scroll{flex:1;overflow-y:auto;padding:16px;max-width:640px;width:100%;margin:0 auto}
+  .nf-calls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+  .nf-call{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;background:#2a1d1a;border:1px solid #4a2f2a;border-radius:12px;padding:12px 15px;text-decoration:none;color:#fff}
+  .nf-call:active{transform:scale(.98)}
+  .nf-call b{font-family:var(--mono);font-size:26px;line-height:1}
+  .nf-call span{font-size:12px;color:#e7c9c4;margin-top:3px}
+  .nf-call.sani{border-color:#c0261f}.nf-call.sani b{color:#ff6b5e}
+  .nf-call.tox b{color:#ffb454}
+  .nf-call.rega b{color:#7fd1ff}
+  .nf-pick label{display:block;font-size:13px;color:#d9cfcb;margin-bottom:7px;font-weight:600}
+  .nf-pick input{width:100%;background:#241a17;border:1px solid #4a2f2a;color:#fff;border-radius:10px;padding:12px 14px;font-size:15px;font-family:var(--font)}
+  .nf-pick input::placeholder{color:#9a8a85}
+  .nf-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+  .nf-chip{background:#241a17;border:1px solid #4a2f2a;color:#f0e6e3;border-radius:20px;padding:7px 13px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font)}
+  .nf-chip.on{background:#c0261f;border-color:#c0261f;color:#fff}
+  .nf-hint{display:flex;gap:11px;align-items:flex-start;background:#241a17;border:1px solid #4a2f2a;border-radius:12px;padding:14px;margin-top:18px;color:#e0d6d2;font-size:14px;line-height:1.5}
+  .nf-hint svg{width:20px;height:20px;flex:none;color:#ffb454}
+  .nf-stoff{margin-top:18px}
+  .nf-sname{display:flex;align-items:center;gap:10px;font-size:20px;font-family:var(--display);font-weight:800;flex-wrap:wrap}
+  .nf-ghs{display:inline-flex;gap:4px}
+  .nf-ghs .ghs{background:#fff;border-radius:5px;padding:2px}
+  .nf-tags{color:#e7c9c4;font-size:13px;margin:4px 0 14px}
+  .nf-sec{background:#241a17;border:1px solid #4a2f2a;border-radius:13px;padding:14px 15px;margin-bottom:12px}
+  .nf-sec h3{margin:0 0 9px;font-size:15px;font-family:var(--display);font-weight:800}
+  .nf-sec.eh{border-left:4px solid #4aa3ff}
+  .nf-sec.fire{border-left:4px solid #ff6b5e}
+  .nf-sec.spill{border-left:4px solid #ffb454}
+  .nf-eh{display:flex;gap:12px;padding:7px 0;border-top:1px solid #3a2a26}
+  .nf-eh:first-of-type{border-top:0;padding-top:0}
+  .nf-eh span{flex:none;width:96px;font-weight:700;color:#fff;font-size:14px}
+  .nf-eh p{margin:0;font-size:14px;color:#e6ddd9;line-height:1.5}
+  .nf-sec.fire p{margin:0;font-size:14px;color:#e6ddd9;line-height:1.5}
+  .nf-sec.spill ul{margin:0;padding-left:18px}
+  .nf-sec.spill li{margin:4px 0;font-size:14px;color:#e6ddd9;line-height:1.5}
+  .nf-warn{color:#ff8b7f;font-weight:700;margin:8px 0 0!important}
+  .nf-links{margin-top:2px}
+  .nf-links .btn{background:#2a1d1a;border:1px solid #4a2f2a;color:#fff;display:inline-flex;align-items:center;gap:7px}
+  .nf-links .btn svg{width:16px;height:16px}
   #printArea{display:none}
   @media print{
     @page{size:A4;margin:12mm}
@@ -859,6 +906,7 @@
       <button class="iconbtn" id="backBtn" data-action="back" aria-label="Zurück"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M15 18l-6-6 6-6"/></svg></button>
       <div class="brand"><div class="logo">St</div><div><h1>StoffScan</h1><small>Gefahrstoff-Kataster · Demo</small></div></div>
       <div id="headSlot"></div>
+      <button class="notfall-btn" data-action="notfall" aria-label="Notfall"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.2 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.2a2 2 0 0 0-3.4 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg><span class="nb-lbl">Notfall</span></button>
     </div>
   </header>
   <div class="shell">
@@ -2117,6 +2165,70 @@ function modalEinsatzQr(locId){var l=location_(locId);if(!l)return;var c=company
     '<div class="notice info" style="margin-top:15px">'+ICO.info+'<div>Am Lagereingang anbringen. Wer scannt – auch Feuerwehr und Sanität – sieht sofort die Einsatzkarte: gelagerte Stoffe, Mengen, Lagerklassen, Löschmittel und besondere Gefahren.</div></div>'+
     '<div class="btn-row"><button class="btn secondary" data-action="printQr">'+ICO.print+' Etikette drucken</button><button class="btn" data-action="simEinsatzScan" data-id="'+locId+'">'+ICO.qr+' Öffnen (simulieren)</button></div>');
   renderRealQr('qrBox',qrTextEinsatz(l));}
+/* ---------- Notfall-Modus (Block 11) ---------- */
+var NF_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.2 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.2a2 2 0 0 0-3.4 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>';
+function notfallData(subId){
+  var s=substance(subId);if(!s)return null;
+  var codes={};hCodes(s.h).forEach(function(c){codes[c]=1;});var ghs=s.ghs||[];
+  function g(k){return ghs.indexOf(k)>-1;}
+  var aetz=g('aetz')||codes['H314']||codes['H318'];
+  var flamm=g('flamm')||['H220','H221','H222','H223','H224','H225','H226'].some(function(x){return codes[x];});
+  var giftig=g('giftig')||g('gesundheit')||['H300','H301','H310','H311','H330','H331'].some(function(x){return codes[x];});
+  var umwelt=g('umwelt')||['H400','H410','H411','H412','H413'].some(function(x){return codes[x];});
+  var druck=g('druckgas');var asp=!!codes['H304'];
+  var reiz=g('reiz')||['H315','H319','H335'].some(function(x){return codes[x];});
+  var eh=[
+    {k:'Augen',t:'Sofort 15 Minuten mit Wasser spülen, Lid offen halten, Kontaktlinsen entfernen.'+((aetz||reiz)?' Ätzend/reizend – danach zum Arzt.':'')},
+    {k:'Haut',t:'Benetzte Kleidung entfernen, Haut mit viel Wasser und Seife waschen.'+(aetz?' Bei Verätzung sofort zum Arzt.':'')},
+    {k:'Einatmen',t:'Betroffene an die frische Luft bringen, beengende Kleidung öffnen.'+((giftig||flamm)?' Bei Atemnot oder Benommenheit → 144.':'')},
+    {k:'Verschlucken',t:'Mund ausspülen, KEIN Erbrechen auslösen.'+(asp?' Aspirationsgefahr – auf keinen Fall Erbrechen!':'')+' Sofort 145 (Tox Info Suisse) anrufen.'}
+  ];
+  var loesch,loeschWarn='';
+  if(flamm){loesch='Schaum, Löschpulver oder CO₂.';loeschWarn='Kein Wasser-Vollstrahl – die Flüssigkeit verspritzt und breitet den Brand aus.';}
+  else if(g('oxid')){loesch='Viel Wasser / Sprühwasser (brandfördernd – Ersticken nicht möglich).';}
+  else{loesch='Wasser, Schaum, Löschpulver oder CO₂ – dem Umfeld anpassen.';}
+  if(druck)loeschWarn=(loeschWarn?loeschWarn+' ':'')+'Druckgasflasche aus Deckung kühlen – Explosionsgefahr, Bereich räumen.';
+  var spill=[];
+  if(flamm)spill.push('Alle Zündquellen aus – kein Licht/Schalter betätigen, nicht rauchen (Explosionsgefahr).');
+  spill.push('Unbeteiligte fernhalten, für Lüftung sorgen, Schutzhandschuhe und Brille tragen.');
+  if(druck)spill.push('Undichte Gasflasche möglichst ins Freie bringen, Zündquellen fernhalten.');
+  spill.push('Mit Bindemittel (Ölbinder, Sand) aufnehmen und in einen gekennzeichneten Behälter geben.');
+  if(aetz)spill.push('Ätzend – nicht mit blossen Händen; vorsichtig aufnehmen bzw. neutralisieren.');
+  if(umwelt)spill.push('Nicht in Kanalisation, Boden oder Gewässer gelangen lassen.');
+  return {s:s,eh:eh,loesch:loesch,loeschWarn:loeschWarn,spill:spill,tags:ghs.map(function(k){return GHS_LABEL[k]||k;})};
+}
+function notfallHtml(subId){
+  var d=notfallData(subId);if(!d)return '';var s=d.s;
+  var ghs=(s.ghs||[]).map(function(k){return ghsBadge(k,'mini');}).join('');
+  return '<div class="nf-stoff">'+
+    '<div class="nf-sname"><b>'+esc(s.name)+'</b>'+(ghs?'<span class="nf-ghs">'+ghs+'</span>':'')+'</div>'+
+    (d.tags.length?'<div class="nf-tags">'+d.tags.map(esc).join(' · ')+'</div>':'')+
+    '<div class="nf-sec eh"><h3>Erste Hilfe</h3>'+d.eh.map(function(r){return '<div class="nf-eh"><span>'+esc(r.k)+'</span><p>'+esc(r.t)+'</p></div>';}).join('')+'</div>'+
+    '<div class="nf-sec fire"><h3>Löschen</h3><p>'+esc(d.loesch)+'</p>'+(d.loeschWarn?'<p class="nf-warn">⚠ '+esc(d.loeschWarn)+'</p>':'')+'</div>'+
+    '<div class="nf-sec spill"><h3>Bei Austritt / Verschütten</h3><ul>'+d.spill.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul></div>'+
+    '<div class="nf-links"><button class="btn" data-action="nfBA" data-id="'+s.id+'">'+ICO.doc+' Ganze Betriebsanweisung</button></div>'+
+  '</div>';
+}
+function nfCallBtn(num,lbl,cls){return '<a class="nf-call '+cls+'" href="tel:'+num+'"><b>'+num+'</b><span>'+esc(lbl)+'</span></a>';}
+function openNotfall(subId){closeNotfall();
+  var subs=DB.substances.slice().sort(function(a,b){return a.name.localeCompare(b.name);});
+  var chips=subs.map(function(s){return '<button class="nf-chip'+(s.id===subId?' on':'')+'" data-action="nfPick" data-id="'+s.id+'" data-name="'+esc(s.name.toLowerCase())+'">'+esc(s.name)+'</button>';}).join('');
+  var detail=subId?notfallHtml(subId):'<div class="nf-hint">'+ICO.info+'<div><b>Bei Lebensgefahr zuerst anrufen.</b> Danach den beteiligten Stoff oben wählen – Erste Hilfe, Löschmittel und Massnahmen bei Austritt erscheinen sofort, ohne Nachladen.</div></div>';
+  var el=document.createElement('div');el.className='nf-overlay';el.id='nfOverlay';
+  el.innerHTML='<div class="nf-bar"><div class="nf-ttl">'+NF_ICON+' Notfall</div><button class="nf-close" data-action="closeNotfall">Schliessen</button></div>'+
+    '<div class="nf-scroll">'+
+      '<div class="nf-calls">'+nfCallBtn('144','Sanität','sani')+nfCallBtn('145','Tox Info Suisse','tox')+nfCallBtn('118','Feuerwehr','fw')+nfCallBtn('1414','Rega','rega')+'</div>'+
+      '<div class="nf-pick"><label>Welcher Stoff ist beteiligt?</label><input id="nfSearch" placeholder="Stoff suchen …" autocomplete="off" oninput="nfFilter(this.value)"><div class="nf-chips" id="nfChips">'+chips+'</div></div>'+
+      '<div id="nfDetail">'+detail+'</div>'+
+    '</div>';
+  document.body.appendChild(el);
+  if(typeof addHistory==='function')addHistory('Notfall-Modus geöffnet',subId?substance(subId).name:'allgemein','');
+}
+function closeNotfall(){var el=document.getElementById('nfOverlay');if(el)el.remove();}
+function nfPick(subId){var d=document.getElementById('nfDetail');if(!d)return;d.innerHTML=notfallHtml(subId);
+  var chips=document.querySelectorAll('#nfChips .nf-chip');Array.prototype.forEach.call(chips,function(c){c.classList.toggle('on',c.dataset.id===subId);});
+  d.scrollIntoView({behavior:'smooth',block:'start'});}
+window.nfFilter=function(v){v=String(v||'').toLowerCase().trim();var chips=document.querySelectorAll('#nfChips .nf-chip');Array.prototype.forEach.call(chips,function(c){c.style.display=(!v||c.dataset.name.indexOf(v)>-1)?'':'none';});};
 function baCodes(str){var out=[];(String(str||'').match(/[HP]\d{3}(?:\s*\+\s*[HP]\d{3})*/g)||[]).forEach(function(c){out.push(c.replace(/\s+/g,''));});return out;}
 function baText(code,map){if(map[code])return map[code];if(code.indexOf('+')>-1){return code.split('+').map(function(c){return map[c]||c;}).join(' ');}return code;}
 function baList(codes,map){return codes.length?('<ul>'+codes.map(function(c){return '<li><b>'+c+'</b> '+esc(baText(c,map))+'</li>';}).join('')+'</ul>'):'<p class="ba-empty">Keine Angaben hinterlegt.</p>';}
@@ -2587,6 +2699,10 @@ document.addEventListener('click',e=>{
     case 'reScanCam':closeModal();goTo('scanArt',{reset:true,nav:'scan'});break;
     case 'switchUser':modalSwitchUser();break;
     case 'genBA':openBA(id);break;
+    case 'notfall':openNotfall(state.view==='detail'?state.curSub:null);break;
+    case 'closeNotfall':closeNotfall();break;
+    case 'nfPick':nfPick(id);break;
+    case 'nfBA':closeNotfall();openBA(id);break;
     case 'gbOpen':modalGb(id);break;
     case 'gbGo':gbGenerate(id);break;
     case 'dossier':dossierPdf();break;
