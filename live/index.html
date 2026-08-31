@@ -681,6 +681,37 @@
   .nf-links{margin-top:2px}
   .nf-links .btn{background:#2a1d1a;border:1px solid #4a2f2a;color:#fff;display:inline-flex;align-items:center;gap:7px}
   .nf-links .btn svg{width:16px;height:16px}
+  .lotse-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:15px 16px 16px;margin:14px 0 4px;box-shadow:0 10px 26px -18px rgba(16,36,28,.5)}
+  .lotse-top{display:flex;align-items:center;gap:14px;margin-bottom:13px}
+  .lotse-score{flex:none;width:64px;height:64px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;line-height:1}
+  .lotse-score.g{background:var(--ok)}.lotse-score.y{background:var(--sun)}.lotse-score.r{background:var(--danger)}
+  .lotse-score .lp{font-family:var(--display);font-weight:800;font-size:19px}
+  .lotse-score .ll{font-size:9.5px;opacity:.92;margin-top:1px;text-transform:uppercase;letter-spacing:.06em}
+  .lotse-meta{flex:1;min-width:0}
+  .lotse-meta b{font-family:var(--display);font-size:15.5px;color:var(--ink)}
+  .lotse-meta small{display:block;color:var(--ink-3);font-size:12.5px;margin:1px 0 8px}
+  .lotse-bar{height:7px;border-radius:5px;background:var(--line-2);overflow:hidden}
+  .lotse-bar i{display:block;height:100%;border-radius:5px}
+  .lotse-bar i.g{background:var(--ok)}.lotse-bar i.y{background:var(--sun)}.lotse-bar i.r{background:var(--danger)}
+  .lotse-next{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:12px 13px}
+  .ln-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+  .ln-step{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);font-weight:700}
+  .ln-txt{font-size:14px;color:var(--ink);line-height:1.45;margin-bottom:11px}
+  .lotse-next .btn{width:100%}
+  .ln-badge,.ll-badge{display:inline-block;font-size:10.5px;font-weight:700;border-radius:20px;padding:3px 10px;white-space:nowrap}
+  .ln-badge.p0,.ll-badge.p0{background:var(--danger-bg);color:var(--danger)}
+  .ln-badge.p1,.ll-badge.p1{background:var(--sun-bg);color:var(--sun)}
+  .ln-badge.p2,.ll-badge.p2{background:var(--ok-bg);color:var(--ok)}
+  .lotse-list{margin-top:9px;display:flex;flex-direction:column}
+  .lotse-li{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--line-2);padding:10px 2px;cursor:pointer;font-family:var(--font)}
+  .lotse-li:first-child{border-top:0}
+  .ll-tx{flex:1;min-width:0;font-size:13px;color:var(--ink-2);line-height:1.4}
+  .lotse-li .chev{flex:none;color:var(--ink-3);display:flex}
+  .lotse-li .chev svg{width:16px;height:16px}
+  .lotse-all{display:inline-flex;align-items:center;gap:4px;margin-top:11px;color:var(--accent);font-weight:700;font-size:13px;cursor:pointer}
+  .lotse-all svg{width:15px;height:15px}
+  .lotse-card.done .lotse-ok{display:flex;align-items:center;gap:9px;background:var(--ok-bg);color:var(--ok);border-radius:11px;padding:12px 13px;font-weight:700;font-size:13.5px}
+  .lotse-card.done .lotse-ok svg{width:18px;height:18px;flex:none}
   #printArea{display:none}
   @media print{
     @page{size:A4;margin:12mm}
@@ -1522,20 +1553,15 @@ function scrStart(){
   return '<div class="view">'+
     '<h2 class="title">Dashboard</h2><p class="sub">Übersicht über gefährliche Stoffe der Gruppe.</p>'+
     '<button class="userline" data-action="switchUser">'+ICO.user+'<span>Angemeldet als <b>'+curUser().name+'</b> · '+curUser().role+'</span><span class="chg">wechseln</span></button>'+
-    '<button class="capture-btn" data-action="capture"><span class="ico">'+ICO.plus+'</span><span><b>Gefahrstoff aufnehmen</b><span>'+ctxNote+'</span></span></button>'+
+    '<button class="capture-btn" data-action="capture"><span class="ico">'+ICO.plus+'</span><span><b>Gefahrstoff aufnehmen</b><span>'+ctxNote+'</span></span></button>'+lotseCard()+
     '<div class="kpi-grid">'+
       '<button class="kpi accent" data-action="goBestandAll"><span class="n">'+all.length+'</span><span class="t">'+ICO.box+' Datensätze</span></button>'+
       '<button class="kpi alert" data-action="goAdminSdb"><span class="n">'+noSdb.length+'</span><span class="t">'+ICO.warn+' ohne SDB</span></button>'+
       '<button class="kpi warnb" data-action="goAdminMenge"><span class="n">'+incompl.length+'</span><span class="t">'+ICO.warn+' unvollständig</span></button>'+
       '<button class="kpi" data-action="goAdminLager"><span class="n">'+DB.locations.length+'</span><span class="t">'+ICO.loc+' Lagerorte</span></button>'+
     '</div>'+
-    zlBanner+
-    '<div class="dash-cols">'+
-      '<div class="panel"><div class="panel-h"><span>Handlungsbedarf<span class="cnt">'+hbList.length+'</span></span>'+(hbList.length>5?'<a data-action="goAdminHB">alle</a>':'')+'</div>'+
-        '<div class="panel-body rows" style="padding:10px">'+(hbList.length?hbTop:'<div class="empty" style="padding:18px">'+ICO.ok+'<div>Kein Handlungsbedarf.</div></div>')+'</div></div>'+
-      '<div class="panel"><div class="panel-h"><span>Letzte Änderungen</span><a data-action="goAdminVerlauf">Verlauf</a></div>'+
-        '<div class="panel-body"><div class="timeline">'+recent+'</div></div></div>'+
-    '</div>'+
+    '<div class="panel" style="margin-top:14px"><div class="panel-h"><span>Letzte Änderungen</span><a data-action="goAdminVerlauf">Verlauf</a></div>'+
+      '<div class="panel-body"><div class="timeline">'+recent+'</div></div></div>'+
     '<button class="userline" data-action="nav" data-v="wissen" data-nav="wissen" style="margin-top:14px">'+ICO.doc+'<span>Wissen · Lagerklassen, Zusammenlagerung &amp; H-Sätze</span><span class="chg">öffnen</span></button>'+
     disclaimer()+'</div>';
 }
@@ -2187,6 +2213,42 @@ function nfPick(subId){var d=document.getElementById('nfDetail');if(!d)return;d.
   var chips=document.querySelectorAll('#nfChips .nf-chip');Array.prototype.forEach.call(chips,function(c){c.classList.toggle('on',c.dataset.id===subId);});
   d.scrollIntoView({behavior:'smooth',block:'start'});}
 window.nfFilter=function(v){v=String(v||'').toLowerCase().trim();var chips=document.querySelectorAll('#nfChips .nf-chip');Array.prototype.forEach.call(chips,function(c){c.style.display=(!v||c.dataset.name.indexOf(v)>-1)?'':'none';});};
+/* ---------- Proaktiver Compliance-Lotse (Block 12) ---------- */
+function lotseInStock(s){return DB.instances.some(function(i){return i.sub===s.id;});}
+function lotseItems(){
+  var items=[];
+  DB.substances.forEach(function(s){
+    if(!lotseInStock(s))return;
+    if(s.sdb.status==='fehlt')items.push({p:0,kind:'SDB fehlt',txt:s.name+' – Sicherheitsdatenblatt beschaffen und hinterlegen.',act:'openSub',id:s.id,cta:'Stoffkarte öffnen'});
+    else if(s.sdb.status==='alt')items.push({p:1,kind:'SDB veraltet',txt:s.name+' – SDB über 3 Jahre alt, Aktualität prüfen.',act:'openSub',id:s.id,cta:'Stoffkarte öffnen'});
+    if(typeof instrDue==='function'&&instrDue(s.id))items.push({p:1,kind:'Instruktion fällig',txt:s.name+' – Mitarbeitende instruieren (jährlich zu wiederholen).',act:'openSub',id:s.id,cta:'Instruktion'});
+  });
+  DB.instances.forEach(function(i){if(i.menge==null){var s=substance(i.sub),l=location_(i.loc);items.push({p:2,kind:'Menge offen',txt:s.name+' · '+(l?l.name:'–')+' – Menge ergänzen.',act:'openInst',id:i.id,cta:'Bestand öffnen'});}});
+  allZlConflicts().forEach(function(e){var red=e.cf.some(function(c){return c.rate==='r';});var l=location_(e.loc);
+    items.push({p:red?0:1,kind:'Zusammenlagerung',txt:(l?l.name:'–')+' – '+(red?'getrennt lagern erforderlich':'nur bedingt erlaubt, SDB prüfen')+'.',act:'openLoc',id:e.loc,cta:'Lagerort öffnen'});});
+  items.sort(function(a,b){return a.p-b.p;});
+  return items;
+}
+function lotseScore(){
+  var subs=DB.substances.filter(lotseInStock);var total=0,green=0;
+  subs.forEach(function(s){total+=2;if(s.sdb.status==='ok')green+=1;if(!(typeof instrDue==='function'&&instrDue(s.id)))green+=1;});
+  DB.instances.forEach(function(i){total+=1;if(i.menge!=null)green+=1;});
+  DB.locations.forEach(function(l){total+=1;if(!locConflicts(l.id).length)green+=1;});
+  return {pct:total?Math.round(green/total*100):100,green:green,total:total};
+}
+function lotseCard(){
+  var items=lotseItems(),sc=lotseScore(),top=items[0];
+  var amp=sc.pct>=90?'g':sc.pct>=60?'y':'r';
+  var head='<div class="lotse-top"><div class="lotse-score '+amp+'"><span class="lp">'+sc.pct+'%</span><span class="ll">bereit</span></div>'+
+    '<div class="lotse-meta"><b>Compliance-Lotse</b><small>'+(items.length?(items.length+' offene Punkte – der wichtigste zuerst'):'Alles erledigt – prüfbereit')+'</small>'+
+    '<div class="lotse-bar"><i class="'+amp+'" style="width:'+sc.pct+'%"></i></div></div></div>';
+  if(!top)return '<div class="lotse-card done">'+head+'<div class="lotse-ok">'+ICO.ok+'<span>Kein Handlungsbedarf – dein Kataster ist prüfbereit.</span></div></div>';
+  var next='<div class="lotse-next"><div class="ln-head"><span class="ln-badge p'+top.p+'">'+top.kind+'</span><span class="ln-step">Nächster Schritt</span></div>'+
+    '<div class="ln-txt">'+esc(top.txt)+'</div>'+
+    '<button class="btn" data-action="'+top.act+'" data-id="'+top.id+'">'+top.cta+' →</button></div>';
+  var rest=items.slice(1,5).map(function(it){return '<button class="lotse-li" data-action="'+it.act+'" data-id="'+it.id+'"><span class="ll-badge p'+it.p+'">'+it.kind+'</span><span class="ll-tx">'+esc(it.txt)+'</span><span class="chev">'+ICO.chev+'</span></button>';}).join('');
+  return '<div class="lotse-card">'+head+next+(rest?'<div class="lotse-list">'+rest+'</div>':'')+(items.length>5?'<a class="lotse-all" data-action="goAdminHB">Alle '+items.length+' Punkte ansehen '+ICO.chev+'</a>':'')+'</div>';
+}
 function baCodes(str){var out=[];(String(str||'').match(/[HP]\d{3}(?:\s*\+\s*[HP]\d{3})*/g)||[]).forEach(function(c){out.push(c.replace(/\s+/g,''));});return out;}
 function baText(code,map){if(map[code])return map[code];if(code.indexOf('+')>-1){return code.split('+').map(function(c){return map[c]||c;}).join(' ');}return code;}
 function baList(codes,map){return codes.length?('<ul>'+codes.map(function(c){return '<li><b>'+c+'</b> '+esc(baText(c,map))+'</li>';}).join('')+'</ul>'):'<p class="ba-empty">Keine Angaben hinterlegt.</p>';}
