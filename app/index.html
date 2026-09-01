@@ -797,6 +797,23 @@
   .mrow.amp-r{border-left:3px solid var(--danger)}
   .mrow.amp-y{border-left:3px solid var(--sun)}
   .mrow.amp-g{border-left:3px solid var(--ok)}
+  .empl-card{border:1px solid var(--line);border-radius:14px;background:var(--surface);margin-top:14px;overflow:hidden}
+  .empl-h{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line-2);font-weight:700;font-size:14px}
+  .empl-h svg{width:16px;height:16px;color:var(--accent)}
+  .empl-row{display:flex;align-items:center;gap:11px;padding:11px 14px;border-top:1px solid var(--line-2)}
+  .empl-row:first-of-type{border-top:0}
+  .empl-tx{flex:1;min-width:0}
+  .empl-tx b{font-size:13.5px}
+  .empl-tx small{display:block;color:var(--ink-3);font-size:11.5px;margin-top:2px;line-height:1.45}
+  .empl-badge{flex:none;font-size:10.5px;font-weight:700;border-radius:20px;padding:5px 10px;text-align:center;max-width:118px}
+  .empl-badge.r{background:var(--danger-bg);color:var(--danger)}
+  .empl-badge.y{background:var(--sun-bg);color:var(--sun)}
+  .empl-badge.g{background:var(--ok-bg);color:var(--ok)}
+  .empl-foot{display:flex;gap:8px;padding:10px 14px;background:var(--surface-2);font-size:11px;color:var(--ink-3);line-height:1.5}
+  .empl-foot svg{width:14px;height:14px;flex:none;margin-top:1px;color:var(--ink-3)}
+  .empl-codes{display:block;font-family:var(--mono);font-size:10px;color:var(--ink-3);margin-top:2px}
+  .ba-restrict{display:flex;gap:8px;align-items:flex-start;margin-top:14px;padding:10px 12px;border:1px solid #e6c98a;background:#fbf3e2;border-radius:8px;font-size:12px;color:#6b4e12;line-height:1.45}
+  .ba-restrict svg{width:15px;height:15px;flex:none;margin-top:1px}
   #printArea{display:none}
   @media print{
     @page{size:A4;margin:12mm}
@@ -2148,9 +2165,10 @@ function gbAssess(s,act){
   if(any(['H330','H331','H334','H335','H336'])||volatile||act.aero)psa.push('Atemschutz mit passendem Filter (gemäss SDB) bei Sprüharbeiten oder unzureichender Lüftung.');
   if(any(CORR))psa.push('Chemikalienschutzschürze / -kleidung.');
   if(!psa.length)psa.push((typeof psaMap==='function'?(psaMap('de')[ghs[0]]||''):'')||'Schutzhandschuhe und Schutzbrille gemäss SDB.');
-  var pers=(cmr||any(['H360','H361','H361f','H361d','H362','H370','H372','H334']))
-    ?'Beschäftigungsbeschränkung: Für Schwangere/Stillende und Jugendliche ist diese Tätigkeit nur nach gesonderter Beurteilung zulässig – bei CMR- und fortpflanzungsgefährdenden Stoffen grundsätzlich nicht (Mutterschutz, ArGV 3/5).'
-    :'Jugendliche nur nach Instruktion und unter Aufsicht beschäftigen.';
+  var _el=emplLimits(s);
+  var pers=_el.restricted
+    ?('Beschäftigungsbeschränkung – Schwangere/Stillende: '+{verboten:'Beschäftigungsverbot',stillverbot:'Verbot für Stillende',beurteilung:'nur nach Beurteilung',keine:'keine besondere Einschränkung'}[_el.preg]+'; Jugendliche (<18): '+{verboten:'grundsätzlich verboten',aufsicht:'nur unter fachkundiger Aufsicht',keine:'keine besondere Einschränkung'}[_el.youth]+' (Mutterschutzverordnung, ArGV 5).')
+    :'Keine besonderen Beschäftigungsbeschränkungen aus der Einstufung; Jugendliche nur nach Instruktion beschäftigen.';
   return {S:S,W:W,score:score,band:band,restBand:restBand,cmr:cmr,gefahr:gefahr,wege:wege,
     sub:sub,tech:tech,org:org,psa:psa,pers:pers,lk:lk,lkName:lkName};
 }
@@ -2489,6 +2507,46 @@ function ampelBoard(fc){
   }).join('');
   return legend+cards;
 }
+/* ---------- Beschäftigungsbeschränkungen (Block 16) ---------- */
+function emplLimits(s){
+  var codes={};hCodes(s.h).forEach(function(c){codes[c]=1;});var ghs=s.ghs||[];
+  function any(a){return a.some(function(x){return codes[x];});}
+  function pick(a){return a.filter(function(x){return codes[x];});}
+  var CMR1=['H340','H350','H350i','H360','H360F','H360D','H360FD','H360Fd','H360Df'];
+  var CMR2=['H341','H351','H361','H361f','H361d','H361fd'];
+  var LACT=['H362'];
+  var ACUTE=['H300','H301','H310','H311','H330','H331'];
+  var CORR=['H314'],RESP=['H334'],STOT=['H370','H372'];
+  var SENS=['H317'],IRR=['H315','H319','H335'];
+  var preg='keine',pc=[];
+  if(any(CMR1)){preg='verboten';pc=pick(CMR1);}
+  else if(any(CMR2)||any(STOT)||any(ACUTE)){preg='beurteilung';pc=pick(CMR2.concat(STOT,ACUTE));}
+  if(any(LACT)){preg=(preg==='verboten'?'verboten':'stillverbot');pc=pc.concat(pick(LACT));}
+  var youth='keine',yc=[];
+  if(any(CMR1)||any(CMR2)||any(ACUTE)||any(CORR)||any(RESP)||any(STOT)){youth='verboten';yc=pick(CMR1.concat(CMR2,ACUTE,CORR,RESP,STOT));}
+  else if(any(SENS)||any(IRR)||ghs.indexOf('flamm')>-1){youth='aufsicht';yc=pick(SENS.concat(IRR));}
+  return {preg:preg,pregCodes:pc,youth:youth,youthCodes:yc,restricted:(preg!=='keine'||youth!=='keine')};
+}
+var EMPL_PREG={verboten:['r','Beschäftigungsverbot','Krebserzeugend / erbgutverändernd / fortpflanzungsgefährdend – Beschäftigungsverbot.'],
+  stillverbot:['r','Verbot für Stillende','Kann über die Muttermilch schaden – für Stillende verboten.'],
+  beurteilung:['y','Nur nach Beurteilung','Exposition vermeiden; Einsatz nur, wenn eine Gefährdung ausgeschlossen ist.'],
+  keine:['g','Keine Einschränkung','Aus der Einstufung keine besondere Einschränkung.']};
+var EMPL_YOUTH={verboten:['r','Nicht für Jugendliche','Gefährliche Arbeit – für Jugendliche unter 18 grundsätzlich verboten.'],
+  aufsicht:['y','Nur unter Aufsicht','Nur nach Instruktion und unter fachkundiger Aufsicht.'],
+  keine:['g','Keine Einschränkung','Aus der Einstufung keine besondere Einschränkung.']};
+function emplCodesHtml(a){return a&&a.length?'<span class="empl-codes">'+a.join(' · ')+'</span>':'';}
+function emplCard(s){
+  var e=emplLimits(s);if(!e.restricted)return '';
+  var p=EMPL_PREG[e.preg],y=EMPL_YOUTH[e.youth];
+  return '<div class="empl-card"><div class="empl-h">'+ICO.info+'<b>Beschäftigungsbeschränkungen</b></div>'+
+    '<div class="empl-row"><div class="empl-tx"><b>Schwangere / Stillende</b><small>'+p[2]+emplCodesHtml(e.pregCodes)+'</small></div><span class="empl-badge '+p[0]+'">'+p[1]+'</span></div>'+
+    '<div class="empl-row"><div class="empl-tx"><b>Jugendliche (unter 18)</b><small>'+y[2]+emplCodesHtml(e.youthCodes)+'</small></div><span class="empl-badge '+y[0]+'">'+y[1]+'</span></div>'+
+    '<div class="empl-foot">'+ICO.info+'<span>Automatisch aus der Einstufung abgeleitet (Mutterschutzverordnung, ArGV 5). Ausnahmen für Lernende in Ausbildung unter fachkundiger Aufsicht möglich – im Einzelfall beurteilen.</span></div></div>';
+}
+function emplBaNote(s,l){var e=emplLimits(s);if(!e.restricted)return '';
+  return {de:'Beschäftigungsbeschränkungen beachten: Einsatz von Schwangeren/Stillenden und Jugendlichen (<18) nur nach Mutterschutz- und Jugendschutzvorschriften.',
+   fr:'Respecter les restrictions d’emploi : femmes enceintes/allaitantes et jeunes (<18 ans) uniquement selon les prescriptions de protection de la maternité et des jeunes.',
+   it:'Osservare le restrizioni d’impiego: gestanti/allattanti e giovani (<18) solo secondo le norme di protezione della maternità e dei giovani.'}[l]||'';}
 function baCodes(str){var out=[];(String(str||'').match(/[HP]\d{3}(?:\s*\+\s*[HP]\d{3})*/g)||[]).forEach(function(c){out.push(c.replace(/\s+/g,''));});return out;}
 function baText(code,map){if(map[code])return map[code];if(code.indexOf('+')>-1){return code.split('+').map(function(c){return map[c]||c;}).join(' ');}return code;}
 function baList(codes,map){return codes.length?('<ul>'+codes.map(function(c){return '<li><b>'+c+'</b> '+esc(baText(c,map))+'</li>';}).join('')+'</ul>'):'<p class="ba-empty">Keine Angaben hinterlegt.</p>';}
@@ -2511,7 +2569,7 @@ function baHtml(s){
     '<div class="ba-sigbar sig-'+(sig==='Gefahr'?'danger':'warn')+'"><b>'+esc((SIGNAL_L[l][sig]||sig))+'</b>'+pikto+'</div>'+
     '<div class="ba-sec"><h3>'+T.s1+'</h3><p><b>'+esc(s.name)+'</b> · '+T.hersteller+': '+esc(s.hersteller||'–')+((s.un&&s.un!=='–')?' · UN '+esc(s.un):'')+'<br>'+T.lk+' '+(lk||'–')+' ('+esc(lkName)+')</p></div>'+
     '<div class="ba-sec ba-gef"><h3>'+T.s2+'</h3>'+baListL(hc,l,'h')+(gefahr?'<ul class="ba-plain">'+gefahr+'</ul>':'')+'</div>'+
-    '<div class="ba-sec ba-schutz"><h3>'+T.s3+'</h3>'+(psa?'<ul class="ba-plain">'+psa+'</ul>':'')+baListL(pc,l,'p')+'</div>'+
+    '<div class="ba-sec ba-schutz"><h3>'+T.s3+'</h3>'+(psa?'<ul class="ba-plain">'+psa+'</ul>':'')+baListL(pc,l,'p')+(emplBaNote(s,l)?'<div class="ba-restrict">'+ICO.warn+'<span>'+emplBaNote(s,l)+'</span></div>':'')+'</div>'+
     '<div class="ba-sec ba-fall"><h3>'+T.s4+'</h3><p>'+loesch+'</p><p>'+spill+'</p></div>'+
     '<div class="ba-sec ba-hilfe"><h3>'+T.s5+'</h3><ul><li><b>'+T.eye+':</b> '+T.eyeT+'</li><li><b>'+T.skin+':</b> '+T.skinT+'</li><li><b>'+T.inhale+':</b> '+T.inhaleT+'</li><li><b>'+T.swallow+':</b> '+T.swallowT+'</li>'+imp+'</ul><p class="ba-emo">'+T.emo+'</p></div>'+
     '<div class="ba-sec ba-ent"><h3>'+T.s6+'</h3><p>'+T.disp+'</p></div>'+
@@ -2626,7 +2684,7 @@ function scrDetail(){
     '<div class="instr-head"><div><b>Instruktionsnachweis</b><small>'+(iCount?('Instruiert: '+iCount+' · zuletzt '+fmtDate(iLast)):'Noch keine Instruktion erfasst')+'</small></div>'+(iDue?'<span class="instr-badge due">fällig</span>':'<span class="instr-badge ok">aktuell</span>')+'</div>'+
     '<div class="btn-row" style="margin-top:11px"><button class="btn secondary" data-action="instrList" data-id="'+s.id+'">Nachweise</button><button class="btn secondary" data-action="instrQr" data-id="'+s.id+'">'+ICO.qr+' Instruktions-QR</button></div>'+
     '<button class="btn" data-action="instrConfirm" data-id="'+s.id+'" style="width:100%;margin-top:9px">'+ICO.ok+' Instruktion bestätigen</button></div>';
-  return '<div class="view">'+hero+notes+bestand+stamm+'<button class="btn secondary" data-action="genBA" data-id="'+s.id+'" style="width:100%;margin-top:14px">'+ICO.doc+' Betriebsanweisung erstellen</button>'+'<button class="btn secondary" data-action="gbOpen" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Gefährdungsbeurteilung erstellen</button>'+instrBlock+oth+disclaimer()+'</div>';
+  return '<div class="view">'+hero+notes+bestand+stamm+emplCard(s)+'<button class="btn secondary" data-action="genBA" data-id="'+s.id+'" style="width:100%;margin-top:14px">'+ICO.doc+' Betriebsanweisung erstellen</button>'+'<button class="btn secondary" data-action="gbOpen" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Gefährdungsbeurteilung erstellen</button>'+instrBlock+oth+disclaimer()+'</div>';
 }
 
 /* ===== LAGERORTDETAIL (nützlicher) ===== */

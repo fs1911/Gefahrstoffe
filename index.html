@@ -610,6 +610,19 @@
   .amk-lname small{display:block;color:var(--ink-3);font-size:11.5px}
   .amk-cnt{font-size:12px;color:var(--ink-2);font-weight:600;transition:color .3s}
   .amk-cnt.done{color:var(--ok)}
+  .empm{display:flex;justify-content:center;align-items:center;min-height:360px}
+  .empm-card{width:322px;max-width:100%;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 20px 44px -20px rgba(16,36,28,.55);transition:opacity .3s}
+  .empm-card.fade{opacity:0}
+  .empm-h{padding:15px 16px;border-bottom:1px solid var(--line-2)}
+  .empm-h b{font-family:var(--display);font-size:17px;color:var(--ink);display:block}
+  .empm-h small{color:var(--ink-3);font-size:12px;font-family:var(--mono)}
+  .empm-row{display:flex;align-items:center;gap:11px;padding:15px 16px;border-top:1px solid var(--line-2);font-size:13.5px;color:var(--ink)}
+  .empm-row:first-of-type{border-top:0}
+  .empm-row span:first-child{flex:1}
+  .empm-badge{flex:none;font-size:11px;font-weight:700;border-radius:20px;padding:5px 11px;text-align:center;transition:background .3s,color .3s}
+  .empm-badge.r{background:var(--danger-bg);color:var(--danger)}
+  .empm-badge.y{background:var(--sun-bg);color:var(--sun)}
+  .empm-badge.g{background:var(--ok-bg);color:var(--ok)}
 </style>
 </head>
 <body>
@@ -758,7 +771,7 @@
       <h2>Alles, was ein Gefahrstoff-Kataster braucht.</h2>
       <p class="lead">Wähle eine Funktion – jede zeigt live, wie sie im Alltag funktioniert. Von der KI-Erfassung bis zum Notfall-Modus.</p>
     </div>
-    <div class="fx-tabs" id="fxTabs"><button class="fx-tab on" data-fx="kidemo-sec">SDB per KI</button><button class="fx-tab" data-fx="ba-sec">Betriebsanweisung</button><button class="fx-tab" data-fx="katalog-sec">Barcode-Katalog</button><button class="fx-tab" data-fx="instr-sec">Instruktion</button><button class="fx-tab" data-fx="lang-sec">Mehrsprachig</button><button class="fx-tab" data-fx="ask-sec">Frag StoffScan</button><button class="fx-tab" data-fx="gb-sec">Gefährdungsbeurteilung</button><button class="fx-tab" data-fx="fw-sec">Feuerwehr-Karte</button><button class="fx-tab" data-fx="notfall-sec">Notfall-Modus</button><button class="fx-tab" data-fx="dossier-sec">Prüf-Dossier</button><button class="fx-tab" data-fx="lotse-sec">Compliance-Lotse</button><button class="fx-tab" data-fx="starter-sec">Starterkatalog</button><button class="fx-tab" data-fx="pwa-sec">Offline / App</button><button class="fx-tab" data-fx="ampel-sec">Standort-Ampel</button></div>
+    <div class="fx-tabs" id="fxTabs"><button class="fx-tab on" data-fx="kidemo-sec">SDB per KI</button><button class="fx-tab" data-fx="ba-sec">Betriebsanweisung</button><button class="fx-tab" data-fx="katalog-sec">Barcode-Katalog</button><button class="fx-tab" data-fx="instr-sec">Instruktion</button><button class="fx-tab" data-fx="lang-sec">Mehrsprachig</button><button class="fx-tab" data-fx="ask-sec">Frag StoffScan</button><button class="fx-tab" data-fx="gb-sec">Gefährdungsbeurteilung</button><button class="fx-tab" data-fx="fw-sec">Feuerwehr-Karte</button><button class="fx-tab" data-fx="notfall-sec">Notfall-Modus</button><button class="fx-tab" data-fx="dossier-sec">Prüf-Dossier</button><button class="fx-tab" data-fx="lotse-sec">Compliance-Lotse</button><button class="fx-tab" data-fx="starter-sec">Starterkatalog</button><button class="fx-tab" data-fx="pwa-sec">Offline / App</button><button class="fx-tab" data-fx="ampel-sec">Standort-Ampel</button><button class="fx-tab" data-fx="empl-sec">Personenschutz</button></div>
   </div>
   <div class="fx-stagewrap">
     <button class="fx-arrow prev" data-fx-nav="-1" aria-label="Vorherige Funktion">&#8249;</button>
@@ -1093,6 +1106,27 @@
         <div class="amk-loc"><span class="amk-dot r" data-l="0"></span><span class="amk-lname">Werkhof Nord<small>Gefahrstoffschrank A</small></span><span class="amk-cnt" data-c="0">3 offen</span></div>
         <div class="amk-loc"><span class="amk-dot y" data-l="1"></span><span class="amk-lname">Baustelle City<small>Magazincontainer</small></span><span class="amk-cnt" data-c="1">2 offen</span></div>
         <div class="amk-loc"><span class="amk-dot g" data-l="2"></span><span class="amk-lname">Werkstatt Technik<small>Chemikalienschrank</small></span><span class="amk-cnt" data-c="2">prüfbereit</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="fx-panel" id="empl-sec">
+  <div class="wrap ba-mkt">
+    <div class="ba-mkt-copy">
+      <div class="eyebrow">Automatischer Personenschutz</div>
+      <h2>Wer darf womit arbeiten?</h2>
+      <p class="lead">StoffScan leitet aus der Einstufung ab, welche Stoffe für Schwangere, Stillende und Jugendliche eingeschränkt oder verboten sind – nach Mutterschutzverordnung und Jugendarbeitsschutz. Direkt auf der Stoffkarte und in der Betriebsanweisung, ohne Nachschlagen.</p>
+      <ul class="ba-mkt-list">
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Schwangere &amp; Stillende: Verbot bei CMR-Stoffen</li>
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Jugendliche unter 18: bei giftig, ätzend, CMR gesperrt</li>
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Aus H-Sätzen abgeleitet – mit Gesetzesbezug</li>
+      </ul>
+    </div>
+    <div class="empm" id="emplMkt">
+      <div class="empm-card" id="empmCard">
+        <div class="empm-h"><b id="empmName">Aceton</b><small id="empmTag">entzündbar · H336</small></div>
+        <div class="empm-row"><span>Schwangere / Stillende</span><span class="empm-badge g" id="empmPreg">Keine Einschränkung</span></div>
+        <div class="empm-row"><span>Jugendliche (unter 18)</span><span class="empm-badge y" id="empmYouth">Nur unter Aufsicht</span></div>
       </div>
     </div>
   </div>
@@ -1585,6 +1619,20 @@
     timers.push(setTimeout(run,6000));
   }
   function start(){if(running)return;running=true;timers.push(setTimeout(run,600));}
+  if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)start();});},{threshold:.35});io.observe(sec);}else start();
+})();
+(function(){
+  var sec=document.getElementById('empl-sec');if(!sec)return;
+  var card=document.getElementById('empmCard'),nm=document.getElementById('empmName'),tag=document.getElementById('empmTag'),preg=document.getElementById('empmPreg'),youth=document.getElementById('empmYouth');
+  var D=[
+   {n:'Aceton',t:'entzündbar · H336',p:['g','Keine Einschränkung'],y:['y','Nur unter Aufsicht']},
+   {n:'Benzin bleifrei',t:'CMR · H340 · H350 · H361',p:['r','Beschäftigungsverbot'],y:['r','Nicht für Jugendliche']},
+   {n:'Entkalker sauer',t:'ätzend · H314',p:['g','Keine Einschränkung'],y:['r','Nicht für Jugendliche']}
+  ];
+  var i=0,timers=[],running=false;
+  function apply(k){nm.textContent=D[k].n;tag.textContent=D[k].t;preg.className='empm-badge '+D[k].p[0];preg.textContent=D[k].p[1];youth.className='empm-badge '+D[k].y[0];youth.textContent=D[k].y[1];}
+  function cycle(){i=(i+1)%D.length;card.classList.add('fade');timers.push(setTimeout(function(){apply(i);card.classList.remove('fade');},320));timers.push(setTimeout(cycle,3200));}
+  function start(){if(running)return;running=true;apply(0);timers.push(setTimeout(cycle,2400));}
   if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)start();});},{threshold:.35});io.observe(sec);}else start();
 })();
 </script>
