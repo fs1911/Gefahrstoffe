@@ -46,6 +46,17 @@ Gefährdungsbeurteilung und keine Instruktion vor Ort.
 → Dies gehört mit der **CAS-Anreicherung** in die Datenqualitäts-Phase (nach den
   offenen Blöcken). Kein Verkauf, solange UN/VeVA nicht validiert sind.
 
+**Entscheid 2026-09:** Reihenfolge = zuerst Blöcke 23–25 fertig, danach die
+komplette UN/VeVA/CAS-Validierung in einem Zug mit offizieller Datenanbindung.
+
+**Vom Kunden gelieferte Quellen (in dieser Phase 1:1 einspielen):**
+- **UN-Nummern / Stoffdaten:** GESTIS-Stoffdatenbank – https://gestis.dguv.de/list
+- **VeVA-/Abfallcodes (CH):** VeVA-online amtliches Abfallverzeichnis –
+  https://www.veva-online.admin.ch/veva/selectionImpl/showWasteCodeTreeOriginCH.cmd?selectedMenuItem=2.1
+- Hinweis: beide sind aus der Build-Sandbox NICHT erreichbar (Egress-Proxy 403).
+  Import daher über: (a) manueller Export/CSV vom Kunden, oder (b) Fetch aus einer
+  Umgebung mit Egress (Supabase Edge Function / einmaliges Import-Skript beim Deploy).
+
 **Von tozzo zum Produkt:** Ursprung war ein Prototyp für die tozzo gruppe. Ziel
 jetzt: ein **generisches, verkaufbares Mehrmandanten-SaaS** ohne Kundenbezug.
 
@@ -240,7 +251,13 @@ damit Kunden den Nutzen sehen (Ziel: Wow-Demo direkt auf der Website).
       Verifizieren/PDF-Export (`auditReportPdf`) und einen Demo-Tamper. Demo persistiert Hashes
       (localStorage); Live rechnet die Kette über das append-only `audit_logs` (Server-seitige
       Unveränderlichkeit ist die Produktions-Härtung). Marketing-Slide „Audit-Log" mit Live-Tamper.
-23. [ ] **Wareneingangs-Check** (7) — SDB aktuell? hier lagerbar?
+23. [x] **Wareneingangs-Check** (7) — SDB aktuell? hier lagerbar?
+    → `weCheck(subId,locId)` prüft beim Einbuchen automatisch: SDB vorhanden & aktuell (fehlt/alt),
+      Zusammenlagerung am Ziel-Lagerort (neue Lagerklasse vs. vorhandene LKs → rot/gelb via ZL-Matrix)
+      und zeigt die Lagerklasse. `weCheckCard` erscheint auf der Stoffkarte („Hier lagerbar / Bedingt /
+      Nicht empfohlen"), `weLieferBanner` fasst den Check im Lieferschein-Import je Ziel-Lagerort
+      zusammen (Positionen ohne SDB + Zusammenlagerungs-Konflikte, dedupliziert). Marketing-Slide
+      „Wareneingang". Beide Apps synchron.
 24. [ ] **Prüffristen – schlanke Erinnerung** (7) — kein Wartungsmodul; fliesst ins Audit-Dossier
 25. [ ] **Substitution – nur Flag „CMR: Ersatz prüfen"** (7) — keine Alternativen-Datenbank
 

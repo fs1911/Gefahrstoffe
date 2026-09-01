@@ -860,6 +860,27 @@
   .lbl-foot{margin-top:6px;font-size:9px;color:#777;line-height:1.35}
   .ls-lead{font-size:12.5px;color:var(--ink-2);margin:0 0 13px;line-height:1.5}
   .vv-chk{display:flex;align-items:center;gap:9px;margin-bottom:11px;cursor:pointer}
+  .we-card{border:1px solid var(--line);border-radius:14px;background:var(--surface);margin-top:14px;overflow:hidden}
+  .we-h{display:flex;align-items:flex-start;gap:9px;padding:12px 14px;border-bottom:1px solid var(--line-2)}
+  .we-h svg{width:17px;height:17px;flex:none;margin-top:1px}
+  .we-h b{font-size:14px}
+  .we-h small{display:block;color:var(--ink-3);font-size:11.5px;margin-top:2px}
+  .we-h.g{background:var(--ok-bg)}.we-h.g svg,.we-h.g b,.we-h.g small{color:var(--ok)}
+  .we-h.y{background:var(--sun-bg)}.we-h.y svg,.we-h.y b,.we-h.y small{color:var(--sun)}
+  .we-h.r{background:var(--danger-bg)}.we-h.r svg,.we-h.r b,.we-h.r small{color:var(--danger)}
+  .we-row{display:flex;align-items:flex-start;gap:9px;padding:10px 14px;border-top:1px solid var(--line-2)}
+  .we-row:first-of-type{border-top:0}
+  .we-row svg{width:15px;height:15px;flex:none;margin-top:1px}
+  .we-row b{font-size:12.5px;color:var(--ink)}
+  .we-row small{display:block;font-size:11px;color:var(--ink-3);margin-top:1px;line-height:1.4}
+  .we-row.g svg{color:var(--ok)}.we-row.y svg{color:var(--sun)}.we-row.r svg{color:var(--danger)}.we-row.i svg{color:var(--ink-3)}
+  .we-banner{display:flex;gap:9px;align-items:flex-start;border-radius:11px;padding:11px 12px;margin:12px 0 2px}
+  .we-banner svg{width:16px;height:16px;flex:none;margin-top:1px}
+  .we-banner b{font-size:12.5px;display:block}
+  .we-banner small{font-size:11px;line-height:1.4}
+  .we-banner.g{background:var(--ok-bg);color:var(--ok)}
+  .we-banner.y{background:var(--sun-bg);color:var(--sun)}
+  .we-banner.r{background:var(--danger-bg);color:var(--danger)}
   .aud-wrap{margin-top:4px}
   .aud-banner{display:flex;gap:10px;align-items:flex-start;border-radius:12px;padding:12px 14px;margin-bottom:11px}
   .aud-banner svg{width:18px;height:18px;flex:none;margin-top:1px}
@@ -2631,6 +2652,45 @@ function ampelBoard(fc){
   }).join('');
   return legend+cards;
 }
+/* ---------- Wareneingangs-Check (Block 23) ---------- */
+function weCheck(subId,locId){
+  var s=substance(subId);var items=[];if(!s)return {level:'g',items:items};
+  if(s.sdb.status==='fehlt')items.push({lvl:'r',label:'Sicherheitsdatenblatt fehlt',detail:'Vor Lagerung/Verwendung SDB beschaffen.'});
+  else if(s.sdb.status==='alt')items.push({lvl:'y',label:'SDB älter als 3 Jahre',detail:'Stand '+(s.sdb.rev||'?')+' – auf Aktualität prüfen.'});
+  else items.push({lvl:'g',label:'SDB aktuell',detail:s.sdb.rev?('Stand '+s.sdb.rev+'.'):'Hinterlegt.'});
+  var newLk=lkOf(s);
+  if(locId){
+    var seen=locLKmap(locId),exLks=Object.keys(seen).filter(function(k){return k!==newLk;}),conf=[];
+    if(newLk)exLks.forEach(function(k){var r=zlRate(newLk,k);if(r==='r'||r==='y')conf.push({a:newLk,b:k,rate:r,star:zlStar(newLk,k)});});
+    if(conf.length){var hasR=conf.some(function(c){return c.rate==='r';});
+      items.push({lvl:hasR?'r':'y',label:hasR?'Zusammenlagerung nicht erlaubt':'Zusammenlagerung nur bedingt',detail:conf.map(function(c){return 'LK '+c.a+' + LK '+c.b+(c.star?' *':'');}).join(', '),pairs:conf});}
+    else items.push({lvl:'g',label:'Zusammenlagerung ok',detail:exLks.length?'Keine Konflikte mit den vorhandenen Stoffen.':'Noch keine anderen Stoffe an diesem Lagerort.'});
+  }
+  items.push({lvl:'i',label:'Lagerklasse '+(newLk||'?'),detail:newLk?LK_INFO[newLk].name:'unbestimmt – Gefahrmerkmale/SDB prüfen.'});
+  var level=items.some(function(x){return x.lvl==='r';})?'r':items.some(function(x){return x.lvl==='y';})?'y':'g';
+  return {level:level,items:items};
+}
+function weLbl(lvl){return {r:['r','Nicht empfohlen'],y:['y','Bedingt lagerbar'],g:['g','Hier lagerbar']}[lvl]||['g','Hier lagerbar'];}
+function weIcon(lvl){return lvl==='g'?ICO.ok:lvl==='i'?ICO.info:ICO.warn;}
+function weCheckCard(subId,locId){
+  if(!locId)return '';var r=weCheck(subId,locId);if(!r.items.length)return '';
+  var lb=weLbl(r.level),loc=location_(locId);
+  var rows=r.items.map(function(it){return '<div class="we-row '+it.lvl+'">'+weIcon(it.lvl)+'<div><b>'+esc(it.label)+'</b>'+(it.detail?'<small>'+esc(it.detail)+'</small>':'')+'</div></div>';}).join('');
+  return '<div class="we-card"><div class="we-h '+lb[0]+'">'+weIcon(r.level)+'<div><b>Wareneingangs-Check</b><small>'+lb[1]+(loc?' · '+esc(loc.name):'')+'</small></div></div>'+rows+'</div>';
+}
+function weLieferBanner(locId,rows){
+  if(!locId)return '';var noSdb=0,conflicts={};
+  rows.forEach(function(pos){var m=lsMatch(pos);var sid=(m.id&&m.score>=0.5)?m.id:null;if(!sid)return;var s=substance(sid);if(s.sdb.status==='fehlt')noSdb++;
+    var r=weCheck(sid,locId);r.items.forEach(function(it){if(it.pairs)it.pairs.forEach(function(c){conflicts[lkKey(c.a,c.b)]=c;});});});
+  var cf=Object.keys(conflicts).map(function(k){return conflicts[k];});
+  var hasR=cf.some(function(c){return c.rate==='r';});
+  var lvl=hasR?'r':(cf.length||noSdb)?'y':'g';
+  var parts=[];
+  if(noSdb)parts.push(noSdb+' Position(en) ohne SDB');
+  if(cf.length)parts.push('Zusammenlagerung: '+cf.map(function(c){return 'LK '+c.a+'+'+c.b;}).join(', '));
+  if(!parts.length)parts.push('Keine Auffälligkeiten – hier lagerbar.');
+  return '<div class="we-banner '+lvl+'">'+weIcon(lvl)+'<div><b>Wareneingangs-Check · '+esc(location_(locId).name)+'</b><small>'+esc(parts.join(' · '))+'</small></div></div>';
+}
 /* ---------- Revisionssicheres Audit-Log (Block 22) ---------- */
 function cyrb53(str,seed){seed=seed||0;var h1=0xdeadbeef^seed,h2=0x41c6ce57^seed;for(var i=0,ch;i<str.length;i++){ch=str.charCodeAt(i);h1=Math.imul(h1^ch,2654435761);h2=Math.imul(h2^ch,1597334677);}h1=Math.imul(h1^(h1>>>16),2246822507);h1^=Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507);h2^=Math.imul(h1^(h1>>>13),3266489909);var n=4294967296*(2097151&h2)+(h1>>>0);return ('00000000000000'+n.toString(16)).slice(-14);}
 function auditCanon(e){return e.seq+'|'+(e.ts||e.t||'')+'|'+(e.who||'')+'|'+(e.a||'')+'|'+(e.m||'')+'|'+(e.cid||'');}
@@ -2843,7 +2903,9 @@ function lsParse(){
   var rows=parseLieferschein(text),res=document.getElementById('lsResults');if(!res)return;
   if(!rows.length){res.innerHTML='<div class="ls-empty">'+ICO.warn+'<span>Keine Positionen erkannt. Text prüfen oder Beispiel einfügen.</span></div>';return;}
   var GEB=['Kanister','Dose','Flasche','Fass','Sack','Eimer','Karton','Tube','Gebinde'],EIN=['l','kg','Stk','ml'];
+  var loc=(document.getElementById('lsLoc')||{}).value||'';
   var html='<div class="ls-count">'+rows.length+' Position(en) erkannt</div>';
+  html=weLieferBanner(loc,rows)+html;
   html+=rows.map(function(pos,idx){
     var m=lsMatch(pos),sel=(m.id&&m.score>=0.5)?m.id:'';
     var einheit=pos.packUnit||'Stk';
@@ -3199,7 +3261,7 @@ function scrDetail(){
     '<div class="instr-head"><div><b>Instruktionsnachweis</b><small>'+(iCount?('Instruiert: '+iCount+' · zuletzt '+fmtDate(iLast)):'Noch keine Instruktion erfasst')+'</small></div>'+(iDue?'<span class="instr-badge due">fällig</span>':'<span class="instr-badge ok">aktuell</span>')+'</div>'+
     '<div class="btn-row" style="margin-top:11px"><button class="btn secondary" data-action="instrList" data-id="'+s.id+'">Nachweise</button><button class="btn secondary" data-action="instrQr" data-id="'+s.id+'">'+ICO.qr+' Instruktions-QR</button></div>'+
     '<button class="btn" data-action="instrConfirm" data-id="'+s.id+'" style="width:100%;margin-top:9px">'+ICO.ok+' Instruktion bestätigen</button></div>';
-  return '<div class="view">'+hero+notes+bestand+stamm+psaCard(s)+emplCard(s)+'<button class="btn secondary" data-action="genBA" data-id="'+s.id+'" style="width:100%;margin-top:14px">'+ICO.doc+' Betriebsanweisung erstellen</button>'+'<button class="btn secondary" data-action="gbOpen" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Gefährdungsbeurteilung erstellen</button>'+'<button class="btn secondary" data-action="umfuell" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Umfüll-Etikett drucken</button>'+'<button class="btn secondary" data-action="veva" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Entsorgungsbeleg (VeVA)</button>'+instrBlock+oth+disclaimer()+'</div>';
+  return '<div class="view">'+hero+notes+bestand+(inst?weCheckCard(s.id,inst.loc):'')+stamm+psaCard(s)+emplCard(s)+'<button class="btn secondary" data-action="genBA" data-id="'+s.id+'" style="width:100%;margin-top:14px">'+ICO.doc+' Betriebsanweisung erstellen</button>'+'<button class="btn secondary" data-action="gbOpen" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Gefährdungsbeurteilung erstellen</button>'+'<button class="btn secondary" data-action="umfuell" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Umfüll-Etikett drucken</button>'+'<button class="btn secondary" data-action="veva" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Entsorgungsbeleg (VeVA)</button>'+instrBlock+oth+disclaimer()+'</div>';
 }
 
 /* ===== LAGERORTDETAIL (nützlicher) ===== */

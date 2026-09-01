@@ -712,6 +712,19 @@
   .adm-h{font-family:var(--mono);font-size:10.5px;color:var(--ink-3);flex:none}
   .adm-row.brk .adm-h{color:var(--danger);font-weight:700}
   .adm-btn{width:100%;margin-top:12px;border:1px dashed var(--line);background:transparent;color:var(--ink-2);font:inherit;font-size:12px;font-weight:600;padding:9px;border-radius:9px;cursor:pointer}
+  .wem-wrap{display:flex;justify-content:center;align-items:center;min-height:360px}
+  .wem{width:330px;max-width:100%;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 22px 48px -20px rgba(16,36,28,.5)}
+  .wem-h{display:flex;align-items:center;gap:10px;padding:13px 15px;background:var(--sun-bg);color:var(--sun);border-bottom:1px solid var(--line-2)}
+  .wem-ic{width:24px;height:24px;border-radius:50%;background:currentColor;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex:none}
+  .wem-h b{font-size:14px;color:var(--ink)}
+  .wem-h small{display:block;font-size:11.5px;color:var(--ink-3);margin-top:1px}
+  .wem-row{display:flex;align-items:flex-start;gap:10px;padding:11px 15px;border-top:1px solid var(--line-2)}
+  .wem-d{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;color:#fff;flex:none;margin-top:1px}
+  .wem-row.r .wem-d{background:var(--danger)}
+  .wem-row.y .wem-d{background:var(--sun)}
+  .wem-row.i .wem-d{background:var(--ink-3)}
+  .wem-row b{font-size:12.5px;color:var(--ink)}
+  .wem-row small{display:block;font-size:11px;color:var(--ink-3);margin-top:1px;line-height:1.4}
 </style>
 </head>
 <body>
@@ -860,7 +873,7 @@
       <h2>Alles, was ein Gefahrstoff-Kataster braucht.</h2>
       <p class="lead">Wähle eine Funktion – jede zeigt live, wie sie im Alltag funktioniert. Von der KI-Erfassung bis zum Notfall-Modus.</p>
     </div>
-    <div class="fx-tabs" id="fxTabs"><button class="fx-tab on" data-fx="kidemo-sec">SDB per KI</button><button class="fx-tab" data-fx="ba-sec">Betriebsanweisung</button><button class="fx-tab" data-fx="katalog-sec">Barcode-Katalog</button><button class="fx-tab" data-fx="instr-sec">Instruktion</button><button class="fx-tab" data-fx="lang-sec">Mehrsprachig</button><button class="fx-tab" data-fx="ask-sec">Frag StoffScan</button><button class="fx-tab" data-fx="gb-sec">Gefährdungsbeurteilung</button><button class="fx-tab" data-fx="fw-sec">Feuerwehr-Karte</button><button class="fx-tab" data-fx="notfall-sec">Notfall-Modus</button><button class="fx-tab" data-fx="dossier-sec">Prüf-Dossier</button><button class="fx-tab" data-fx="lotse-sec">Compliance-Lotse</button><button class="fx-tab" data-fx="starter-sec">Starterkatalog</button><button class="fx-tab" data-fx="pwa-sec">Offline / App</button><button class="fx-tab" data-fx="ampel-sec">Standort-Ampel</button><button class="fx-tab" data-fx="empl-sec">Personenschutz</button><button class="fx-tab" data-fx="stfv-sec">Mengenschwellen</button><button class="fx-tab" data-fx="psa-sec">PSA punktgenau</button><button class="fx-tab" data-fx="label-sec">Umfüll-Etikett</button><button class="fx-tab" data-fx="ls-sec">Lieferschein</button><button class="fx-tab" data-fx="veva-sec">Entsorgungsbeleg</button><button class="fx-tab" data-fx="audit-sec">Audit-Log</button></div>
+    <div class="fx-tabs" id="fxTabs"><button class="fx-tab on" data-fx="kidemo-sec">SDB per KI</button><button class="fx-tab" data-fx="ba-sec">Betriebsanweisung</button><button class="fx-tab" data-fx="katalog-sec">Barcode-Katalog</button><button class="fx-tab" data-fx="instr-sec">Instruktion</button><button class="fx-tab" data-fx="lang-sec">Mehrsprachig</button><button class="fx-tab" data-fx="ask-sec">Frag StoffScan</button><button class="fx-tab" data-fx="gb-sec">Gefährdungsbeurteilung</button><button class="fx-tab" data-fx="fw-sec">Feuerwehr-Karte</button><button class="fx-tab" data-fx="notfall-sec">Notfall-Modus</button><button class="fx-tab" data-fx="dossier-sec">Prüf-Dossier</button><button class="fx-tab" data-fx="lotse-sec">Compliance-Lotse</button><button class="fx-tab" data-fx="starter-sec">Starterkatalog</button><button class="fx-tab" data-fx="pwa-sec">Offline / App</button><button class="fx-tab" data-fx="ampel-sec">Standort-Ampel</button><button class="fx-tab" data-fx="empl-sec">Personenschutz</button><button class="fx-tab" data-fx="stfv-sec">Mengenschwellen</button><button class="fx-tab" data-fx="psa-sec">PSA punktgenau</button><button class="fx-tab" data-fx="label-sec">Umfüll-Etikett</button><button class="fx-tab" data-fx="ls-sec">Lieferschein</button><button class="fx-tab" data-fx="veva-sec">Entsorgungsbeleg</button><button class="fx-tab" data-fx="audit-sec">Audit-Log</button><button class="fx-tab" data-fx="we-sec">Wareneingang</button></div>
   </div>
   <div class="fx-stagewrap">
     <button class="fx-arrow prev" data-fx-nav="-1" aria-label="Vorherige Funktion">&#8249;</button>
@@ -1365,6 +1378,29 @@
           <div class="adm-row" data-n="4"><span class="adm-n">#4</span><div class="adm-mid"><b>Wareneingang</b><small>3 Positionen</small></div><span class="adm-h">92CF37…</span></div>
         </div>
         <button class="adm-btn" id="admTamper" type="button">Manipulation simulieren</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="fx-panel" id="we-sec">
+  <div class="wrap ba-mkt">
+    <div class="ba-mkt-copy">
+      <div class="eyebrow">Schon beim Annehmen richtig</div>
+      <h2>Wareneingangs-Check.</h2>
+      <p class="lead">Beim Einbuchen prüft StoffScan automatisch: Ist ein Sicherheitsdatenblatt vorhanden und aktuell? Und darf der Stoff an diesem Lagerort überhaupt stehen – oder gibt es einen Zusammenlagerungs-Konflikt? So landet nichts Falsches im Regal.</p>
+      <ul class="ba-mkt-list">
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> SDB vorhanden &amp; aktuell?</li>
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Zusammenlagerung am Ziel-Lagerort geprüft</li>
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Warnung, bevor der Stoff falsch eingelagert wird</li>
+      </ul>
+    </div>
+    <div class="wem-wrap">
+      <div class="wem" id="weMkt">
+        <div class="wem-h" id="wemH"><span class="wem-ic" id="wemIc">!</span><div><b>Wareneingangs-Check</b><small id="wemSub">Bedingt lagerbar · Werkhof Nord</small></div></div>
+        <div class="wem-row r"><span class="wem-d">✕</span><div><b>SDB fehlt</b><small>Vor Lagerung Sicherheitsdatenblatt beschaffen.</small></div></div>
+        <div class="wem-row y"><span class="wem-d">!</span><div><b>Zusammenlagerung nur bedingt</b><small>LK 3 + LK 8 · Einzelfall im SDB prüfen</small></div></div>
+        <div class="wem-row i"><span class="wem-d">i</span><div><b>Lagerklasse 3</b><small>Entzündbare Flüssigkeiten</small></div></div>
       </div>
     </div>
   </div>
