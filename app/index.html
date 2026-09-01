@@ -814,6 +814,22 @@
   .empl-codes{display:block;font-family:var(--mono);font-size:10px;color:var(--ink-3);margin-top:2px}
   .ba-restrict{display:flex;gap:8px;align-items:flex-start;margin-top:14px;padding:10px 12px;border:1px solid #e6c98a;background:#fbf3e2;border-radius:8px;font-size:12px;color:#6b4e12;line-height:1.45}
   .ba-restrict svg{width:15px;height:15px;flex:none;margin-top:1px}
+  .psa-card{border:1px solid var(--line);border-radius:14px;background:var(--surface);margin-top:14px;overflow:hidden}
+  .psa-h{display:flex;align-items:flex-start;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line-2)}
+  .psa-h svg{width:16px;height:16px;color:var(--accent);flex:none;margin-top:2px}
+  .psa-h b{font-size:14px}
+  .psa-h small{display:block;color:var(--ink-3);font-size:11px;margin-top:2px;line-height:1.45}
+  .psa-row{display:flex;gap:11px;padding:11px 14px;border-top:1px solid var(--line-2)}
+  .psa-ic{flex:none;width:34px;height:34px;border-radius:9px;background:var(--surface-2);display:flex;align-items:center;justify-content:center}
+  .psa-ic svg{width:19px;height:19px;color:var(--ink-2)}
+  .psa-tx{flex:1;min-width:0}
+  .psa-t{display:flex;align-items:center;gap:8px;font-weight:700;font-size:13px}
+  .psa-tag{font-size:9.5px;font-weight:700;border-radius:20px;padding:2px 8px;letter-spacing:.02em;text-transform:uppercase;flex:none}
+  .psa-tag.need{background:var(--danger-bg);color:var(--danger)}
+  .psa-tag.rec{background:var(--sun-bg);color:var(--sun)}
+  .psa-tag.ctx{background:var(--surface-2);color:var(--ink-3)}
+  .psa-v{font-size:12.5px;color:var(--ink);margin-top:3px;line-height:1.4}
+  .psa-s{font-size:11px;color:var(--ink-3);margin-top:2px;line-height:1.4}
   .stfv-card{border:1px solid var(--line);border-radius:14px;background:var(--surface);margin-bottom:14px;overflow:hidden}
   .stfv-h{display:flex;gap:10px;align-items:flex-start;padding:13px 14px;border-bottom:1px solid var(--line-2);background:var(--sun-bg)}
   .stfv-h svg{width:18px;height:18px;color:var(--sun);flex:none;margin-top:1px}
@@ -2526,6 +2542,59 @@ function ampelBoard(fc){
   }).join('');
   return legend+cards;
 }
+/* ---------- PSA punktgenau je Stoff (Block 18) ---------- */
+var PSA_ICON={
+  hand:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M8 13V5.5a1.5 1.5 0 013 0V11m0-1V4a1.5 1.5 0 013 0v7m0-1V6a1.5 1.5 0 013 0v9a6 6 0 01-6 6h-1.2a5 5 0 01-3.9-1.9l-3-3.8a1.6 1.6 0 012.5-2L8 15"/></svg>',
+  resp:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 9h16v3a6 6 0 01-6 6h-4a6 6 0 01-6-6z"/><path d="M8.5 13h7M4 9l3-3.5M20 9l-3-3.5"/></svg>',
+  eye:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.7"/></svg>',
+  body:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M8.5 3l3.5 2.5L15.5 3 20 6l-2.2 4-2-1.1V21H8.2V8.9L6.2 10 4 6z"/></svg>'};
+function psaProfile(s){
+  var ghs=s.ghs||[],codes={};hCodes(s.h).forEach(function(c){codes[c]=1;});
+  function any(a){return a.some(function(x){return codes[x];});}
+  var aetz=ghs.indexOf('aetz')>-1||codes['H314']||codes['H318'];
+  var eyeIrr=codes['H319'],skinIrr=codes['H315'],skinSens=codes['H317'];
+  var dermal=any(['H310','H311','H312']);
+  var cmr=any(['H340','H350','H350i','H360','H360F','H360D','H360FD','H360Fd','H360Df','H361','H361f','H361d','H361fd','H341','H351']);
+  var stot=any(['H370','H371','H372','H373']);
+  var inhal=any(['H330','H331','H332','H334','H335','H336']);
+  var solvent=ghs.indexOf('flamm')>-1;
+  var toxic=ghs.indexOf('giftig')>-1||any(['H330','H331']);
+  var gas=ghs.indexOf('druckgas')>-1;
+  var health=ghs.indexOf('gesundheit')>-1||cmr||stot;
+  // Haende
+  var g;
+  if(aetz) g={ic:'hand',t:'Hände',lvl:'need',val:'Chemikalienschutzhandschuhe – Butyl oder Nitril (NBR ≥ 0,4 mm)',sub:'EN ISO 374-1 Typ A · Durchbruchzeit ≥ geplante Tragedauer'};
+  else if(solvent&&(health||toxic)) g={ic:'hand',t:'Hände',lvl:'need',val:'Butyl bzw. Viton®/FKM – Nitril allein reicht für Lösemittel oft nicht',sub:'Lösemittel durchdringen dünne Nitrilhandschuhe rasch – Material nach Lösemittel wählen'};
+  else if(dermal||cmr) g={ic:'hand',t:'Hände',lvl:'need',val:'Chemikalienschutzhandschuhe (Butyl/Nitril), langer Barriereschutz',sub:'Hautaufnahme relevant – Durchbruchzeit beachten, kontaminierte Handschuhe sofort wechseln'};
+  else if(solvent) g={ic:'hand',t:'Hände',lvl:'need',val:'Nitril für Kurzkontakt; bei längerem Lösemittelkontakt Butyl/Viton®',sub:'Durchbruchzeit im SDB Abschnitt 8 prüfen'};
+  else if(skinIrr||skinSens||eyeIrr) g={ic:'hand',t:'Hände',lvl:'rec',val:'Nitril-Einweghandschuhe (EN ISO 374)',sub:'Hautkontakt vermeiden, bei Beschädigung wechseln'};
+  else g={ic:'hand',t:'Hände',lvl:'ctx',val:'Bei direktem Kontakt Nitril-Handschuhe',sub:'Kein eingestufter Hautgefahren-Hinweis'};
+  // Atemwege
+  var r;
+  if(toxic||gas) r={ic:'resp',t:'Atemwege',lvl:'need',val:'Vollmaske mit Kombifilter (ABEK); bei hoher Konzentration umluftunabhängiger Atemschutz',sub:'Giftig/gasförmig – Grenzwerte und Sauerstoffgehalt beachten'};
+  else if(solvent||inhal||cmr) r={ic:'resp',t:'Atemwege',lvl:'rec',val:'Filter A (braun) gegen organische Dämpfe – AX bei niedrig siedenden Lösemitteln',sub:'Bei Sprüharbeiten zusätzlich Partikelfilter P2/P3 kombinieren'};
+  else if(aetz) r={ic:'resp',t:'Atemwege',lvl:'rec',val:'Filter E/B gegen saure bzw. anorganische Gase',sub:'Bei Aerosolbildung Partikelfilter P2/P3 kombinieren'};
+  else r={ic:'resp',t:'Atemwege',lvl:'ctx',val:'Atemschutz nur bei Sprüharbeiten oder unzureichender Lüftung',sub:'Filtertyp gemäss SDB Abschnitt 8'};
+  // Augen / Gesicht
+  var e;
+  if(aetz) e={ic:'eye',t:'Augen / Gesicht',lvl:'need',val:'Korbbrille / Vollsichtbrille (EN 166); bei Spritzgefahr Gesichtsschutzschirm',sub:'Verätzungsgefahr für die Augen'};
+  else if(eyeIrr||skinIrr) e={ic:'eye',t:'Augen / Gesicht',lvl:'rec',val:'Gestellbrille mit Seitenschutz (EN 166)',sub:'Augenreizung möglich'};
+  else e={ic:'eye',t:'Augen / Gesicht',lvl:'ctx',val:'Schutzbrille bei Spritzgefahr',sub:''};
+  // Koerper
+  var b;
+  if(aetz) b={ic:'body',t:'Körper',lvl:'need',val:'Chemikalienschürze/-schutzkleidung (EN 14605); säurefeste Stiefel beim Umfüllen grösserer Mengen',sub:'Spritz- und Verätzungsschutz'};
+  else if(cmr||health) b={ic:'body',t:'Körper',lvl:'rec',val:'Geschlossene Schutzkleidung; kontaminierte Kleidung sofort wechseln',sub:'Exposition so gering wie möglich halten'};
+  else if(solvent) b={ic:'body',t:'Körper',lvl:'rec',val:'Antistatische, flammhemmende Arbeitskleidung; keine synthetische Oberbekleidung',sub:'Zündgefahr durch statische Aufladung'};
+  else b={ic:'body',t:'Körper',lvl:'ctx',val:'Geschlossene Arbeitskleidung / Schürze',sub:''};
+  return [g,r,e,b];
+}
+function psaLevelTag(lvl){return {need:['need','Erforderlich'],rec:['rec','Empfohlen'],ctx:['ctx','Bei Bedarf']}[lvl]||['ctx','Bei Bedarf'];}
+function psaCard(s){
+  var rows=psaProfile(s);
+  var body=rows.map(function(r){var t=psaLevelTag(r.lvl);
+    return '<div class="psa-row"><span class="psa-ic">'+PSA_ICON[r.ic]+'</span><div class="psa-tx"><div class="psa-t">'+esc(r.t)+'<span class="psa-tag '+t[0]+'">'+t[1]+'</span></div><div class="psa-v">'+esc(r.val)+'</div>'+(r.sub?'<div class="psa-s">'+esc(r.sub)+'</div>':'')+'</div></div>';}).join('');
+  return '<div class="psa-card"><div class="psa-h">'+ICO.info+'<div><b>Persönliche Schutzausrüstung – stoffbezogen</b><small>Aus der GHS-Einstufung abgeleitet. Massgeblich ist das SDB Abschnitt 8 des Herstellers.</small></div></div>'+body+'</div>';
+}
 /* ---------- Beschäftigungsbeschränkungen (Block 16) ---------- */
 function emplLimits(s){
   var codes={};hCodes(s.h).forEach(function(c){codes[c]=1;});var ghs=s.ghs||[];
@@ -2737,7 +2806,7 @@ function scrDetail(){
     '<div class="instr-head"><div><b>Instruktionsnachweis</b><small>'+(iCount?('Instruiert: '+iCount+' · zuletzt '+fmtDate(iLast)):'Noch keine Instruktion erfasst')+'</small></div>'+(iDue?'<span class="instr-badge due">fällig</span>':'<span class="instr-badge ok">aktuell</span>')+'</div>'+
     '<div class="btn-row" style="margin-top:11px"><button class="btn secondary" data-action="instrList" data-id="'+s.id+'">Nachweise</button><button class="btn secondary" data-action="instrQr" data-id="'+s.id+'">'+ICO.qr+' Instruktions-QR</button></div>'+
     '<button class="btn" data-action="instrConfirm" data-id="'+s.id+'" style="width:100%;margin-top:9px">'+ICO.ok+' Instruktion bestätigen</button></div>';
-  return '<div class="view">'+hero+notes+bestand+stamm+emplCard(s)+'<button class="btn secondary" data-action="genBA" data-id="'+s.id+'" style="width:100%;margin-top:14px">'+ICO.doc+' Betriebsanweisung erstellen</button>'+'<button class="btn secondary" data-action="gbOpen" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Gefährdungsbeurteilung erstellen</button>'+instrBlock+oth+disclaimer()+'</div>';
+  return '<div class="view">'+hero+notes+bestand+stamm+psaCard(s)+emplCard(s)+'<button class="btn secondary" data-action="genBA" data-id="'+s.id+'" style="width:100%;margin-top:14px">'+ICO.doc+' Betriebsanweisung erstellen</button>'+'<button class="btn secondary" data-action="gbOpen" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Gefährdungsbeurteilung erstellen</button>'+instrBlock+oth+disclaimer()+'</div>';
 }
 
 /* ===== LAGERORTDETAIL (nützlicher) ===== */
