@@ -725,6 +725,19 @@
   .wem-row.i .wem-d{background:var(--ink-3)}
   .wem-row b{font-size:12.5px;color:var(--ink)}
   .wem-row small{display:block;font-size:11px;color:var(--ink-3);margin-top:1px;line-height:1.4}
+  .pfm-wrap{display:flex;justify-content:center;align-items:center;min-height:360px}
+  .pfm{width:330px;max-width:100%;display:flex;flex-direction:column;gap:9px}
+  .pfm-row{display:flex;align-items:center;gap:11px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 13px;box-shadow:0 12px 30px -22px rgba(16,36,28,.4)}
+  .pfm-row.over{border-left:3px solid var(--danger)}
+  .pfm-row.soon{border-left:3px solid var(--sun)}
+  .pfm-row.ok{border-left:3px solid var(--ok)}
+  .pfm-mid{flex:1;min-width:0}
+  .pfm-mid b{font-size:13px;color:var(--ink)}
+  .pfm-mid small{display:block;font-size:11px;margin-top:2px}
+  .pfm-row.over small{color:var(--danger)}
+  .pfm-row.soon small{color:var(--sun)}
+  .pfm-row.ok small{color:var(--ink-3)}
+  .pfm-btn{flex:none;border:1px solid var(--line);background:var(--surface);color:var(--brand);font:inherit;font-size:11.5px;font-weight:700;padding:7px 11px;border-radius:8px;cursor:pointer;transition:background .2s,color .2s}
 </style>
 </head>
 <body>
@@ -873,7 +886,7 @@
       <h2>Alles, was ein Gefahrstoff-Kataster braucht.</h2>
       <p class="lead">Wähle eine Funktion – jede zeigt live, wie sie im Alltag funktioniert. Von der KI-Erfassung bis zum Notfall-Modus.</p>
     </div>
-    <div class="fx-tabs" id="fxTabs"><button class="fx-tab on" data-fx="kidemo-sec">SDB per KI</button><button class="fx-tab" data-fx="ba-sec">Betriebsanweisung</button><button class="fx-tab" data-fx="katalog-sec">Barcode-Katalog</button><button class="fx-tab" data-fx="instr-sec">Instruktion</button><button class="fx-tab" data-fx="lang-sec">Mehrsprachig</button><button class="fx-tab" data-fx="ask-sec">Frag StoffScan</button><button class="fx-tab" data-fx="gb-sec">Gefährdungsbeurteilung</button><button class="fx-tab" data-fx="fw-sec">Feuerwehr-Karte</button><button class="fx-tab" data-fx="notfall-sec">Notfall-Modus</button><button class="fx-tab" data-fx="dossier-sec">Prüf-Dossier</button><button class="fx-tab" data-fx="lotse-sec">Compliance-Lotse</button><button class="fx-tab" data-fx="starter-sec">Starterkatalog</button><button class="fx-tab" data-fx="pwa-sec">Offline / App</button><button class="fx-tab" data-fx="ampel-sec">Standort-Ampel</button><button class="fx-tab" data-fx="empl-sec">Personenschutz</button><button class="fx-tab" data-fx="stfv-sec">Mengenschwellen</button><button class="fx-tab" data-fx="psa-sec">PSA punktgenau</button><button class="fx-tab" data-fx="label-sec">Umfüll-Etikett</button><button class="fx-tab" data-fx="ls-sec">Lieferschein</button><button class="fx-tab" data-fx="veva-sec">Entsorgungsbeleg</button><button class="fx-tab" data-fx="audit-sec">Audit-Log</button><button class="fx-tab" data-fx="we-sec">Wareneingang</button></div>
+    <div class="fx-tabs" id="fxTabs"><button class="fx-tab on" data-fx="kidemo-sec">SDB per KI</button><button class="fx-tab" data-fx="ba-sec">Betriebsanweisung</button><button class="fx-tab" data-fx="katalog-sec">Barcode-Katalog</button><button class="fx-tab" data-fx="instr-sec">Instruktion</button><button class="fx-tab" data-fx="lang-sec">Mehrsprachig</button><button class="fx-tab" data-fx="ask-sec">Frag StoffScan</button><button class="fx-tab" data-fx="gb-sec">Gefährdungsbeurteilung</button><button class="fx-tab" data-fx="fw-sec">Feuerwehr-Karte</button><button class="fx-tab" data-fx="notfall-sec">Notfall-Modus</button><button class="fx-tab" data-fx="dossier-sec">Prüf-Dossier</button><button class="fx-tab" data-fx="lotse-sec">Compliance-Lotse</button><button class="fx-tab" data-fx="starter-sec">Starterkatalog</button><button class="fx-tab" data-fx="pwa-sec">Offline / App</button><button class="fx-tab" data-fx="ampel-sec">Standort-Ampel</button><button class="fx-tab" data-fx="empl-sec">Personenschutz</button><button class="fx-tab" data-fx="stfv-sec">Mengenschwellen</button><button class="fx-tab" data-fx="psa-sec">PSA punktgenau</button><button class="fx-tab" data-fx="label-sec">Umfüll-Etikett</button><button class="fx-tab" data-fx="ls-sec">Lieferschein</button><button class="fx-tab" data-fx="veva-sec">Entsorgungsbeleg</button><button class="fx-tab" data-fx="audit-sec">Audit-Log</button><button class="fx-tab" data-fx="we-sec">Wareneingang</button><button class="fx-tab" data-fx="pruef-sec">Prüffristen</button></div>
   </div>
   <div class="fx-stagewrap">
     <button class="fx-arrow prev" data-fx-nav="-1" aria-label="Vorherige Funktion">&#8249;</button>
@@ -1401,6 +1414,28 @@
         <div class="wem-row r"><span class="wem-d">✕</span><div><b>SDB fehlt</b><small>Vor Lagerung Sicherheitsdatenblatt beschaffen.</small></div></div>
         <div class="wem-row y"><span class="wem-d">!</span><div><b>Zusammenlagerung nur bedingt</b><small>LK 3 + LK 8 · Einzelfall im SDB prüfen</small></div></div>
         <div class="wem-row i"><span class="wem-d">i</span><div><b>Lagerklasse 3</b><small>Entzündbare Flüssigkeiten</small></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="fx-panel" id="pruef-sec">
+  <div class="wrap ba-mkt">
+    <div class="ba-mkt-copy">
+      <div class="eyebrow">Nichts mehr vergessen</div>
+      <h2>Prüffristen im Blick.</h2>
+      <p class="lead">Auffangwanne, Not-/Augendusche, Feuerlöscher, Lagerkontrolle: StoffScan erinnert an wiederkehrende Prüfungen – schlank, ohne schwerfälliges Wartungsmodul. Jede Bestätigung wandert automatisch ins revisionssichere Audit-Log und ins Prüf-Dossier.</p>
+      <ul class="ba-mkt-list">
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Erinnerung an fällige und überfällige Prüfungen</li>
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Ein Klick zum Bestätigen &ndash; mit Datum</li>
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Fliesst automatisch ins Audit-Dossier</li>
+      </ul>
+    </div>
+    <div class="pfm-wrap">
+      <div class="pfm" id="pfMkt">
+        <div class="pfm-row over" data-k="0"><div class="pfm-mid"><b>Feuerlöscher geprüft</b><small id="pfm0s">überfällig seit 04.08.2026</small></div><button class="pfm-btn" data-k="0">Bestätigen</button></div>
+        <div class="pfm-row soon" data-k="1"><div class="pfm-mid"><b>Auffangwannen kontrolliert</b><small id="pfm1s">fällig bis 20.09.2026</small></div><button class="pfm-btn" data-k="1">Bestätigen</button></div>
+        <div class="pfm-row ok" data-k="2"><div class="pfm-mid"><b>Lagerkontrolle</b><small id="pfm2s">nächste Prüfung 12.02.2027</small></div><button class="pfm-btn" data-k="2">Bestätigen</button></div>
       </div>
     </div>
   </div>
@@ -1983,6 +2018,18 @@
   function reset(){tampered=false;rows.forEach(function(r){r.classList.remove('brk');});banner.classList.remove('bad');btxt.textContent='Kette intakt · 4 Einträge';btn.textContent='Manipulation simulieren';}
   function tamper(){tampered=true;rows.forEach(function(r){var n=+r.getAttribute('data-n');if(n>=2)r.classList.add('brk');});banner.classList.add('bad');btxt.textContent='Kette gebrochen bei Nr. 2';btn.textContent='Zurücksetzen';var m=rows[1].querySelector('small');if(m)m.textContent='Aceton [nachträglich geändert]';}
   if(btn)btn.addEventListener('click',function(){tampered?reset():tamper();});
+})();
+(function(){
+  var sec=document.getElementById('pruef-sec');if(!sec)return;
+  var texts=['nächste Prüfung heute + 12 Mte','nächste Prüfung heute + 12 Mte','nächste Prüfung 12.02.2027'];
+  sec.querySelectorAll('.pfm-btn').forEach(function(b){b.addEventListener('click',function(){
+    var k=+b.getAttribute('data-k');var row=sec.querySelector('.pfm-row[data-k="'+k+'"]');
+    row.classList.remove('over','soon');row.classList.add('ok');
+    var d=new Date();d.setMonth(d.getMonth()+(k===2?6:12));
+    var s=('0'+d.getDate()).slice(-2)+'.'+('0'+(d.getMonth()+1)).slice(-2)+'.'+d.getFullYear();
+    var sm=document.getElementById('pfm'+k+'s');if(sm)sm.textContent='bestätigt · nächste Prüfung '+s;
+    b.textContent='✓ erledigt';b.disabled=true;b.style.opacity=.6;
+  });});
 })();
 </script>
 </body>

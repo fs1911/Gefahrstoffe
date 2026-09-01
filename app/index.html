@@ -860,6 +860,23 @@
   .lbl-foot{margin-top:6px;font-size:9px;color:#777;line-height:1.35}
   .ls-lead{font-size:12.5px;color:var(--ink-2);margin:0 0 13px;line-height:1.5}
   .vv-chk{display:flex;align-items:center;gap:9px;margin-bottom:11px;cursor:pointer}
+  .chk-wrap{margin-top:4px}
+  .chk-expl{display:flex;gap:8px;align-items:flex-start;font-size:11.5px;color:var(--ink-3);line-height:1.5;margin-bottom:12px}
+  .chk-expl svg{width:15px;height:15px;flex:none;margin-top:1px;color:var(--ink-3)}
+  .chk-row{display:flex;gap:11px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:11px 13px;margin-bottom:9px;background:var(--surface)}
+  .chk-row.over{border-left:3px solid var(--danger)}
+  .chk-row.soon{border-left:3px solid var(--sun)}
+  .chk-row.ok{border-left:3px solid var(--ok)}
+  .chk-mid{flex:1;min-width:0}
+  .chk-t{display:flex;align-items:center;gap:8px;font-weight:700;font-size:13px;color:var(--ink);flex-wrap:wrap}
+  .chk-badge{font-size:9.5px;font-weight:700;border-radius:20px;padding:2px 8px;text-transform:uppercase;letter-spacing:.02em}
+  .chk-badge.over{background:var(--danger-bg);color:var(--danger)}
+  .chk-badge.soon{background:var(--sun-bg);color:var(--sun)}
+  .chk-badge.ok{background:var(--ok-bg);color:var(--ok)}
+  .chk-s{font-size:11.5px;color:var(--ink-2);margin-top:2px}
+  .chk-meta{font-size:10.5px;color:var(--ink-3);margin-top:3px}
+  .chk-btn{flex:none;width:auto;white-space:nowrap;padding:8px 14px;font-size:12px;align-self:center}
+  @media(max-width:520px){.chk-row{flex-direction:column;align-items:stretch}.chk-btn{width:100%}}
   .we-card{border:1px solid var(--line);border-radius:14px;background:var(--surface);margin-top:14px;overflow:hidden}
   .we-h{display:flex;align-items:flex-start;gap:9px;padding:12px 14px;border-bottom:1px solid var(--line-2)}
   .we-h svg{width:17px;height:17px;flex:none;margin-top:1px}
@@ -2652,6 +2669,36 @@ function ampelBoard(fc){
   }).join('');
   return legend+cards;
 }
+/* ---------- Prüffristen – schlanke Erinnerung (Block 24) ---------- */
+var CHECK_TYPES=[
+  {k:'wanne',name:'Auffangwannen kontrolliert',months:12,hint:'Dichtheit, Rückhaltevolumen, keine Rückstände.'},
+  {k:'dusche',name:'Not-/Augendusche geprüft',months:12,hint:'Funktion und Erreichbarkeit.'},
+  {k:'loescher',name:'Feuerlöscher geprüft',months:12,hint:'Prüfplakette gültig.'},
+  {k:'lager',name:'Lagerkontrolle · Ordnung & Kennzeichnung',months:6,hint:'Etiketten lesbar, Zusammenlagerung eingehalten.'},
+  {k:'sdb',name:'SDB-Bestand auf Aktualität geprüft',months:12,hint:'Sicherheitsdatenblätter aktuell.'}
+];
+function checksKey(){return (typeof orgId==='function'&&orgId())||'demo';}
+function checksGet(){try{var all=JSON.parse(localStorage.getItem('stoffscan_checks_v1')||'{}');return all[checksKey()]||{};}catch(e){return {};}}
+function checksSet(map){try{var all=JSON.parse(localStorage.getItem('stoffscan_checks_v1')||'{}');all[checksKey()]=map;localStorage.setItem('stoffscan_checks_v1',JSON.stringify(all));}catch(e){}}
+function checkStatus(lastIso,months){
+  if(!lastIso)return {lvl:'over',next:null,label:'noch nie bestätigt'};
+  var last=new Date(lastIso),next=new Date(last);next.setMonth(next.getMonth()+months);
+  var now=new Date(),ms=next-now,day=86400000;
+  var nextIso=next.toISOString().slice(0,10);
+  if(ms<0)return {lvl:'over',next:nextIso,label:'überfällig seit '+fmtDate(nextIso)};
+  if(ms<30*day)return {lvl:'soon',next:nextIso,label:'fällig bis '+fmtDate(nextIso)};
+  return {lvl:'ok',next:nextIso,label:'nächste Prüfung '+fmtDate(nextIso)};
+}
+function checksDueCount(){var m=checksGet(),n=0;CHECK_TYPES.forEach(function(t){var st=checkStatus(m[t.k],t.months);if(st.lvl!=='ok')n++;});return n;}
+function checkConfirm(k){var t=CHECK_TYPES.filter(function(x){return x.k===k;})[0];if(!t)return;var m=checksGet();m[k]=todayStr();checksSet(m);addHistory('Prüffrist bestätigt',t.name);toast('Prüfung bestätigt · im Audit-Log dokumentiert');render();}
+function checksBoard(){
+  var m=checksGet();
+  var rows=CHECK_TYPES.map(function(t){var st=checkStatus(m[t.k],t.months);
+    var badge='<span class="chk-badge '+st.lvl+'">'+(st.lvl==='over'?'überfällig':st.lvl==='soon'?'bald fällig':'aktuell')+'</span>';
+    var last=m[t.k]?('zuletzt '+fmtDate(m[t.k])):'noch nie bestätigt';
+    return '<div class="chk-row '+st.lvl+'"><div class="chk-mid"><div class="chk-t">'+esc(t.name)+badge+'</div><div class="chk-s">'+esc(t.hint)+'</div><div class="chk-meta">'+esc(last)+' · Intervall '+t.months+' Mte · '+esc(st.label)+'</div></div><button class="btn secondary chk-btn" data-action="checkConfirm" data-id="'+t.k+'">'+ICO.ok+' Bestätigen</button></div>';}).join('');
+  return '<div class="chk-wrap"><div class="chk-expl">'+ICO.info+'<span>Schlanke Erinnerung an wiederkehrende Prüfungen – kein Wartungsmodul. Jede Bestätigung wird ins <b>Audit-Log</b> geschrieben und erscheint im Prüf-Dossier.</span></div>'+rows+'</div>';
+}
 /* ---------- Wareneingangs-Check (Block 23) ---------- */
 function weCheck(subId,locId){
   var s=substance(subId);var items=[];if(!s)return {level:'g',items:items};
@@ -3330,7 +3377,8 @@ function scrAdmin(){
   const inScope=i=>!fc||location_(i.loc).company===fc;
   const allHb=DB.instances.filter(i=>inScope(i)&&instWarn(i));
   const ampRed=DB.locations.filter(function(l){return (!fc||l.company===fc)&&locAmpel(l.id).level==='r';}).length;
-  const tabs=[['ampel','Ampel',ampRed],['hb','Handlungsbedarf',allHb.length],['stoffe','Stoffstamm',null],['lager','Lagerorte',null],['firmen','Firmen',null],['personen','Personen',null],['verlauf','Audit-Log',null]];
+  const pruefDue=checksDueCount();
+  const tabs=[['ampel','Ampel',ampRed],['hb','Handlungsbedarf',allHb.length],['stoffe','Stoffstamm',null],['lager','Lagerorte',null],['firmen','Firmen',null],['personen','Personen',null],['pruef','Prüffristen',pruefDue],['verlauf','Audit-Log',null]];
   const tabsHtml='<div class="tabs">'+tabs.map(t=>'<button class="tab '+(tab===t[0]?'active':'')+'" data-action="adminTab" data-id="'+t[0]+'">'+t[1]+(t[2]!=null?'<span class="cnt'+(t[2]?' alert':'')+'">'+t[2]+'</span>':'')+'</button>').join('')+'</div>';
   const fOpts='<option value="">Alle Firmen (Gruppe)</option>'+DB.companies.filter(c=>!c.group).map(c=>'<option value="'+c.id+'" '+(fc===c.id?'selected':'')+'>'+c.name+'</option>').join('');
   const filterBar='<div class="field admin-filter"><label>Firma eingrenzen</label><select data-action="adminCompany">'+fOpts+'</select></div>';
@@ -3373,6 +3421,8 @@ function scrAdmin(){
       return '<div class="mrow"><span class="mg">'+ICO.user+'</span><span class="mm"><span class="mt">'+u.name+'</span><span class="ms">'+(c?firmTag(u.company):'')+' <span class="role-tag">'+u.role+'</span></span></span><span class="row-actions"><button class="edit-btn" data-action="editUser" data-id="'+u.id+'" aria-label="Bearbeiten">'+ICO.edit+'</button><button class="del-btn" data-action="delUser" data-id="'+u.id+'" aria-label="Löschen">'+ICO.trash+'</button></span></div>';}).join('') ||'<div class="empty">'+ICO.user+'<div>Keine Personen.</div></div>';
   }else if(tab==='verlauf'){
     body=filterBar+auditBoard(fc);
+  }else if(tab==='pruef'){
+    body=filterBar+checksBoard();
   }
   const exportBar='<div class="label-h" style="margin-top:24px">Export &amp; Druck'+(fc?' · '+company(fc).name:' · ganze Gruppe')+'</div>'+
     '<div class="exp-grid">'+
@@ -3613,6 +3663,7 @@ document.addEventListener('click',e=>{
     case 'auditPdf':auditReportPdf();break;
     case 'auditTamper':auditTamperDemo();render();break;
     case 'auditReseal':auditResealDo();render();break;
+    case 'checkConfirm':checkConfirm(id);break;
     case 'dossier':dossierPdf();break;
     case 'starterOpen':modalStarter();break;
     case 'starterPreview':modalStarterPreview(id);break;

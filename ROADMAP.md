@@ -258,7 +258,13 @@ damit Kunden den Nutzen sehen (Ziel: Wow-Demo direkt auf der Website).
       Nicht empfohlen"), `weLieferBanner` fasst den Check im Lieferschein-Import je Ziel-Lagerort
       zusammen (Positionen ohne SDB + Zusammenlagerungs-Konflikte, dedupliziert). Marketing-Slide
       „Wareneingang". Beide Apps synchron.
-24. [ ] **Prüffristen – schlanke Erinnerung** (7) — kein Wartungsmodul; fliesst ins Audit-Dossier
+24. [x] **Prüffristen – schlanke Erinnerung** (7) — kein Wartungsmodul; fliesst ins Audit-Dossier
+    → `CHECK_TYPES` (Auffangwanne, Not-/Augendusche, Feuerlöscher, Lagerkontrolle, SDB-Bestand) mit
+      Intervall; `checkStatus` berechnet aktuell/bald fällig/überfällig. Admin-Tab „Prüffristen" mit
+      Fällig-Zähler und Board; `checkConfirm` setzt das Datum und schreibt einen Audit-Log-Eintrag
+      („Prüffrist bestätigt") → landet im Prüf-Dossier. Persistenz client-seitig pro Org
+      (localStorage, offline-tauglich) – bewusst schlank, kein Wartungsmodul. Marketing-Slide
+      „Prüffristen". Beide Apps synchron.
 25. [ ] **Substitution – nur Flag „CMR: Ersatz prüfen"** (7) — keine Alternativen-Datenbank
 
 ### Separat behandeln (Vertrieb/GTM, kein App-Feature)
