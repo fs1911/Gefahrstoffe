@@ -764,6 +764,31 @@
   .pwa-steps{display:flex;flex-direction:column;gap:10px;font-size:13.5px;color:var(--ink-2);line-height:1.5}
   .pwa-steps b{color:var(--ink)}
   .pwa-note{margin-top:13px;font-size:12.5px;color:var(--ink-3);line-height:1.5}
+  .amp-legend{display:flex;gap:16px;flex-wrap:wrap;margin:8px 0 14px;font-size:12.5px;color:var(--ink-2)}
+  .amp-legend span{display:inline-flex;align-items:center;gap:6px}
+  .amp-dot{width:12px;height:12px;border-radius:50%;flex:none;display:inline-block}
+  .amp-dot.r{background:var(--danger)}.amp-dot.y{background:var(--sun)}.amp-dot.g{background:var(--ok)}
+  .amp-comp{border:1px solid var(--line);border-radius:14px;margin-bottom:14px;overflow:hidden;background:var(--surface)}
+  .amp-comp-h{display:flex;align-items:center;gap:11px;padding:13px 14px;border-bottom:1px solid var(--line-2)}
+  .amp-comp-h .amp-dot{width:16px;height:16px}
+  .amp-ctx{flex:1;min-width:0}
+  .amp-ctx b{font-size:15px}
+  .amp-ctx small{display:block;color:var(--ink-3);font-size:12px}
+  .amp-badge{flex:none;font-size:11px;font-weight:700;border-radius:20px;padding:4px 11px}
+  .amp-badge.r{background:var(--danger-bg);color:var(--danger)}
+  .amp-badge.y{background:var(--sun-bg);color:var(--sun)}
+  .amp-badge.g{background:var(--ok-bg);color:var(--ok)}
+  .amp-loc{display:flex;align-items:center;gap:11px;width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--line-2);padding:11px 14px;cursor:pointer;font-family:var(--font)}
+  .amp-loc:first-of-type{border-top:0}
+  .amp-lname{flex:1;min-width:0;font-size:14px;color:var(--ink)}
+  .amp-lname small{display:block;color:var(--ink-3);font-size:11.5px}
+  .amp-cnt{flex:none;font-size:12px;color:var(--ink-2);font-weight:600}
+  .amp-loc .chev{flex:none;color:var(--ink-3);display:flex}
+  .amp-loc .chev svg{width:16px;height:16px}
+  .amp-empty{padding:11px 14px;color:var(--ink-3);font-size:12.5px}
+  .mrow.amp-r{border-left:3px solid var(--danger)}
+  .mrow.amp-y{border-left:3px solid var(--sun)}
+  .mrow.amp-g{border-left:3px solid var(--ok)}
   #printArea{display:none}
   @media print{
     @page{size:A4;margin:12mm}
@@ -2395,6 +2420,38 @@ window.addEventListener('offline',pwaUpdateOnline);
 function pwaInstallCard(){return '<div class="pwa-card"><div class="pwa-ic">'+ICO_DL+'</div><div class="pwa-tx"><b>Als App installieren</b><small>StoffScan auf den Startbildschirm legen – läuft dann wie eine App und funktioniert auch offline: Stoffkarten, Betriebsanweisungen &amp; Notfall.</small></div><button class="btn secondary" data-action="pwaInstall">'+ICO_DL+' Installieren</button></div>';}
 
 if(document.readyState!=="loading")pwaUpdateOnline();else window.addEventListener("DOMContentLoaded",pwaUpdateOnline);
+/* ---------- Compliance-Ampel je Standort (Block 15) ---------- */
+function locOpenItems(locId){
+  var items=[];
+  instsAtLoc(locId).forEach(function(i){var s=substance(i.sub);if(!s)return;
+    if(s.sdb.status==='fehlt')items.push({p:0});
+    else if(s.sdb.status==='alt')items.push({p:1});
+    if(i.menge==null)items.push({p:1});
+    if(typeof instrDue==='function'&&instrDue(s.id))items.push({p:1});
+  });
+  locConflicts(locId).forEach(function(c){items.push({p:c.rate==='r'?0:1});});
+  return items;
+}
+function ampelLevel(items){var r=false,y=false;items.forEach(function(x){if(x.p===0)r=true;else y=true;});return r?'r':(y?'y':'g');}
+function locAmpel(locId){var it=locOpenItems(locId);return {level:ampelLevel(it),open:it.length};}
+function companyAmpel(cid){var locs=DB.locations.filter(function(l){return l.company===cid;});var worst='g',open=0;locs.forEach(function(l){var a=locAmpel(l.id);open+=a.open;if(a.level==='r')worst='r';else if(a.level==='y'&&worst!=='r')worst='y';});return {level:worst,open:open,locs:locs.length};}
+function ampelLabel(lv){return lv==='r'?'Handeln':lv==='y'?'Prüfen':'In Ordnung';}
+function ampRank(lv){return lv==='r'?0:lv==='y'?1:2;}
+function ampelBoard(fc){
+  var comps=DB.companies.filter(function(c){return !c.group&&(!fc||c.id===fc)&&DB.locations.some(function(l){return l.company===c.id;});});
+  comps.sort(function(a,b){return ampRank(companyAmpel(a.id).level)-ampRank(companyAmpel(b.id).level);});
+  var legend='<div class="amp-legend"><span><i class="amp-dot r"></i>Handlungsbedarf</span><span><i class="amp-dot y"></i>zu prüfen</span><span><i class="amp-dot g"></i>in Ordnung</span></div>';
+  if(!comps.length)return legend+'<div class="empty">'+ICO.info+'<div>Keine Firmen erfasst.</div></div>';
+  var cards=comps.map(function(c){
+    var a=companyAmpel(c.id);
+    var locs=DB.locations.filter(function(l){return l.company===c.id;});
+    locs.sort(function(x,y){return ampRank(locAmpel(x.id).level)-ampRank(locAmpel(y.id).level);});
+    var locRows=locs.length?locs.map(function(l){var la=locAmpel(l.id);
+      return '<button class="amp-loc" data-action="openLoc" data-id="'+l.id+'"><span class="amp-dot '+la.level+'"></span><span class="amp-lname">'+esc(l.name)+'<small>'+esc(l.bereich||'')+'</small></span><span class="amp-cnt">'+(la.open?(la.open+' offen'):'prüfbereit')+'</span><span class="chev">'+ICO.chev+'</span></button>';}).join(''):'<div class="amp-empty">Keine Lagerorte erfasst.</div>';
+    return '<div class="amp-comp"><div class="amp-comp-h"><span class="amp-dot '+a.level+'"></span><div class="amp-ctx"><b>'+esc(c.name)+'</b><small>'+locs.length+' Lagerorte'+(a.open?' · '+a.open+' offene Punkte':' · prüfbereit')+'</small></div><span class="amp-badge '+a.level+'">'+ampelLabel(a.level)+'</span></div>'+locRows+'</div>';
+  }).join('');
+  return legend+cards;
+}
 function baCodes(str){var out=[];(String(str||'').match(/[HP]\d{3}(?:\s*\+\s*[HP]\d{3})*/g)||[]).forEach(function(c){out.push(c.replace(/\s+/g,''));});return out;}
 function baText(code,map){if(map[code])return map[code];if(code.indexOf('+')>-1){return code.split('+').map(function(c){return map[c]||c;}).join(' ');}return code;}
 function baList(codes,map){return codes.length?('<ul>'+codes.map(function(c){return '<li><b>'+c+'</b> '+esc(baText(c,map))+'</li>';}).join('')+'</ul>'):'<p class="ba-empty">Keine Angaben hinterlegt.</p>';}
@@ -2601,13 +2658,15 @@ function scrAdmin(){
   const fc=state.adminCompany;
   const inScope=i=>!fc||location_(i.loc).company===fc;
   const allHb=DB.instances.filter(i=>inScope(i)&&instWarn(i));
-  const tabs=[['hb','Handlungsbedarf',allHb.length],['stoffe','Stoffstamm',null],['lager','Lagerorte',null],['firmen','Firmen',null],['personen','Personen',null],['verlauf','Verlauf',null]];
+  const ampRed=DB.locations.filter(function(l){return (!fc||l.company===fc)&&locAmpel(l.id).level==='r';}).length;
+  const tabs=[['ampel','Ampel',ampRed],['hb','Handlungsbedarf',allHb.length],['stoffe','Stoffstamm',null],['lager','Lagerorte',null],['firmen','Firmen',null],['personen','Personen',null],['verlauf','Verlauf',null]];
   const tabsHtml='<div class="tabs">'+tabs.map(t=>'<button class="tab '+(tab===t[0]?'active':'')+'" data-action="adminTab" data-id="'+t[0]+'">'+t[1]+(t[2]!=null?'<span class="cnt'+(t[2]?' alert':'')+'">'+t[2]+'</span>':'')+'</button>').join('')+'</div>';
   const fOpts='<option value="">Alle Firmen (Gruppe)</option>'+DB.companies.filter(c=>!c.group).map(c=>'<option value="'+c.id+'" '+(fc===c.id?'selected':'')+'>'+c.name+'</option>').join('');
   const filterBar='<div class="field admin-filter"><label>Firma eingrenzen</label><select data-action="adminCompany">'+fOpts+'</select></div>';
 
   let body='';
-  if(tab==='hb'){
+  if(tab==='ampel'){body=filterBar+ampelBoard(fc);}
+  else if(tab==='hb'){
     const noSdb=DB.instances.filter(i=>inScope(i)&&substance(i.sub).sdb.status==='fehlt');
     const incompl=DB.instances.filter(i=>inScope(i)&&instIncomplete(i));
     const zlEntries=allZlConflicts(l=>!fc||l.company===fc);
@@ -2632,11 +2691,11 @@ function scrAdmin(){
     const locs=DB.locations.filter(l=>!fc||l.company===fc);
     body=filterBar+'<button class="add-btn" data-action="addLocation">'+ICO.plus+' Lagerort hinzufügen</button>'+
       (locs.length?locs.map(l=>{const ins=instsAtLoc(l.id);const w=ins.filter(instWarn).length;
-      return '<div class="mrow"><button class="ag" style="all:unset;flex:1;min-width:0;display:flex;align-items:center;gap:11px;cursor:pointer" data-action="openLoc" data-id="'+l.id+'"><span class="mg">'+ICO.loc+'</span><span class="mm"><span class="mt">'+l.name+'</span><span class="ms">'+firmTag(l.company)+' '+l.bereich+' · '+ins.length+' Stoffe'+(w?' · <b style="color:var(--warn)">'+w+' offen</b>':'')+'</span></span></button><span class="row-actions"><button class="edit-btn" data-action="editLocation" data-id="'+l.id+'" aria-label="Bearbeiten">'+ICO.edit+'</button><button class="del-btn" data-action="delLocation" data-id="'+l.id+'" aria-label="Löschen">'+ICO.trash+'</button></span></div>';}).join(''):'<div class="empty">'+ICO.loc+'<div>Keine Lagerorte.</div></div>');
+      return '<div class="mrow amp-'+locAmpel(l.id).level+'"><button class="ag" style="all:unset;flex:1;min-width:0;display:flex;align-items:center;gap:11px;cursor:pointer" data-action="openLoc" data-id="'+l.id+'"><span class="mg">'+ICO.loc+'</span><span class="mm"><span class="mt">'+l.name+'</span><span class="ms">'+firmTag(l.company)+' '+l.bereich+' · '+ins.length+' Stoffe'+(w?' · <b style="color:var(--warn)">'+w+' offen</b>':'')+'</span></span></button><span class="row-actions"><button class="edit-btn" data-action="editLocation" data-id="'+l.id+'" aria-label="Bearbeiten">'+ICO.edit+'</button><button class="del-btn" data-action="delLocation" data-id="'+l.id+'" aria-label="Löschen">'+ICO.trash+'</button></span></div>';}).join(''):'<div class="empty">'+ICO.loc+'<div>Keine Lagerorte.</div></div>');
   }else if(tab==='firmen'){
     body='<button class="add-btn" data-action="addCompany">'+ICO.plus+' Firma hinzufügen</button>'+
       DB.companies.filter(c=>!c.group).map(c=>{const n=DB.instances.filter(i=>location_(i.loc).company===c.id).length;const lc=DB.locations.filter(l=>l.company===c.id).length;
-      return '<div class="mrow"><span class="mg">'+ICO.firma+'</span><span class="mm"><span class="mt">'+c.name+'</span><span class="ms">'+lc+' Lagerorte · '+n+' Bestände</span></span><span class="row-actions"><button class="edit-btn" data-action="editCompany" data-id="'+c.id+'" aria-label="Bearbeiten">'+ICO.edit+'</button><button class="del-btn" data-action="delCompany" data-id="'+c.id+'" aria-label="Löschen">'+ICO.trash+'</button></span></div>';}).join('');
+      return '<div class="mrow amp-'+companyAmpel(c.id).level+'"><span class="mg">'+ICO.firma+'</span><span class="mm"><span class="mt">'+c.name+'</span><span class="ms">'+lc+' Lagerorte · '+n+' Bestände</span></span><span class="row-actions"><button class="edit-btn" data-action="editCompany" data-id="'+c.id+'" aria-label="Bearbeiten">'+ICO.edit+'</button><button class="del-btn" data-action="delCompany" data-id="'+c.id+'" aria-label="Löschen">'+ICO.trash+'</button></span></div>';}).join('');
   }else if(tab==='personen'){
     const users=DB.users.filter(u=>!fc||u.company===fc).map(u=>{const c=company(u.company);const self=AUTH.profile&&u.id===AUTH.profile.id;
       return '<div class="mrow"><span class="mg">'+ICO.user+'</span><span class="mm"><span class="mt">'+u.name+(self?' (Sie)':'')+'</span><span class="ms">'+(c?firmTag(u.company):'')+' <span class="role-tag">'+u.role+'</span></span></span><span class="row-actions"><button class="edit-btn" data-action="editUser" data-id="'+u.id+'" aria-label="Bearbeiten">'+ICO.edit+'</button>'+(self?'':'<button class="del-btn" data-action="delUser" data-id="'+u.id+'" aria-label="Entfernen">'+ICO.trash+'</button>')+'</span></div>';}).join('');
