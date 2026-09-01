@@ -697,6 +697,21 @@
   .vvm-box{flex:1;border:1px solid #ccc;border-radius:5px;padding:8px 9px}
   .vvm-box small{font-size:9.5px;color:#666;text-transform:uppercase;letter-spacing:.03em}
   .vvm-sig{height:26px;border-bottom:1px solid #999;margin-top:14px}
+  .adm-wrap{display:flex;justify-content:center;align-items:center;min-height:360px}
+  .adm{width:330px;max-width:100%;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 22px 48px -20px rgba(16,36,28,.5)}
+  .adm-banner{display:flex;align-items:center;gap:9px;background:var(--ok-bg);color:var(--ok);border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:13px;transition:background .3s,color .3s}
+  .adm-banner.bad{background:var(--danger-bg);color:var(--danger)}
+  .adm-dot{width:9px;height:9px;border-radius:50%;background:currentColor;flex:none}
+  .adm-rows{display:flex;flex-direction:column;gap:7px}
+  .adm-row{display:flex;align-items:center;gap:10px;border:1px solid var(--line-2);border-radius:10px;padding:9px 11px;transition:border-color .3s,background .3s}
+  .adm-row.brk{border-color:var(--danger);background:var(--danger-bg)}
+  .adm-n{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--ink-3);width:26px;flex:none}
+  .adm-mid{flex:1;min-width:0}
+  .adm-mid b{font-size:12.5px;color:var(--ink)}
+  .adm-mid small{display:block;font-size:11px;color:var(--ink-3);margin-top:1px}
+  .adm-h{font-family:var(--mono);font-size:10.5px;color:var(--ink-3);flex:none}
+  .adm-row.brk .adm-h{color:var(--danger);font-weight:700}
+  .adm-btn{width:100%;margin-top:12px;border:1px dashed var(--line);background:transparent;color:var(--ink-2);font:inherit;font-size:12px;font-weight:600;padding:9px;border-radius:9px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -845,7 +860,7 @@
       <h2>Alles, was ein Gefahrstoff-Kataster braucht.</h2>
       <p class="lead">Wähle eine Funktion – jede zeigt live, wie sie im Alltag funktioniert. Von der KI-Erfassung bis zum Notfall-Modus.</p>
     </div>
-    <div class="fx-tabs" id="fxTabs"><button class="fx-tab on" data-fx="kidemo-sec">SDB per KI</button><button class="fx-tab" data-fx="ba-sec">Betriebsanweisung</button><button class="fx-tab" data-fx="katalog-sec">Barcode-Katalog</button><button class="fx-tab" data-fx="instr-sec">Instruktion</button><button class="fx-tab" data-fx="lang-sec">Mehrsprachig</button><button class="fx-tab" data-fx="ask-sec">Frag StoffScan</button><button class="fx-tab" data-fx="gb-sec">Gefährdungsbeurteilung</button><button class="fx-tab" data-fx="fw-sec">Feuerwehr-Karte</button><button class="fx-tab" data-fx="notfall-sec">Notfall-Modus</button><button class="fx-tab" data-fx="dossier-sec">Prüf-Dossier</button><button class="fx-tab" data-fx="lotse-sec">Compliance-Lotse</button><button class="fx-tab" data-fx="starter-sec">Starterkatalog</button><button class="fx-tab" data-fx="pwa-sec">Offline / App</button><button class="fx-tab" data-fx="ampel-sec">Standort-Ampel</button><button class="fx-tab" data-fx="empl-sec">Personenschutz</button><button class="fx-tab" data-fx="stfv-sec">Mengenschwellen</button><button class="fx-tab" data-fx="psa-sec">PSA punktgenau</button><button class="fx-tab" data-fx="label-sec">Umfüll-Etikett</button><button class="fx-tab" data-fx="ls-sec">Lieferschein</button><button class="fx-tab" data-fx="veva-sec">Entsorgungsbeleg</button></div>
+    <div class="fx-tabs" id="fxTabs"><button class="fx-tab on" data-fx="kidemo-sec">SDB per KI</button><button class="fx-tab" data-fx="ba-sec">Betriebsanweisung</button><button class="fx-tab" data-fx="katalog-sec">Barcode-Katalog</button><button class="fx-tab" data-fx="instr-sec">Instruktion</button><button class="fx-tab" data-fx="lang-sec">Mehrsprachig</button><button class="fx-tab" data-fx="ask-sec">Frag StoffScan</button><button class="fx-tab" data-fx="gb-sec">Gefährdungsbeurteilung</button><button class="fx-tab" data-fx="fw-sec">Feuerwehr-Karte</button><button class="fx-tab" data-fx="notfall-sec">Notfall-Modus</button><button class="fx-tab" data-fx="dossier-sec">Prüf-Dossier</button><button class="fx-tab" data-fx="lotse-sec">Compliance-Lotse</button><button class="fx-tab" data-fx="starter-sec">Starterkatalog</button><button class="fx-tab" data-fx="pwa-sec">Offline / App</button><button class="fx-tab" data-fx="ampel-sec">Standort-Ampel</button><button class="fx-tab" data-fx="empl-sec">Personenschutz</button><button class="fx-tab" data-fx="stfv-sec">Mengenschwellen</button><button class="fx-tab" data-fx="psa-sec">PSA punktgenau</button><button class="fx-tab" data-fx="label-sec">Umfüll-Etikett</button><button class="fx-tab" data-fx="ls-sec">Lieferschein</button><button class="fx-tab" data-fx="veva-sec">Entsorgungsbeleg</button><button class="fx-tab" data-fx="audit-sec">Audit-Log</button></div>
   </div>
   <div class="fx-stagewrap">
     <button class="fx-arrow prev" data-fx-nav="-1" aria-label="Vorherige Funktion">&#8249;</button>
@@ -1323,6 +1338,33 @@
         <div class="vvm-code"><span>Menge</span><b>3 l</b></div>
         <div class="vvm-code"><span>UN-Nummer</span><b>1950</b></div>
         <div class="vvm-parties"><div class="vvm-box"><small>Abgeber</small><div class="vvm-sig"></div></div><div class="vvm-box"><small>Empfänger</small><div class="vvm-sig"></div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="fx-panel" id="audit-sec">
+  <div class="wrap ba-mkt">
+    <div class="ba-mkt-copy">
+      <div class="eyebrow">Nachweis für die Kontrolle</div>
+      <h2>Revisionssicheres Audit-Log.</h2>
+      <p class="lead">Jede Aktion wird automatisch protokolliert – wer, was, wann. Die Einträge sind über eine Hash-Kette versiegelt: Wird nachträglich etwas geändert oder gelöscht, bricht die Kette und ist sofort sichtbar. So haben Sie bei einer Kontrolle einen lückenlosen, manipulationssicheren Nachweis.</p>
+      <ul class="ba-mkt-list">
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Automatisches Protokoll aller Aktionen (wer / was / wann)</li>
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Hash-Kette macht Manipulation sofort sichtbar</li>
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Als PDF-Protokoll für die Behörde exportierbar</li>
+      </ul>
+    </div>
+    <div class="adm-wrap">
+      <div class="adm" id="adMkt">
+        <div class="adm-banner" id="admBanner"><span class="adm-dot"></span><b id="admBtxt">Kette intakt · 4 Einträge</b></div>
+        <div class="adm-rows">
+          <div class="adm-row" data-n="1"><span class="adm-n">#1</span><div class="adm-mid"><b>Bestand erfasst</b><small>Bremsenreiniger · Werkhof Nord</small></div><span class="adm-h">A3F9C1…</span></div>
+          <div class="adm-row" data-n="2"><span class="adm-n">#2</span><div class="adm-mid"><b>SDB ergänzt</b><small>Aceton</small></div><span class="adm-h">7B2E04…</span></div>
+          <div class="adm-row" data-n="3"><span class="adm-n">#3</span><div class="adm-mid"><b>Instruktion bestätigt</b><small>M. Muster</small></div><span class="adm-h">E1D8AA…</span></div>
+          <div class="adm-row" data-n="4"><span class="adm-n">#4</span><div class="adm-mid"><b>Wareneingang</b><small>3 Positionen</small></div><span class="adm-h">92CF37…</span></div>
+        </div>
+        <button class="adm-btn" id="admTamper" type="button">Manipulation simulieren</button>
       </div>
     </div>
   </div>
@@ -1897,6 +1939,14 @@
   function start(){if(done)return;done=true;render();}
   if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)start();});},{threshold:.3});io.observe(sec);}else start();
   sec.querySelectorAll&&document.querySelectorAll('[data-fx="ls-sec"]').forEach(function(b){b.addEventListener('click',function(){done=false;start();});});
+})();
+(function(){
+  var sec=document.getElementById('audit-sec');if(!sec)return;
+  var btn=document.getElementById('admTamper'),banner=document.getElementById('admBanner'),btxt=document.getElementById('admBtxt');
+  var rows=[].slice.call(sec.querySelectorAll('.adm-row'));var tampered=false;
+  function reset(){tampered=false;rows.forEach(function(r){r.classList.remove('brk');});banner.classList.remove('bad');btxt.textContent='Kette intakt · 4 Einträge';btn.textContent='Manipulation simulieren';}
+  function tamper(){tampered=true;rows.forEach(function(r){var n=+r.getAttribute('data-n');if(n>=2)r.classList.add('brk');});banner.classList.add('bad');btxt.textContent='Kette gebrochen bei Nr. 2';btn.textContent='Zurücksetzen';var m=rows[1].querySelector('small');if(m)m.textContent='Aceton [nachträglich geändert]';}
+  if(btn)btn.addEventListener('click',function(){tampered?reset():tamper();});
 })();
 </script>
 </body>

@@ -17,6 +17,35 @@ Firmengruppen hinweg.
 **Charakter:** betriebliche Unterstützung. Ersetzt keine Rechtsberatung, keine
 Gefährdungsbeurteilung und keine Instruktion vor Ort.
 
+---
+
+## ⚠️ KRITISCH VOR LAUNCH – Datenqualität UN-Nummern & VeVA-Codes (MUSS)
+
+> Entscheid Kunde (2026-09): Das Produkt ist gut und verkäuflich – **aber** die
+> **UN-Nummern und VeVA-/Abfallcodes müssen zu 100 % korrekt sein**, sonst sind
+> alle darauf aufbauenden Funktionen (Feuerwehr-Karte, Notfall, Entsorgungsbeleg,
+> Transport) wertlos. Vor dem Verkauf zwingend abzusichern.
+
+**Problemlage (ehrlich):**
+- **UN-Nummern** lassen sich NICHT aus GHS ableiten – sie sind produkt-/gemisch-
+  spezifisch und stehen rechtsverbindlich in **SDB Abschnitt 14** des Herstellers.
+- **VeVA-/LVA-Abfallcodes** sind aktuell nur **heuristische Vorschläge** (Block 21).
+
+**Lösungsweg (vor Launch umzusetzen):**
+1. **Validierte Referenzlisten einbetten** (beide sind endlich & öffentlich):
+   - **ADR/SDR-Gefahrgutliste** (UN-Nr → offizieller Stoffname → Klasse/VG). Jede
+     eingegebene UN-Nr wird gegen die amtliche Liste geprüft (Tippfehler/ungültig →
+     Warnung; Name/Klasse werden angezeigt).
+   - **LVA/VeVA-Abfallverzeichnis** (amtliche Code-Liste inkl. Sonderabfall-Stern).
+     Abfallcode wird zum **validierten Picker** statt Freitext-Heuristik.
+2. **SDB-Abschnitt-14-Parsing per KI** (Edge Function) → UN-Nr/Klasse/Verpackungs-
+   gruppe vorschlagen, dann **gegen ADR-Liste validieren** und vom Nutzer bestätigen.
+3. **Quelle & Status je Feld** anzeigen: „aus SDB bestätigt" vs. „Vorschlag, ungeprüft".
+   Ungeprüfte sicherheits-/transportrelevante Felder klar kennzeichnen.
+
+→ Dies gehört mit der **CAS-Anreicherung** in die Datenqualitäts-Phase (nach den
+  offenen Blöcken). Kein Verkauf, solange UN/VeVA nicht validiert sind.
+
 **Von tozzo zum Produkt:** Ursprung war ein Prototyp für die tozzo gruppe. Ziel
 jetzt: ein **generisches, verkaufbares Mehrmandanten-SaaS** ohne Kundenbezug.
 
@@ -203,7 +232,14 @@ damit Kunden den Nutzen sehen (Ziel: Wow-Demo direkt auf der Website).
       Abfall-Tabelle, UN-Nummer, Abgeber-/Empfänger-/Transporteur-Unterschriftenfeldern und VeVA-
       Rechtshinweis (SR 814.610, Begleitschein via veva-online.ch). Button auf der Stoffkarte,
       Marketing-Slide „Entsorgungsbeleg". Beide Apps synchron.
-22. [ ] **Revisionssicheres Audit-Log** (7)
+22. [x] **Revisionssicheres Audit-Log** (7)
+    → Jede Aktion (addHistory) wird mit Zeitstempel/Person/Detail protokolliert und über eine
+      **Hash-Kette** (`cyrb53`, `auditCanon`) versiegelt: jeder Eintrag enthält eine Prüfsumme über
+      den vorherigen → nachträgliches Ändern/Löschen bricht die Kette. `auditVerify` findet den
+      Bruchpunkt, `auditBoard` (Admin-Tab „Audit-Log") zeigt Siegel + Einträge + Prüfsummen,
+      Verifizieren/PDF-Export (`auditReportPdf`) und einen Demo-Tamper. Demo persistiert Hashes
+      (localStorage); Live rechnet die Kette über das append-only `audit_logs` (Server-seitige
+      Unveränderlichkeit ist die Produktions-Härtung). Marketing-Slide „Audit-Log" mit Live-Tamper.
 23. [ ] **Wareneingangs-Check** (7) — SDB aktuell? hier lagerbar?
 24. [ ] **Prüffristen – schlanke Erinnerung** (7) — kein Wartungsmodul; fliesst ins Audit-Dossier
 25. [ ] **Substitution – nur Flag „CMR: Ersatz prüfen"** (7) — keine Alternativen-Datenbank

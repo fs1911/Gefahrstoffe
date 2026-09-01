@@ -860,6 +860,30 @@
   .lbl-foot{margin-top:6px;font-size:9px;color:#777;line-height:1.35}
   .ls-lead{font-size:12.5px;color:var(--ink-2);margin:0 0 13px;line-height:1.5}
   .vv-chk{display:flex;align-items:center;gap:9px;margin-bottom:11px;cursor:pointer}
+  .aud-wrap{margin-top:4px}
+  .aud-banner{display:flex;gap:10px;align-items:flex-start;border-radius:12px;padding:12px 14px;margin-bottom:11px}
+  .aud-banner svg{width:18px;height:18px;flex:none;margin-top:1px}
+  .aud-banner.ok{background:var(--ok-bg);color:var(--ok)}
+  .aud-banner.bad{background:var(--danger-bg);color:var(--danger)}
+  .aud-banner b{font-size:13.5px}
+  .aud-banner small{display:block;font-size:11.5px;margin-top:2px;color:var(--ink-2);line-height:1.45}
+  .aud-banner .mono{font-family:var(--mono)}
+  .aud-expl{display:flex;gap:8px;align-items:flex-start;font-size:11.5px;color:var(--ink-3);line-height:1.5;margin-bottom:12px}
+  .aud-expl svg{width:15px;height:15px;flex:none;margin-top:1px;color:var(--ink-3)}
+  .aud-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+  .aud-actions .btn{flex:1;min-width:150px}
+  .aud-demo{display:flex;gap:8px;align-items:center;font-size:11px;color:var(--ink-3);margin-bottom:14px;flex-wrap:wrap}
+  .aud-demo span{font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+  .aud-demo button{border:1px dashed var(--line);background:transparent;color:var(--ink-2);font:inherit;font-size:11px;padding:5px 10px;border-radius:8px;cursor:pointer}
+  .aud-list{display:flex;flex-direction:column;gap:7px}
+  .aud-row{display:flex;gap:11px;align-items:center;border:1px solid var(--line);border-radius:11px;padding:10px 12px;background:var(--surface)}
+  .aud-row.brk{border-color:var(--danger);background:var(--danger-bg)}
+  .aud-n{flex:none;font-family:var(--mono);font-size:11px;font-weight:700;color:var(--ink-3);width:34px}
+  .aud-mid{flex:1;min-width:0}
+  .aud-a{font-weight:700;font-size:13px;color:var(--ink)}
+  .aud-m{font-size:12px;color:var(--ink-2);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .aud-meta{font-size:10.5px;color:var(--ink-3);margin-top:2px}
+  .aud-hash{flex:none;font-family:var(--mono);font-size:10.5px;color:var(--ink-3);letter-spacing:.02em}
   .vv-chk input{width:auto;flex:none}
   .vv-chk span{font-size:12.5px;color:var(--ink);font-weight:500}
   .um-f textarea{width:100%;box-sizing:border-box;padding:10px 11px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font:inherit;font-size:13px;resize:vertical;line-height:1.5}
@@ -2607,6 +2631,54 @@ function ampelBoard(fc){
   }).join('');
   return legend+cards;
 }
+/* ---------- Revisionssicheres Audit-Log (Block 22) ---------- */
+function cyrb53(str,seed){seed=seed||0;var h1=0xdeadbeef^seed,h2=0x41c6ce57^seed;for(var i=0,ch;i<str.length;i++){ch=str.charCodeAt(i);h1=Math.imul(h1^ch,2654435761);h2=Math.imul(h2^ch,1597334677);}h1=Math.imul(h1^(h1>>>16),2246822507);h1^=Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507);h2^=Math.imul(h1^(h1>>>13),3266489909);var n=4294967296*(2097151&h2)+(h1>>>0);return ('00000000000000'+n.toString(16)).slice(-14);}
+function auditCanon(e){return e.seq+'|'+(e.ts||e.t||'')+'|'+(e.who||'')+'|'+(e.a||'')+'|'+(e.m||'')+'|'+(e.cid||'');}
+function auditChron(){return DB.history.slice().reverse();}
+function auditEnsure(){
+  var arr=auditChron(),prev='GENESIS',base=Date.now()-arr.length*3600000,changed=false;
+  arr.forEach(function(e,i){
+    if(!e.ts){e.ts=new Date(base+i*3600000).toISOString();changed=true;}
+    var seq=i+1;if(e.seq!==seq){e.seq=seq;changed=true;}
+    var hash=cyrb53(prev+'|'+auditCanon(e));
+    if(!e.hash){e.hash=hash;changed=true;}
+    prev=e.hash;
+  });
+  if(changed&&typeof saveDB==='function')saveDB();
+}
+function auditCompute(){
+  var arr=auditChron(),prev='GENESIS';
+  return arr.map(function(e,i){var seq=i+1;var ce=Object.assign({},e,{seq:seq});var rec=cyrb53(prev+'|'+auditCanon(ce));prev=rec;
+    return {seq:seq,ts:e.ts||e.t,t:e.t,who:e.who,a:e.a,m:e.m,cid:e.cid,alert:e.alert,hash:rec,stored:e.hash};});
+}
+function auditVerify(){var c=auditCompute(),brk=null;for(var i=0;i<c.length;i++){if(c[i].stored&&c[i].stored!==c[i].hash){brk=c[i].seq;break;}}return {ok:brk===null,breakSeq:brk,count:c.length,seal:c.length?c[c.length-1].hash:'—'};}
+function auditShort(h){return String(h||'').slice(0,10).toUpperCase();}
+function auditTamperDemo(){var arr=auditChron();if(arr.length<2)return;var e=arr[Math.floor(arr.length/2)];e.m=(e.m||'')+' [nachträglich geändert]';if(typeof saveDB==='function')saveDB();toast('Demo: Eintrag #'+e.seq+' verändert – jetzt „Kette verifizieren".',false);}
+function auditResealDo(){var arr=auditChron(),prev='GENESIS';arr.forEach(function(e,i){e.seq=i+1;if(!e.ts)e.ts=new Date().toISOString();e.hash=cyrb53(prev+'|'+auditCanon(e));prev=e.hash;});if(typeof saveDB==='function')saveDB();toast('Audit-Kette neu versiegelt.');}
+function auditBoard(fc){
+  auditEnsure();
+  var chain=auditCompute(),vr=auditVerify();
+  var view=chain.slice().reverse().filter(function(e){return !fc||e.cid===fc;});
+  var banner=vr.ok
+   ?'<div class="aud-banner ok">'+ICO.ok+'<div><b>Kette intakt · '+vr.count+' Einträge</b><small>Jeder Eintrag ist per Prüfsumme mit dem vorherigen verkettet. Siegel: <span class="mono">'+auditShort(vr.seal)+'</span></small></div></div>'
+   :'<div class="aud-banner bad">'+ICO.warn+'<div><b>Kette gebrochen bei Nr. '+vr.breakSeq+'</b><small>Ein Eintrag wurde nachträglich verändert – die Prüfsummen stimmen nicht mehr überein.</small></div></div>';
+  var rows=view.length?view.map(function(e){var brk=!vr.ok&&e.seq>=vr.breakSeq;
+    return '<div class="aud-row'+(brk?' brk':'')+'"><div class="aud-n">#'+e.seq+'</div><div class="aud-mid"><div class="aud-a">'+esc(e.a)+'</div><div class="aud-m">'+esc(e.m)+'</div><div class="aud-meta">'+esc(e.t)+' · '+esc(e.who)+'</div></div><div class="aud-hash mono">'+auditShort(e.hash)+'</div></div>';}).join(''):'<div class="empty" style="padding:10px">Keine Einträge.</div>';
+  var actions='<div class="aud-actions"><button class="btn secondary" data-action="auditVerify">'+ICO.ok+' Kette verifizieren</button><button class="btn secondary" data-action="auditPdf">'+ICO.doc+' Audit-Log als PDF</button></div>'+
+   '<div class="aud-demo"><span>Demo</span><button data-action="auditTamper">Manipulation testen</button><button data-action="auditReseal">Neu versiegeln</button></div>';
+  return '<div class="aud-wrap">'+banner+'<div class="aud-expl">'+ICO.info+'<span>Revisionssicher: Aktionen werden automatisch protokolliert und über eine <b>Hash-Kette</b> versiegelt. Nachträgliches Ändern oder Löschen eines Eintrags bricht die Kette und wird sofort sichtbar.</span></div>'+actions+'<div class="aud-list">'+rows+'</div></div>';
+}
+function auditReportPdf(){
+  var chain=auditCompute(),vr=auditVerify();
+  var rows=chain.slice().reverse().map(function(e){return '<tr><td>#'+e.seq+'</td><td>'+esc(e.t)+'</td><td>'+esc(e.who)+'</td><td>'+esc(e.a)+'</td><td>'+esc(e.m)+'</td><td class="mono">'+auditShort(e.hash)+'</td></tr>';}).join('');
+  var status=vr.ok?'<span style="color:#1f7a4d;font-weight:700">Kette intakt · Siegel '+auditShort(vr.seal)+'</span>':'<span class="pr-warn">Kette gebrochen bei Nr. '+vr.breakSeq+'</span>';
+  var html='<div class="pr-h"><div>'+prLogoHtml()+'<div style="font-family:var(--mono);font-size:11px;color:#333;margin-top:5px">'+esc(orgName())+'</div></div><div class="pr-meta">Revisionssicheres Audit-Log<br>Stand '+todayStr()+'</div></div>'+
+    '<div class="pr-title">Audit-Log · Aktionsprotokoll</div>'+
+    '<p style="margin:-4px 0 10px;font-size:11px;color:#333">Status: '+status+' · '+vr.count+' Einträge</p>'+
+    '<table class="pr-tbl"><thead><tr><th style="width:44px">Nr.</th><th style="width:96px">Zeitpunkt</th><th style="width:96px">Person</th><th>Aktion</th><th>Detail</th><th style="width:96px">Prüfsumme</th></tr></thead><tbody>'+rows+'</tbody></table>'+
+    '<p style="margin-top:12px;font-size:10px;color:#555">Jeder Eintrag enthält eine Prüfsumme über den vorherigen Eintrag (Hash-Kette). Nachträgliche Änderungen oder Löschungen verändern alle folgenden Prüfsummen und werden dadurch erkennbar. Dient als betrieblicher Nachweis der Aktionshistorie – ersetzt keine gesetzlich vorgeschriebene Aufbewahrung.</p>'+prFooter();
+  doPrint(html);
+}
 /* ---------- VeVA-Entsorgungsbeleg (Block 21) ---------- */
 function vevaSuggest(s){
   var ghs=s.ghs||[];var n=(s.name||'').toLowerCase();
@@ -3196,7 +3268,7 @@ function scrAdmin(){
   const inScope=i=>!fc||location_(i.loc).company===fc;
   const allHb=DB.instances.filter(i=>inScope(i)&&instWarn(i));
   const ampRed=DB.locations.filter(function(l){return (!fc||l.company===fc)&&locAmpel(l.id).level==='r';}).length;
-  const tabs=[['ampel','Ampel',ampRed],['hb','Handlungsbedarf',allHb.length],['stoffe','Stoffstamm',null],['lager','Lagerorte',null],['firmen','Firmen',null],['personen','Personen',null],['verlauf','Verlauf',null]];
+  const tabs=[['ampel','Ampel',ampRed],['hb','Handlungsbedarf',allHb.length],['stoffe','Stoffstamm',null],['lager','Lagerorte',null],['firmen','Firmen',null],['personen','Personen',null],['verlauf','Audit-Log',null]];
   const tabsHtml='<div class="tabs">'+tabs.map(t=>'<button class="tab '+(tab===t[0]?'active':'')+'" data-action="adminTab" data-id="'+t[0]+'">'+t[1]+(t[2]!=null?'<span class="cnt'+(t[2]?' alert':'')+'">'+t[2]+'</span>':'')+'</button>').join('')+'</div>';
   const fOpts='<option value="">Alle Firmen (Gruppe)</option>'+DB.companies.filter(c=>!c.group).map(c=>'<option value="'+c.id+'" '+(fc===c.id?'selected':'')+'>'+c.name+'</option>').join('');
   const filterBar='<div class="field admin-filter"><label>Firma eingrenzen</label><select data-action="adminCompany">'+fOpts+'</select></div>';
@@ -3238,8 +3310,7 @@ function scrAdmin(){
       DB.users.filter(u=>!fc||u.company===fc).map(u=>{const c=company(u.company);
       return '<div class="mrow"><span class="mg">'+ICO.user+'</span><span class="mm"><span class="mt">'+u.name+'</span><span class="ms">'+(c?firmTag(u.company):'')+' <span class="role-tag">'+u.role+'</span></span></span><span class="row-actions"><button class="edit-btn" data-action="editUser" data-id="'+u.id+'" aria-label="Bearbeiten">'+ICO.edit+'</button><button class="del-btn" data-action="delUser" data-id="'+u.id+'" aria-label="Löschen">'+ICO.trash+'</button></span></div>';}).join('') ||'<div class="empty">'+ICO.user+'<div>Keine Personen.</div></div>';
   }else if(tab==='verlauf'){
-    const hist=DB.history.filter(h=>!fc||h.cid===fc);
-    body=filterBar+'<div class="card"><div style="padding:15px"><div class="timeline">'+(hist.length?hist.map(h=>'<div class="tl-item '+(h.alert?'alert':'')+'"><div class="t">'+h.t+' · '+h.who+'</div><div class="a">'+h.a+'</div><div class="m">'+h.m+'</div></div>').join(''):'<div class="empty" style="padding:10px">Keine Einträge.</div>')+'</div></div></div>';
+    body=filterBar+auditBoard(fc);
   }
   const exportBar='<div class="label-h" style="margin-top:24px">Export &amp; Druck'+(fc?' · '+company(fc).name:' · ganze Gruppe')+'</div>'+
     '<div class="exp-grid">'+
@@ -3476,6 +3547,10 @@ document.addEventListener('click',e=>{
     case 'lsApply':lsApply();break;
     case 'veva':modalVeVA(id);break;
     case 'vevaPrint':vevaPrint(id);break;
+    case 'auditVerify':render();break;
+    case 'auditPdf':auditReportPdf();break;
+    case 'auditTamper':auditTamperDemo();render();break;
+    case 'auditReseal':auditResealDo();render();break;
     case 'dossier':dossierPdf();break;
     case 'starterOpen':modalStarter();break;
     case 'starterPreview':modalStarterPreview(id);break;
@@ -3537,7 +3612,7 @@ document.addEventListener('change',e=>{
   const ac=e.target.closest('[data-action="adminCompany"]');if(ac){state.adminCompany=ac.value;render();}
   const lf=e.target.closest('[data-action="lsFile"]');if(lf){lsFile(lf);return;}
 });
-function addHistory(a,m,cid){const n=new Date();const t=('0'+n.getDate()).slice(-2)+'.'+('0'+(n.getMonth()+1)).slice(-2)+'. '+('0'+n.getHours()).slice(-2)+':'+('0'+n.getMinutes()).slice(-2);DB.history.unshift({t,who:'Sie',a,m,cid:cid||'',alert:false});}
+function addHistory(a,m,cid){const n=new Date();const t=('0'+n.getDate()).slice(-2)+'.'+('0'+(n.getMonth()+1)).slice(-2)+'. '+('0'+n.getHours()).slice(-2)+':'+('0'+n.getMinutes()).slice(-2);auditEnsure();var newest=DB.history[0];var prev=newest?newest.hash:'GENESIS';var seq=(newest&&newest.seq?newest.seq:DB.history.length)+1;var e={t:t,who:'Sie',a:a,m:m,cid:cid||'',alert:false,ts:n.toISOString(),seq:seq};e.hash=cyrb53(prev+'|'+auditCanon(e));DB.history.unshift(e);if(typeof saveDB==='function')saveDB();}
 
 function saveUser(id){const f=document.getElementById('mForm');const name=f.name.value.trim();if(!name){toast('Name fehlt.',false);f.name.focus();return;}
   if(id){const u=DB.users.find(x=>x.id===id);if(u){u.name=name;u.role=f.role.value;u.company=f.company.value;}}
