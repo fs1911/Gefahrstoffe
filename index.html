@@ -656,6 +656,19 @@
   .psm-tag.rec{background:var(--sun-bg);color:var(--sun)}
   .psm-v{font-size:11.5px;color:var(--ink-2);margin-top:2px;line-height:1.4}
   .psm-foot{margin-top:12px;font-size:10.5px;color:var(--ink-3);line-height:1.45;text-align:center}
+  .lblm-wrap{display:flex;justify-content:center;align-items:center;min-height:360px}
+  .lblm{width:300px;max-width:100%;background:#fff;color:#111;border:2.5px solid #111;border-radius:7px;padding:15px 16px;box-shadow:0 22px 48px -20px rgba(16,36,28,.5)}
+  .lblm-hd{display:flex;justify-content:space-between;align-items:baseline;gap:10px;border-bottom:1.5px solid #111;padding-bottom:8px;margin-bottom:9px}
+  .lblm-name{font-family:var(--display);font-weight:800;font-size:18px;color:#111}
+  .lblm-amt{font-weight:700;font-size:13px;color:#333;white-space:nowrap}
+  .lblm-pikrow{display:flex;gap:8px;margin:3px 0 10px}
+  .lblm-pik{width:46px;height:46px}
+  .lblm-pik svg{width:100%;height:100%;display:block}
+  .lblm-sig{display:inline-block;font-weight:800;font-size:15px;letter-spacing:.05em;background:#fbe4e2;color:#a3140b;border:1.5px solid #a3140b;border-radius:5px;padding:4px 12px;margin-bottom:10px}
+  .lblm-lab{font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:#555;margin:8px 0 3px}
+  .lblm-ul{margin:0;padding-left:17px}
+  .lblm-ul li{font-size:11.5px;line-height:1.4;margin:2px 0;color:#111}
+  .lblm-sup{margin-top:11px;padding-top:8px;border-top:1px solid #bbb;font-size:10.5px;color:#333}
 </style>
 </head>
 <body>
@@ -804,7 +817,7 @@
       <h2>Alles, was ein Gefahrstoff-Kataster braucht.</h2>
       <p class="lead">Wähle eine Funktion – jede zeigt live, wie sie im Alltag funktioniert. Von der KI-Erfassung bis zum Notfall-Modus.</p>
     </div>
-    <div class="fx-tabs" id="fxTabs"><button class="fx-tab on" data-fx="kidemo-sec">SDB per KI</button><button class="fx-tab" data-fx="ba-sec">Betriebsanweisung</button><button class="fx-tab" data-fx="katalog-sec">Barcode-Katalog</button><button class="fx-tab" data-fx="instr-sec">Instruktion</button><button class="fx-tab" data-fx="lang-sec">Mehrsprachig</button><button class="fx-tab" data-fx="ask-sec">Frag StoffScan</button><button class="fx-tab" data-fx="gb-sec">Gefährdungsbeurteilung</button><button class="fx-tab" data-fx="fw-sec">Feuerwehr-Karte</button><button class="fx-tab" data-fx="notfall-sec">Notfall-Modus</button><button class="fx-tab" data-fx="dossier-sec">Prüf-Dossier</button><button class="fx-tab" data-fx="lotse-sec">Compliance-Lotse</button><button class="fx-tab" data-fx="starter-sec">Starterkatalog</button><button class="fx-tab" data-fx="pwa-sec">Offline / App</button><button class="fx-tab" data-fx="ampel-sec">Standort-Ampel</button><button class="fx-tab" data-fx="empl-sec">Personenschutz</button><button class="fx-tab" data-fx="stfv-sec">Mengenschwellen</button><button class="fx-tab" data-fx="psa-sec">PSA punktgenau</button></div>
+    <div class="fx-tabs" id="fxTabs"><button class="fx-tab on" data-fx="kidemo-sec">SDB per KI</button><button class="fx-tab" data-fx="ba-sec">Betriebsanweisung</button><button class="fx-tab" data-fx="katalog-sec">Barcode-Katalog</button><button class="fx-tab" data-fx="instr-sec">Instruktion</button><button class="fx-tab" data-fx="lang-sec">Mehrsprachig</button><button class="fx-tab" data-fx="ask-sec">Frag StoffScan</button><button class="fx-tab" data-fx="gb-sec">Gefährdungsbeurteilung</button><button class="fx-tab" data-fx="fw-sec">Feuerwehr-Karte</button><button class="fx-tab" data-fx="notfall-sec">Notfall-Modus</button><button class="fx-tab" data-fx="dossier-sec">Prüf-Dossier</button><button class="fx-tab" data-fx="lotse-sec">Compliance-Lotse</button><button class="fx-tab" data-fx="starter-sec">Starterkatalog</button><button class="fx-tab" data-fx="pwa-sec">Offline / App</button><button class="fx-tab" data-fx="ampel-sec">Standort-Ampel</button><button class="fx-tab" data-fx="empl-sec">Personenschutz</button><button class="fx-tab" data-fx="stfv-sec">Mengenschwellen</button><button class="fx-tab" data-fx="psa-sec">PSA punktgenau</button><button class="fx-tab" data-fx="label-sec">Umfüll-Etikett</button></div>
   </div>
   <div class="fx-stagewrap">
     <button class="fx-arrow prev" data-fx-nav="-1" aria-label="Vorherige Funktion">&#8249;</button>
@@ -1203,6 +1216,33 @@
         <div class="psm-tabs"><button class="psm-tab on" data-psm="solvent">Lösemittel-Verdünnung</button><button class="psm-tab" data-psm="acid">Säure / ätzend</button></div>
         <div class="psm-rows" id="psmRows"></div>
         <div class="psm-foot">Massgeblich bleibt das SDB Abschnitt 8 des Herstellers.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="fx-panel" id="label-sec">
+  <div class="wrap ba-mkt">
+    <div class="ba-mkt-copy">
+      <div class="eyebrow">Beim Umfüllen normkonform kennzeichnen</div>
+      <h2>Umfüll-Etikett auf Knopfdruck.</h2>
+      <p class="lead">Wer einen Gefahrstoff in eine Sprühflasche oder ein kleineres Gebinde umfüllt, muss das neue Gebinde kennzeichnen. StoffScan erzeugt das GHS-Etikett automatisch aus dem Stoffstamm – Produktname, Piktogramme, Signalwort und H-/P-Sätze. Drucken, aufkleben, fertig.</p>
+      <ul class="ba-mkt-list">
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> GHS-Piktogramme, Signalwort &amp; H-/P-Sätze automatisch</li>
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Grösse wählbar (A7 / A6 / A5) &ndash; druckfertig</li>
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Datum &amp; verantwortliche Person direkt aufs Etikett</li>
+      </ul>
+    </div>
+    <div class="lblm-wrap">
+      <div class="lblm" id="lblMkt">
+        <div class="lblm-hd"><div class="lblm-name">Bremsenreiniger</div><div class="lblm-amt">1 l</div></div>
+        <div class="lblm-pikrow" id="lblmPik"></div>
+        <div class="lblm-sig">GEFAHR</div>
+        <div class="lblm-lab">Gefahrenhinweise (H)</div>
+        <ul class="lblm-ul"><li><b>H222</b> Extrem entzündbares Aerosol.</li><li><b>H315</b> Verursacht Hautreizungen.</li><li><b>H336</b> Kann Schläfrigkeit verursachen.</li></ul>
+        <div class="lblm-lab">Sicherheitshinweise (P)</div>
+        <ul class="lblm-ul"><li><b>P210</b> Von Hitze und Zündquellen fernhalten.</li><li><b>P271</b> Nur im Freien oder gut belüftet.</li></ul>
+        <div class="lblm-sup">Umgefüllt: Muster AG &middot; <span id="lblmDate">heute</span></div>
       </div>
     </div>
   </div>
@@ -1752,6 +1792,16 @@
   function render(k){rowsEl.innerHTML=DATA[k].map(function(r){var g=TAG[r.lvl];return '<div class="psm-row"><span class="psm-ic">'+IC[r.ic]+'</span><div class="psm-tx"><div class="psm-t">'+r.t+'<span class="psm-tag '+g[0]+'">'+g[1]+'</span></div><div class="psm-v">'+r.v+'</div></div></div>';}).join('');}
   tabs.forEach(function(b){b.addEventListener('click',function(){tabs.forEach(function(x){x.classList.remove('on');});b.classList.add('on');render(b.getAttribute('data-psm'));});});
   render('solvent');
+})();
+(function(){
+  var sec=document.getElementById('label-sec');if(!sec)return;
+  var PK={
+    flamm:'<svg viewBox="0 0 579 579"><rect x="70" y="70" width="439" height="439" transform="rotate(45 289.5 289.5)" fill="#fff" stroke="#e30613" stroke-width="34"/><path d="M290 121c-18 34 3 53-20 102-13-10-6-47-30-48 3 12 1 16 0 20-3 17-8 31 3 52-17-8-18-23-32-33 3 16-4 49 15 81-17-2-23-8-41-26 19 100 34 103 105 109-30-4-46-20-55-48 12 8 20 10 34 10-22-35-16-28-14-48 10 13 2 15 27 25-8-26 13-43 8-73 6 13 26 11 25 73 17-19 18-6 26-26 1 11 6 25-17 49 34-6 60-38 62-88-6 15-14 24-29 21 16-16 25-49 12-75-5 14-12 24-29 29 8-14 6-32 6-32s3-25-12-45c-4 30-4 46-23 50 3-17 4-26-6-46-10-21-22-42-24-62z" fill="#111"/></svg>',
+    reiz:'<svg viewBox="0 0 579 579"><rect x="70" y="70" width="439" height="439" transform="rotate(45 289.5 289.5)" fill="#fff" stroke="#e30613" stroke-width="34"/><g fill="#111"><circle cx="289" cy="190" r="34"/><path d="M262 250h54l-10 150h-34z"/></g></svg>',
+    gesundheit:'<svg viewBox="0 0 579 579"><rect x="70" y="70" width="439" height="439" transform="rotate(45 289.5 289.5)" fill="#fff" stroke="#e30613" stroke-width="34"/><path d="M289 150c-40 0-72 32-72 72 0 20 8 38 21 51-8 22-30 26-30 55 0 34 36 51 81 51s81-17 81-51c0-29-22-33-30-55 13-13 21-31 21-51 0-40-32-72-72-72z" fill="none" stroke="#111" stroke-width="20"/></svg>'};
+  var pr=document.getElementById('lblmPik');
+  if(pr)pr.innerHTML=['flamm','gesundheit','reiz'].map(function(k){return '<span class="lblm-pik">'+PK[k]+'</span>';}).join('');
+  var d=document.getElementById('lblmDate');if(d){var n=new Date();d.textContent=('0'+n.getDate()).slice(-2)+'.'+('0'+(n.getMonth()+1)).slice(-2)+'.'+n.getFullYear();}
 })();
 </script>
 </body>

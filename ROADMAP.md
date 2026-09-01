@@ -180,7 +180,13 @@ damit Kunden den Nutzen sehen (Ziel: Wow-Demo direkt auf der Website).
       Augen-/Gesichts- und Körperschutz mit Norm (EN 166/14605). Karte `psaCard(s)` auf der
       Stoffkarte (Level: Erforderlich/Empfohlen/Bei Bedarf), Hinweis „massgeblich SDB Abschnitt 8".
       Marketing-Slide „PSA punktgenau" mit Lösemittel/Säure-Umschalter. Beide Apps synchron.
-19. [ ] **GHS-Eigenetikett beim Umfüllen** (7)
+19. [x] **GHS-Eigenetikett beim Umfüllen** (7)
+    → `modalUmfuell(subId)` + `umfuellLabelHtml(s,opts)`: erzeugt aus dem Stoffstamm ein
+      GHS-konformes Umfüll-/Eigenetikett (Produktname, GHS-Piktogramme, Signalwort, H-/P-Sätze
+      im Volltext, Lieferant/Hersteller, Umfüll-Datum & Person). Live-Vorschau im Modal,
+      Grösse wählbar (A7/A6/A5), druckfertig via `doPrint` (eigene `.lbl-*` Print-CSS in mm).
+      Button auf der Stoffkarte, Hinweis „innerbetriebliche Kennzeichnung nach CLP/GHS –
+      Originaletikett & SDB massgeblich". Marketing-Slide „Umfüll-Etikett". Beide Apps synchron.
 20. [ ] **Lieferschein/Rechnung (PDF) → Bestand** (7)
 21. [ ] **VeVA-Entsorgungsbeleg** (7) — Abfallcode + Sonderabfall-Begleitschein
 22. [ ] **Revisionssicheres Audit-Log** (7)

@@ -822,6 +822,34 @@
   .psa-tag.ctx{background:var(--surface-2);color:var(--ink-3)}
   .psa-v{font-size:12.5px;color:var(--ink);margin-top:3px;line-height:1.4}
   .psa-s{font-size:11px;color:var(--ink-3);margin-top:2px;line-height:1.4}
+  .um-lead{font-size:12.5px;color:var(--ink-2);margin:0 0 13px;line-height:1.5}
+  .um-grid{display:flex;gap:10px}
+  .um-grid .um-f{flex:1;min-width:0}
+  .um-f{display:block;margin-bottom:11px}
+  .um-f>span{display:block;font-size:11.5px;font-weight:600;color:var(--ink-2);margin-bottom:4px}
+  .um-f input,.um-f select{width:100%;box-sizing:border-box;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font:inherit;font-size:13px}
+  .um-prevlab{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-3);margin:6px 0 6px}
+  .um-prev{background:repeating-linear-gradient(45deg,var(--surface-2),var(--surface-2) 9px,transparent 9px,transparent 18px);border-radius:10px;padding:12px}
+  .um-note{font-size:10.5px;color:var(--ink-3);margin:12px 0 0;line-height:1.5}
+  .lbl{box-sizing:border-box;border:2.5px solid #111;border-radius:6px;padding:12px 13px;background:#fff;color:#111;font-size:12px;line-height:1.35}
+  .lbl-preview{max-width:100%;margin:0 auto}
+  .lbl-hd{display:flex;justify-content:space-between;align-items:baseline;gap:10px;border-bottom:1.5px solid #111;padding-bottom:7px;margin-bottom:8px}
+  .lbl-name{font-weight:800;font-size:16px;letter-spacing:-.01em;color:#111}
+  .lbl-amt{font-weight:700;font-size:12px;white-space:nowrap;color:#333}
+  .lbl-pikrow{display:flex;flex-wrap:wrap;gap:7px;margin:2px 0 9px}
+  .lbl-pk{width:52px;height:52px;display:block}
+  .lbl-pk svg{width:100%;height:100%;display:block}
+  .lbl-nopk{font-size:11px;color:#777}
+  .lbl-sig{font-weight:800;font-size:15px;text-transform:uppercase;letter-spacing:.04em;padding:5px 11px;border-radius:5px;display:inline-block;margin-bottom:9px}
+  .lbl-sig-d{background:#fbe4e2;color:#a3140b;border:1.5px solid #a3140b}
+  .lbl-sig-w{background:#fdf1dd;color:#8a5a06;border:1.5px solid #b9820f}
+  .lbl-block{margin:7px 0}
+  .lbl-lab{font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.03em;color:#555;margin-bottom:3px}
+  .lbl-ul{margin:0;padding-left:16px}
+  .lbl-ul li{margin:2px 0;font-size:11.5px;line-height:1.35;color:#111}
+  .lbl-dim{color:#888;list-style:none;margin-left:-16px}
+  .lbl-sup{margin-top:9px;padding-top:7px;border-top:1px solid #bbb;font-size:10.5px;color:#333;line-height:1.4}
+  .lbl-foot{margin-top:6px;font-size:9px;color:#777;line-height:1.35}
   .stfv-card{border:1px solid var(--line);border-radius:14px;background:var(--surface);margin-bottom:14px;overflow:hidden}
   .stfv-h{display:flex;gap:10px;align-items:flex-start;padding:13px 14px;border-bottom:1px solid var(--line-2);background:var(--sun-bg)}
   .stfv-h svg{width:18px;height:18px;color:var(--sun);flex:none;margin-top:1px}
@@ -856,6 +884,10 @@
     .pr-warn{color:#a3140b;font-weight:700}
     .pr-foot{margin-top:14px;font-size:10px;color:#555;border-top:1px solid #ccc;padding-top:8px}
     .pr-page{page-break-before:always}
+    .lbl{-webkit-print-color-adjust:exact;print-color-adjust:exact;page-break-inside:avoid;border-radius:0}
+    .lbl-a7{width:74mm}.lbl-a6{width:105mm}.lbl-a5{width:148mm}
+    .lbl-pk{width:15mm;height:15mm}
+    .lbl-name{font-size:15pt}
     .dos-cover{padding:10px 4px 20px;text-align:center}
     .dos-logo{margin:24px 0 22px}
     .dos-logo img{max-height:64px;max-width:220px;object-fit:contain}
@@ -2503,6 +2535,45 @@ function ampelBoard(fc){
   }).join('');
   return legend+cards;
 }
+/* ---------- GHS-Eigenetikett beim Umfuellen (Block 19) ---------- */
+function umDeDate(iso){var p=String(iso||'').split('-');return p.length===3?p[2]+'.'+p[1]+'.'+p[0]:String(iso||'');}
+function umfuellLabelHtml(s,o){
+  o=o||{};var size=o.size||'a6';var ghs=s.ghs||[];
+  var pikto=ghs.length?ghs.map(function(g){return '<span class="lbl-pk">'+(GHS_SVG[g]||'')+'</span>';}).join(''):'<span class="lbl-nopk">Keine GHS-Piktogramme hinterlegt</span>';
+  var hc=baCodes(s.h),pc=baCodes(s.p);
+  var hHtml=hc.length?hc.map(function(c){return '<li><b>'+esc(c)+'</b> '+esc(baText(c,H_TEXT))+'</li>';}).join(''):'<li class="lbl-dim">Keine H-Sätze hinterlegt</li>';
+  var pHtml=pc.length?pc.map(function(c){return '<li><b>'+esc(c)+'</b> '+esc(baText(c,P_TEXT))+'</li>';}).join(''):'<li class="lbl-dim">Keine P-Sätze hinterlegt</li>';
+  var sig=s.signal||'Achtung',org=orgName();
+  var datum=umDeDate(o.datum||todayStr());
+  var supplier=esc(s.hersteller||org);
+  var inhalt=o.inhalt?esc(o.inhalt):'';
+  var person=o.person?' · '+esc(o.person):'';
+  return '<div class="lbl lbl-'+size+(o.preview?' lbl-preview':'')+'">'+
+    '<div class="lbl-hd"><div class="lbl-name">'+esc(s.name)+'</div>'+(inhalt?'<div class="lbl-amt">'+inhalt+'</div>':'')+'</div>'+
+    '<div class="lbl-pikrow">'+pikto+'</div>'+
+    '<div class="lbl-sig lbl-sig-'+(sig==='Gefahr'?'d':'w')+'">'+esc(String(sig).toUpperCase())+'</div>'+
+    '<div class="lbl-block"><div class="lbl-lab">Gefahrenhinweise (H-Sätze)</div><ul class="lbl-ul">'+hHtml+'</ul></div>'+
+    '<div class="lbl-block"><div class="lbl-lab">Sicherheitshinweise (P-Sätze)</div><ul class="lbl-ul">'+pHtml+'</ul></div>'+
+    '<div class="lbl-sup">Lieferant / Hersteller: <b>'+supplier+'</b>'+((s.un&&s.un!=='–')?' · UN '+esc(s.un):'')+'<br>Umgefüllt: '+esc(org)+' · '+esc(datum)+person+'</div>'+
+    '<div class="lbl-foot">Innerbetriebliche Umfüll-Kennzeichnung nach CLP/GHS · Originaletikett &amp; SDB bleiben massgeblich</div>'+
+  '</div>';
+}
+function umfuellReadOpts(){return {inhalt:((document.getElementById('umInhalt')||{}).value)||'',datum:((document.getElementById('umDatum')||{}).value)||todayStr(),person:((document.getElementById('umPerson')||{}).value)||'',size:((document.getElementById('umSize')||{}).value)||'a6'};}
+function umfuellPreview(subId){var s=substance(subId),p=document.getElementById('umPrev');if(!s||!p)return;var o=umfuellReadOpts();o.preview=true;p.innerHTML=umfuellLabelHtml(s,o);}
+function umfuellPrint(subId){var s=substance(subId);if(!s)return;var o=umfuellReadOpts();closeModal();doPrint(umfuellLabelHtml(s,o));}
+function modalUmfuell(subId){
+  var s=substance(subId);if(!s)return;var today=todayStr();
+  var body='<p class="um-lead">Etikett für ein umgefülltes oder kleineres Gebinde. Produktname, GHS-Piktogramme, Signalwort und H-/P-Sätze werden automatisch aus dem Stoffstamm übernommen.</p>'+
+   '<label class="um-f"><span>Inhalt / Menge</span><input id="umInhalt" type="text" placeholder="z. B. 1 l Sprühflasche"></label>'+
+   '<div class="um-grid"><label class="um-f"><span>Umgefüllt am</span><input id="umDatum" type="date" value="'+today+'"></label>'+
+   '<label class="um-f"><span>Etikettgrösse</span><select id="umSize"><option value="a7">Klein · A7 (74 mm)</option><option value="a6" selected>Mittel · A6 (105 mm)</option><option value="a5">Gross · A5 (148 mm)</option></select></label></div>'+
+   '<label class="um-f"><span>Verantwortliche Person (optional)</span><input id="umPerson" type="text" placeholder="Name"></label>'+
+   '<div class="um-prevlab">Vorschau</div><div class="um-prev" id="umPrev">'+umfuellLabelHtml(s,{datum:today,size:'a6',preview:true})+'</div>'+
+   '<button class="btn" data-action="umfuellPrint" data-id="'+subId+'" style="width:100%;margin-top:12px">'+ICO.doc+' Etikett drucken</button>'+
+   '<p class="um-note">Innerbetriebliche Umfüll-Kennzeichnung nach CLP/GHS. Für die Abgabe an Dritte gilt die vollständige Lieferantenkennzeichnung. Originaletikett und Sicherheitsdatenblatt bleiben massgeblich.</p>';
+  openModal('Umfüll-Etikett · '+esc(s.name),body);
+  ['umInhalt','umDatum','umPerson','umSize'].forEach(function(idf){var el=document.getElementById(idf);if(!el)return;el.addEventListener('input',function(){umfuellPreview(subId);});el.addEventListener('change',function(){umfuellPreview(subId);});});
+}
 /* ---------- PSA punktgenau je Stoff (Block 18) ---------- */
 var PSA_ICON={
   hand:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M8 13V5.5a1.5 1.5 0 013 0V11m0-1V4a1.5 1.5 0 013 0v7m0-1V6a1.5 1.5 0 013 0v9a6 6 0 01-6 6h-1.2a5 5 0 01-3.9-1.9l-3-3.8a1.6 1.6 0 012.5-2L8 15"/></svg>',
@@ -2768,7 +2839,7 @@ function scrDetail(){
     '<div class="instr-head"><div><b>Instruktionsnachweis</b><small>'+(iCount?('Instruiert: '+iCount+' · zuletzt '+fmtDate(iLast)):'Noch keine Instruktion erfasst')+'</small></div>'+(iDue?'<span class="instr-badge due">fällig</span>':'<span class="instr-badge ok">aktuell</span>')+'</div>'+
     '<div class="btn-row" style="margin-top:11px"><button class="btn secondary" data-action="instrList" data-id="'+s.id+'">Nachweise</button><button class="btn secondary" data-action="instrQr" data-id="'+s.id+'">'+ICO.qr+' Instruktions-QR</button></div>'+
     '<button class="btn" data-action="instrConfirm" data-id="'+s.id+'" style="width:100%;margin-top:9px">'+ICO.ok+' Instruktion bestätigen</button></div>';
-  return '<div class="view">'+hero+notes+bestand+stamm+psaCard(s)+emplCard(s)+'<button class="btn secondary" data-action="genBA" data-id="'+s.id+'" style="width:100%;margin-top:14px">'+ICO.doc+' Betriebsanweisung erstellen</button>'+'<button class="btn secondary" data-action="gbOpen" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Gefährdungsbeurteilung erstellen</button>'+instrBlock+oth+disclaimer()+'</div>';
+  return '<div class="view">'+hero+notes+bestand+stamm+psaCard(s)+emplCard(s)+'<button class="btn secondary" data-action="genBA" data-id="'+s.id+'" style="width:100%;margin-top:14px">'+ICO.doc+' Betriebsanweisung erstellen</button>'+'<button class="btn secondary" data-action="gbOpen" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Gefährdungsbeurteilung erstellen</button>'+'<button class="btn secondary" data-action="umfuell" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Umfüll-Etikett drucken</button>'+instrBlock+oth+disclaimer()+'</div>';
 }
 
 /* ===== LAGERORTDETAIL (nützlicher) ===== */
@@ -3082,6 +3153,8 @@ document.addEventListener('click',e=>{
     case 'nfBA':closeNotfall();openBA(id);break;
     case 'gbOpen':modalGb(id);break;
     case 'gbGo':gbGenerate(id);break;
+    case 'umfuell':modalUmfuell(id);break;
+    case 'umfuellPrint':umfuellPrint(id);break;
     case 'dossier':dossierPdf();break;
     case 'starterOpen':modalStarter();break;
     case 'starterPreview':modalStarterPreview(id);break;
