@@ -575,10 +575,10 @@
   .fx-tab:hover{border-color:var(--brand);color:var(--ink)}
   .fx-tab.on{background:var(--brand);border-color:var(--brand);color:#fff}
   .fx-stagewrap{position:relative;margin-top:6px}
-  .fx-stage{position:relative}
-  .fx-panel{display:none}
-  .fx-panel.on{display:block;animation:fxIn .4s ease}
-  @keyframes fxIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .fx-stage{position:relative;display:flex;align-items:center}
+  .fx-panel{display:none;width:100%}
+  .fx-panel.on{display:block;animation:fxIn .35s ease}
+  @keyframes fxIn{from{opacity:0}to{opacity:1}}
   .fx-panel > .wrap{padding-top:10px;padding-bottom:10px}
   .fx-panel section{padding:0}
   .fx-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:4;width:46px;height:46px;border-radius:50%;background:var(--surface);border:1px solid var(--line);color:var(--ink);font-size:24px;line-height:1;cursor:pointer;box-shadow:0 8px 20px -10px rgba(16,36,28,.45);display:flex;align-items:center;justify-content:center;transition:border-color .2s}
@@ -1519,6 +1519,10 @@
   dotsWrap.addEventListener('click',function(e){var b=e.target.closest('[data-fx-dot]');if(!b)return;show(+b.getAttribute('data-fx-dot'));kick();});
   [].slice.call(sec.querySelectorAll('[data-fx-nav]')).forEach(function(a){a.addEventListener('click',function(){go(+a.getAttribute('data-fx-nav'));});});
   var stage=document.getElementById('fxStage'),sx=0,sy=0;
+  function measure(){var maxH=0;panels.forEach(function(p){var cs=p.style.cssText;p.style.display='block';p.style.position='absolute';p.style.visibility='hidden';p.style.left='0';p.style.right='0';var h=p.offsetHeight;if(h>maxH)maxH=h;p.style.cssText=cs;});if(maxH)stage.style.minHeight=maxH+'px';}
+  var rz;window.addEventListener('resize',function(){clearTimeout(rz);rz=setTimeout(measure,150);});
+  window.addEventListener('load',measure);
+  measure();setTimeout(measure,500);
   stage.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
   stage.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy))go(dx<0?1:-1);},{passive:true});
   if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){inView=e.isIntersecting;kick();});},{threshold:.2});io.observe(sec);}
