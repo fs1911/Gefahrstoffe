@@ -195,7 +195,14 @@ damit Kunden den Nutzen sehen (Ziel: Wow-Demo direkt auf der Website).
       Vorschau je Position, Ziel-Lagerort wählbar, Textdatei-Upload, Verlaufseintrag „Wareneingang".
       Demo: `DB.instances.push`; Live: Insert in `substances`/`substance_instances`. Marketing-Slide
       „Lieferschein". PDF-KI-Extraktion (Edge Function) als Cloud-Erweiterung vorgemerkt.
-21. [ ] **VeVA-Entsorgungsbeleg** (7) — Abfallcode + Sonderabfall-Begleitschein
+21. [x] **VeVA-Entsorgungsbeleg** (7) — Abfallcode + Sonderabfall-Begleitschein
+    → `vevaSuggest(s)` leitet aus GHS/Name einen Abfallcode-Vorschlag (LVA/VeVA, z. B. 14 06 03*
+      Lösemittel, 13 07 01* Heizöl, 06 01 06* Säuren, 16 05 04* Druckgase) und die Sonderabfall-
+      Kennzeichnung ab. `modalVeVA(subId)` sammelt Menge, Empfänger/Entsorger, VeVA-Betriebsnummern
+      und Datum; `vevaBelegHtml` erzeugt einen druckfertigen Entsorgungsbeleg/Begleitschein mit
+      Abfall-Tabelle, UN-Nummer, Abgeber-/Empfänger-/Transporteur-Unterschriftenfeldern und VeVA-
+      Rechtshinweis (SR 814.610, Begleitschein via veva-online.ch). Button auf der Stoffkarte,
+      Marketing-Slide „Entsorgungsbeleg". Beide Apps synchron.
 22. [ ] **Revisionssicheres Audit-Log** (7)
 23. [ ] **Wareneingangs-Check** (7) — SDB aktuell? hier lagerbar?
 24. [ ] **Prüffristen – schlanke Erinnerung** (7) — kein Wartungsmodul; fliesst ins Audit-Dossier

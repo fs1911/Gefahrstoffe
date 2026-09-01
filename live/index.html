@@ -851,6 +851,9 @@
   .lbl-sup{margin-top:9px;padding-top:7px;border-top:1px solid #bbb;font-size:10.5px;color:#333;line-height:1.4}
   .lbl-foot{margin-top:6px;font-size:9px;color:#777;line-height:1.35}
   .ls-lead{font-size:12.5px;color:var(--ink-2);margin:0 0 13px;line-height:1.5}
+  .vv-chk{display:flex;align-items:center;gap:9px;margin-bottom:11px;cursor:pointer}
+  .vv-chk input{width:auto;flex:none}
+  .vv-chk span{font-size:12.5px;color:var(--ink);font-weight:500}
   .um-f textarea{width:100%;box-sizing:border-box;padding:10px 11px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font:inherit;font-size:13px;resize:vertical;line-height:1.5}
   .ls-actions{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 6px}
   .ls-actions .btn{flex:1;min-width:110px}
@@ -907,6 +910,17 @@
     .lbl-a7{width:74mm}.lbl-a6{width:105mm}.lbl-a5{width:148mm}
     .lbl-pk{width:15mm;height:15mm}
     .lbl-name{font-size:15pt}
+    .veva-badge{margin:2px 0 12px}
+    .veva-sb{-webkit-print-color-adjust:exact;print-color-adjust:exact;background:#a3140b;color:#fff;font-weight:800;font-size:11px;letter-spacing:.05em;padding:4px 12px;border-radius:4px}
+    .veva-oa{-webkit-print-color-adjust:exact;print-color-adjust:exact;background:#eee;color:#333;font-weight:700;font-size:11px;padding:4px 12px;border-radius:4px}
+    table.veva-tbl th{width:190px;background:#f3f3f3;text-align:left;vertical-align:top}
+    .veva-parties{display:flex;gap:12px;margin:16px 0 0}
+    .veva-box{flex:1;border:1px solid #bbb;border-radius:4px;padding:10px 12px}
+    .veva-transport{border:1px solid #bbb;border-radius:4px;padding:10px 12px;margin-top:12px}
+    .veva-bh{font-weight:700;font-size:11px;margin-bottom:8px;color:#111}
+    .veva-line{display:flex;font-size:11px;margin:3px 0;color:#222}
+    .veva-line span{width:120px;color:#666}
+    .veva-sig{margin-top:22px;border-top:1px solid #999;padding-top:3px;font-size:9px;color:#666}
     .dos-cover{padding:10px 4px 20px;text-align:center}
     .dos-logo{margin:24px 0 22px}
     .dos-logo img{max-height:64px;max-width:220px;object-fit:contain}
@@ -2554,6 +2568,82 @@ function ampelBoard(fc){
   }).join('');
   return legend+cards;
 }
+/* ---------- VeVA-Entsorgungsbeleg (Block 21) ---------- */
+function vevaSuggest(s){
+  var ghs=s.ghs||[];var n=(s.name||'').toLowerCase();
+  var special=ghs.length>0;
+  var code='16 05 08*',name='Gebrauchte Chemikalien mit gefährlichen Stoffen';
+  if(/lack|farbe|grundier|primer|paint/.test(n)){code='08 01 11*';name='Farb- und Lackabfälle mit organischen Lösemitteln';}
+  else if(/heizöl|heizoel/.test(n)){code='13 07 01*';name='Heizöl und Diesel';}
+  else if(/diesel|benzin|alkylat/.test(n)){code='13 07 02*';name='Benzin';}
+  else if(/öl|oel|hydraul|getriebe|schmier/.test(n)&&!/speise/.test(n)){code='13 02 08*';name='Andere Maschinen-, Getriebe- und Schmieröle';}
+  else if(ghs.indexOf('druckgas')>-1||(/spray|aerosol|spraydose/.test(n)&&ghs.indexOf('flamm')>-1)){code='16 05 04*';name='Gase in Druckbehältern mit gefährlichen Stoffen';}
+  else if(/säure|saeure|acid|entkalk/.test(n)){code='06 01 06*';name='Andere Säuren';}
+  else if(/lauge|alkalisch|natronlauge|kalilauge/.test(n)){code='06 02 05*';name='Andere Basen';}
+  else if(ghs.indexOf('flamm')>-1||/verdünn|verduenn|lösemittel|loesemittel|reiniger|aceton|thinner/.test(n)){code='14 06 03*';name='Andere Lösemittel und Lösemittelgemische';}
+  else if(ghs.indexOf('aetz')>-1){code='16 05 06*';name='Laborchemikalien mit gefährlichen Stoffen';}
+  else if(ghs.indexOf('oxid')>-1){code='16 09 03*';name='Andere oxidierende Stoffe';}
+  else if(!ghs.length){code='20 01 30';name='Reinigungsmittel ohne gefährliche Stoffe';special=false;}
+  return {code:code,name:name,special:special};
+}
+function vevaBelegHtml(s,o){
+  o=o||{};var org=orgName();var special=!!o.special;
+  var mengeStr=(o.menge?esc(o.menge):'–')+' '+esc(o.einheit||'');
+  var un=(s.un&&s.un!=='–')?esc(s.un):'–';
+  var datum=umDeDate(o.datum||todayStr());
+  var sonder=special?'<span class="veva-sb">SONDERABFALL</span>':'<span class="veva-oa">Abfall zur Verwertung / Beseitigung</span>';
+  return '<div class="veva-doc">'+
+    '<div class="pr-h"><div>'+prLogoHtml()+'<div style="font-family:var(--mono);font-size:11px;color:#333;margin-top:5px">'+esc(org)+'</div></div>'+
+      '<div class="pr-meta">Entsorgungsbeleg / Begleitschein<br>VeVA (SR 814.610)<br>Stand '+datum+'</div></div>'+
+    '<div class="pr-title">Entsorgungsbeleg · '+esc(s.name)+'</div>'+
+    '<div class="veva-badge">'+sonder+'</div>'+
+    '<table class="pr-tbl veva-tbl"><tbody>'+
+      '<tr><th>Abfallbezeichnung</th><td>'+esc(s.name)+(s.hersteller?' · '+esc(s.hersteller):'')+'</td></tr>'+
+      '<tr><th>Abfallcode (LVA/VeVA)</th><td class="mono"><b>'+esc(o.code||'')+'</b>'+(o.codeName?' · '+esc(o.codeName):'')+'</td></tr>'+
+      '<tr><th>Sonderabfall</th><td>'+(special?'Ja – nur an bewilligte Entsorger; Begleitschein erforderlich':'Nein')+'</td></tr>'+
+      '<tr><th>Menge</th><td>'+mengeStr+'</td></tr>'+
+      '<tr><th>UN-Nummer (Transport)</th><td class="mono">'+un+'</td></tr>'+
+    '</tbody></table>'+
+    '<div class="veva-parties">'+
+      '<div class="veva-box"><div class="veva-bh">Abgeberbetrieb</div><div class="veva-line"><span>Firma</span>'+esc(org)+'</div><div class="veva-line"><span>VeVA-Betriebs-Nr.</span>'+esc(o.abgeberNr||'____________')+'</div><div class="veva-sig">Datum / Unterschrift</div></div>'+
+      '<div class="veva-box"><div class="veva-bh">Empfänger / Entsorger</div><div class="veva-line"><span>Firma</span>'+esc(o.empf||'____________')+'</div><div class="veva-line"><span>VeVA-Betriebs-Nr.</span>'+esc(o.empfNr||'____________')+'</div><div class="veva-sig">Datum / Unterschrift</div></div>'+
+    '</div>'+
+    '<div class="veva-transport"><div class="veva-bh">Transporteur</div><div class="veva-sig">Datum / Unterschrift</div></div>'+
+    '<div class="pr-foot">VeVA (SR 814.610): Sonderabfälle dürfen nur bewilligten Entsorgungsunternehmen übergeben werden; dafür ist der Begleitschein über veva-online.ch mit gültigen Betriebsnummern zu verwenden. Dieser Beleg dient als betriebliche Übergabe-Dokumentation. Der Abfallcode ist ein Vorschlag aus der Einstufung – massgeblich sind Herkunft und Zusammensetzung des Abfalls.</div>'+
+  '</div>';
+}
+function modalVeVA(subId){
+  var s=substance(subId);if(!s)return;
+  var inst=state.curInst?instance(state.curInst):(DB.instances.filter(function(i){return i.sub===subId;})[0]||null);
+  var sug=vevaSuggest(s),today=todayStr();
+  var menge=(inst&&inst.menge!=null)?inst.menge:'';var einheit=inst?inst.einheit:'l';
+  var body='<p class="ls-lead">Entsorgungsbeleg nach VeVA. Abfallcode und Sonderabfall-Kennzeichnung werden aus der Einstufung vorgeschlagen – bitte prüfen und Empfänger ergänzen.</p>'+
+    '<div class="um-grid"><label class="um-f"><span>Menge</span><input id="vvMenge" type="number" step="any" value="'+menge+'"></label>'+
+    '<label class="um-f"><span>Einheit</span><select id="vvEinheit"><option>l</option><option>kg</option><option>Stk</option><option>ml</option></select></label></div>'+
+    '<label class="um-f"><span>Abfallcode (LVA/VeVA)</span><input id="vvCode" type="text" value="'+esc(sug.code)+'"></label>'+
+    '<label class="vv-chk"><input id="vvSonder" type="checkbox"'+(sug.special?' checked':'')+'><span>Sonderabfall (Begleitschein erforderlich)</span></label>'+
+    '<label class="um-f"><span>Empfänger / Entsorgungsunternehmen</span><input id="vvEmpf" type="text" placeholder="Name des Entsorgers"></label>'+
+    '<div class="um-grid"><label class="um-f"><span>Abgeber VeVA-Nr. (optional)</span><input id="vvAbgNr" type="text" placeholder="z. B. 12345"></label>'+
+    '<label class="um-f"><span>Empfänger VeVA-Nr. (optional)</span><input id="vvEmpfNr" type="text" placeholder="z. B. 67890"></label></div>'+
+    '<label class="um-f"><span>Datum</span><input id="vvDatum" type="date" value="'+today+'"></label>'+
+    '<button class="btn" data-action="vevaPrint" data-id="'+subId+'" style="width:100%;margin-top:10px">'+ICO.doc+' Entsorgungsbeleg drucken</button>'+
+    '<p class="um-note">Für Sonderabfälle ist der offizielle Begleitschein über veva-online.ch mit Betriebsnummern zu verwenden. Der Abfallcode ist ein Vorschlag; massgeblich sind Herkunft und Zusammensetzung.</p>';
+  openModal('Entsorgungsbeleg (VeVA) · '+esc(s.name),body);
+  var se=document.getElementById('vvEinheit');if(se&&einheit){[].slice.call(se.options).forEach(function(op){if(op.value===einheit||op.text===einheit)op.selected=true;});}
+}
+function vevaPrint(subId){
+  var s=substance(subId);if(!s)return;var sug=vevaSuggest(s);
+  var code=(((document.getElementById('vvCode')||{}).value)||sug.code).trim();
+  var o={menge:(((document.getElementById('vvMenge')||{}).value)||'').trim(),
+    einheit:(document.getElementById('vvEinheit')||{}).value||'',
+    code:code,codeName:(code===sug.code?sug.name:''),
+    special:!!((document.getElementById('vvSonder')||{}).checked),
+    empf:(((document.getElementById('vvEmpf')||{}).value)||'').trim(),
+    abgeberNr:(((document.getElementById('vvAbgNr')||{}).value)||'').trim(),
+    empfNr:(((document.getElementById('vvEmpfNr')||{}).value)||'').trim(),
+    datum:(document.getElementById('vvDatum')||{}).value||todayStr()};
+  closeModal();doPrint(vevaBelegHtml(s,o));
+}
 /* ---------- Lieferschein / Rechnung -> Bestand (Block 20) ---------- */
 var LS_SAMPLE=['Muster Chemie AG · Lieferschein Nr. 48213','Datum 28.08.2026 · Kunde: Werkhof Muster','',
  'Pos  Menge  Artikel-Nr  Bezeichnung                 Preis',
@@ -3002,7 +3092,7 @@ function scrDetail(){
     '<div class="instr-head"><div><b>Instruktionsnachweis</b><small>'+(iCount?('Instruiert: '+iCount+' · zuletzt '+fmtDate(iLast)):'Noch keine Instruktion erfasst')+'</small></div>'+(iDue?'<span class="instr-badge due">fällig</span>':'<span class="instr-badge ok">aktuell</span>')+'</div>'+
     '<div class="btn-row" style="margin-top:11px"><button class="btn secondary" data-action="instrList" data-id="'+s.id+'">Nachweise</button><button class="btn secondary" data-action="instrQr" data-id="'+s.id+'">'+ICO.qr+' Instruktions-QR</button></div>'+
     '<button class="btn" data-action="instrConfirm" data-id="'+s.id+'" style="width:100%;margin-top:9px">'+ICO.ok+' Instruktion bestätigen</button></div>';
-  return '<div class="view">'+hero+notes+bestand+stamm+psaCard(s)+emplCard(s)+'<button class="btn secondary" data-action="genBA" data-id="'+s.id+'" style="width:100%;margin-top:14px">'+ICO.doc+' Betriebsanweisung erstellen</button>'+'<button class="btn secondary" data-action="gbOpen" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Gefährdungsbeurteilung erstellen</button>'+'<button class="btn secondary" data-action="umfuell" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Umfüll-Etikett drucken</button>'+instrBlock+oth+disclaimer()+'</div>';
+  return '<div class="view">'+hero+notes+bestand+stamm+psaCard(s)+emplCard(s)+'<button class="btn secondary" data-action="genBA" data-id="'+s.id+'" style="width:100%;margin-top:14px">'+ICO.doc+' Betriebsanweisung erstellen</button>'+'<button class="btn secondary" data-action="gbOpen" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Gefährdungsbeurteilung erstellen</button>'+'<button class="btn secondary" data-action="umfuell" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Umfüll-Etikett drucken</button>'+'<button class="btn secondary" data-action="veva" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Entsorgungsbeleg (VeVA)</button>'+instrBlock+oth+disclaimer()+'</div>';
 }
 
 /* ===== LAGERORTDETAIL (nützlicher) ===== */
@@ -3322,6 +3412,8 @@ document.addEventListener('click',e=>{
     case 'lsParse':lsParse();break;
     case 'lsExample':lsExample();break;
     case 'lsApply':lsApply();break;
+    case 'veva':modalVeVA(id);break;
+    case 'vevaPrint':vevaPrint(id);break;
     case 'dossier':dossierPdf();break;
     case 'starterOpen':modalStarter();break;
     case 'starterPreview':modalStarterPreview(id);break;

@@ -685,6 +685,18 @@
   .lsm-meta{font-size:11px;color:var(--ink-3);margin-top:1px}
   .lsm-badge{flex:none;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.02em;border-radius:20px;padding:2px 7px;background:var(--ok-bg);color:var(--ok)}
   .lsm-badge.new{background:var(--surface-2);color:var(--ink-2)}
+  .vvm-wrap{display:flex;justify-content:center;align-items:center;min-height:360px}
+  .vvm{width:320px;max-width:100%;background:#fff;color:#111;border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:0 22px 48px -20px rgba(16,36,28,.5)}
+  .vvm-h{display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:2px solid #111;padding-bottom:9px;margin-bottom:11px}
+  .vvm-t{font-family:var(--mono);font-size:11px;color:#333}
+  .vvm-sb{background:#a3140b;color:#fff;font-weight:800;font-size:9px;letter-spacing:.05em;padding:3px 9px;border-radius:4px}
+  .vvm-name{font-family:var(--display);font-weight:800;font-size:17px;color:#111;margin-bottom:11px}
+  .vvm-code{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;padding:5px 0;border-bottom:1px solid #eee;color:#333}
+  .vvm-code b{font-family:var(--mono);color:#111}
+  .vvm-parties{display:flex;gap:10px;margin-top:14px}
+  .vvm-box{flex:1;border:1px solid #ccc;border-radius:5px;padding:8px 9px}
+  .vvm-box small{font-size:9.5px;color:#666;text-transform:uppercase;letter-spacing:.03em}
+  .vvm-sig{height:26px;border-bottom:1px solid #999;margin-top:14px}
 </style>
 </head>
 <body>
@@ -833,7 +845,7 @@
       <h2>Alles, was ein Gefahrstoff-Kataster braucht.</h2>
       <p class="lead">Wähle eine Funktion – jede zeigt live, wie sie im Alltag funktioniert. Von der KI-Erfassung bis zum Notfall-Modus.</p>
     </div>
-    <div class="fx-tabs" id="fxTabs"><button class="fx-tab on" data-fx="kidemo-sec">SDB per KI</button><button class="fx-tab" data-fx="ba-sec">Betriebsanweisung</button><button class="fx-tab" data-fx="katalog-sec">Barcode-Katalog</button><button class="fx-tab" data-fx="instr-sec">Instruktion</button><button class="fx-tab" data-fx="lang-sec">Mehrsprachig</button><button class="fx-tab" data-fx="ask-sec">Frag StoffScan</button><button class="fx-tab" data-fx="gb-sec">Gefährdungsbeurteilung</button><button class="fx-tab" data-fx="fw-sec">Feuerwehr-Karte</button><button class="fx-tab" data-fx="notfall-sec">Notfall-Modus</button><button class="fx-tab" data-fx="dossier-sec">Prüf-Dossier</button><button class="fx-tab" data-fx="lotse-sec">Compliance-Lotse</button><button class="fx-tab" data-fx="starter-sec">Starterkatalog</button><button class="fx-tab" data-fx="pwa-sec">Offline / App</button><button class="fx-tab" data-fx="ampel-sec">Standort-Ampel</button><button class="fx-tab" data-fx="empl-sec">Personenschutz</button><button class="fx-tab" data-fx="stfv-sec">Mengenschwellen</button><button class="fx-tab" data-fx="psa-sec">PSA punktgenau</button><button class="fx-tab" data-fx="label-sec">Umfüll-Etikett</button><button class="fx-tab" data-fx="ls-sec">Lieferschein</button></div>
+    <div class="fx-tabs" id="fxTabs"><button class="fx-tab on" data-fx="kidemo-sec">SDB per KI</button><button class="fx-tab" data-fx="ba-sec">Betriebsanweisung</button><button class="fx-tab" data-fx="katalog-sec">Barcode-Katalog</button><button class="fx-tab" data-fx="instr-sec">Instruktion</button><button class="fx-tab" data-fx="lang-sec">Mehrsprachig</button><button class="fx-tab" data-fx="ask-sec">Frag StoffScan</button><button class="fx-tab" data-fx="gb-sec">Gefährdungsbeurteilung</button><button class="fx-tab" data-fx="fw-sec">Feuerwehr-Karte</button><button class="fx-tab" data-fx="notfall-sec">Notfall-Modus</button><button class="fx-tab" data-fx="dossier-sec">Prüf-Dossier</button><button class="fx-tab" data-fx="lotse-sec">Compliance-Lotse</button><button class="fx-tab" data-fx="starter-sec">Starterkatalog</button><button class="fx-tab" data-fx="pwa-sec">Offline / App</button><button class="fx-tab" data-fx="ampel-sec">Standort-Ampel</button><button class="fx-tab" data-fx="empl-sec">Personenschutz</button><button class="fx-tab" data-fx="stfv-sec">Mengenschwellen</button><button class="fx-tab" data-fx="psa-sec">PSA punktgenau</button><button class="fx-tab" data-fx="label-sec">Umfüll-Etikett</button><button class="fx-tab" data-fx="ls-sec">Lieferschein</button><button class="fx-tab" data-fx="veva-sec">Entsorgungsbeleg</button></div>
   </div>
   <div class="fx-stagewrap">
     <button class="fx-arrow prev" data-fx-nav="-1" aria-label="Vorherige Funktion">&#8249;</button>
@@ -1286,6 +1298,31 @@
         </div>
         <div class="lsm-arrow" id="lsmArrow">↓</div>
         <div class="lsm-rows" id="lsmRows"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="fx-panel" id="veva-sec">
+  <div class="wrap ba-mkt">
+    <div class="ba-mkt-copy">
+      <div class="eyebrow">Sonderabfall sauber übergeben</div>
+      <h2>Entsorgungsbeleg nach VeVA.</h2>
+      <p class="lead">Muss ein Gefahrstoff entsorgt werden, schlägt StoffScan den passenden Abfallcode (LVA/VeVA) vor, markiert Sonderabfälle und erstellt einen Übergabe-Beleg mit Abgeber, Empfänger und Unterschriftenfeldern – bereit zum Ausdrucken.</p>
+      <ul class="ba-mkt-list">
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Abfallcode-Vorschlag aus der Einstufung</li>
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Sonderabfall automatisch gekennzeichnet</li>
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Übergabe-Beleg mit Unterschriftenfeldern zum Drucken</li>
+      </ul>
+    </div>
+    <div class="vvm-wrap">
+      <div class="vvm" id="vvMkt">
+        <div class="vvm-h"><span class="vvm-t">Entsorgungsbeleg · VeVA</span><span class="vvm-sb">SONDERABFALL</span></div>
+        <div class="vvm-name">Bremsenreiniger</div>
+        <div class="vvm-code"><span>Abfallcode (LVA/VeVA)</span><b>14 06 03*</b></div>
+        <div class="vvm-code"><span>Menge</span><b>3 l</b></div>
+        <div class="vvm-code"><span>UN-Nummer</span><b>1950</b></div>
+        <div class="vvm-parties"><div class="vvm-box"><small>Abgeber</small><div class="vvm-sig"></div></div><div class="vvm-box"><small>Empfänger</small><div class="vvm-sig"></div></div></div>
       </div>
     </div>
   </div>
