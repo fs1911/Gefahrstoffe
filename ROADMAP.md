@@ -187,7 +187,14 @@ damit Kunden den Nutzen sehen (Ziel: Wow-Demo direkt auf der Website).
       Grösse wählbar (A7/A6/A5), druckfertig via `doPrint` (eigene `.lbl-*` Print-CSS in mm).
       Button auf der Stoffkarte, Hinweis „innerbetriebliche Kennzeichnung nach CLP/GHS –
       Originaletikett & SDB massgeblich". Marketing-Slide „Umfüll-Etikett". Beide Apps synchron.
-20. [ ] **Lieferschein/Rechnung (PDF) → Bestand** (7)
+20. [x] **Lieferschein/Rechnung (PDF) → Bestand** (7)
+    → `modalLieferschein()` + `parseLieferschein(text)`: erkennt aus eingefügtem Lieferschein-/
+      Rechnungstext die Positionen (Menge, Gebinde, Gebindegrösse, Artikel-Nr), ordnet sie per
+      `lsMatch` automatisch dem Stoffstamm zu (Token-Score + Artikel-Nr/Barcode-Abgleich) und bucht
+      sie mit `lsApply` als Bestand ein – neue Produkte werden als Stoffstamm angelegt. Editierbare
+      Vorschau je Position, Ziel-Lagerort wählbar, Textdatei-Upload, Verlaufseintrag „Wareneingang".
+      Demo: `DB.instances.push`; Live: Insert in `substances`/`substance_instances`. Marketing-Slide
+      „Lieferschein". PDF-KI-Extraktion (Edge Function) als Cloud-Erweiterung vorgemerkt.
 21. [ ] **VeVA-Entsorgungsbeleg** (7) — Abfallcode + Sonderabfall-Begleitschein
 22. [ ] **Revisionssicheres Audit-Log** (7)
 23. [ ] **Wareneingangs-Check** (7) — SDB aktuell? hier lagerbar?

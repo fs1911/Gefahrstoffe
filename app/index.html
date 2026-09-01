@@ -858,6 +858,25 @@
   .lbl-dim{color:#888;list-style:none;margin-left:-16px}
   .lbl-sup{margin-top:9px;padding-top:7px;border-top:1px solid #bbb;font-size:10.5px;color:#333;line-height:1.4}
   .lbl-foot{margin-top:6px;font-size:9px;color:#777;line-height:1.35}
+  .ls-lead{font-size:12.5px;color:var(--ink-2);margin:0 0 13px;line-height:1.5}
+  .um-f textarea{width:100%;box-sizing:border-box;padding:10px 11px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font:inherit;font-size:13px;resize:vertical;line-height:1.5}
+  .ls-actions{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 6px}
+  .ls-actions .btn{flex:1;min-width:110px}
+  .ls-file{display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+  .ls-count{font-size:11.5px;font-weight:700;color:var(--ink-2);margin:14px 0 8px}
+  .ls-empty{display:flex;gap:8px;align-items:center;font-size:12.5px;color:var(--ink-2);background:var(--sun-bg);border-radius:10px;padding:11px 12px;margin-top:12px}
+  .ls-empty svg{width:16px;height:16px;color:var(--sun);flex:none}
+  .ls-row{border:1px solid var(--line);border-radius:12px;padding:11px 12px;margin-bottom:9px;background:var(--surface)}
+  .ls-drow{display:flex;align-items:center;gap:8px;justify-content:space-between;margin-bottom:9px}
+  .ls-desc{font-weight:700;font-size:13px;color:var(--ink);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ls-badge{font-size:9.5px;font-weight:700;border-radius:20px;padding:3px 8px;flex:none;text-transform:uppercase;letter-spacing:.02em}
+  .ls-badge.ok{background:var(--ok-bg);color:var(--ok)}
+  .ls-badge.new{background:var(--surface-2);color:var(--ink-2)}
+  .ls-grid{display:grid;grid-template-columns:1fr 1.3fr 1fr 1fr;gap:7px;margin-bottom:9px}
+  .ls-grid label,.ls-matchlab{display:flex;flex-direction:column;font-size:10px;font-weight:600;color:var(--ink-3);gap:3px;text-transform:uppercase;letter-spacing:.02em}
+  .ls-grid input,.ls-grid select,.ls-matchlab select{padding:7px 8px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:inherit;font-size:12.5px;text-transform:none;font-weight:500}
+  .ls-matchlab{font-size:10px;margin-top:2px}
+  @media(max-width:520px){.ls-grid{grid-template-columns:1fr 1fr}}
   .stfv-card{border:1px solid var(--line);border-radius:14px;background:var(--surface);margin-bottom:14px;overflow:hidden}
   .stfv-h{display:flex;gap:10px;align-items:flex-start;padding:13px 14px;border-bottom:1px solid var(--line-2);background:var(--sun-bg)}
   .stfv-h svg{width:18px;height:18px;color:var(--sun);flex:none;margin-top:1px}
@@ -2574,6 +2593,147 @@ function ampelBoard(fc){
   }).join('');
   return legend+cards;
 }
+/* ---------- Lieferschein / Rechnung -> Bestand (Block 20) ---------- */
+var LS_SAMPLE=['Muster Chemie AG · Lieferschein Nr. 48213','Datum 28.08.2026 · Kunde: Werkhof Muster','',
+ 'Pos  Menge  Artikel-Nr  Bezeichnung                 Preis',
+ '1    6      08931       Bremsenreiniger 500 ml Spraydose   8.90',
+ '2    2 Kanister 10021   Aceton technisch 10 L        42.00',
+ '3    4 Stk   55012      Bremsfluessigkeit DOT4 1 L    12.50',
+ '4    1 Fass  20140      Diesel 200 L                  310.00',
+ '5    3 Dose  33012      Rostloeser 400 ml             6.40','',
+ 'Zwischentotal 640.30','MwSt 8.1% 51.86','Total CHF 692.16','Besten Dank fuer Ihren Auftrag.'].join('\n');
+function LS_GEB(k){k=(k||'').toLowerCase();
+  if(/dose|spraydose|spray/.test(k))return 'Dose';
+  if(/kanister/.test(k))return 'Kanister';
+  if(/flasche/.test(k))return 'Flasche';
+  if(/fass|fässer|faesser/.test(k))return 'Fass';
+  if(/sack|säcke|saecke/.test(k))return 'Sack';
+  if(/eimer|bidon/.test(k))return 'Eimer';
+  if(/karton|kart/.test(k))return 'Karton';
+  if(/tube/.test(k))return 'Tube';
+  return 'Gebinde';}
+function parseLieferschein(text){
+  var lines=String(text||'').split(/\r?\n/),out=[];
+  var SKIP=/(lieferschein|rechnung|quittung|^datum|kunde|kundennr|auftrag|seite\s*\d|zwischentotal|^total|mwst|mehrwertsteuer|^summe\b|^betrag|lieferadresse|rechnungsadresse|^pos\b.*bezeichnung|artikel-?nr\.?\s*bezeichnung|freundliche gr|besten dank|^\s*$)/i;
+  lines.forEach(function(ln){
+    var line=ln.trim();if(!line||SKIP.test(line))return;
+    if(!/[a-zäöü]{3,}/i.test(line))return;
+    if(!/\d/.test(line))return;
+    var pk=line.match(/(\d+(?:[.,]\d+)?)\s*(ml|lt|liter|l|kg|kilo|g|gr|gramm)\b/i);
+    var packStr='',packVal=null,packUnit='';
+    if(pk){var v=parseFloat(pk[1].replace(',','.')),u=pk[2].toLowerCase();packStr=pk[1].replace(',','.')+' '+pk[2];
+      if(u==='ml'){packVal=v/1000;packUnit='l';}
+      else if(u.charAt(0)==='l'){packVal=v;packUnit='l';}
+      else if(u==='g'||u==='gr'||u==='gramm'){packVal=v/1000;packUnit='kg';}
+      else{packVal=v;packUnit='kg';}}
+    var geb='Gebinde',anz=null;
+    var qm=line.match(/(?:^|\s)(\d{1,3})\s*(x|stk|stück|st\b|dose[n]?|kanister|flasche[n]?|gebinde|fass|fässer|faesser|bidon|sack|säcke|saecke|karton[s]?|kart\b|eimer|tube[n]?|spraydose[n]?)/i);
+    if(qm){anz=parseInt(qm[1],10);geb=LS_GEB(qm[2]);}
+    else{var two=line.match(/^\s*(\d{1,3})\s+(\d{1,3})(?!\d)/);
+      if(two)anz=parseInt(two[2],10);
+      else{var lead=line.match(/^\s*(\d{1,3})(?!\d)/);if(lead)anz=parseInt(lead[1],10);}}
+    if(anz==null||anz<1)anz=1;
+    if(geb==='Gebinde'){var gk=line.match(/(spraydose|spray|kanister|flasche|fass|fässer|faesser|sack|säcke|saecke|eimer|karton|tube|bidon|dose)/i);if(gk)geb=LS_GEB(gk[1]);}
+    var an=line.match(/\b(\d{4,8})\b/);var art=an?an[1]:'';
+    var d=line;
+    d=d.replace(/art(?:ikel)?[.\-]?\s*nr\.?\s*:?\s*[A-Z0-9\-]+/ig,' ');
+    d=d.replace(/\bpos\.?\s*\d+/ig,' ');
+    d=d.replace(/(chf|fr\.?|eur)\s*\d+(?:[.,]\d+)?/ig,' ');
+    d=d.replace(/\d+[.,]\d{2}(?=\s|$)/g,' ');
+    d=d.replace(/\b\d{4,8}\b/g,' ');
+    if(qm)d=d.replace(qm[0],' ');
+    d=d.replace(/^\s*(?:\d{1,3}\s+){1,2}/,' ');
+    d=d.replace(/^\s*(?:x|stk|stück|st|dose[n]?|kanister|flasche[n]?|gebinde|fass|bidon|sack|karton|eimer|tube|spraydose[n]?)\b/i,' ');
+    d=d.replace(/\s{2,}/g,' ').trim().replace(/^[\-–•.\)\s]+/,'').replace(/[\-–\s]+$/,'').trim();
+    if(d.length<3||!/[a-zäöü]{3,}/i.test(d))return;
+    out.push({raw:line,desc:d,anzahl:anz,gebinde:geb,packStr:packStr,packVal:packVal,packUnit:packUnit,art:art});
+  });
+  return out;
+}
+function lsNorm(s){return String(s||'').toLowerCase().replace(/[^a-zäöüéèà0-9]+/g,' ').replace(/\b(technisch|neu|art|nr|pos|stk|dose|kanister|flasche|liter|ltr|ml|kg|spray|spraydose|gebinde)\b/g,' ').replace(/\s+/g,' ').trim();}
+function lsTok(s){return lsNorm(s).split(' ').filter(function(w){return w.length>=3;});}
+function lsMatch(pos){
+  var dt=lsTok(pos.desc),best={id:null,score:0};
+  DB.substances.forEach(function(s){
+    var st=lsTok(s.name),inter=0;
+    dt.forEach(function(w){if(st.some(function(x){return x.indexOf(w)>-1||w.indexOf(x)>-1;}))inter++;});
+    var score=dt.length?inter/dt.length:0;
+    if(pos.art&&s.barcode&&String(s.barcode).indexOf(pos.art)>-1)score=Math.max(score,0.95);
+    if(score>best.score)best={id:s.id,score:score};
+  });
+  return best;
+}
+function lsLocOpts(sel){return DB.locations.map(function(l){var c=company(l.company);return '<option value="'+l.id+'"'+(l.id===sel?' selected':'')+'>'+esc((c?c.name:'')+' · '+l.name)+'</option>';}).join('');}
+function modalLieferschein(){
+  var defLoc=state.activeLoc||state.filter.loc||(DB.locations[0]&&DB.locations[0].id)||'';
+  var body='<p class="ls-lead">Lieferschein- oder Rechnungstext einfügen. StoffScan erkennt die Positionen, ordnet sie dem Stoffstamm zu und bucht sie als Bestand.</p>'+
+    '<label class="um-f"><span>Ziel-Lagerort</span><select id="lsLoc">'+lsLocOpts(defLoc)+'</select></label>'+
+    '<label class="um-f"><span>Lieferschein-Text</span><textarea id="lsText" rows="6" placeholder="Positionen einfügen …"></textarea></label>'+
+    '<div class="ls-actions"><button class="btn secondary" data-action="lsExample" type="button">Beispiel</button><label class="ls-file btn secondary">Textdatei…<input type="file" accept=".txt,.csv,text/plain" data-action="lsFile" hidden></label><button class="btn" data-action="lsParse" type="button">Positionen erkennen</button></div>'+
+    '<div id="lsResults"></div>'+
+    '<p class="um-note">Automatische Erkennung – bitte Positionen und Zuordnung prüfen. PDF-Erkennung per KI folgt in der Cloud-Version; das Einfügen von Text funktioniert offline.</p>';
+  openModal('Lieferschein → Bestand',body);
+}
+function lsExample(){var t=document.getElementById('lsText');if(t)t.value=LS_SAMPLE;}
+function lsFile(input){var f=input.files&&input.files[0];if(!f)return;var rd=new FileReader();rd.onload=function(){var t=document.getElementById('lsText');if(t)t.value=String(rd.result||'');};rd.readAsText(f);}
+function lsParse(){
+  var text=(document.getElementById('lsText')||{}).value||'';
+  var rows=parseLieferschein(text),res=document.getElementById('lsResults');if(!res)return;
+  if(!rows.length){res.innerHTML='<div class="ls-empty">'+ICO.warn+'<span>Keine Positionen erkannt. Text prüfen oder Beispiel einfügen.</span></div>';return;}
+  var GEB=['Kanister','Dose','Flasche','Fass','Sack','Eimer','Karton','Tube','Gebinde'],EIN=['l','kg','Stk','ml'];
+  var html='<div class="ls-count">'+rows.length+' Position(en) erkannt</div>';
+  html+=rows.map(function(pos,idx){
+    var m=lsMatch(pos),sel=(m.id&&m.score>=0.5)?m.id:'';
+    var einheit=pos.packUnit||'Stk';
+    var menge=(pos.packVal!=null)?(Math.round(pos.anzahl*pos.packVal*1000)/1000):(einheit==='Stk'?pos.anzahl:'');
+    var gebOpts=GEB.map(function(g){return '<option'+(g===pos.gebinde?' selected':'')+'>'+g+'</option>';}).join('');
+    var einOpts=EIN.map(function(e){return '<option'+(e===einheit?' selected':'')+'>'+e+'</option>';}).join('');
+    var subOpts=DB.substances.map(function(s){return '<option value="'+s.id+'"'+(s.id===sel?' selected':'')+'>'+esc(s.name)+'</option>';}).join('');
+    var badge=sel?'<span class="ls-badge ok">zugeordnet '+Math.round(m.score*100)+'%</span>':'<span class="ls-badge new">neuer Stoff</span>';
+    return '<div class="ls-row" data-desc="'+esc(pos.desc)+'" data-art="'+esc(pos.art)+'" data-groesse="'+esc(pos.packStr||'–')+'">'+
+      '<div class="ls-drow"><div class="ls-desc">'+esc(pos.desc)+'</div>'+badge+'</div>'+
+      '<div class="ls-grid">'+
+        '<label>Anzahl<input class="ls-anzahl" type="number" min="1" value="'+pos.anzahl+'"></label>'+
+        '<label>Gebinde<select class="ls-geb">'+gebOpts+'</select></label>'+
+        '<label>Menge<input class="ls-menge" type="number" step="any" value="'+menge+'"></label>'+
+        '<label>Einheit<select class="ls-einheit">'+einOpts+'</select></label>'+
+      '</div>'+
+      '<label class="ls-matchlab">Zuordnung<select class="ls-match"><option value="__new"'+(sel?'':' selected')+'>➕ Neuen Stoff anlegen</option><option value="__ignore">Ignorieren</option>'+subOpts+'</select></label>'+
+    '</div>';
+  }).join('');
+  html+='<button class="btn" data-action="lsApply" type="button" style="width:100%;margin-top:12px">'+ICO.ok+' In Bestand übernehmen</button>';
+  res.innerHTML=html;
+}
+function lsCollect(){
+  return [].slice.call(document.querySelectorAll('#lsResults .ls-row')).map(function(r){
+    return {match:r.querySelector('.ls-match').value,
+      anzahl:parseInt(r.querySelector('.ls-anzahl').value||'1',10)||1,
+      gebinde:r.querySelector('.ls-geb').value,
+      menge:(function(){var v=r.querySelector('.ls-menge').value.trim();if(v==='')return null;var n=parseFloat(v.replace(',','.'));return isNaN(n)?null:n;})(),
+      einheit:r.querySelector('.ls-einheit').value,
+      groesse:r.getAttribute('data-groesse')||'–',
+      desc:r.getAttribute('data-desc')||'Neuer Stoff',
+      art:r.getAttribute('data-art')||''};
+  }).filter(function(x){return x.match!=='__ignore';});
+}
+function lsApply(){
+  var loc=(document.getElementById('lsLoc')||{}).value;if(!loc){toast('Lagerort wählen.',false);return;}
+  var items=lsCollect();if(!items.length){toast('Keine Position ausgewählt.',false);return;}
+  var made=0,newSubs=0;
+  items.forEach(function(it,k){
+    var sid;
+    if(it.match==='__new'){sid='s_'+Date.now()+'_'+k;
+      DB.substances.push({id:sid,name:it.desc,hersteller:'unbekannt',signal:'Achtung',ghs:[],h:'– (aus Lieferschein, bitte ergänzen)',p:'–',un:'–',lk:null,barcode:it.art||'',info:'',sdb:{status:'fehlt',rev:null,link:null}});
+      newSubs++;}
+    else sid=it.match;
+    qrCounter++;var qr='INST-'+String(qrCounter).padStart(6,'0');
+    DB.instances.push({id:'i_'+Date.now()+'_'+k,sub:sid,loc:loc,gebinde:it.gebinde,groesse:it.groesse,anzahl:it.anzahl,menge:it.menge,einheit:it.einheit,status:'Lager',qr:qr,last:new Date().toISOString().slice(0,10)});
+    made++;
+  });
+  addHistory('Wareneingang',made+' Position(en) aus Lieferschein · '+location_(loc).name,location_(loc).company);
+  saveDB();closeModal();toast(made+' Bestand(e) erfasst'+(newSubs?' · '+newSubs+' neuer Stoff':''));
+  state.filter.loc=loc;goTo('bestand',{reset:true,nav:'bestand'});
+}
 /* ---------- GHS-Eigenetikett beim Umfuellen (Block 19) ---------- */
 function umDeDate(iso){var p=String(iso||'').split('-');return p.length===3?p[2]+'.'+p[1]+'.'+p[0]:String(iso||'');}
 function umfuellLabelHtml(s,o){
@@ -2921,7 +3081,7 @@ function scrBestand(){
   const locOpts='<option value="">Alle Lagerorte</option>'+DB.locations.map(l=>'<option value="'+l.id+'" '+(f.loc===l.id?'selected':'')+'>'+l.name+'</option>').join('');
   const statusChips=['Lager','im Einsatz','zur Entsorgung'].map(st=>'<button class="chip '+(f.status===st?'on':'')+'" data-action="statusChip" data-id="'+st+'">'+st+'</button>').join('');
   const cards=list.length?list.map(instCard).join(''):'<div class="empty">'+ICO.search+'<div>Keine Treffer. Filter anpassen.</div></div>';
-  return '<div class="view"><h2 class="title">Bestände</h2><p class="sub">Vorkommen über alle Firmen und Lagerorte.</p>'+
+  return '<div class="view"><h2 class="title">Bestände</h2><p class="sub">Vorkommen über alle Firmen und Lagerorte.</p>'+'<button class="btn secondary" data-action="lieferschein" style="width:100%;margin:2px 0 14px">'+ICO.box+' Lieferschein / Rechnung erfassen</button>'+
     '<div class="field"><label>Firma / Ansicht</label><select data-action="filter" data-key="company">'+compOpts+'</select></div>'+
     '<div class="field"><label>Lagerort</label><select data-action="filter" data-key="loc">'+locOpts+'</select></div>'+
     '<div class="chips">'+statusChips+'<button class="chip hb '+(f.hb?'on':'')+'" data-action="hbChip">'+ICO.warn+' Nur Handlungsbedarf</button></div>'+
@@ -3220,6 +3380,10 @@ document.addEventListener('click',e=>{
     case 'gbGo':gbGenerate(id);break;
     case 'umfuell':modalUmfuell(id);break;
     case 'umfuellPrint':umfuellPrint(id);break;
+    case 'lieferschein':modalLieferschein();break;
+    case 'lsParse':lsParse();break;
+    case 'lsExample':lsExample();break;
+    case 'lsApply':lsApply();break;
     case 'dossier':dossierPdf();break;
     case 'starterOpen':modalStarter();break;
     case 'starterPreview':modalStarterPreview(id);break;
@@ -3279,6 +3443,7 @@ document.addEventListener('click',e=>{
 document.addEventListener('change',e=>{
   const f=e.target.closest('[data-action="filter"]');if(f){state.filter[f.dataset.key]=f.value;render();return;}
   const ac=e.target.closest('[data-action="adminCompany"]');if(ac){state.adminCompany=ac.value;render();}
+  const lf=e.target.closest('[data-action="lsFile"]');if(lf){lsFile(lf);return;}
 });
 function addHistory(a,m,cid){const n=new Date();const t=('0'+n.getDate()).slice(-2)+'.'+('0'+(n.getMonth()+1)).slice(-2)+'. '+('0'+n.getHours()).slice(-2)+':'+('0'+n.getMinutes()).slice(-2);DB.history.unshift({t,who:'Sie',a,m,cid:cid||'',alert:false});}
 
