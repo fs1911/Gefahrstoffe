@@ -623,6 +623,23 @@
   .empm-badge.r{background:var(--danger-bg);color:var(--danger)}
   .empm-badge.y{background:var(--sun-bg);color:var(--sun)}
   .empm-badge.g{background:var(--ok-bg);color:var(--ok)}
+  .sfm{display:flex;justify-content:center;align-items:center;min-height:360px}
+  .sfm-card{width:322px;max-width:100%;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 20px 44px -20px rgba(16,36,28,.55)}
+  .sfm-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:18px}
+  .sfm-h b{font-family:var(--display);font-size:16px;color:var(--ink)}
+  .sfm-badge{font-size:11px;font-weight:700;border-radius:20px;padding:4px 11px;flex:none;transition:background .4s,color .4s}
+  .sfm-badge.g{background:var(--ok-bg);color:var(--ok)}
+  .sfm-badge.i{background:var(--surface-2);color:var(--ink-2)}
+  .sfm-badge.y{background:var(--sun-bg);color:var(--sun)}
+  .sfm-badge.r{background:var(--danger-bg);color:var(--danger)}
+  .sfm-gauge{position:relative;height:16px;border-radius:8px;background:var(--line-2);margin-bottom:9px}
+  .sfm-fill{display:block;height:100%;border-radius:8px;background:var(--sun);width:0}
+  .sfm-fill.i{background:var(--ink-3)}.sfm-fill.y{background:var(--sun)}.sfm-fill.r{background:var(--danger)}
+  .sfm-thr{position:absolute;top:-4px;bottom:-4px;right:0;width:3px;border-radius:2px;background:var(--danger)}
+  .sfm-thr:after{content:"Schwelle";position:absolute;top:-17px;right:-2px;font-size:9px;font-weight:700;color:var(--danger);white-space:nowrap}
+  .sfm-meta{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;color:var(--ink-2);margin-top:12px}
+  .sfm-note{margin-top:15px;background:var(--sun-bg);color:var(--sun);border-radius:10px;padding:10px 12px;font-weight:600;font-size:12.5px;opacity:0;transform:translateY(4px);transition:opacity .4s,transform .4s}
+  .sfm-note.on{opacity:1;transform:none}
 </style>
 </head>
 <body>
@@ -771,7 +788,7 @@
       <h2>Alles, was ein Gefahrstoff-Kataster braucht.</h2>
       <p class="lead">Wähle eine Funktion – jede zeigt live, wie sie im Alltag funktioniert. Von der KI-Erfassung bis zum Notfall-Modus.</p>
     </div>
-    <div class="fx-tabs" id="fxTabs"><button class="fx-tab on" data-fx="kidemo-sec">SDB per KI</button><button class="fx-tab" data-fx="ba-sec">Betriebsanweisung</button><button class="fx-tab" data-fx="katalog-sec">Barcode-Katalog</button><button class="fx-tab" data-fx="instr-sec">Instruktion</button><button class="fx-tab" data-fx="lang-sec">Mehrsprachig</button><button class="fx-tab" data-fx="ask-sec">Frag StoffScan</button><button class="fx-tab" data-fx="gb-sec">Gefährdungsbeurteilung</button><button class="fx-tab" data-fx="fw-sec">Feuerwehr-Karte</button><button class="fx-tab" data-fx="notfall-sec">Notfall-Modus</button><button class="fx-tab" data-fx="dossier-sec">Prüf-Dossier</button><button class="fx-tab" data-fx="lotse-sec">Compliance-Lotse</button><button class="fx-tab" data-fx="starter-sec">Starterkatalog</button><button class="fx-tab" data-fx="pwa-sec">Offline / App</button><button class="fx-tab" data-fx="ampel-sec">Standort-Ampel</button><button class="fx-tab" data-fx="empl-sec">Personenschutz</button></div>
+    <div class="fx-tabs" id="fxTabs"><button class="fx-tab on" data-fx="kidemo-sec">SDB per KI</button><button class="fx-tab" data-fx="ba-sec">Betriebsanweisung</button><button class="fx-tab" data-fx="katalog-sec">Barcode-Katalog</button><button class="fx-tab" data-fx="instr-sec">Instruktion</button><button class="fx-tab" data-fx="lang-sec">Mehrsprachig</button><button class="fx-tab" data-fx="ask-sec">Frag StoffScan</button><button class="fx-tab" data-fx="gb-sec">Gefährdungsbeurteilung</button><button class="fx-tab" data-fx="fw-sec">Feuerwehr-Karte</button><button class="fx-tab" data-fx="notfall-sec">Notfall-Modus</button><button class="fx-tab" data-fx="dossier-sec">Prüf-Dossier</button><button class="fx-tab" data-fx="lotse-sec">Compliance-Lotse</button><button class="fx-tab" data-fx="starter-sec">Starterkatalog</button><button class="fx-tab" data-fx="pwa-sec">Offline / App</button><button class="fx-tab" data-fx="ampel-sec">Standort-Ampel</button><button class="fx-tab" data-fx="empl-sec">Personenschutz</button><button class="fx-tab" data-fx="stfv-sec">Mengenschwellen</button></div>
   </div>
   <div class="fx-stagewrap">
     <button class="fx-arrow prev" data-fx-nav="-1" aria-label="Vorherige Funktion">&#8249;</button>
@@ -1127,6 +1144,28 @@
         <div class="empm-h"><b id="empmName">Aceton</b><small id="empmTag">entzündbar · H336</small></div>
         <div class="empm-row"><span>Schwangere / Stillende</span><span class="empm-badge g" id="empmPreg">Keine Einschränkung</span></div>
         <div class="empm-row"><span>Jugendliche (unter 18)</span><span class="empm-badge y" id="empmYouth">Nur unter Aufsicht</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="fx-panel" id="stfv-sec">
+  <div class="wrap ba-mkt">
+    <div class="ba-mkt-copy">
+      <div class="eyebrow">Bevor es meldepflichtig wird</div>
+      <h2>Mengenschwellen im Blick.</h2>
+      <p class="lead">StoffScan summiert die gelagerten Mengen je Stoff und warnt früh, wenn sie sich der Schwelle der Störfallverordnung nähern – lange bevor ein Kurzbericht fällig wird. So gibt es keine bösen Überraschungen bei der Kontrolle.</p>
+      <ul class="ba-mkt-list">
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Mengen je Stoff und Standort automatisch summiert</li>
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Frühwarnung ab 80 % des Richtwerts</li>
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Richtwerte nach StFV-Kategorien – im Einzelfall prüfbar</li>
+      </ul>
+    </div>
+    <div class="sfm" id="sfMkt">
+      <div class="sfm-card">
+        <div class="sfm-h"><b>Heizöl · Tanklager</b><span class="sfm-badge g" id="sfmBadge">im Rahmen</span></div>
+        <div class="sfm-gauge"><span class="sfm-fill g" id="sfmFill"></span><span class="sfm-thr"></span></div>
+        <div class="sfm-meta"><span id="sfmKg">0 kg</span><span>Richtwert 5000 kg</span></div>
+        <div class="sfm-note" id="sfmNote">Frühwarnung – Störfall-Schwelle bald erreicht.</div>
       </div>
     </div>
   </div>
@@ -1633,6 +1672,21 @@
   function apply(k){nm.textContent=D[k].n;tag.textContent=D[k].t;preg.className='empm-badge '+D[k].p[0];preg.textContent=D[k].p[1];youth.className='empm-badge '+D[k].y[0];youth.textContent=D[k].y[1];}
   function cycle(){i=(i+1)%D.length;card.classList.add('fade');timers.push(setTimeout(function(){apply(i);card.classList.remove('fade');},320));timers.push(setTimeout(cycle,3200));}
   function start(){if(running)return;running=true;apply(0);timers.push(setTimeout(cycle,2400));}
+  if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)start();});},{threshold:.35});io.observe(sec);}else start();
+})();
+(function(){
+  var sec=document.getElementById('stfv-sec');if(!sec)return;
+  var fill=document.getElementById('sfmFill'),badge=document.getElementById('sfmBadge'),kg=document.getElementById('sfmKg'),note=document.getElementById('sfmNote');
+  var TARGET=84,MAX=5000;var timers=[],iv=null,running=false;
+  function lvl(p){return p>=100?'r':p>=80?'y':p>=50?'i':'g';}
+  function lbl(p){return p>=100?'Schwelle erreicht':p>=80?'Frühwarnung':p>=50?'Beobachten':'im Rahmen';}
+  function set(p){fill.style.width=p+'%';fill.className='sfm-fill '+lvl(p);badge.className='sfm-badge '+lvl(p);badge.textContent=lbl(p);kg.textContent=Math.round(p/100*MAX)+' kg';note.classList.toggle('on',p>=80);}
+  function run(){
+    var p=0;set(0);if(iv)clearInterval(iv);
+    iv=setInterval(function(){p+=2;if(p>=TARGET){p=TARGET;set(p);clearInterval(iv);iv=null;}else set(p);},45);
+    timers.push(setTimeout(run,6000));
+  }
+  function start(){if(running)return;running=true;timers.push(setTimeout(run,500));}
   if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)start();});},{threshold:.35});io.observe(sec);}else start();
 })();
 </script>

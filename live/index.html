@@ -806,6 +806,23 @@
   .empl-codes{display:block;font-family:var(--mono);font-size:10px;color:var(--ink-3);margin-top:2px}
   .ba-restrict{display:flex;gap:8px;align-items:flex-start;margin-top:14px;padding:10px 12px;border:1px solid #e6c98a;background:#fbf3e2;border-radius:8px;font-size:12px;color:#6b4e12;line-height:1.45}
   .ba-restrict svg{width:15px;height:15px;flex:none;margin-top:1px}
+  .stfv-card{border:1px solid var(--line);border-radius:14px;background:var(--surface);margin-bottom:14px;overflow:hidden}
+  .stfv-h{display:flex;gap:10px;align-items:flex-start;padding:13px 14px;border-bottom:1px solid var(--line-2);background:var(--sun-bg)}
+  .stfv-h svg{width:18px;height:18px;color:var(--sun);flex:none;margin-top:1px}
+  .stfv-h b{font-size:14px;color:var(--ink)}
+  .stfv-h small{display:block;color:var(--ink-3);font-size:11.5px;margin-top:2px;line-height:1.45}
+  .stfv-row{display:block;width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--line-2);padding:12px 14px;cursor:pointer;font-family:var(--font)}
+  .stfv-row:first-of-type{border-top:0}
+  .stfv-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+  .stfv-top b{font-size:13.5px;color:var(--ink)}
+  .stfv-badge{font-size:10.5px;font-weight:700;border-radius:20px;padding:3px 9px;flex:none}
+  .stfv-badge.r{background:var(--danger-bg);color:var(--danger)}
+  .stfv-badge.y{background:var(--sun-bg);color:var(--sun)}
+  .stfv-badge.i{background:var(--surface-2);color:var(--ink-2)}
+  .stfv-bar{position:relative;height:9px;border-radius:6px;background:var(--line-2);overflow:hidden;margin-bottom:6px}
+  .stfv-bar i{display:block;height:100%;border-radius:6px}
+  .stfv-bar i.r{background:var(--danger)}.stfv-bar i.y{background:var(--sun)}.stfv-bar i.i{background:var(--ink-3)}
+  .stfv-meta{font-size:11.5px;color:var(--ink-3);font-family:var(--mono)}
   #printArea{display:none}
   @media print{
     @page{size:A4;margin:12mm}
@@ -2510,6 +2527,39 @@ function emplBaNote(s,l){var e=emplLimits(s);if(!e.restricted)return '';
   return {de:'Beschäftigungsbeschränkungen beachten: Einsatz von Schwangeren/Stillenden und Jugendlichen (<18) nur nach Mutterschutz- und Jugendschutzvorschriften.',
    fr:'Respecter les restrictions d’emploi : femmes enceintes/allaitantes et jeunes (<18 ans) uniquement selon les prescriptions de protection de la maternité et des jeunes.',
    it:'Osservare le restrizioni d’impiego: gestanti/allattanti e giovani (<18) solo secondo le norme di protezione della maternità e dei giovani.'}[l]||'';}
+/* ---------- Mengenschwellen-Frühwarnung (StFV, Block 17) ---------- */
+/* Richtwerte (kg) je Gefahrenkategorie – im Einzelfall StFV Anhang 1.1 prüfen. */
+var STFV_CATS={explosiv:[100,'Explosive Stoffe'],giftig:[2000,'Giftige Stoffe'],druckgas:[2000,'Gase unter Druck'],oxid:[5000,'Brandfördernde Stoffe'],flamm:[5000,'Entzündbare Flüssigkeiten'],umwelt:[2000,'Gewässergefährdende Stoffe']};
+function stfvThreshold(s){
+  var ghs=s.ghs||[],codes={};hCodes(s.h).forEach(function(c){codes[c]=1;});
+  var best=null;
+  ['explosiv','giftig','druckgas','oxid','flamm'].forEach(function(k){if(ghs.indexOf(k)>-1){var c=STFV_CATS[k];if(!best||c[0]<best.t)best={t:c[0],n:c[1],k:k};}});
+  if(ghs.indexOf('umwelt')>-1&&(codes['H400']||codes['H410']||codes['H411'])){var c=STFV_CATS.umwelt;if(!best||c[0]<best.t)best={t:c[0],n:c[1],k:'umwelt'};}
+  return best;
+}
+function stfvKg(i){if(i.menge==null)return 0;var u=(i.einheit||'').toLowerCase();return i.menge*(u==='t'?1000:1);}
+function stfvLevel(pct){return pct>=100?'r':pct>=80?'y':pct>=50?'i':'';}
+function stfvForSub(subId,insts){var s=substance(subId);if(!s)return null;var thr=stfvThreshold(s);if(!thr)return null;
+  var kg=0;insts.forEach(function(i){if(i.sub===subId)kg+=stfvKg(i);});
+  if(kg<=0)return null;var pct=Math.round(kg/thr.t*100);
+  return {sub:subId,kg:kg,thr:thr.t,cat:thr.n,pct:pct,level:stfvLevel(pct)};
+}
+function stfvScopeInsts(fc){return DB.instances.filter(function(i){return !fc||location_(i.loc).company===fc;});}
+function stfvList(fc){var insts=stfvScopeInsts(fc),seen={},out=[];
+  insts.forEach(function(i){if(seen[i.sub])return;seen[i.sub]=1;var r=stfvForSub(i.sub,insts);if(r&&r.level)out.push(r);});
+  out.sort(function(a,b){return b.pct-a.pct;});return out;}
+function stfvLabel(lv){return lv==='r'?'Schwelle erreicht':lv==='y'?'Frühwarnung':'Beobachten';}
+function stfvCard(fc){
+  var list=stfvList(fc);if(!list.length)return '';
+  var rows=list.map(function(r){var s=substance(r.sub);var w=Math.min(100,r.pct);
+    return '<button class="stfv-row" data-action="openSub" data-id="'+r.sub+'"><div class="stfv-top"><b>'+esc(s.name)+'</b><span class="stfv-badge '+r.level+'">'+stfvLabel(r.level)+'</span></div>'+
+      '<div class="stfv-bar"><i class="'+r.level+'" style="width:'+w+'%"></i></div>'+
+      '<div class="stfv-meta">'+Math.round(r.kg)+' kg von Richtwert '+r.thr+' kg · '+r.pct+'% · '+esc(r.cat)+'</div></button>';}).join('');
+  return '<div class="stfv-card"><div class="stfv-h">'+ICO.warn+'<div><b>Mengenschwellen (StFV) – Frühwarnung</b><small>Gelagerte Mengen nähern sich der Störfall-Schwelle. Richtwerte (l ≈ kg) – im Einzelfall StFV Anhang 1.1 prüfen.</small></div></div>'+rows+'</div>';
+}
+function stfvNoticeForSub(subId,fc){var r=stfvForSub(subId,stfvScopeInsts(fc));if(!r||!r.level||r.level==='i')return '';
+  var lab=r.level==='r'?'Störfall-Schwelle erreicht/überschritten':'Frühwarnung: Störfall-Schwelle';
+  return '<div class="notice '+(r.level==='r'?'danger':'warn')+'">'+ICO.warn+'<div><b>'+lab+'.</b> '+Math.round(r.kg)+' kg von Richtwert '+r.thr+' kg ('+r.pct+'%, '+esc(r.cat)+'). StFV Anhang 1.1 prüfen.</div></div>';}
 function baCodes(str){var out=[];(String(str||'').match(/[HP]\d{3}(?:\s*\+\s*[HP]\d{3})*/g)||[]).forEach(function(c){out.push(c.replace(/\s+/g,''));});return out;}
 function baText(code,map){if(map[code])return map[code];if(code.indexOf('+')>-1){return code.split('+').map(function(c){return map[c]||c;}).join(' ');}return code;}
 function baList(codes,map){return codes.length?('<ul>'+codes.map(function(c){return '<li><b>'+c+'</b> '+esc(baText(c,map))+'</li>';}).join('')+'</ul>'):'<p class="ba-empty">Keine Angaben hinterlegt.</p>';}
@@ -2598,6 +2648,7 @@ function scrDetail(){
   else if(s.sdb.status==='alt')notes+='<div class="notice warn">'+ICO.warn+'<div><b>SDB älter als 3 Jahre</b> (Stand '+s.sdb.rev+'). Auf Aktualität prüfen.</div></div>';
   if(inst&&instIncomplete(inst))notes+='<div class="notice warn">'+ICO.warn+'<div><b>Menge fehlt</b> bei diesem Bestand – bitte ergänzen.</div></div>';
   if(inst)notes+=zlNoticeForInst(inst);
+  notes+=stfvNoticeForSub(s.id,inst?location_(inst.loc).company:'');
 
   // 3) BESTAND (Lagerort-gebunden) – Fakten + QR-CTA
   let bestand;
@@ -2772,7 +2823,7 @@ function scrAdmin(){
       '<button class="exp-btn" data-action="printReport">'+ICO.doc+'<span><b>Bericht als PDF</b><small>Druckansicht · «Als PDF speichern»</small></span></button>'+
       '<button class="exp-btn" data-action="printLabels">'+ICO.qr+'<span><b>Etiketten-Druckbogen</b><small>Lagerort- &amp; Artikel-QR</small></span></button>'+
     '</div>';
-  return '<div class="view"><h2 class="title">Verwaltung</h2><p class="sub">Arbeitsübersicht: was ist offen, wo und in welcher Firma.</p>'+logoCardHtml()+'<div class="dossier-card"><div class="dossier-ic">'+ICO.doc+'</div><div class="dossier-tx"><b>Prüf-Dossier</b><small>Alles für die Kontrolle auf einen Klick: Gefahrstoffliste, SDB-Status, Zusammenlagerung, Instruktionsnachweise und offene Punkte – als PDF.</small></div><button class="btn" data-action="dossier">'+ICO.print+' Erstellen</button></div>'+starterCardHtml()+pwaInstallCard()+tabsHtml+body+exportBar+disclaimer()+'</div>';
+  return '<div class="view"><h2 class="title">Verwaltung</h2><p class="sub">Arbeitsübersicht: was ist offen, wo und in welcher Firma.</p>'+logoCardHtml()+'<div class="dossier-card"><div class="dossier-ic">'+ICO.doc+'</div><div class="dossier-tx"><b>Prüf-Dossier</b><small>Alles für die Kontrolle auf einen Klick: Gefahrstoffliste, SDB-Status, Zusammenlagerung, Instruktionsnachweise und offene Punkte – als PDF.</small></div><button class="btn" data-action="dossier">'+ICO.print+' Erstellen</button></div>'+starterCardHtml()+pwaInstallCard()+stfvCard(fc)+tabsHtml+body+exportBar+disclaimer()+'</div>';
 }
 function adminHbRow(i){
   const s=substance(i.sub),l=location_(i.loc);
