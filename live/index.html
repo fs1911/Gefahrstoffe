@@ -852,6 +852,31 @@
   .lbl-foot{margin-top:6px;font-size:9px;color:#777;line-height:1.35}
   .ls-lead{font-size:12.5px;color:var(--ink-2);margin:0 0 13px;line-height:1.5}
   .vv-chk{display:flex;align-items:center;gap:9px;margin-bottom:11px;cursor:pointer}
+  .badge.b-cmr{background:#3a1c4d;color:#fff}
+  .subst-card{border:1px solid var(--line);border-radius:14px;background:var(--surface);margin-top:14px;overflow:hidden}
+  .subst-h{display:flex;align-items:flex-start;gap:9px;padding:12px 14px;background:#f3e9f7;border-bottom:1px solid var(--line-2)}
+  .subst-h svg{width:17px;height:17px;flex:none;margin-top:1px;color:#7a2a9a}
+  .subst-h b{font-size:14px;color:#5b2a86}
+  .subst-h small{display:block;color:#7a4a95;font-size:11.5px;margin-top:2px;line-height:1.4}
+  .subst-body{padding:12px 14px}
+  .subst-body p{margin:0;font-size:12.5px;color:var(--ink-2);line-height:1.55}
+  .subst-codes{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .subst-codes span{font-family:var(--mono);font-size:10.5px;font-weight:700;background:#f3e9f7;color:#5b2a86;border-radius:6px;padding:3px 8px}
+  .subst-done{display:flex;gap:8px;align-items:flex-start;margin-top:11px;font-size:12px;color:var(--ok)}
+  .subst-done svg{width:15px;height:15px;flex:none;margin-top:1px}
+  .subst-again{background:none;border:0;color:var(--accent);font:inherit;font-size:12px;font-weight:600;text-decoration:underline;cursor:pointer;padding:0}
+  .subst-admin{border:1px solid var(--line);border-radius:14px;background:var(--surface);margin-bottom:14px;overflow:hidden}
+  .subst-ah{display:flex;align-items:flex-start;gap:9px;padding:12px 14px;background:#f3e9f7;border-bottom:1px solid var(--line-2)}
+  .subst-ah svg{width:17px;height:17px;flex:none;margin-top:1px;color:#7a2a9a}
+  .subst-ah b{font-size:14px;color:#5b2a86}
+  .subst-ah small{display:block;color:#7a4a95;font-size:11.5px;margin-top:2px;line-height:1.4}
+  .subst-row{display:flex;align-items:center;gap:9px;width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--line-2);padding:11px 14px;cursor:pointer;font:inherit}
+  .subst-cat{font-family:var(--mono);font-size:10px;font-weight:700;border-radius:6px;padding:3px 7px;flex:none;color:#fff}
+  .subst-cat.c1{background:#5b2a86}.subst-cat.c2{background:#8a5aad}
+  .subst-nm{flex:1;min-width:0;font-weight:600;font-size:13px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .subst-ok{font-size:10.5px;font-weight:700;color:var(--ok);flex:none}
+  .subst-off{font-size:10.5px;font-weight:700;color:var(--sun);flex:none}
+  .subst-row svg{width:16px;height:16px;color:var(--ink-3);flex:none}
   .chk-wrap{margin-top:4px}
   .chk-expl{display:flex;gap:8px;align-items:flex-start;font-size:11.5px;color:var(--ink-3);line-height:1.5;margin-bottom:12px}
   .chk-expl svg{width:15px;height:15px;flex:none;margin-top:1px;color:var(--ink-3)}
@@ -2630,6 +2655,40 @@ function ampelBoard(fc){
   }).join('');
   return legend+cards;
 }
+/* ---------- Substitution – CMR-Flag (Block 25) ---------- */
+function cmrFlag(s){
+  var codes={};hCodes(s.h).forEach(function(c){codes[c]=1;});
+  function pick(a){return a.filter(function(x){return codes[x];});}
+  var C1=['H340','H350','H350i','H360','H360F','H360D','H360FD','H360Fd','H360Df'];
+  var C2=['H341','H351','H361','H361f','H361d','H361fd'];
+  var c1=pick(C1),c2=pick(C2);
+  if(c1.length)return {cmr:true,cat:'1',codes:c1.concat(c2)};
+  if(c2.length)return {cmr:true,cat:'2',codes:c2};
+  return {cmr:false,cat:null,codes:[]};
+}
+function cmrBadge(s){var f=cmrFlag(s);if(!f.cmr)return '';return '<span class="badge b-cmr">CMR '+f.cat+'</span>';}
+function substReviewKey(){return (typeof orgId==='function'&&orgId())||'demo';}
+function substReviewGet(subId){try{var all=JSON.parse(localStorage.getItem('stoffscan_subst_v1')||'{}');var m=all[substReviewKey()]||{};return m[subId]||null;}catch(e){return null;}}
+function substReviewSet(subId,iso){try{var all=JSON.parse(localStorage.getItem('stoffscan_subst_v1')||'{}');var m=all[substReviewKey()]||{};m[subId]=iso;all[substReviewKey()]=m;localStorage.setItem('stoffscan_subst_v1',JSON.stringify(all));}catch(e){}}
+function substReview(subId){var s=substance(subId);if(!s)return;substReviewSet(subId,todayStr());addHistory('Substitution geprüft',s.name+' (CMR)');toast('Substitutionsprüfung dokumentiert · im Audit-Log');render();}
+function substCard(s){
+  var f=cmrFlag(s);if(!f.cmr)return '';
+  var done=substReviewGet(s.id);
+  var codes=f.codes.length?'<div class="subst-codes">'+f.codes.map(function(c){return '<span>'+esc(c)+'</span>';}).join('')+'</div>':'';
+  var action=done
+   ?'<div class="subst-done">'+ICO.ok+'<span>Substitution geprüft am '+fmtDate(done)+'. <button class="subst-again" data-action="substReview" data-id="'+s.id+'">erneut dokumentieren</button></span></div>'
+   :'<button class="btn secondary" data-action="substReview" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.ok+' Substitutionsprüfung dokumentieren</button>';
+  return '<div class="subst-card"><div class="subst-h">'+ICO.warn+'<div><b>Substitution prüfen (CMR '+f.cat+')</b><small>'+(f.cat==='1'?'Krebserzeugend / erbgutverändernd / fortpflanzungsgefährdend':'Verdacht auf CMR-Wirkung')+'</small></div></div>'+
+    '<div class="subst-body"><p>Für CMR-Stoffe gilt die <b>Substitutionspflicht</b>: Es ist zu prüfen und zu dokumentieren, ob ein weniger gefährliches Produkt oder Verfahren die Aufgabe erfüllt (SUVA/EKAS, Chemikalien- und Arbeitsschutzrecht).</p>'+codes+action+'</div></div>';
+}
+function substAdminCard(fc){
+  var list=DB.substances.filter(function(s){if(!cmrFlag(s).cmr)return false;if(!fc)return true;return DB.instances.some(function(i){return i.sub===s.id&&location_(i.loc).company===fc;});});
+  if(!list.length)return '';
+  var open=list.filter(function(s){return !substReviewGet(s.id);}).length;
+  var rows=list.map(function(s){var f=cmrFlag(s),done=substReviewGet(s.id);
+    return '<button class="subst-row" data-action="openSub" data-id="'+s.id+'"><span class="subst-cat c'+f.cat+'">CMR '+f.cat+'</span><span class="subst-nm">'+esc(s.name)+'</span>'+(done?'<span class="subst-ok">geprüft '+fmtDate(done)+'</span>':'<span class="subst-off">offen</span>')+ICO.chev+'</button>';}).join('');
+  return '<div class="subst-admin"><div class="subst-ah">'+ICO.warn+'<div><b>Substitution prüfen (CMR)</b><small>'+list.length+' CMR-Stoff(e)'+(open?' · '+open+' offen':' · alle dokumentiert')+'. Ersatz ist gesetzlich vorrangig.</small></div></div>'+rows+'</div>';
+}
 /* ---------- Prüffristen – schlanke Erinnerung (Block 24) ---------- */
 var CHECK_TYPES=[
   {k:'wanne',name:'Auffangwannen kontrolliert',months:12,hint:'Dichtheit, Rückhaltevolumen, keine Rückstände.'},
@@ -3213,7 +3272,7 @@ function scrDetail(){
 
   // 1) HERO: Name, Signal+SDB-Badges, GHS gross
   const ghs=s.ghs.length?'<div class="sk-ghs">'+s.ghs.map(g=>ghsBadge(g,'big')).join('')+'</div>':'<div class="sk-ghs none">Keine GHS-Piktogramme hinterlegt</div>';
-  const hero='<div class="sk-hero"><div class="sk-badges">'+signalBadge(s)+sdbBadge(s)+'</div>'+
+  const hero='<div class="sk-hero"><div class="sk-badges">'+signalBadge(s)+sdbBadge(s)+cmrBadge(s)+'</div>'+
     '<h1 class="sk-name">'+s.name+'</h1><div class="sk-mfr">'+s.hersteller+(s.un!=='–'?' · UN '+s.un:'')+'</div>'+ghs+'</div>';
 
   // 2) WARNHINWEISE direkt unter Hero
@@ -3221,6 +3280,7 @@ function scrDetail(){
   if(s.sdb.status==='fehlt')notes+='<div class="notice danger">'+ICO.warn+'<div><b>Kein SDB hinterlegt.</b> Sicherheitsdatenblatt ergänzen.</div></div>';
   else if(s.sdb.status==='alt')notes+='<div class="notice warn">'+ICO.warn+'<div><b>SDB älter als 3 Jahre</b> (Stand '+s.sdb.rev+'). Auf Aktualität prüfen.</div></div>';
   if(inst&&instIncomplete(inst))notes+='<div class="notice warn">'+ICO.warn+'<div><b>Menge fehlt</b> bei diesem Bestand – bitte ergänzen.</div></div>';
+  if(cmrFlag(s).cmr)notes+='<div class="notice" style="background:#f3e9f7">'+ICO.warn+'<div><b>CMR-Stoff – Substitution prüfen.</b> Ersatz durch ein weniger gefährliches Produkt/Verfahren ist zu prüfen und zu dokumentieren (Ersatzpflicht).</div></div>';
   if(inst)notes+=zlNoticeForInst(inst);
   notes+=stfvNoticeForSub(s.id,inst?location_(inst.loc).company:'');
 
@@ -3273,7 +3333,7 @@ function scrDetail(){
     '<div class="instr-head"><div><b>Instruktionsnachweis</b><small>'+(iCount?('Instruiert: '+iCount+' · zuletzt '+fmtDate(iLast)):'Noch keine Instruktion erfasst')+'</small></div>'+(iDue?'<span class="instr-badge due">fällig</span>':'<span class="instr-badge ok">aktuell</span>')+'</div>'+
     '<div class="btn-row" style="margin-top:11px"><button class="btn secondary" data-action="instrList" data-id="'+s.id+'">Nachweise</button><button class="btn secondary" data-action="instrQr" data-id="'+s.id+'">'+ICO.qr+' Instruktions-QR</button></div>'+
     '<button class="btn" data-action="instrConfirm" data-id="'+s.id+'" style="width:100%;margin-top:9px">'+ICO.ok+' Instruktion bestätigen</button></div>';
-  return '<div class="view">'+hero+notes+bestand+(inst?weCheckCard(s.id,inst.loc):'')+stamm+psaCard(s)+emplCard(s)+'<button class="btn secondary" data-action="genBA" data-id="'+s.id+'" style="width:100%;margin-top:14px">'+ICO.doc+' Betriebsanweisung erstellen</button>'+'<button class="btn secondary" data-action="gbOpen" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Gefährdungsbeurteilung erstellen</button>'+'<button class="btn secondary" data-action="umfuell" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Umfüll-Etikett drucken</button>'+'<button class="btn secondary" data-action="veva" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Entsorgungsbeleg (VeVA)</button>'+instrBlock+oth+disclaimer()+'</div>';
+  return '<div class="view">'+hero+notes+bestand+(inst?weCheckCard(s.id,inst.loc):'')+stamm+psaCard(s)+emplCard(s)+substCard(s)+'<button class="btn secondary" data-action="genBA" data-id="'+s.id+'" style="width:100%;margin-top:14px">'+ICO.doc+' Betriebsanweisung erstellen</button>'+'<button class="btn secondary" data-action="gbOpen" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Gefährdungsbeurteilung erstellen</button>'+'<button class="btn secondary" data-action="umfuell" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Umfüll-Etikett drucken</button>'+'<button class="btn secondary" data-action="veva" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Entsorgungsbeleg (VeVA)</button>'+instrBlock+oth+disclaimer()+'</div>';
 }
 
 /* ===== LAGERORTDETAIL (nützlicher) ===== */
@@ -3399,7 +3459,7 @@ function scrAdmin(){
       '<button class="exp-btn" data-action="printReport">'+ICO.doc+'<span><b>Bericht als PDF</b><small>Druckansicht · «Als PDF speichern»</small></span></button>'+
       '<button class="exp-btn" data-action="printLabels">'+ICO.qr+'<span><b>Etiketten-Druckbogen</b><small>Lagerort- &amp; Artikel-QR</small></span></button>'+
     '</div>';
-  return '<div class="view"><h2 class="title">Verwaltung</h2><p class="sub">Arbeitsübersicht: was ist offen, wo und in welcher Firma.</p>'+logoCardHtml()+'<div class="dossier-card"><div class="dossier-ic">'+ICO.doc+'</div><div class="dossier-tx"><b>Prüf-Dossier</b><small>Alles für die Kontrolle auf einen Klick: Gefahrstoffliste, SDB-Status, Zusammenlagerung, Instruktionsnachweise und offene Punkte – als PDF.</small></div><button class="btn" data-action="dossier">'+ICO.print+' Erstellen</button></div>'+starterCardHtml()+pwaInstallCard()+stfvCard(fc)+tabsHtml+body+exportBar+disclaimer()+'</div>';
+  return '<div class="view"><h2 class="title">Verwaltung</h2><p class="sub">Arbeitsübersicht: was ist offen, wo und in welcher Firma.</p>'+logoCardHtml()+'<div class="dossier-card"><div class="dossier-ic">'+ICO.doc+'</div><div class="dossier-tx"><b>Prüf-Dossier</b><small>Alles für die Kontrolle auf einen Klick: Gefahrstoffliste, SDB-Status, Zusammenlagerung, Instruktionsnachweise und offene Punkte – als PDF.</small></div><button class="btn" data-action="dossier">'+ICO.print+' Erstellen</button></div>'+starterCardHtml()+pwaInstallCard()+substAdminCard(fc)+stfvCard(fc)+tabsHtml+body+exportBar+disclaimer()+'</div>';
 }
 function adminHbRow(i){
   const s=substance(i.sub),l=location_(i.loc);
@@ -3602,6 +3662,7 @@ document.addEventListener('click',e=>{
     case 'auditTamper':auditTamperDemo();render();break;
     case 'auditReseal':auditResealDo();render();break;
     case 'checkConfirm':checkConfirm(id);break;
+    case 'substReview':substReview(id);break;
     case 'dossier':dossierPdf();break;
     case 'starterOpen':modalStarter();break;
     case 'starterPreview':modalStarterPreview(id);break;

@@ -265,7 +265,14 @@ damit Kunden den Nutzen sehen (Ziel: Wow-Demo direkt auf der Website).
       („Prüffrist bestätigt") → landet im Prüf-Dossier. Persistenz client-seitig pro Org
       (localStorage, offline-tauglich) – bewusst schlank, kein Wartungsmodul. Marketing-Slide
       „Prüffristen". Beide Apps synchron.
-25. [ ] **Substitution – nur Flag „CMR: Ersatz prüfen"** (7) — keine Alternativen-Datenbank
+25. [x] **Substitution – nur Flag „CMR: Ersatz prüfen"** (7) — keine Alternativen-Datenbank
+    → `cmrFlag(s)` erkennt CMR-Stoffe aus den H-Sätzen (Kat 1: H340/H350/H360*, Kat 2: H341/H351/
+      H361*). Stoffkarte: CMR-Badge im Kopf + Hinweis „Substitution prüfen (Ersatzpflicht)" +
+      `substCard` mit Erklärung der Substitutionspflicht (SUVA/EKAS) und Button
+      „Substitutionsprüfung dokumentieren" (schreibt Audit-Log-Eintrag + Datum, client-seitig pro
+      Org). `substAdminCard` listet alle CMR-Stoffe mit Prüfstatus (offen/geprüft). Keine
+      Alternativen-Datenbank – bewusst nur Flag + Dokumentation. Demo-Seed: CMR-Stoff
+      „Dieselkraftstoff" (H351) ergänzt. Marketing-Slide „CMR / Substitution". Beide Apps synchron.
 
 ### Separat behandeln (Vertrieb/GTM, kein App-Feature)
 - [ ] Berater / Sicherheitsbeauftragte als Multiplikatoren (Mandanten-Ansicht)
