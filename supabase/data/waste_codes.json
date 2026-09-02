@@ -1,0 +1,6022 @@
+[
+{
+"code": "01 01 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus dem Abbau von metallhaltigen Bodenschätzen",
+"schwelle_kg": null
+},
+{
+"code": "01 01 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus dem Abbau von nichtmetallhaltigen Bodenschätzen",
+"schwelle_kg": null
+},
+{
+"code": "01 03 04",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Säure bildende Aufbereitungsrückstände aus der Verarbeitung von sulfidischem Erz",
+"schwelle_kg": null
+},
+{
+"code": "01 03 05",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Aufbereitungsrückstände, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "01 03 06",
+"klassierung": "",
+"special": false,
+"beschreibung": "Aufbereitungsrückstände mit Ausnahme derjenigen, die unter 01 03 04 oder 01 03 05 fallen",
+"schwelle_kg": null
+},
+{
+"code": "01 03 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere, gefährliche Stoffe enthaltende Abfälle aus der physikalischen und chemischen Verarbeitung von metallhaltigen Bodenschätzen",
+"schwelle_kg": null
+},
+{
+"code": "01 03 08",
+"klassierung": "",
+"special": false,
+"beschreibung": "Staubende und pulvrige Abfälle mit Ausnahme derjenigen, die unter 01 03 07 fallen",
+"schwelle_kg": null
+},
+{
+"code": "01 03 09",
+"klassierung": "",
+"special": false,
+"beschreibung": "Rotschlamm aus der Aluminiumoxidherstellung mit Ausnahme von Rotschlamm, der unter 01 03 07 fällt",
+"schwelle_kg": null
+},
+{
+"code": "01 03 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "01 04 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Gefährliche Stoffe enthaltende Abfälle aus der physikalischen und chemischen Weiterverarbeitung von nichtmetallhaltigen Bodenschätzen",
+"schwelle_kg": null
+},
+{
+"code": "01 04 08",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle von Kies- und Gesteinsbruch mit Ausnahme derjenigen, die unter 01 04 07 fallen",
+"schwelle_kg": null
+},
+{
+"code": "01 04 09",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle von Sand und Ton",
+"schwelle_kg": null
+},
+{
+"code": "01 04 10",
+"klassierung": "",
+"special": false,
+"beschreibung": "Staubende und pulvrige Abfälle mit Ausnahme derjenigen, die unter 01 04 07 fallen",
+"schwelle_kg": null
+},
+{
+"code": "01 04 11",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus der Verarbeitung von Kali- und Steinsalz mit Ausnahme derjenigen, die unter 01 04 07 fallen",
+"schwelle_kg": null
+},
+{
+"code": "01 04 12",
+"klassierung": "",
+"special": false,
+"beschreibung": "Aufbereitungsrückstände und andere Abfälle aus der Wäsche und Reinigung von Bodenschätzen mit Ausnahme derjenigen, die unter 01 04 07 oder 01 04 11 fallen",
+"schwelle_kg": null
+},
+{
+"code": "01 04 13",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus Steinmetz- und –sägearbeiten mit Ausnahme derjenigen, die unter 01 04 07 fallen",
+"schwelle_kg": null
+},
+{
+"code": "01 04 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "01 05 04",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme und Abfälle aus Süsswasserbohrungen",
+"schwelle_kg": null
+},
+{
+"code": "01 05 05",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Ölhaltige Bohrschlämme und -abfälle",
+"schwelle_kg": null
+},
+{
+"code": "01 05 06",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Bohrschlämme und andere Bohrabfälle, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "01 05 07",
+"klassierung": "",
+"special": false,
+"beschreibung": "Barythaltige Bohrschlämme und -abfälle mit Ausnahme derjenigen, die unter 01 05 05 oder 01 05 06 fallen",
+"schwelle_kg": null
+},
+{
+"code": "01 05 08",
+"klassierung": "",
+"special": false,
+"beschreibung": "Chloridhaltige Bohrschlämme und -abfälle mit Ausnahme derjenigen, die unter 01 05 05 oder 01 05 06 fallen",
+"schwelle_kg": null
+},
+{
+"code": "01 05 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "02 01 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme von Wasch- und Reinigungsvorgängen",
+"schwelle_kg": null
+},
+{
+"code": "02 01 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus tierischem Gewebe",
+"schwelle_kg": null
+},
+{
+"code": "02 01 03",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus pflanzlichem Gewebe",
+"schwelle_kg": null
+},
+{
+"code": "02 01 04",
+"klassierung": "",
+"special": false,
+"beschreibung": "Kunststoffabfälle (ohne Verpackungen)",
+"schwelle_kg": null
+},
+{
+"code": "02 01 06",
+"klassierung": "",
+"special": false,
+"beschreibung": "Tierische Ausscheidungen, Gülle/Jauche und Stallmist (einschliesslich verdorbenes Stroh), Abwässer, getrennt gesammelt und extern behandelt",
+"schwelle_kg": null
+},
+{
+"code": "02 01 07",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus der Forstwirtschaft",
+"schwelle_kg": null
+},
+{
+"code": "02 01 08",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Abfälle von Chemikalien für die Landwirtschaft, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "02 01 09",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle von Chemikalien für die Landwirtschaft mit Ausnahme derjenigen, die unter 02 01 08 fallen",
+"schwelle_kg": null
+},
+{
+"code": "02 01 10",
+"klassierung": "",
+"special": false,
+"beschreibung": "Metallabfälle",
+"schwelle_kg": null
+},
+{
+"code": "02 01 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "02 02 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme von Wasch- und Reinigungsvorgängen",
+"schwelle_kg": null
+},
+{
+"code": "02 02 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus tierischem Gewebe",
+"schwelle_kg": null
+},
+{
+"code": "02 02 03",
+"klassierung": "",
+"special": false,
+"beschreibung": "Für Verzehr oder Verarbeitung ungeeignete Stoffe",
+"schwelle_kg": null
+},
+{
+"code": "02 02 04",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme aus der betriebseigenen Abwasserbehandlung",
+"schwelle_kg": null
+},
+{
+"code": "02 02 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "02 03 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme aus Wasch-, Reinigungs-, Schäl-, Zentrifugier- und Abtrennprozessen",
+"schwelle_kg": null
+},
+{
+"code": "02 03 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle von Konservierungsstoffen",
+"schwelle_kg": null
+},
+{
+"code": "02 03 03",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus der Extraktion mit Lösungsmitteln",
+"schwelle_kg": null
+},
+{
+"code": "02 03 04",
+"klassierung": "",
+"special": false,
+"beschreibung": "Für Verzehr oder Verarbeitung ungeeignete Stoffe",
+"schwelle_kg": null
+},
+{
+"code": "02 03 05",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme aus der betriebseigenen Abwasserbehandlung",
+"schwelle_kg": null
+},
+{
+"code": "02 03 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "02 04 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Rübenerde",
+"schwelle_kg": null
+},
+{
+"code": "02 04 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Nicht spezifikationsgerechter Kalziumkarbonatschlamm",
+"schwelle_kg": null
+},
+{
+"code": "02 04 03",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme aus der betriebseigenen Abwasserbehandlung",
+"schwelle_kg": null
+},
+{
+"code": "02 04 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "02 05 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Für Verzehr oder Verarbeitung ungeeignete Stoffe",
+"schwelle_kg": null
+},
+{
+"code": "02 05 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme aus der betriebseigenen Abwasserbehandlung",
+"schwelle_kg": null
+},
+{
+"code": "02 05 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "02 06 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Für Verzehr oder Verarbeitung ungeeignete Stoffe",
+"schwelle_kg": null
+},
+{
+"code": "02 06 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle von Konservierungsstoffen",
+"schwelle_kg": null
+},
+{
+"code": "02 06 03",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme aus der betriebseigenen Abwasserbehandlung",
+"schwelle_kg": null
+},
+{
+"code": "02 06 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "02 07 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus der Wäsche, Reinigung und mechanischen Zerkleinerung des Rohmaterials",
+"schwelle_kg": null
+},
+{
+"code": "02 07 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus der Alkoholdestillation",
+"schwelle_kg": null
+},
+{
+"code": "02 07 03",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus der chemischen Behandlung",
+"schwelle_kg": null
+},
+{
+"code": "02 07 04",
+"klassierung": "",
+"special": false,
+"beschreibung": "Für Verzehr oder Verarbeitung ungeeignete Stoffe",
+"schwelle_kg": null
+},
+{
+"code": "02 07 05",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme aus der betriebseigenen Abwasserbehandlung",
+"schwelle_kg": null
+},
+{
+"code": "02 07 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "03 01 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Rinden- und Korkabfälle",
+"schwelle_kg": null
+},
+{
+"code": "03 01 04",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Problematische Holzabfälle",
+"schwelle_kg": null
+},
+{
+"code": "03 01 05",
+"klassierung": "",
+"special": false,
+"beschreibung": "Ausschliesslich mechanisch bearbeitetes Restholz",
+"schwelle_kg": null
+},
+{
+"code": "03 01 98",
+"klassierung": "ak",
+"special": false,
+"beschreibung": "Restholz, mit Ausnahme desjenigen, das unter 03 01 04 oder 03 01 05 fällt",
+"schwelle_kg": null
+},
+{
+"code": "03 01 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "03 02 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Halogenfreie organische Holzschutzmittel",
+"schwelle_kg": 200
+},
+{
+"code": "03 02 02",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Chlororganische Holzschutzmittel",
+"schwelle_kg": null
+},
+{
+"code": "03 02 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Metallorganische Holzschutzmittel",
+"schwelle_kg": null
+},
+{
+"code": "03 02 04",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Anorganische Holzschutzmittel",
+"schwelle_kg": null
+},
+{
+"code": "03 02 05",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Holzschutzmittel, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "03 02 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Holzschutzmittel anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "03 03 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Rinden- und Holzabfälle",
+"schwelle_kg": null
+},
+{
+"code": "03 03 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Sulfitschlämme (aus der Rückgewinnung von Kochlaugen)",
+"schwelle_kg": null
+},
+{
+"code": "03 03 05",
+"klassierung": "",
+"special": false,
+"beschreibung": "De-Inking-Schlämme aus dem Papierrecycling",
+"schwelle_kg": null
+},
+{
+"code": "03 03 07",
+"klassierung": "",
+"special": false,
+"beschreibung": "Mechanisch abgetrennte Abfälle aus der Auflösung von Papier und Kartonabfällen",
+"schwelle_kg": null
+},
+{
+"code": "03 03 08",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus dem Sortieren von Papier und Karton für das Recycling",
+"schwelle_kg": null
+},
+{
+"code": "03 03 09",
+"klassierung": "",
+"special": false,
+"beschreibung": "Kalkschlammabfälle",
+"schwelle_kg": null
+},
+{
+"code": "03 03 10",
+"klassierung": "",
+"special": false,
+"beschreibung": "Faserabfälle, Faser-, Füller- und Überzugsschlämme aus der mechanischen Abtrennung",
+"schwelle_kg": null
+},
+{
+"code": "03 03 11",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme aus der betriebseigenen Abwasserbehandlung mit Ausnahme derjenigen, die unter 03 03 10 fallen",
+"schwelle_kg": null
+},
+{
+"code": "03 03 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "04 01 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Fleischabschabungen und Häuteabfälle",
+"schwelle_kg": null
+},
+{
+"code": "04 01 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Geäschertes Leimleder",
+"schwelle_kg": null
+},
+{
+"code": "04 01 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Entfettungsabfälle, Lösungsmittelhaltig, ohne flüssige Phase",
+"schwelle_kg": null
+},
+{
+"code": "04 01 04",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Chromhaltige Gerbereibrühe",
+"schwelle_kg": 20000
+},
+{
+"code": "04 01 05",
+"klassierung": "",
+"special": false,
+"beschreibung": "Chromfreie Gerbereibrühe",
+"schwelle_kg": null
+},
+{
+"code": "04 01 06",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Chromhaltige Schlämme, insbesondere aus der betriebseigenen Abwasserbehandlung",
+"schwelle_kg": null
+},
+{
+"code": "04 01 07",
+"klassierung": "",
+"special": false,
+"beschreibung": "Chromfreie Schlämme, insbesondere aus der betriebseigenen Abwasserbehandlung",
+"schwelle_kg": null
+},
+{
+"code": "04 01 08",
+"klassierung": "",
+"special": false,
+"beschreibung": "Chromhaltige Abfälle aus gegerbtem Leder (Abschnitte, Schleifstaub, Falzspäne)",
+"schwelle_kg": null
+},
+{
+"code": "04 01 09",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus der Zurichtung und dem Finish",
+"schwelle_kg": null
+},
+{
+"code": "04 01 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "04 02 09",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus Verbundmaterialien (imprägnierte Textilien, Elastomer, Plastomer)",
+"schwelle_kg": null
+},
+{
+"code": "04 02 10",
+"klassierung": "",
+"special": false,
+"beschreibung": "Organische Stoffe aus Naturstoffen (z. B. Fette, Wachse)",
+"schwelle_kg": null
+},
+{
+"code": "04 02 14",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Abfälle aus dem Finish, die organische Lösungsmittel enthalten",
+"schwelle_kg": 20000
+},
+{
+"code": "04 02 15",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus dem Finish mit Ausnahme derjenigen, die unter 04 02 14 fallen",
+"schwelle_kg": null
+},
+{
+"code": "04 02 16",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Farbstoffe und Pigmente, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "04 02 17",
+"klassierung": "",
+"special": false,
+"beschreibung": "Farbstoffe und Pigmente mit Ausnahme derjenigen, die unter 04 02 16 fallen",
+"schwelle_kg": null
+},
+{
+"code": "04 02 19",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlämme aus der betriebseigenen Abwasserbehandlung, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "04 02 20",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme aus der betriebseigenen Abwasserbehandlung mit Ausnahme derjenigen, die unter 04 02 19 fallen",
+"schwelle_kg": null
+},
+{
+"code": "04 02 21",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus unbehandelten Textilfasern",
+"schwelle_kg": null
+},
+{
+"code": "04 02 22",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus verarbeiteten Textilfasern",
+"schwelle_kg": null
+},
+{
+"code": "04 02 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "05 01 02",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Entsalzungsschlämme",
+"schwelle_kg": 20000
+},
+{
+"code": "05 01 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Bodenschlämme aus Tanks",
+"schwelle_kg": 200000
+},
+{
+"code": "05 01 04",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Saure Alkylschlämme",
+"schwelle_kg": null
+},
+{
+"code": "05 01 05",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Verschüttetes Öl",
+"schwelle_kg": null
+},
+{
+"code": "05 01 06",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Ölhaltige Schlämme aus Betriebsvorgängen und Instandhaltung",
+"schwelle_kg": 200000
+},
+{
+"code": "05 01 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Säureteere",
+"schwelle_kg": 20000
+},
+{
+"code": "05 01 08",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Teere",
+"schwelle_kg": null
+},
+{
+"code": "05 01 09",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlämme aus der betriebseigenen Abwasserbehandlung, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "05 01 10",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme aus der betriebseigenen Abwasserbehandlung mit Ausnahme derjenigen, die unter 05 01 09 fallen",
+"schwelle_kg": null
+},
+{
+"code": "05 01 11",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Abfälle aus der Brennstoffreinigung mit Basen",
+"schwelle_kg": null
+},
+{
+"code": "05 01 12",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Säurehaltige Öle",
+"schwelle_kg": null
+},
+{
+"code": "05 01 13",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme aus der Kesselspeisewasseraufbereitung",
+"schwelle_kg": null
+},
+{
+"code": "05 01 14",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus Kühlkolonnen",
+"schwelle_kg": null
+},
+{
+"code": "05 01 15",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Gebrauchte Filtertone",
+"schwelle_kg": null
+},
+{
+"code": "05 01 16",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schwefelhaltige Abfälle aus der Ölentschwefelung",
+"schwelle_kg": null
+},
+{
+"code": "05 01 17",
+"klassierung": "",
+"special": false,
+"beschreibung": "Bitumen",
+"schwelle_kg": null
+},
+{
+"code": "05 01 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "05 06 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Säureteere",
+"schwelle_kg": null
+},
+{
+"code": "05 06 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Teere",
+"schwelle_kg": null
+},
+{
+"code": "05 06 04",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus Kühlkolonnen",
+"schwelle_kg": null
+},
+{
+"code": "05 06 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "05 07 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Quecksilberhaltige Abfälle",
+"schwelle_kg": 2000
+},
+{
+"code": "05 07 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schwefelhaltige Abfälle",
+"schwelle_kg": null
+},
+{
+"code": "05 07 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "06 01 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schwefelsäure und schweflige Säure",
+"schwelle_kg": 20000
+},
+{
+"code": "06 01 02",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Salzsäure",
+"schwelle_kg": 20000
+},
+{
+"code": "06 01 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Flusssäure",
+"schwelle_kg": 200
+},
+{
+"code": "06 01 04",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Phosphorsäure und phosphorige Säure",
+"schwelle_kg": 20000
+},
+{
+"code": "06 01 05",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Salpetersäure und salpetrige Säure",
+"schwelle_kg": 20000
+},
+{
+"code": "06 01 06",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Säuren",
+"schwelle_kg": null
+},
+{
+"code": "06 01 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "06 02 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Kalziumhydroxid",
+"schwelle_kg": null
+},
+{
+"code": "06 02 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Ammoniumhydroxid",
+"schwelle_kg": 2000
+},
+{
+"code": "06 02 04",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Natrium- und Kaliumhydroxid",
+"schwelle_kg": 20000
+},
+{
+"code": "06 02 05",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Basen",
+"schwelle_kg": null
+},
+{
+"code": "06 02 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "06 03 11",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Feste Salze und Lösungen, die Cyanid enthalten",
+"schwelle_kg": 15
+},
+{
+"code": "06 03 13",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Feste Salze und Lösungen, die Schwermetalle enthalten",
+"schwelle_kg": null
+},
+{
+"code": "06 03 14",
+"klassierung": "",
+"special": false,
+"beschreibung": "Feste Salze und Lösungen mit Ausnahme derjenigen, die unter 06 03 11 oder 06 03 13 fallen",
+"schwelle_kg": null
+},
+{
+"code": "06 03 15",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Metalloxide, die Schwermetalle enthalten",
+"schwelle_kg": null
+},
+{
+"code": "06 03 16",
+"klassierung": "",
+"special": false,
+"beschreibung": "Metalloxide mit Ausnahme derjenigen, die unter 06 03 15 fallen",
+"schwelle_kg": null
+},
+{
+"code": "06 03 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "06 04 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Arsenhaltige Abfälle",
+"schwelle_kg": 2000
+},
+{
+"code": "06 04 04",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Quecksilberhaltige Abfälle",
+"schwelle_kg": null
+},
+{
+"code": "06 04 05",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Abfälle, die andere Schwermetalle enthalten",
+"schwelle_kg": null
+},
+{
+"code": "06 04 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "06 05 02",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlämme aus der betriebseigenen Abwasserbehandlung, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "06 05 03",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme aus der betriebseigenen Abwasserbehandlung mit Ausnahme derjenigen, die unter 06 05 02 fallen",
+"schwelle_kg": null
+},
+{
+"code": "06 06 02",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Abfälle, die gefährliche Sulfide enthalten",
+"schwelle_kg": null
+},
+{
+"code": "06 06 03",
+"klassierung": "",
+"special": false,
+"beschreibung": "Sulfidhaltige Abfälle mit Ausnahme derjenigen, die unter 06 06 02 fallen",
+"schwelle_kg": null
+},
+{
+"code": "06 06 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "06 07 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Asbesthaltige Abfälle aus der Elektrolyse",
+"schwelle_kg": null
+},
+{
+"code": "06 07 02",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Aktivkohle aus der Chlorherstellung",
+"schwelle_kg": null
+},
+{
+"code": "06 07 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Quecksilberhaltige Bariumsulfatschlämme",
+"schwelle_kg": null
+},
+{
+"code": "06 07 04",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Lösungen und Säuren, z.B. Kontaktsäure",
+"schwelle_kg": null
+},
+{
+"code": "06 07 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "06 08 02",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Gefährliche Chlorsilane enthaltende Abfälle",
+"schwelle_kg": null
+},
+{
+"code": "06 08 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "06 09 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Phosphorhaltige Schlacke",
+"schwelle_kg": null
+},
+{
+"code": "06 09 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Reaktionsabfälle auf Kalziumbasis, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "06 09 04",
+"klassierung": "",
+"special": false,
+"beschreibung": "Reaktionsabfälle auf Kalziumbasis mit Ausnahme derjenigen, die unter 06 09 03 fallen",
+"schwelle_kg": null
+},
+{
+"code": "06 09 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "06 10 02",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Abfälle, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "06 10 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "06 11 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Reaktionsabfälle auf Kalziumbasis aus der Titandioxidherstellung",
+"schwelle_kg": null
+},
+{
+"code": "06 11 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "06 13 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Anorganische Pflanzenschutzmittel, Holzschutzmittel und andere Biozide",
+"schwelle_kg": null
+},
+{
+"code": "06 13 02",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Gebrauchte Aktivkohle mit Ausnahme derjenigen, die unter 06 07 02 fällt",
+"schwelle_kg": null
+},
+{
+"code": "06 13 03",
+"klassierung": "",
+"special": false,
+"beschreibung": "Industrieruss",
+"schwelle_kg": null
+},
+{
+"code": "06 13 04",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Abfälle aus der Asbestverarbeitung",
+"schwelle_kg": null
+},
+{
+"code": "06 13 05",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Ofen- und Kaminruss",
+"schwelle_kg": null
+},
+{
+"code": "06 13 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "07 01 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Wässrige Waschflüssigkeiten und Mutterlaugen",
+"schwelle_kg": 20000
+},
+{
+"code": "07 01 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Halogenorganische Lösungsmittel, Waschflüssigkeiten und Mutterlaugen",
+"schwelle_kg": 20000
+},
+{
+"code": "07 01 04",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere organische Lösungsmittel, Waschflüssigkeiten und Mutterlaugen",
+"schwelle_kg": 20000
+},
+{
+"code": "07 01 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Halogenierte Reaktions- und Destillationsrückstände",
+"schwelle_kg": null
+},
+{
+"code": "07 01 08",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Reaktions- und Destillationsrückstände",
+"schwelle_kg": null
+},
+{
+"code": "07 01 09",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Halogenierte Filterkuchen, gebrauchte Aufsaugmaterialien",
+"schwelle_kg": null
+},
+{
+"code": "07 01 10",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Filterkuchen, gebrauchte Aufsaugmaterialien",
+"schwelle_kg": null
+},
+{
+"code": "07 01 11",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlämme aus der betriebseigenen Abwasserbehandlung, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "07 01 12",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme aus der betriebseigenen Abwasserbehandlung mit Ausnahme derjenigen, die unter 07 01 11 fallen",
+"schwelle_kg": null
+},
+{
+"code": "07 01 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "07 02 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Wässrige Waschflüssigkeiten und Mutterlaugen",
+"schwelle_kg": 20000
+},
+{
+"code": "07 02 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Halogenorganische Lösungsmittel, Waschflüssigkeiten und Mutterlaugen",
+"schwelle_kg": 20000
+},
+{
+"code": "07 02 04",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere organische Lösungsmittel, Waschflüssigkeiten und Mutterlaugen",
+"schwelle_kg": 20000
+},
+{
+"code": "07 02 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Halogenierte Reaktions- und Destillationsrückstände",
+"schwelle_kg": null
+},
+{
+"code": "07 02 08",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Reaktions- und Destillationsrückstände",
+"schwelle_kg": null
+},
+{
+"code": "07 02 09",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Halogenierte Filterkuchen, gebrauchte Aufsaugmaterialien",
+"schwelle_kg": null
+},
+{
+"code": "07 02 10",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Filterkuchen, gebrauchte Aufsaugmaterialien",
+"schwelle_kg": null
+},
+{
+"code": "07 02 11",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlämme aus der betriebseigenen Abwasserbehandlung, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "07 02 12",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme aus der betriebseigenen Abwasserbehandlung mit Ausnahme derjenigen, die unter 07 02 11 fallen",
+"schwelle_kg": null
+},
+{
+"code": "07 02 13",
+"klassierung": "",
+"special": false,
+"beschreibung": "Kunststoffabfälle",
+"schwelle_kg": null
+},
+{
+"code": "07 02 14",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Abfälle von Zusatzstoffen, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "07 02 15",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle von Zusatzstoffen mit Ausnahme derjenigen, die unter 07 02 14 fallen",
+"schwelle_kg": null
+},
+{
+"code": "07 02 16",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Gefährliche Silikone enthaltende Abfälle",
+"schwelle_kg": null
+},
+{
+"code": "07 02 17",
+"klassierung": "",
+"special": false,
+"beschreibung": "Silikonhaltige Abfälle mit Ausnahme derjenigen, die unter 07 02 16 fallen",
+"schwelle_kg": null
+},
+{
+"code": "07 02 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "07 03 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Wässrige Waschflüssigkeiten und Mutterlaugen",
+"schwelle_kg": 20000
+},
+{
+"code": "07 03 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Halogenorganische Lösungsmittel, Waschflüssigkeiten und Mutterlaugen",
+"schwelle_kg": 20000
+},
+{
+"code": "07 03 04",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere organische Lösungsmittel, Waschflüssigkeiten und Mutterlaugen",
+"schwelle_kg": 20000
+},
+{
+"code": "07 03 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Halogenierte Reaktions- und Destillationsrückstände",
+"schwelle_kg": null
+},
+{
+"code": "07 03 08",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Reaktions- und Destillationsrückstände",
+"schwelle_kg": null
+},
+{
+"code": "07 03 09",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Halogenierte Filterkuchen, gebrauchte Aufsaugmaterialien",
+"schwelle_kg": null
+},
+{
+"code": "07 03 10",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Filterkuchen, gebrauchte Aufsaugmaterialien",
+"schwelle_kg": null
+},
+{
+"code": "07 03 11",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlämme aus der betriebseigenen Abwasserbehandlung, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "07 03 12",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme aus der betriebseigenen Abwasserbehandlung mit Ausnahme derjenigen, die unter 07 03 11 fallen",
+"schwelle_kg": null
+},
+{
+"code": "07 03 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "07 04 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Wässrige Waschflüssigkeiten und Mutterlaugen",
+"schwelle_kg": 20000
+},
+{
+"code": "07 04 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Halogenorganische Lösungsmittel, Waschflüssigkeiten und Mutterlaugen",
+"schwelle_kg": 20000
+},
+{
+"code": "07 04 04",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere organische Lösungsmittel, Waschflüssigkeiten und Mutterlaugen",
+"schwelle_kg": 20000
+},
+{
+"code": "07 04 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Halogenierte Reaktions- und Destillationsrückstände",
+"schwelle_kg": null
+},
+{
+"code": "07 04 08",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Reaktions- und Destillationsrückstände",
+"schwelle_kg": null
+},
+{
+"code": "07 04 09",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Halogenierte Filterkuchen, gebrauchte Aufsaugmaterialien",
+"schwelle_kg": null
+},
+{
+"code": "07 04 10",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Filterkuchen, gebrauchte Aufsaugmaterialien",
+"schwelle_kg": null
+},
+{
+"code": "07 04 11",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlämme aus der betriebseigenen Abwasserbehandlung, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "07 04 12",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme aus der betriebseigenen Abwasserbehandlung mit Ausnahme derjenigen, die unter 07 04 11 fallen",
+"schwelle_kg": null
+},
+{
+"code": "07 04 13",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Feste Abfälle, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "07 04 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "07 05 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Wässrige Waschflüssigkeiten und Mutterlaugen",
+"schwelle_kg": 20000
+},
+{
+"code": "07 05 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Halogenorganische Lösungsmittel, Waschflüssigkeiten und Mutterlaugen",
+"schwelle_kg": 20000
+},
+{
+"code": "07 05 04",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere organische Lösungsmittel, Waschflüssigkeiten und Mutterlaugen",
+"schwelle_kg": 20000
+},
+{
+"code": "07 05 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Halogenierte Reaktions- und Destillationsrückstände",
+"schwelle_kg": null
+},
+{
+"code": "07 05 08",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Reaktions- und Destillationsrückstände",
+"schwelle_kg": null
+},
+{
+"code": "07 05 09",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Halogenierte Filterkuchen, gebrauchte Aufsaugmaterialien",
+"schwelle_kg": null
+},
+{
+"code": "07 05 10",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Filterkuchen, gebrauchte Aufsaugmaterialien",
+"schwelle_kg": null
+},
+{
+"code": "07 05 11",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlämme aus der betriebseigenen Abwasserbehandlung, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "07 05 12",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme aus der betriebseigenen Abwasserbehandlung mit Ausnahme derjenigen, die unter 07 05 11 fallen",
+"schwelle_kg": null
+},
+{
+"code": "07 05 13",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Feste Abfälle, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "07 05 14",
+"klassierung": "",
+"special": false,
+"beschreibung": "Feste Abfälle mit Ausnahme derjenigen, die unter 07 05 13 fallen",
+"schwelle_kg": null
+},
+{
+"code": "07 05 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "07 06 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Wässrige Waschflüssigkeiten und Mutterlaugen",
+"schwelle_kg": 20000
+},
+{
+"code": "07 06 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Halogenorganische Lösungsmittel, Waschflüssigkeiten und Mutterlaugen",
+"schwelle_kg": 20000
+},
+{
+"code": "07 06 04",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere organische Lösungsmittel, Waschflüssigkeiten und Mutterlaugen",
+"schwelle_kg": 20000
+},
+{
+"code": "07 06 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Halogenierte Reaktions- und Destillationsrückstände",
+"schwelle_kg": null
+},
+{
+"code": "07 06 08",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Reaktions- und Destillationsrückstände",
+"schwelle_kg": null
+},
+{
+"code": "07 06 09",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Halogenierte Filterkuchen, gebrauchte Aufsaugmaterialien",
+"schwelle_kg": null
+},
+{
+"code": "07 06 10",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Filterkuchen, gebrauchte Aufsaugmaterialien",
+"schwelle_kg": null
+},
+{
+"code": "07 06 11",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlämme aus der betriebseigenen Abwasserbehandlung, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "07 06 12",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme aus der betriebseigenen Abwasserbehandlung mit Ausnahme derjenigen, die unter 07 06 11 fallen",
+"schwelle_kg": null
+},
+{
+"code": "07 06 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "07 07 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Wässrige Waschflüssigkeiten und Mutterlaugen",
+"schwelle_kg": 20000
+},
+{
+"code": "07 07 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Halogenorganische Lösungsmittel, Waschflüssigkeiten und Mutterlaugen",
+"schwelle_kg": 20000
+},
+{
+"code": "07 07 04",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere organische Lösungsmittel, Waschflüssigkeiten und Mutterlaugen",
+"schwelle_kg": 20000
+},
+{
+"code": "07 07 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Halogenierte Reaktions- und Destillationsrückstände",
+"schwelle_kg": null
+},
+{
+"code": "07 07 08",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Reaktions- und Destillationsrückstände",
+"schwelle_kg": null
+},
+{
+"code": "07 07 09",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Halogenierte Filterkuchen, gebrauchte Aufsaugmaterialien",
+"schwelle_kg": null
+},
+{
+"code": "07 07 10",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Filterkuchen, gebrauchte Aufsaugmaterialien",
+"schwelle_kg": null
+},
+{
+"code": "07 07 11",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlämme aus der betriebseigenen Abwasserbehandlung, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "07 07 12",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme aus der betriebseigenen Abwasserbehandlung mit Ausnahme derjenigen, die unter 07 07 11 fallen",
+"schwelle_kg": null
+},
+{
+"code": "07 07 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "08 01 11",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Farb- und Lackabfälle, die organische Lösungsmittel oder andere gefährliche Stoffe enthalten",
+"schwelle_kg": 20000
+},
+{
+"code": "08 01 12",
+"klassierung": "",
+"special": false,
+"beschreibung": "Farb- und Lackabfälle mit Ausnahme derjenigen, die unter 08 01 11 fallen",
+"schwelle_kg": null
+},
+{
+"code": "08 01 13",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Farb- und Lackschlämme, die organische Lösungsmittel oder andere gefährliche Stoffe enthalten",
+"schwelle_kg": 20000
+},
+{
+"code": "08 01 14",
+"klassierung": "",
+"special": false,
+"beschreibung": "Farb- und Lackschlämme mit Ausnahme derjenigen, die unter 08 01 13 fallen",
+"schwelle_kg": null
+},
+{
+"code": "08 01 15",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Wässrige Schlämme, die Farben oder Lacke mit organischen Lösungsmitteln oder anderen gefährlichen Stoffen enthalten",
+"schwelle_kg": 20000
+},
+{
+"code": "08 01 16",
+"klassierung": "",
+"special": false,
+"beschreibung": "Wässrige Schlämme, die Farben oder Lacke enthalten mit Ausnahme derjenigen, die unter 08 01 15 fallen",
+"schwelle_kg": null
+},
+{
+"code": "08 01 17",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Abfälle aus der Farb- oder Lackentfernung, die organische Lösungsmittel oder andere gefährliche Stoffe enthalten",
+"schwelle_kg": 20000
+},
+{
+"code": "08 01 18",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus der Farb- oder Lackentfernung mit Ausnahme derjenigen, die unter 08 01 17 fallen",
+"schwelle_kg": null
+},
+{
+"code": "08 01 19",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Wässrige Suspensionen, die Farben oder Lacke mit organischen Lösungsmitteln oder anderen gefährlichen Stoffen enthalten",
+"schwelle_kg": null
+},
+{
+"code": "08 01 20",
+"klassierung": "",
+"special": false,
+"beschreibung": "Wässrige Suspensionen, die Farben oder Lacke enthalten mit Ausnahme derjenigen, die unter 08 01 19 fallen",
+"schwelle_kg": null
+},
+{
+"code": "08 01 21",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Farb- oder Lackentfernerabfälle",
+"schwelle_kg": null
+},
+{
+"code": "08 01 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "08 02 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Abfälle von Beschichtungspulver",
+"schwelle_kg": null
+},
+{
+"code": "08 02 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Wässrige Schlämme, die keramische Werkstoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "08 02 03",
+"klassierung": "",
+"special": false,
+"beschreibung": "Wässrige Suspensionen, die keramische Werkstoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "08 02 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "08 03 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Wässrige Schlämme, die Druckfarben enthalten",
+"schwelle_kg": null
+},
+{
+"code": "08 03 08",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Wässrige flüssige Abfälle, die Druckfarben enthalten",
+"schwelle_kg": null
+},
+{
+"code": "08 03 12",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Druckfarbenabfälle, die gefährliche Stoffe enthalten",
+"schwelle_kg": 20000
+},
+{
+"code": "08 03 13",
+"klassierung": "",
+"special": false,
+"beschreibung": "Druckfarbenabfälle mit Ausnahme derjenigen, die unter 08 03 12 fallen",
+"schwelle_kg": null
+},
+{
+"code": "08 03 14",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Druckfarbenschlämme, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "08 03 15",
+"klassierung": "",
+"special": false,
+"beschreibung": "Druckfarbenschlämme mit Ausnahme derjenigen, die unter 08 03 14 fallen",
+"schwelle_kg": null
+},
+{
+"code": "08 03 16",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Abfälle von Ätzlösungen",
+"schwelle_kg": null
+},
+{
+"code": "08 03 17",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Tonerabfälle, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "08 03 18",
+"klassierung": "",
+"special": false,
+"beschreibung": "Tonerabfälle mit Ausnahme derjenigen, die unter 08 03 17 fallen",
+"schwelle_kg": null
+},
+{
+"code": "08 03 19",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Dispersionsöl",
+"schwelle_kg": null
+},
+{
+"code": "08 03 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "08 04 09",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Klebstoff- und Dichtmassenabfälle, die organische Lösungsmittel oder andere gefährliche Stoffe enthalten",
+"schwelle_kg": 20000
+},
+{
+"code": "08 04 10",
+"klassierung": "",
+"special": false,
+"beschreibung": "Klebstoff- und Dichtmassenabfälle mit Ausnahme derjenigen, die unter 08 04 09 fallen",
+"schwelle_kg": null
+},
+{
+"code": "08 04 11",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Klebstoff- und dichtmassenenhaltige Schlämme, die organische Lösungsmittel oder andere gefährliche Stoffe enthalten",
+"schwelle_kg": 20000
+},
+{
+"code": "08 04 12",
+"klassierung": "",
+"special": false,
+"beschreibung": "Klebstoff- und dichtmassenenhaltige Schlämme mit Ausnahme derjenigen, die unter 08 04 11 fallen",
+"schwelle_kg": null
+},
+{
+"code": "08 04 13",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Wässrige Schlämme, die Klebstoffe und Dichtmassen mit organischen Lösungsmitteln oder anderen gefährlichen Stoffen enthalten",
+"schwelle_kg": 15
+},
+{
+"code": "08 04 14",
+"klassierung": "",
+"special": false,
+"beschreibung": "Wässrige Schlämme, die Klebstoffe und Dichtmassen enthalten, mit Ausnahme derjenigen, die unter 08 04 13 fallen",
+"schwelle_kg": null
+},
+{
+"code": "08 04 15",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Wässrige flüssige Abfälle, die Klebstoffe und Dichtmassen mit organischen Lösungsmitteln oder anderen gefährlichen Stoffen enthalten",
+"schwelle_kg": null
+},
+{
+"code": "08 04 16",
+"klassierung": "",
+"special": false,
+"beschreibung": "Wässrige flüssige Abfälle, die Klebstoffe und Dichtmassen enthalten, mit Ausnahme derjenigen, die unter 08 04 15 fallen",
+"schwelle_kg": null
+},
+{
+"code": "08 04 17",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Harzöle",
+"schwelle_kg": null
+},
+{
+"code": "08 04 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "08 05 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Isocyanatabfälle",
+"schwelle_kg": null
+},
+{
+"code": "09 01 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Entwickler und Aktivatorenlösungen auf Wasserbasis",
+"schwelle_kg": null
+},
+{
+"code": "09 01 02",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Offsetdruckplatten-Entwicklerlösungen auf Wasserbasis",
+"schwelle_kg": null
+},
+{
+"code": "09 01 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Entwicklerlösungen auf Lösungsmittelbasis",
+"schwelle_kg": 20000
+},
+{
+"code": "09 01 04",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Fixierbäder",
+"schwelle_kg": null
+},
+{
+"code": "09 01 05",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Bleichlösungen und Bleich-Fixier-Bäder",
+"schwelle_kg": null
+},
+{
+"code": "09 01 06",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Silberhaltige Abfälle aus der betriebseigenen Behandlung fotografischer Abfälle",
+"schwelle_kg": null
+},
+{
+"code": "09 01 07",
+"klassierung": "",
+"special": false,
+"beschreibung": "Filme und fotografische Papiere, die Silber oder Silberverbindungen enthalten",
+"schwelle_kg": null
+},
+{
+"code": "09 01 08",
+"klassierung": "",
+"special": false,
+"beschreibung": "Filme und fotografische Papiere, die kein Silber und keine Silberverbindungen enthalten",
+"schwelle_kg": null
+},
+{
+"code": "09 01 13",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Wässrige flüssige Abfälle aus der betriebseigenen Silberrückgewinnung mit Ausnahme derjenigen, die unter 09 01 06 fallen",
+"schwelle_kg": null
+},
+{
+"code": "09 01 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "10 01 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Rost- und Kesselasche, Schlacken und Kesselstaub mit Ausnahme von Kesselstaub, der unter 10 01 04 fällt",
+"schwelle_kg": null
+},
+{
+"code": "10 01 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Filterstäube aus Kohlefeuerung",
+"schwelle_kg": null
+},
+{
+"code": "10 01 03",
+"klassierung": "",
+"special": false,
+"beschreibung": "Filterstäube aus Torffeuerung und Feuerung mit naturbelassenem Holz oder Restholz",
+"schwelle_kg": null
+},
+{
+"code": "10 01 04",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Filterstäube und Kesselstaub aus Ölfeuerung",
+"schwelle_kg": null
+},
+{
+"code": "10 01 05",
+"klassierung": "",
+"special": false,
+"beschreibung": "Reaktionsabfälle auf Kalziumbasis aus der Rauchgasentschwefelung in fester Form",
+"schwelle_kg": null
+},
+{
+"code": "10 01 07",
+"klassierung": "",
+"special": false,
+"beschreibung": "Reaktionsabfälle auf Kalziumbasis aus der Rauchgasentschwefelung in Form von Schlämmen",
+"schwelle_kg": null
+},
+{
+"code": "10 01 09",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schwefelsäure",
+"schwelle_kg": 20000
+},
+{
+"code": "10 01 13",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Filterstäube aus emulgierten, als Brennstoffe verwendeten Kohlenwasserstoffen",
+"schwelle_kg": null
+},
+{
+"code": "10 01 14",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Rost- und Kesselasche, Schlacken und Kesselstaub aus der Abfallmitverbrennung, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "10 01 15",
+"klassierung": "",
+"special": false,
+"beschreibung": "Rost- und Kesselasche, Schlacken und Kesselstaub aus der Abfallmitverbrennung mit Ausnahme derjenigen, die unter 10 01 14 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 01 16",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Filterstäube aus der Abfallmitverbrennung, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "10 01 17",
+"klassierung": "",
+"special": false,
+"beschreibung": "Filterstäube aus der Abfallmitverbrennung mit Ausnahme derjenigen, die unter 10 01 16 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 01 18",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Abfälle aus der Abgasbehandlung, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "10 01 19",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus der Abgasbehandlung mit Ausnahme derjenigen, die unter 10 01 05, 10 01 07 oder 10 01 18 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 01 20",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlämme aus der betriebseigenen Abwasserbehandlung, die gefährliche Stoffe enthalten",
+"schwelle_kg": 20000
+},
+{
+"code": "10 01 21",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme aus der betriebseigenen Abwasserbehandlung mit Ausnahme derjenigen, die unter 10 01 20 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 01 22",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Wässrige Schlämme aus der Kesselreinigung, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "10 01 23",
+"klassierung": "",
+"special": false,
+"beschreibung": "Wässrige Schlämme aus der Kesselreinigung mit Ausnahme derjenigen, die unter 10 01 22 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 01 24",
+"klassierung": "",
+"special": false,
+"beschreibung": "Sande aus der Wirbelschichtfeuerung",
+"schwelle_kg": null
+},
+{
+"code": "10 01 25",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus der Lagerung und Vorbereitung von Brennstoffen für Kohlekraftwerke",
+"schwelle_kg": null
+},
+{
+"code": "10 01 26",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus der Kühlwasserbehandlung",
+"schwelle_kg": null
+},
+{
+"code": "10 01 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "10 02 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus der Verarbeitung von Schlacke (einschliesslich granulierte Hochofenschlacke)",
+"schwelle_kg": null
+},
+{
+"code": "10 02 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Unbearbeitete Schlacke",
+"schwelle_kg": null
+},
+{
+"code": "10 02 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Feste Abfälle aus der Abgasbehandlung, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "10 02 08",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus der Abgasbehandlung mit Ausnahme derjenigen, die unter 10 02 07 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 02 10",
+"klassierung": "",
+"special": false,
+"beschreibung": "Walzzunder",
+"schwelle_kg": null
+},
+{
+"code": "10 02 11",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Ölhaltige Abfälle aus der Kühlwasserbehandlung",
+"schwelle_kg": null
+},
+{
+"code": "10 02 12",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus der Kühlwasserbehandlung mit Ausnahme derjenigen, die unter 10 02 11 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 02 13",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlämme und Filterkuchen aus der Abgasbehandlung, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "10 02 14",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme und Filterkuchen aus der Abgasbehandlung mit Ausnahme derjenigen, die unter 10 02 13 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 02 15",
+"klassierung": "",
+"special": false,
+"beschreibung": "Andere Schlämme und Filterkuchen",
+"schwelle_kg": null
+},
+{
+"code": "10 02 98",
+"klassierung": "S",
+"special": true,
+"beschreibung": "",
+"schwelle_kg": null
+},
+{
+"code": "10 02 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "10 03 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Anodenschrott",
+"schwelle_kg": null
+},
+{
+"code": "10 03 04",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlacken aus der Erstschmelze",
+"schwelle_kg": null
+},
+{
+"code": "10 03 05",
+"klassierung": "",
+"special": false,
+"beschreibung": "Aluminiumoxid-Abfälle",
+"schwelle_kg": null
+},
+{
+"code": "10 03 08",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Salzschlacken aus der Zweitschmelze",
+"schwelle_kg": null
+},
+{
+"code": "10 03 09",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schwarze Krätzen aus der Zweitschmelze",
+"schwelle_kg": null
+},
+{
+"code": "10 03 15",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Abschaum, der entzündlich ist oder in Kontakt mit Wasser entzündliche Gase in gefährlicher Menge abgibt",
+"schwelle_kg": null
+},
+{
+"code": "10 03 16",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abschaum mit Ausnahme desjenigen, der unter 10 03 15 fällt",
+"schwelle_kg": null
+},
+{
+"code": "10 03 17",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Teerhaltige Abfälle aus der Anodenherstellung",
+"schwelle_kg": null
+},
+{
+"code": "10 03 18",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus der Anodenherstellung, die Kohlenstoffe enthalten, mit Ausnahme derjenigen, die unter 10 03 17 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 03 19",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Filterstaub, der gefährliche Stoffe enthält",
+"schwelle_kg": null
+},
+{
+"code": "10 03 20",
+"klassierung": "",
+"special": false,
+"beschreibung": "Filterstaub mit Ausnahme desjenigen, der unter 10 03 19 fällt",
+"schwelle_kg": null
+},
+{
+"code": "10 03 21",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Teilchen und Staub (einschliesslich Kugelmühlenstaub), die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "10 03 22",
+"klassierung": "",
+"special": false,
+"beschreibung": "Andere Teilchen und Staub (einschliesslich Kugelmühlenstaub) mit Ausnahme derjenigen, die unter 10 03 21 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 03 23",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Feste Abfälle aus der Abgasbehandlung, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "10 03 24",
+"klassierung": "",
+"special": false,
+"beschreibung": "Feste Abfälle aus der Abgasbehandlung mit Ausnahme derjenigen, die unter 10 03 23 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 03 25",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlämme und Filterkuchen aus der Abgasbehandlung, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "10 03 26",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme und Filterkuchen aus der Abgasbehandlung mit Ausnahme derjenigen, die unter 10 03 25 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 03 27",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Ölhaltige Abfälle aus der Kühlwasserbehandlung",
+"schwelle_kg": null
+},
+{
+"code": "10 03 28",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus der Kühlwasserbehandlung mit Ausnahme derjenigen, die unter 10 03 27 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 03 29",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Gefährliche Stoffe enthaltende Abfälle aus der Behandlung von Salzschlacken und schwarzen Krätzen",
+"schwelle_kg": null
+},
+{
+"code": "10 03 30",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus der Behandlung von Salzschlacken und schwarzen Krätzen mit Ausnahme derjenigen, die unter 10 03 29 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 03 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "10 04 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlacken (Erst- und Zweitschmelze)",
+"schwelle_kg": null
+},
+{
+"code": "10 04 02",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Krätzen und Abschaum (Erst- und Zweitschmelze)",
+"schwelle_kg": null
+},
+{
+"code": "10 04 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Kalziumarsenat",
+"schwelle_kg": null
+},
+{
+"code": "10 04 04",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Filterstaub",
+"schwelle_kg": null
+},
+{
+"code": "10 04 05",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Teilchen und Staub",
+"schwelle_kg": null
+},
+{
+"code": "10 04 06",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Feste Abfälle aus der Abgasbehandlung",
+"schwelle_kg": null
+},
+{
+"code": "10 04 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlämme und Filterkuchen aus der Abgasbehandlung",
+"schwelle_kg": null
+},
+{
+"code": "10 04 09",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Ölhaltige Abfälle aus der Kühlwasserbehandlung",
+"schwelle_kg": null
+},
+{
+"code": "10 04 10",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus der Kühlwasserbehandlung mit Ausnahme derjenigen, die unter 10 04 09 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 04 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "10 05 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlacken (Erst- und Zweitschmelze)",
+"schwelle_kg": null
+},
+{
+"code": "10 05 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Filterstaub",
+"schwelle_kg": null
+},
+{
+"code": "10 05 04",
+"klassierung": "",
+"special": false,
+"beschreibung": "Andere Teilchen und Staub",
+"schwelle_kg": null
+},
+{
+"code": "10 05 05",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Feste Abfälle aus der Abgasbehandlung",
+"schwelle_kg": null
+},
+{
+"code": "10 05 06",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlämme und Filterkuchen aus der Abgasbehandlung",
+"schwelle_kg": null
+},
+{
+"code": "10 05 08",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Ölhaltige Abfälle aus der Kühlwasserbehandlung",
+"schwelle_kg": null
+},
+{
+"code": "10 05 09",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus der Kühlwasserbehandlung mit Ausnahme derjenigen, die unter 10 05 08 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 05 10",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Krätzen und Abschaum, die entzündlich sind oder in Kontakt mit Wasser entzündliche Gase in gefährlicher Menge abgeben",
+"schwelle_kg": null
+},
+{
+"code": "10 05 11",
+"klassierung": "",
+"special": false,
+"beschreibung": "Krätzen und Abschaum mit Ausnahme derjenigen, die unter 10 05 10 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 05 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "10 06 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlacken (Erst- und Zweitschmelze)",
+"schwelle_kg": null
+},
+{
+"code": "10 06 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Krätzen und Abschaum (Erst- und Zweitschmelze)",
+"schwelle_kg": null
+},
+{
+"code": "10 06 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Filterstaub",
+"schwelle_kg": null
+},
+{
+"code": "10 06 04",
+"klassierung": "",
+"special": false,
+"beschreibung": "Andere Teilchen und Staub",
+"schwelle_kg": null
+},
+{
+"code": "10 06 06",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Feste Abfälle aus der Abgasbehandlung",
+"schwelle_kg": null
+},
+{
+"code": "10 06 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlämme und Filterkuchen aus der Abgasbehandlung",
+"schwelle_kg": null
+},
+{
+"code": "10 06 09",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Ölhaltige Abfälle aus der Kühlwasserbehandlung",
+"schwelle_kg": null
+},
+{
+"code": "10 06 10",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus der Kühlwasserbehandlung mit Ausnahme derjenigen, die unter 10 06 09 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 06 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "10 07 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlacken (Erst- und Zweitschmelze)",
+"schwelle_kg": null
+},
+{
+"code": "10 07 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Krätzen und Abschaum (Erst- und Zweitschmelze)",
+"schwelle_kg": null
+},
+{
+"code": "10 07 03",
+"klassierung": "",
+"special": false,
+"beschreibung": "Feste Abfälle aus der Abgasbehandlung",
+"schwelle_kg": null
+},
+{
+"code": "10 07 04",
+"klassierung": "",
+"special": false,
+"beschreibung": "Andere Teilchen und Staub",
+"schwelle_kg": null
+},
+{
+"code": "10 07 05",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme und Filterkuchen aus der Abgasbehandlung",
+"schwelle_kg": null
+},
+{
+"code": "10 07 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Ölhaltige Abfälle aus der Kühlwasserbehandlung",
+"schwelle_kg": null
+},
+{
+"code": "10 07 08",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus der Kühlwasserbehandlung mit Ausnahme derjenigen, die unter 10 07 07 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 07 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "10 08 04",
+"klassierung": "",
+"special": false,
+"beschreibung": "Teilchen und Staub",
+"schwelle_kg": null
+},
+{
+"code": "10 08 08",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Salzschlacken (Erst- und Zweitschmelze)",
+"schwelle_kg": null
+},
+{
+"code": "10 08 09",
+"klassierung": "",
+"special": false,
+"beschreibung": "Andere Schlacken",
+"schwelle_kg": null
+},
+{
+"code": "10 08 10",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Krätzen und Abschaum, die entzündlich sind oder in Kontakt mit Wasser entzündliche Gase in gefährlicher Menge abgeben",
+"schwelle_kg": null
+},
+{
+"code": "10 08 11",
+"klassierung": "",
+"special": false,
+"beschreibung": "Krätzen und Abschaum mit Ausnahme derjenigen, die unter 10 08 10 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 08 12",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Teerhaltige Abfälle aus der Anodenherstellung",
+"schwelle_kg": null
+},
+{
+"code": "10 08 13",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus der Anodenherstellung, die Kohlenstoffe enthalten, mit Ausnahme derjenigen, die unter 10 08 12 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 08 14",
+"klassierung": "",
+"special": false,
+"beschreibung": "Anodenschrott",
+"schwelle_kg": null
+},
+{
+"code": "10 08 15",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Filterstaub, der gefährliche Stoffe enthält",
+"schwelle_kg": null
+},
+{
+"code": "10 08 16",
+"klassierung": "",
+"special": false,
+"beschreibung": "Filterstaub mit Ausnahme desjenigen, der unter 10 08 15 fällt",
+"schwelle_kg": null
+},
+{
+"code": "10 08 17",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlämme und Filterkuchen aus der Abgasbehandlung, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "10 08 18",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme und Filterkuchen aus der Abgasbehandlung mit Ausnahme derjenigen, die unter 10 08 17 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 08 19",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Ölhaltige Abfälle aus der Kühlwasserbehandlung",
+"schwelle_kg": null
+},
+{
+"code": "10 08 20",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus der Kühlwasserbehandlung mit Ausnahme derjenigen, die unter 10 08 19 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 08 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "10 09 03",
+"klassierung": "",
+"special": false,
+"beschreibung": "Ofenschlacke",
+"schwelle_kg": null
+},
+{
+"code": "10 09 05",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Gefährliche Stoffe enthaltende Giessformen und -sande vor dem Giessen",
+"schwelle_kg": null
+},
+{
+"code": "10 09 06",
+"klassierung": "",
+"special": false,
+"beschreibung": "Giessformen und -sande vor dem Giessen mit Ausnahme derjenigen, die unter 10 09 05 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 09 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Gefährliche Stoffe enthaltende Giessformen und -sande nach dem Giessen",
+"schwelle_kg": null
+},
+{
+"code": "10 09 08",
+"klassierung": "",
+"special": false,
+"beschreibung": "Giessformen und –sande nach dem Giessen mit Ausnahme derjenigen, die unter 10 09 07 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 09 09",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Filterstaub, der gefährliche Stoffe enthält",
+"schwelle_kg": null
+},
+{
+"code": "10 09 10",
+"klassierung": "",
+"special": false,
+"beschreibung": "Filterstaub mit Ausnahme desjenigen, der unter 10 09 09 fällt",
+"schwelle_kg": null
+},
+{
+"code": "10 09 11",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Teilchen, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "10 09 12",
+"klassierung": "",
+"special": false,
+"beschreibung": "Andere Teilchen mit Ausnahme derjenigen, die unter 10 09 11 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 09 13",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Abfälle von Bindemitteln, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "10 09 14",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle von Bindemitteln mit Ausnahme derjenigen, die unter 10 09 13 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 09 15",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Abfälle aus rissanzeigenden Substanzen, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "10 09 16",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus rissanzeigenden Substanzen mit Ausnahme derjenigen, die unter 10 09 15 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 09 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "10 10 03",
+"klassierung": "",
+"special": false,
+"beschreibung": "Ofenschlacke",
+"schwelle_kg": null
+},
+{
+"code": "10 10 05",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Gefährliche Stoffe enthaltende Giessformen und -sande vor dem Giessen",
+"schwelle_kg": null
+},
+{
+"code": "10 10 06",
+"klassierung": "",
+"special": false,
+"beschreibung": "Giessformen und –sande vor dem Giessen mit Ausnahme derjenigen, die unter 10 10 05 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 10 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Gefährliche Stoffe enthaltende Giessformen und -sande nach dem Giessen",
+"schwelle_kg": null
+},
+{
+"code": "10 10 08",
+"klassierung": "",
+"special": false,
+"beschreibung": "Giessformen und -sande nach dem Giessen mit Ausnahme derjenigen, die unter 10 10 07 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 10 09",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Filterstaub, der gefährliche Stoffe enthält",
+"schwelle_kg": null
+},
+{
+"code": "10 10 10",
+"klassierung": "",
+"special": false,
+"beschreibung": "Filterstaub mit Ausnahme desjenigen, der unter 10 10 09 fällt",
+"schwelle_kg": null
+},
+{
+"code": "10 10 11",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Teilchen, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "10 10 12",
+"klassierung": "",
+"special": false,
+"beschreibung": "Andere Teilchen mit Ausnahme derjenigen, die unter 10 10 11 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 10 13",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Abfälle von Bindemitteln, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "10 10 14",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle von Bindemitteln mit Ausnahme derjenigen, die unter 10 10 13 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 10 15",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Abfälle aus rissanzeigenden Substanzen, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "10 10 16",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus rissanzeigenden Substanzen mit Ausnahme derjenigen, die unter 10 10 15 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 10 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "10 11 03",
+"klassierung": "",
+"special": false,
+"beschreibung": "Glasfaserabfall",
+"schwelle_kg": null
+},
+{
+"code": "10 11 05",
+"klassierung": "",
+"special": false,
+"beschreibung": "Teilchen und Staub",
+"schwelle_kg": null
+},
+{
+"code": "10 11 09",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Gemengeabfall mit gefährlichen Stoffen vor dem Schmelzen",
+"schwelle_kg": null
+},
+{
+"code": "10 11 10",
+"klassierung": "",
+"special": false,
+"beschreibung": "Gemengeabfall vor dem Schmelzen mit Ausnahme desjenigen, der unter 10 11 09 fällt",
+"schwelle_kg": null
+},
+{
+"code": "10 11 11",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Glasabfall in kleinen Teilchen und Glasstaub, die Schwermetalle enthalten (z.B. aus Elektronenstrahlröhren)",
+"schwelle_kg": null
+},
+{
+"code": "10 11 12",
+"klassierung": "",
+"special": false,
+"beschreibung": "Glasabfall mit Ausnahme desjenigen, der unter 10 11 11 fällt",
+"schwelle_kg": null
+},
+{
+"code": "10 11 13",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Glaspolier- und Glasschleifschlämme, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "10 11 14",
+"klassierung": "",
+"special": false,
+"beschreibung": "Glaspolier- und Glasschleifschlämme mit Ausnahme derjenigen, die unter 10 11 13 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 11 15",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Feste Abfälle aus der Abgasbehandlung, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "10 11 16",
+"klassierung": "",
+"special": false,
+"beschreibung": "Feste Abfälle aus der Abgasbehandlung mit Ausnahme derjenigen, die unter 10 11 15 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 11 17",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlämme und Filterkuchen aus der Abgasbehandlung, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "10 11 18",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme und Filterkuchen aus der Abgasbehandlung mit Ausnahme derjenigen, die unter 10 11 17 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 11 19",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Feste Abfälle aus der betriebseigenen Abwasserbehandlung, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "10 11 20",
+"klassierung": "",
+"special": false,
+"beschreibung": "Feste Abfälle aus der betriebseigenen Abwasserbehandlung mit Ausnahme derjenigen, die unter 10 11 19 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 11 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "10 12 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Rohmischungen vor dem Brennen",
+"schwelle_kg": null
+},
+{
+"code": "10 12 03",
+"klassierung": "",
+"special": false,
+"beschreibung": "Teilchen und Staub",
+"schwelle_kg": null
+},
+{
+"code": "10 12 05",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme und Filterkuchen aus der Abgasbehandlung",
+"schwelle_kg": null
+},
+{
+"code": "10 12 06",
+"klassierung": "",
+"special": false,
+"beschreibung": "Verworfene Formen",
+"schwelle_kg": null
+},
+{
+"code": "10 12 08",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus Keramikerzeugnissen, Ziegeln, Fliesen und Steinzeug (nach dem Brennen)",
+"schwelle_kg": null
+},
+{
+"code": "10 12 09",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Feste Abfälle aus der Abgasbehandlung, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "10 12 10",
+"klassierung": "",
+"special": false,
+"beschreibung": "Feste Abfälle aus der Abgasbehandlung mit Ausnahme derjenigen, die unter 10 12 09 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 12 11",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Glasurabfälle, die Schwermetalle enthalten",
+"schwelle_kg": null
+},
+{
+"code": "10 12 12",
+"klassierung": "",
+"special": false,
+"beschreibung": "Glasurabfälle mit Ausnahme derjenigen, die unter 10 12 11 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 12 13",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme aus der betriebseigenen Abwasserbehandlung",
+"schwelle_kg": null
+},
+{
+"code": "10 12 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "10 13 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle von Rohgemenge vor dem Brennen",
+"schwelle_kg": null
+},
+{
+"code": "10 13 04",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus der Kalzinierung und Hydratisierung von Branntkalk",
+"schwelle_kg": null
+},
+{
+"code": "10 13 06",
+"klassierung": "",
+"special": false,
+"beschreibung": "Teilchen und Staub (ausser 10 13 12 und 10 13 13)",
+"schwelle_kg": null
+},
+{
+"code": "10 13 07",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme und Filterkuchen aus der Abgasbehandlung",
+"schwelle_kg": null
+},
+{
+"code": "10 13 09",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Asbesthaltige Abfälle aus der Herstellung von Asbestzement",
+"schwelle_kg": null
+},
+{
+"code": "10 13 10",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus der Herstellung von Asbestzement mit Ausnahme derjenigen, die unter 10 13 09 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 13 11",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus der Herstellung anderer Verbundstoffe auf Zementbasis mit Ausnahme derjenigen, die unter 10 13 09 oder 10 13 10 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 13 12",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Feste Abfälle aus der Abgasbehandlung, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "10 13 13",
+"klassierung": "",
+"special": false,
+"beschreibung": "Feste Abfälle aus der Abgasbehandlung mit Ausnahme derjenigen, die unter 10 13 12 fallen",
+"schwelle_kg": null
+},
+{
+"code": "10 13 14",
+"klassierung": "",
+"special": false,
+"beschreibung": "Betonabfälle und Betonschlämme",
+"schwelle_kg": null
+},
+{
+"code": "10 13 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "10 14 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Quecksilberhaltige Abfälle aus der Gasreinigung",
+"schwelle_kg": null
+},
+{
+"code": "11 01 05",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Saure Beizlösungen",
+"schwelle_kg": 20000
+},
+{
+"code": "11 01 06",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Säuren anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "11 01 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Alkalische Beizlösungen",
+"schwelle_kg": 20000
+},
+{
+"code": "11 01 08",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Phosphatierschlämme",
+"schwelle_kg": null
+},
+{
+"code": "11 01 09",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlämme und Filterkuchen, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "11 01 10",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme und Filterkuchen mit Ausnahme derjenigen, die unter 11 01 09 fallen",
+"schwelle_kg": null
+},
+{
+"code": "11 01 11",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Wässrige Spülflüssigkeiten, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "11 01 12",
+"klassierung": "",
+"special": false,
+"beschreibung": "Wässrige Spülflüssigkeiten mit Ausnahme derjenigen, die unter 11 01 11 fallen",
+"schwelle_kg": null
+},
+{
+"code": "11 01 13",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Abfälle aus der Entfettung, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "11 01 14",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus der Entfettung mit Ausnahme derjenigen, die unter 11 01 13 fallen",
+"schwelle_kg": null
+},
+{
+"code": "11 01 15",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Eluate und Schlämme aus Membransystemen oder Ionenaustauschsystemen, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "11 01 16",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Gesättigte oder verbrauchte Ionenaustauscherharze",
+"schwelle_kg": null
+},
+{
+"code": "11 01 98",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Abfälle, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "11 01 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "11 02 02",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlämme aus der Zink-Hydrometallurgie (einschliesslich Jarosit, Goethit)",
+"schwelle_kg": null
+},
+{
+"code": "11 02 03",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus der Herstellung von Anoden für wässrige elektrolytische Prozesse",
+"schwelle_kg": null
+},
+{
+"code": "11 02 05",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Abfälle aus Prozessen der Kupfer-Hydrometallurgie, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "11 02 06",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus Prozessen der Kupfer-Hydrometallurgie mit Ausnahme derjenigen, die unter 11 02 05 fallen",
+"schwelle_kg": null
+},
+{
+"code": "11 02 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Abfälle, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "11 02 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "11 03 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Cyanidhaltige Abfälle",
+"schwelle_kg": 200
+},
+{
+"code": "11 03 02",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Abfälle",
+"schwelle_kg": null
+},
+{
+"code": "11 05 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Hartzink",
+"schwelle_kg": null
+},
+{
+"code": "11 05 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Zinkasche, Abschöpfgut, Zinkkrätze und Abschaum",
+"schwelle_kg": null
+},
+{
+"code": "11 05 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Feste Abfälle aus der Abgasbehandlung",
+"schwelle_kg": null
+},
+{
+"code": "11 05 04",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Gebrauchte Flussmittel",
+"schwelle_kg": null
+},
+{
+"code": "11 05 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "12 01 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Eisenfeil- und -drehspäne",
+"schwelle_kg": null
+},
+{
+"code": "12 01 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Eisenstaub und -teile",
+"schwelle_kg": null
+},
+{
+"code": "12 01 03",
+"klassierung": "",
+"special": false,
+"beschreibung": "NE-Metallfeil- und -drehspäne mit Ausnahme derjenigen, die unter 12 01 98 fallen",
+"schwelle_kg": null
+},
+{
+"code": "12 01 04",
+"klassierung": "",
+"special": false,
+"beschreibung": "NE-Metallstaub und -teilchen mit Ausnahme derjenigen, die unter 12 01 98 fallen",
+"schwelle_kg": null
+},
+{
+"code": "12 01 05",
+"klassierung": "",
+"special": false,
+"beschreibung": "Kunststoffspäne und -drehspäne",
+"schwelle_kg": null
+},
+{
+"code": "12 01 06",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Halogenhaltige Bearbeitungsöle auf Mineralölbasis (ausser Emulsionen und Lösungen)",
+"schwelle_kg": 20000
+},
+{
+"code": "12 01 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Halogenfreie Bearbeitungsöle auf Mineralölbasis (ausser Emulsionen und Lösungen)",
+"schwelle_kg": 2000
+},
+{
+"code": "12 01 08",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Halogenhaltige Bearbeitungsemulsionen und -lösungen",
+"schwelle_kg": null
+},
+{
+"code": "12 01 09",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Halogenfreie Bearbeitungsemulsionen und -lösungen",
+"schwelle_kg": null
+},
+{
+"code": "12 01 10",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Synthetische Bearbeitungsöle",
+"schwelle_kg": null
+},
+{
+"code": "12 01 12",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Gebrauchte Wachse und Fette",
+"schwelle_kg": 20000
+},
+{
+"code": "12 01 13",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schweissabfälle",
+"schwelle_kg": null
+},
+{
+"code": "12 01 14",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Bearbeitungsschlämme, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "12 01 15",
+"klassierung": "",
+"special": false,
+"beschreibung": "Bearbeitungsschlämme mit Ausnahme derjenigen, die unter 12 01 14 fallen",
+"schwelle_kg": null
+},
+{
+"code": "12 01 16",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Strahlmittelabfälle, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "12 01 17",
+"klassierung": "",
+"special": false,
+"beschreibung": "Strahlmittelabfälle mit Ausnahme derjenigen, die unter 12 01 16 fallen",
+"schwelle_kg": null
+},
+{
+"code": "12 01 18",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Ölhaltige Metallschlämme (Schleif-, Hon- und Läppschlämme)",
+"schwelle_kg": null
+},
+{
+"code": "12 01 19",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Biologisch leicht abbaubare Bearbeitungsöle",
+"schwelle_kg": null
+},
+{
+"code": "12 01 20",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Gebrauchte Hon- und Schleifmittel, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "12 01 21",
+"klassierung": "",
+"special": false,
+"beschreibung": "Gebrauchte Hon- und Schleifmittel mit Ausnahme derjenigen, die unter 12 01 20 fallen",
+"schwelle_kg": null
+},
+{
+"code": "12 01 98",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Brennbare und selbstentzündliche Abfälle und Schrott aus Magnesium oder solche, die bei Kontakt mit Wasser gefährliche Mengen brennbarer Gase emittieren",
+"schwelle_kg": null
+},
+{
+"code": "12 01 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "12 03 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Wässrige Waschflüssigkeiten",
+"schwelle_kg": null
+},
+{
+"code": "12 03 02",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Abfälle aus der Dampfentfettung",
+"schwelle_kg": null
+},
+{
+"code": "13 01 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Hydrauliköle, die PCB enthalten",
+"schwelle_kg": 20000
+},
+{
+"code": "13 01 04",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Chlorierte Emulsionen",
+"schwelle_kg": 20000
+},
+{
+"code": "13 01 05",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Nichtchlorierte Emulsionen",
+"schwelle_kg": 200000
+},
+{
+"code": "13 01 09",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Chlorierte Hydrauliköle auf Mineralölbasis",
+"schwelle_kg": 20000
+},
+{
+"code": "13 01 10",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Nichtchlorierte Hydrauliköle auf Mineralölbasis",
+"schwelle_kg": 200000
+},
+{
+"code": "13 01 11",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Synthetische Hydrauliköle",
+"schwelle_kg": 200000
+},
+{
+"code": "13 01 12",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Biologisch leicht abbaubare Hydrauliköle",
+"schwelle_kg": 200000
+},
+{
+"code": "13 01 13",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Hydrauliköle",
+"schwelle_kg": null
+},
+{
+"code": "13 02 04",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Chlorierte Maschinen-, Getriebe- und Schmieröle auf Mineralölbasis",
+"schwelle_kg": 20000
+},
+{
+"code": "13 02 05",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Nichtchlorierte Maschinen-, Getriebe- und Schmieröle auf Mineralölbasis",
+"schwelle_kg": 200000
+},
+{
+"code": "13 02 06",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Synthetische Maschinen-, Getriebe- und Schmieröle",
+"schwelle_kg": 200000
+},
+{
+"code": "13 02 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Biologisch leicht abbaubare Maschinen-, Getriebe- und Schmieröle",
+"schwelle_kg": 200000
+},
+{
+"code": "13 02 08",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Maschinen-, Getriebe- und Schmieröle (einschliesslich Mineralölgemische)",
+"schwelle_kg": null
+},
+{
+"code": "13 03 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Isolier- und Wärmeübertragungsöle, die PCB enthalten",
+"schwelle_kg": 20000
+},
+{
+"code": "13 03 06",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Chlorierte Isolier- und Wärmeübertragungsöle auf Mineralölbasis mit Ausnahme derjenigen, die unter 13 03 01 fallen",
+"schwelle_kg": 20000
+},
+{
+"code": "13 03 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Nichtchlorierte Isolier- und Wärmeübertragungsöle auf Mineralölbasis",
+"schwelle_kg": 200000
+},
+{
+"code": "13 03 08",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Synthetische Isolier- und Wärmeübertragungsöle",
+"schwelle_kg": 200000
+},
+{
+"code": "13 03 09",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Biologisch leicht abbaubare Isolier- und Wärmeübertragungsöle",
+"schwelle_kg": 200000
+},
+{
+"code": "13 03 10",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Isolier- und Wärmeübertragungsöle",
+"schwelle_kg": null
+},
+{
+"code": "13 04 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Bilgenöle aus der Binnenschifffahrt",
+"schwelle_kg": 200000
+},
+{
+"code": "13 04 02",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Bilgenöle aus Molenablaufkanälen",
+"schwelle_kg": 200000
+},
+{
+"code": "13 04 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Bilgenöle aus der übrigen Schifffahrt",
+"schwelle_kg": null
+},
+{
+"code": "13 05 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Feste Abfälle aus Sandfanganlagen und Öl-/Wasserabscheidern",
+"schwelle_kg": null
+},
+{
+"code": "13 05 02",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlämme aus Öl-/Wasserabscheidern",
+"schwelle_kg": null
+},
+{
+"code": "13 05 06",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Öle aus Öl-/Wasserabscheidern",
+"schwelle_kg": 200000
+},
+{
+"code": "13 05 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Öliges Wasser aus Öl-/Wasserabscheidern",
+"schwelle_kg": 200000
+},
+{
+"code": "13 05 08",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Abfallgemische aus Sandfanganlagen und Öl-/Wasserabscheidern",
+"schwelle_kg": null
+},
+{
+"code": "13 07 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Heizöl und Diesel",
+"schwelle_kg": null
+},
+{
+"code": "13 07 02",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Benzin",
+"schwelle_kg": null
+},
+{
+"code": "13 07 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Brennstoffe (einschliesslich Gemische)",
+"schwelle_kg": null
+},
+{
+"code": "13 08 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlämme oder Emulsionen aus Entsalzern",
+"schwelle_kg": 200000
+},
+{
+"code": "13 08 02",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Emulsionen",
+"schwelle_kg": null
+},
+{
+"code": "13 08 99",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "14 06 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Fluorchlorkohlenwasserstoffe, H-FCKW, H-FKW",
+"schwelle_kg": null
+},
+{
+"code": "14 06 02",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere halogenierte Lösungsmittel und Lösungsmittelgemische",
+"schwelle_kg": 20000
+},
+{
+"code": "14 06 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Lösungsmittel und Lösungsmittelgemische",
+"schwelle_kg": 20000
+},
+{
+"code": "14 06 04",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlämme oder feste Abfälle, die halogenierte Lösungsmittel enthalten",
+"schwelle_kg": 2000
+},
+{
+"code": "14 06 05",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlämme oder feste Abfälle, die andere Lösungsmittel enthalten",
+"schwelle_kg": null
+},
+{
+"code": "15 01 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Verpackungen aus Papier und Karton",
+"schwelle_kg": null
+},
+{
+"code": "15 01 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Verpackungen aus Kunststoff",
+"schwelle_kg": null
+},
+{
+"code": "15 01 03",
+"klassierung": "ak",
+"special": false,
+"beschreibung": "Verpackungen aus Holz mit Ausnahme derjenigen, die unter 15 01 98 fallen",
+"schwelle_kg": null
+},
+{
+"code": "15 01 04",
+"klassierung": "",
+"special": false,
+"beschreibung": "Verpackungen aus Metall",
+"schwelle_kg": null
+},
+{
+"code": "15 01 05",
+"klassierung": "",
+"special": false,
+"beschreibung": "Verbundverpackungen",
+"schwelle_kg": null
+},
+{
+"code": "15 01 06",
+"klassierung": "",
+"special": false,
+"beschreibung": "Gemischte Verpackungen",
+"schwelle_kg": null
+},
+{
+"code": "15 01 07",
+"klassierung": "",
+"special": false,
+"beschreibung": "Verpackungen aus Glas",
+"schwelle_kg": null
+},
+{
+"code": "15 01 09",
+"klassierung": "",
+"special": false,
+"beschreibung": "Verpackungen aus Textilien",
+"schwelle_kg": null
+},
+{
+"code": "15 01 10",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Verpackungen, die Rückstände von Stoffen oder von Sonderabfällen mit besonders gefährlichen Eigenschaften enthalten oder durch Stoffe oder Sonderabfälle mit besonders gefährlichen Eigenschaften verunreinigt sind",
+"schwelle_kg": null
+},
+{
+"code": "15 01 11",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Verpackungen aus Metall, die eine gefährliche feste poröse Matrix (z.B. Asbest) enthalten, einschliesslich geleerter Druckbehältnisse",
+"schwelle_kg": null
+},
+{
+"code": "15 01 98",
+"klassierung": "",
+"special": false,
+"beschreibung": "Einwegpaletten aus Massivholz",
+"schwelle_kg": null
+},
+{
+"code": "15 02 02",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Aufsaug- und Filtermaterialien (einschliesslich Ölfilter anderswo nicht genannt), Wischtücher und Schutzkleidung, die durch gefährliche Stoffe verunreinigt sind",
+"schwelle_kg": null
+},
+{
+"code": "15 02 03",
+"klassierung": "",
+"special": false,
+"beschreibung": "Aufsaug- und Filtermaterialien, Wischtücher und Schutzkleidung mit Ausnahme derjenigen, die unter 15 02 02 fallen",
+"schwelle_kg": null
+},
+{
+"code": "16 01 03",
+"klassierung": "ak",
+"special": false,
+"beschreibung": "Altreifen",
+"schwelle_kg": null
+},
+{
+"code": "16 01 04",
+"klassierung": "ak",
+"special": false,
+"beschreibung": "Altfahrzeuge",
+"schwelle_kg": null
+},
+{
+"code": "16 01 06",
+"klassierung": "ak",
+"special": false,
+"beschreibung": "Altfahrzeuge, die weder Flüssigkeiten noch andere gefährliche Bestandteile enthalten",
+"schwelle_kg": null
+},
+{
+"code": "16 01 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Ölfilter",
+"schwelle_kg": null
+},
+{
+"code": "16 01 08",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Quecksilberhaltige Bestandteile",
+"schwelle_kg": null
+},
+{
+"code": "16 01 09",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Bestandteile, die PCB enthalten",
+"schwelle_kg": 20000
+},
+{
+"code": "16 01 10",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Explosive Bauteile (z. B. aus Airbags)",
+"schwelle_kg": 200
+},
+{
+"code": "16 01 11",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Asbesthaltige Bremsbeläge",
+"schwelle_kg": null
+},
+{
+"code": "16 01 12",
+"klassierung": "",
+"special": false,
+"beschreibung": "Bremsbeläge mit Ausnahme derjenigen, die unter 16 01 11 fallen",
+"schwelle_kg": null
+},
+{
+"code": "16 01 13",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Bremsflüssigkeiten",
+"schwelle_kg": 200000
+},
+{
+"code": "16 01 14",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Frostschutzmittel, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "16 01 15",
+"klassierung": "",
+"special": false,
+"beschreibung": "Frostschutzmittel mit Ausnahme derjenigen, die unter 16 01 14 fallen",
+"schwelle_kg": null
+},
+{
+"code": "16 01 16",
+"klassierung": "",
+"special": false,
+"beschreibung": "Flüssiggasbehälter",
+"schwelle_kg": null
+},
+{
+"code": "16 01 17",
+"klassierung": "",
+"special": false,
+"beschreibung": "Eisenmetalle",
+"schwelle_kg": null
+},
+{
+"code": "16 01 18",
+"klassierung": "",
+"special": false,
+"beschreibung": "Nichteisenmetalle",
+"schwelle_kg": null
+},
+{
+"code": "16 01 19",
+"klassierung": "",
+"special": false,
+"beschreibung": "Kunststoffe",
+"schwelle_kg": null
+},
+{
+"code": "16 01 20",
+"klassierung": "",
+"special": false,
+"beschreibung": "Glas",
+"schwelle_kg": null
+},
+{
+"code": "16 01 21",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Gefährliche Bestandteile mit Ausnahme derjenigen, die unter 16 01 07 bis 16 01 11 oder 16 01 13 bis 16 01 15 fallen",
+"schwelle_kg": null
+},
+{
+"code": "16 01 22",
+"klassierung": "",
+"special": false,
+"beschreibung": "Bestandteile anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "16 01 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "16 02 09",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Transformatoren und Kondensatoren, die PCB enthalten",
+"schwelle_kg": 20000
+},
+{
+"code": "16 02 10",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Gebrauchte Geräte, die PCB enthalten oder damit verunreinigt sind, mit Ausnahme derjenigen, die unter 16 02 09 fallen",
+"schwelle_kg": 2000
+},
+{
+"code": "16 02 11",
+"klassierung": "ak",
+"special": false,
+"beschreibung": "Gebrauchte Geräte, die Fluorchlorkohlenwasserstoffe, H-FCKW oder H-FKW enthalten",
+"schwelle_kg": null
+},
+{
+"code": "16 02 12",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Gebrauchte Geräte, die freies Asbest enthalten",
+"schwelle_kg": null
+},
+{
+"code": "16 02 13",
+"klassierung": "ak",
+"special": false,
+"beschreibung": "Gebrauchte Geräte mit Ausnahme derjenigen, die unter 16 02 09 bis 16 02 12 oder 20 01 21 fallen",
+"schwelle_kg": null
+},
+{
+"code": "16 02 15",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Aus gebrauchten Geräten entfernte gefährliche Bestandteile",
+"schwelle_kg": null
+},
+{
+"code": "16 02 16",
+"klassierung": "",
+"special": false,
+"beschreibung": "Aus gebrauchten Geräten entfernte Bestandteile mit Ausnahme de jenigen, die unter 16 02 15 oder 16 02 97 fallen",
+"schwelle_kg": null
+},
+{
+"code": "16 02 97",
+"klassierung": "ak",
+"special": false,
+"beschreibung": "Aus gebrauchten Geräten entfernte elektronische Bestandteile mit Ausnahme derjenigen, die unter 16 02 15 fallen",
+"schwelle_kg": null
+},
+{
+"code": "16 02 98",
+"klassierung": "ak",
+"special": false,
+"beschreibung": "Altmetallkabel",
+"schwelle_kg": null
+},
+{
+"code": "16 03 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Anorganische Abfälle, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "16 03 04",
+"klassierung": "",
+"special": false,
+"beschreibung": "Anorganische Abfälle mit Ausnahme derjenigen, die unter 16 03 03 fallen",
+"schwelle_kg": null
+},
+{
+"code": "16 03 05",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Organische Abfälle, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "16 03 06",
+"klassierung": "",
+"special": false,
+"beschreibung": "Organische Abfälle mit Ausnahme derjenigen, die unter 16 03 05 fallen",
+"schwelle_kg": null
+},
+{
+"code": "16 03 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Metallisches Quecksilber",
+"schwelle_kg": null
+},
+{
+"code": "16 04 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Munition",
+"schwelle_kg": 2000
+},
+{
+"code": "16 04 02",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Feuerwerkskörperabfälle",
+"schwelle_kg": 2000
+},
+{
+"code": "16 04 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Explosivabfälle",
+"schwelle_kg": null
+},
+{
+"code": "16 05 04",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Gefährliche Stoffe enthaltende Gase in Druckbehältern (einschliesslich Halonen)",
+"schwelle_kg": null
+},
+{
+"code": "16 05 05",
+"klassierung": "",
+"special": false,
+"beschreibung": "Gase in Druckbehältern mit Ausnahme derjenigen, die unter 16 05 04 fallen",
+"schwelle_kg": null
+},
+{
+"code": "16 05 06",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Laborchemikalien, die aus gefährlichen Stoffen bestehen oder solche enthalten, einschliesslich Gemische von Laborchemikalien",
+"schwelle_kg": null
+},
+{
+"code": "16 05 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Gebrauchte anorganische Chemikalien, die aus gefährlichen Stoffen bestehen oder solche enthalten",
+"schwelle_kg": null
+},
+{
+"code": "16 05 08",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Gebrauchte organische Chemikalien, die aus gefährlichen Stoffen bestehen oder solche enthalten",
+"schwelle_kg": null
+},
+{
+"code": "16 05 09",
+"klassierung": "",
+"special": false,
+"beschreibung": "Gebrauchte Chemikalien mit Ausnahme derjenigen, die unter 16 05 06, 16 05 07 oder 16 05 08 fallen",
+"schwelle_kg": null
+},
+{
+"code": "16 05 98",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Chemikalienreste unbekannter Zusammensetzung",
+"schwelle_kg": null
+},
+{
+"code": "16 06 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Bleibatterien und Bleiakkumulatoren",
+"schwelle_kg": null
+},
+{
+"code": "16 06 02",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Nickel-Cadmium-Batterien und Nickel-Cadmium-Akkumulatoren",
+"schwelle_kg": null
+},
+{
+"code": "16 06 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Quecksilber enthaltende Batterien",
+"schwelle_kg": null
+},
+{
+"code": "16 06 04",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Alkalibatterien",
+"schwelle_kg": null
+},
+{
+"code": "16 06 05",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Batterien und Akkumulatoren",
+"schwelle_kg": null
+},
+{
+"code": "16 06 06",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Getrennt gesammelte Elektrolyte aus Batterien und Akkumulatoren",
+"schwelle_kg": 2000
+},
+{
+"code": "16 06 97",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Lithium-Batterien und Lithium-Akkumulatoren",
+"schwelle_kg": null
+},
+{
+"code": "16 06 98",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Gemische von Batterien und/oder Akkumulatoren",
+"schwelle_kg": null
+},
+{
+"code": "16 07 08",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Ölhaltige Abfälle",
+"schwelle_kg": null
+},
+{
+"code": "16 07 09",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Abfälle, die sonstige gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "16 07 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "16 08 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Gebrauchte Katalysatoren, die Gold, Silber, Rhenium, Rhodium, Palladium, Iridium oder Platin enthalten mit Ausnahme derjenigen, die unter 16 08 07 fallen",
+"schwelle_kg": null
+},
+{
+"code": "16 08 02",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Gebrauchte Katalysatoren, die gefährliche Übergangsmetalle oder deren Verbindungen enthalten",
+"schwelle_kg": 2000
+},
+{
+"code": "16 08 03",
+"klassierung": "",
+"special": false,
+"beschreibung": "Gebrauchte Katalysatoren, die Übergangsmetalle oder deren Verbindungen enthalten, anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "16 08 04",
+"klassierung": "",
+"special": false,
+"beschreibung": "Gebrauchte Katalysatoren aus Crackprozessen mit Ausnahme derjenigen, die unter 16 08 07 fallen",
+"schwelle_kg": null
+},
+{
+"code": "16 08 05",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Gebrauchte Katalysatoren, die Phosphorsäure enthalten",
+"schwelle_kg": 2000
+},
+{
+"code": "16 08 06",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Gebrauchte Flüssigkeiten, die als Katalysatoren verwendet wurden",
+"schwelle_kg": 2000
+},
+{
+"code": "16 08 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Gebrauchte Katalysatoren, die durch gefährliche Stoffe verunreinigt sind",
+"schwelle_kg": null
+},
+{
+"code": "16 09 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Permanganate, z.B. Kaliumpermanganat",
+"schwelle_kg": null
+},
+{
+"code": "16 09 02",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Chromate, z.B. Kaliumchromat, Kalium- oder Natriumdichromat",
+"schwelle_kg": null
+},
+{
+"code": "16 09 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Peroxide, z.B. Wasserstoffperoxid",
+"schwelle_kg": null
+},
+{
+"code": "16 09 04",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Oxidierende Stoffe anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "16 10 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Wässrige flüssige Abfälle, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "16 10 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Wässrige flüssige Abfälle mit Ausnahme derjenigen, die unter 16 10 01 fallen",
+"schwelle_kg": null
+},
+{
+"code": "16 10 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Wässrige Konzentrate, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "16 10 04",
+"klassierung": "",
+"special": false,
+"beschreibung": "Wässrige Konzentrate mit Ausnahme derjenigen, die unter 16 10 03 fallen",
+"schwelle_kg": null
+},
+{
+"code": "16 11 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Auskleidungen und feuerfeste Materialien auf Kohlenstoffbasis aus metallurgischen Prozessen, die gefährliche Stoffe enthalten",
+"schwelle_kg": 2000
+},
+{
+"code": "16 11 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Auskleidungen und feuerfeste Materialien auf Kohlenstoffbasis aus metallurgischen Prozessen mit Ausnahme derjenigen, die unter 16 11 01 fallen",
+"schwelle_kg": null
+},
+{
+"code": "16 11 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Auskleidungen und feuerfeste Materialien aus metallurgischen Prozessen, die gefährliche Stoffe enthalten",
+"schwelle_kg": 2000
+},
+{
+"code": "16 11 04",
+"klassierung": "",
+"special": false,
+"beschreibung": "Andere Auskleidungen und feuerfeste Materialien aus metallurgischen Prozessen mit Ausnahme derjenigen, die unter 16 11 03 fallen",
+"schwelle_kg": null
+},
+{
+"code": "16 11 05",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Auskleidungen und feuerfeste Materialien aus nichtmetallurgischen Prozessen, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "16 11 06",
+"klassierung": "",
+"special": false,
+"beschreibung": "Auskleidungen und feuerfeste Materialien aus nichtmetallurgischen Prozessen mit Ausnahme derjenigen, die unter 16 11 05 fallen",
+"schwelle_kg": null
+},
+{
+"code": "17 01 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Betonabbruch",
+"schwelle_kg": null
+},
+{
+"code": "17 01 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Ziegel",
+"schwelle_kg": null
+},
+{
+"code": "17 01 07",
+"klassierung": "",
+"special": false,
+"beschreibung": "Mischabbruch",
+"schwelle_kg": null
+},
+{
+"code": "17 01 98",
+"klassierung": "",
+"special": false,
+"beschreibung": "Strassenaufbruch",
+"schwelle_kg": null
+},
+{
+"code": "17 02 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "",
+"schwelle_kg": null
+},
+{
+"code": "17 02 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Glas",
+"schwelle_kg": null
+},
+{
+"code": "17 02 03",
+"klassierung": "",
+"special": false,
+"beschreibung": "Kunststoff",
+"schwelle_kg": null
+},
+{
+"code": "17 02 04",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Glas oder Kunststoffe, die gefährliche Stoffe enthalten oder durch gefährliche Stoffe verunreinigt sind",
+"schwelle_kg": null
+},
+{
+"code": "17 02 97",
+"klassierung": "ak",
+"special": false,
+"beschreibung": "Altholz von Baustellen, Abbrüchen, Renovationen und Umbauten",
+"schwelle_kg": null
+},
+{
+"code": "17 02 98",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Problematische Holzabfälle",
+"schwelle_kg": null
+},
+{
+"code": "17 03 01",
+"klassierung": "ak",
+"special": false,
+"beschreibung": "Ausbauasphalt mit einem Gehalt von mehr als 250 bis zu 1000 mg PAK pro kg",
+"schwelle_kg": null
+},
+{
+"code": "17 03 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Ausbauasphalt mit einem Gehalt von bis zu 250 mg PAK pro kg",
+"schwelle_kg": null
+},
+{
+"code": "17 03 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Ausbauasphalt mit einem Gehalt von mehr als 1000 mg PAK pro kg sowie andere teerhaltige Abfälle und Kohlenteer",
+"schwelle_kg": null
+},
+{
+"code": "17 04 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Kupfer, Bronze, Messing",
+"schwelle_kg": null
+},
+{
+"code": "17 04 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Aluminium",
+"schwelle_kg": null
+},
+{
+"code": "17 04 03",
+"klassierung": "",
+"special": false,
+"beschreibung": "Blei",
+"schwelle_kg": null
+},
+{
+"code": "17 04 04",
+"klassierung": "",
+"special": false,
+"beschreibung": "Zink",
+"schwelle_kg": null
+},
+{
+"code": "17 04 05",
+"klassierung": "",
+"special": false,
+"beschreibung": "Eisen und Stahl",
+"schwelle_kg": null
+},
+{
+"code": "17 04 06",
+"klassierung": "",
+"special": false,
+"beschreibung": "Zinn",
+"schwelle_kg": null
+},
+{
+"code": "17 04 07",
+"klassierung": "",
+"special": false,
+"beschreibung": "Gemischte Metalle",
+"schwelle_kg": null
+},
+{
+"code": "17 04 09",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Metallabfälle, die durch gefährliche Stoffe verunreinigt sind",
+"schwelle_kg": null
+},
+{
+"code": "17 04 10",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Altmetallkabel, die Öl, Kohlenteer oder andere gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "17 04 11",
+"klassierung": "ak",
+"special": false,
+"beschreibung": "Altmetallkabel mit Ausnahme derjenigen, die unter 17 04 10 fallen",
+"schwelle_kg": null
+},
+{
+"code": "17 05 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Abgetragener Ober- oder Unterboden, der durch gefährliche Stoffe verunreinigt ist",
+"schwelle_kg": null
+},
+{
+"code": "17 05 04",
+"klassierung": "",
+"special": false,
+"beschreibung": "Unbelasteter abgetragener Ober- oder Unterboden",
+"schwelle_kg": null
+},
+{
+"code": "17 05 05",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Aushub- und Ausbruchmaterial, das durch gefährliche Stoffe verunreinigt ist",
+"schwelle_kg": null
+},
+{
+"code": "17 05 06",
+"klassierung": "",
+"special": false,
+"beschreibung": "Unverschmutztes Aushub- und Ausbruchmaterial",
+"schwelle_kg": null
+},
+{
+"code": "17 05 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Gleisaushub, der durch gefährliche Stoffe verunreinigt ist",
+"schwelle_kg": null
+},
+{
+"code": "17 05 08",
+"klassierung": "",
+"special": false,
+"beschreibung": "Unverschmutzter Gleisaushub",
+"schwelle_kg": null
+},
+{
+"code": "17 05 90",
+"klassierung": "",
+"special": false,
+"beschreibung": "akb Stark belasteter abgetragener Ober- oder Unterboden mit Ausnahme desjenigen, der unter 17 05 03 fällt",
+"schwelle_kg": null
+},
+{
+"code": "17 05 91",
+"klassierung": "",
+"special": false,
+"beschreibung": "akb Stark verschmutztes Aushub- und Ausbruchmaterial mit Ausnahme desjenigen, das unter 17 05 05 fällt",
+"schwelle_kg": null
+},
+{
+"code": "17 05 92",
+"klassierung": "",
+"special": false,
+"beschreibung": "akb Stark verschmutzter Gleisaushub mit Ausnahme desjenigen, der unter 17 05 07 fällt",
+"schwelle_kg": null
+},
+{
+"code": "17 05 93",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schwach belasteter abgetragener Ober- oder Unterboden",
+"schwelle_kg": null
+},
+{
+"code": "17 05 94",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schwach verschmutztes Aushub- und Ausbruchmaterial",
+"schwelle_kg": null
+},
+{
+"code": "17 05 95",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schwach verschmutzter Gleisaushub",
+"schwelle_kg": null
+},
+{
+"code": "17 05 96",
+"klassierung": "ak",
+"special": false,
+"beschreibung": "Wenig belasteter abgetragener Ober- und Unterboden",
+"schwelle_kg": null
+},
+{
+"code": "17 05 97",
+"klassierung": "ak",
+"special": false,
+"beschreibung": "Wenig verschmutztes Aushub- und Ausbruchmaterial",
+"schwelle_kg": null
+},
+{
+"code": "17 05 98",
+"klassierung": "ak",
+"special": false,
+"beschreibung": "Wenig verschmutzter Gleisaushub",
+"schwelle_kg": null
+},
+{
+"code": "17 06 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Dämmmaterial, das Asbest enthält",
+"schwelle_kg": null
+},
+{
+"code": "17 06 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Anderes Dämmmaterial, dass aus gefährlichen Stoffen besteht oder solche Stoffe enthält",
+"schwelle_kg": null
+},
+{
+"code": "17 06 04",
+"klassierung": "",
+"special": false,
+"beschreibung": "Dämmmaterial mit Ausnahme desjenigen, das unter 17 06 01 oder 17 06 03 fällt",
+"schwelle_kg": null
+},
+{
+"code": "17 06 05",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Bauabfälle mit freien oder sich freisetzenden Asbestfasern",
+"schwelle_kg": null
+},
+{
+"code": "17 06 98",
+"klassierung": "",
+"special": false,
+"beschreibung": "Asbesthaltige Bauabfälle mit Ausnahme derjenigen, die unter 17 06 05 fallen",
+"schwelle_kg": null
+},
+{
+"code": "17 08 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Bauabfälle auf Gipsbasis, die durch gefährliche Stoffe verunreinigt sind",
+"schwelle_kg": null
+},
+{
+"code": "17 08 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Bauabfälle auf Gipsbasis mit Ausnahme derjenigen, die unter 17 08 01 fallen",
+"schwelle_kg": null
+},
+{
+"code": "17 09 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Bauabfälle, die Quecksilber enthalten",
+"schwelle_kg": null
+},
+{
+"code": "17 09 02",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Bauabfälle, die PCB enthalten",
+"schwelle_kg": null
+},
+{
+"code": "17 09 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Gemischte Bauabfälle sowie sonstige Bauabfälle, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "17 09 04",
+"klassierung": "ak",
+"special": false,
+"beschreibung": "Gemischte Bauabfälle sowie sonstige verschmutzte Bauabfälle",
+"schwelle_kg": null
+},
+{
+"code": "17 09 97",
+"klassierung": "",
+"special": false,
+"beschreibung": "",
+"schwelle_kg": null
+},
+{
+"code": "17 09 98",
+"klassierung": "",
+"special": false,
+"beschreibung": "Gemischte brennbare Bauabfälle (z.B. Holz, Papier, Karton und Kunststoffe)",
+"schwelle_kg": null
+},
+{
+"code": "18 01 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Abfälle mit Verletzungsgefahr (spitze oder scharfe Gegenstände – „sharps“) mit Ausnahme derjenigen, die unter 18 01 03 fallen",
+"schwelle_kg": null
+},
+{
+"code": "18 01 02",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Abfälle mit Kontaminationsgefahr (z. B. Gewebeabfälle, Abfälle mit Blut, Sekreten und Exkreten, Blutbeutel und Blutkonserven) mit Ausnahme derjenigen, die unter 18 01 03 fallen",
+"schwelle_kg": null
+},
+{
+"code": "18 01 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Infektiöse Abfälle",
+"schwelle_kg": null
+},
+{
+"code": "18 01 04",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle, an deren Sammlung und Entsorgung aus infektionspräventiver Sicht keine besonderen Anforderungen gestellt werden (z.B. Wund- und Gipsverbände, Wäsche, Einwegkleidung, Windeln)",
+"schwelle_kg": null
+},
+{
+"code": "18 01 06",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Chemikalien, die aus gefährlichen Stoffen bestehen oder solche enthalten",
+"schwelle_kg": null
+},
+{
+"code": "18 01 07",
+"klassierung": "",
+"special": false,
+"beschreibung": "Chemikalien mit Ausnahme derjenigen, die unter 18 01 06 fallen",
+"schwelle_kg": null
+},
+{
+"code": "18 01 08",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Zytostatika-Abfälle",
+"schwelle_kg": null
+},
+{
+"code": "18 01 09",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Altmedikamente mit Ausnahme derjenigen, die unter 18 01 08 fallen",
+"schwelle_kg": null
+},
+{
+"code": "18 01 10",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Amalgamabfälle aus der Zahnmedizin",
+"schwelle_kg": 20000
+},
+{
+"code": "18 02 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Abfälle mit Verletzungsgefahr (spitze oder scharfe Gegenstände – «sharps») mit Ausnahme derjenigen, die unter 18 02 02 fallen",
+"schwelle_kg": null
+},
+{
+"code": "18 02 02",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Infektiöse Abfälle",
+"schwelle_kg": null
+},
+{
+"code": "18 02 03",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle, an deren Sammlung und Entsorgung aus infektionspräventiver Sicht keine besonderen Anforderungen gestellt werden",
+"schwelle_kg": null
+},
+{
+"code": "18 02 05",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Chemikalien, die aus gefährlichen Stoffen bestehen oder solche enthalten",
+"schwelle_kg": null
+},
+{
+"code": "18 02 06",
+"klassierung": "",
+"special": false,
+"beschreibung": "Chemikalien mit Ausnahme derjenigen, die unter 18 02 05 fallen",
+"schwelle_kg": null
+},
+{
+"code": "18 02 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Zytostatika-Abfälle",
+"schwelle_kg": null
+},
+{
+"code": "18 02 08",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Altmedikamente mit Ausnahme derjenigen, die unter 18 02 07 fallen",
+"schwelle_kg": null
+},
+{
+"code": "18 02 98",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Tierische Abfälle mit Kontaminationsgefahr (z. B. Gewebeabfälle, Abfälle mit Blut, Sekreten und Exkreten, Blutbeutel und Blutkonserven, kontaminierte Kadaver von Tieren) mit Ausnahme derjenigen, die unter 18 02 02 fallen",
+"schwelle_kg": null
+},
+{
+"code": "19 01 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Eisenteile, aus der Rost- und Kesselasche entfernt",
+"schwelle_kg": null
+},
+{
+"code": "19 01 05",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Filterkuchen aus der Abgasbehandlung",
+"schwelle_kg": null
+},
+{
+"code": "19 01 06",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Wässrige flüssige Abfälle aus der Abgasbehandlung und andere wässrige flüssige Abfälle",
+"schwelle_kg": null
+},
+{
+"code": "19 01 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Feste Abfälle aus der Abgasbehandlung",
+"schwelle_kg": null
+},
+{
+"code": "19 01 10",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Gebrauchte Aktivkohle aus der Abgasbehandlung",
+"schwelle_kg": null
+},
+{
+"code": "19 01 11",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Rost- und Kesselaschen sowie Schlacken, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "19 01 12",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlacke aus Anlagen, in denen Siedlungsabfälle oder Abfälle vergleichbarer Zusammensetzung verbrannt werden sowie Rost- und Kesselasche mit Ausnahme derjenigen, die unter 19 01 11 fallen",
+"schwelle_kg": null
+},
+{
+"code": "19 01 13",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Filterstaub, der gefährliche Stoffe enthält",
+"schwelle_kg": null
+},
+{
+"code": "19 01 14",
+"klassierung": "",
+"special": false,
+"beschreibung": "Filterstaub mit Ausnahme desjenigen, der unter 19 01 13 fällt",
+"schwelle_kg": null
+},
+{
+"code": "19 01 15",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Kesselstaub, der gefährliche Stoffe enthält",
+"schwelle_kg": null
+},
+{
+"code": "19 01 16",
+"klassierung": "",
+"special": false,
+"beschreibung": "Kesselstaub mit Ausnahme desjenigen, der unter 19 01 15 fällt",
+"schwelle_kg": null
+},
+{
+"code": "19 01 17",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Pyrolyseabfälle, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "19 01 18",
+"klassierung": "",
+"special": false,
+"beschreibung": "Pyrolyseabfälle mit Ausnahme derjenigen, die unter 19 01 17 fallen",
+"schwelle_kg": null
+},
+{
+"code": "19 01 19",
+"klassierung": "",
+"special": false,
+"beschreibung": "Sande aus der Wirbelschichtfeuerung",
+"schwelle_kg": null
+},
+{
+"code": "19 01 98",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Sande aus der Wirbelschichtfeuerung, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "19 01 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "19 02 03",
+"klassierung": "",
+"special": false,
+"beschreibung": "Vorgemischte Abfälle, die keine Sonderabfälle enthalten",
+"schwelle_kg": null
+},
+{
+"code": "19 02 04",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Vorgemischte Abfälle, die wenigstens einen Sonderabfall enthalten",
+"schwelle_kg": null
+},
+{
+"code": "19 02 05",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlämme aus der physikalisch-chemischen Behandlung, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "19 02 06",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme aus der physikalisch-chemischen Behandlung mit Ausnahme derjenigen, die unter 19 02 05 fallen",
+"schwelle_kg": null
+},
+{
+"code": "19 02 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Öl und Konzentrate aus Abtrennprozessen",
+"schwelle_kg": null
+},
+{
+"code": "19 02 08",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Flüssige brennbare Abfälle, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "19 02 09",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Feste brennbare Abfälle, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "19 02 10",
+"klassierung": "",
+"special": false,
+"beschreibung": "Brennbare Abfälle mit Ausnahme derjenigen, die unter 19 02 08 oder 19 02 09 fallen",
+"schwelle_kg": null
+},
+{
+"code": "19 02 11",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Sonstige Abfälle, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "19 02 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "19 03 08",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Teilweise stabilisiertes Quecksilber",
+"schwelle_kg": null
+},
+{
+"code": "19 04 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Verglaste Abfälle",
+"schwelle_kg": null
+},
+{
+"code": "19 04 02",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Filterstaub und andere Abfälle aus der Abgasbehandlung",
+"schwelle_kg": null
+},
+{
+"code": "19 04 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Nicht verglaste Festphase",
+"schwelle_kg": null
+},
+{
+"code": "19 04 04",
+"klassierung": "",
+"special": false,
+"beschreibung": "Wässrige flüssige Abfälle aus dem Tempern",
+"schwelle_kg": null
+},
+{
+"code": "19 05 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Nicht kompostierte Fraktion von Siedlungs- und ähnlichen Abfällen",
+"schwelle_kg": null
+},
+{
+"code": "19 05 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Nicht kompostierte Fraktion von tierischen und pflanzlichen Abfällen",
+"schwelle_kg": null
+},
+{
+"code": "19 05 03",
+"klassierung": "",
+"special": false,
+"beschreibung": "Nicht spezifikationsgerechter Kompost",
+"schwelle_kg": null
+},
+{
+"code": "19 05 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "19 06 03",
+"klassierung": "",
+"special": false,
+"beschreibung": "Flüssigkeiten aus der anaeroben Behandlung von Siedlungsabfällen",
+"schwelle_kg": null
+},
+{
+"code": "19 06 04",
+"klassierung": "",
+"special": false,
+"beschreibung": "Gärrückstand/-schlamm aus der anaeroben Behandlung von Siedlungsabfällen",
+"schwelle_kg": null
+},
+{
+"code": "19 06 05",
+"klassierung": "",
+"special": false,
+"beschreibung": "Flüssigkeiten aus der anaeroben Behandlung von tierischen und pflanzlichen Abfällen",
+"schwelle_kg": null
+},
+{
+"code": "19 06 06",
+"klassierung": "",
+"special": false,
+"beschreibung": "Gärrücksstand/-schlamm aus der anaeroben Behandlung von tierischen und pflanzlichen Abfällen",
+"schwelle_kg": null
+},
+{
+"code": "19 06 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "19 07 02",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Deponiesickerwasser, das gefährliche Stoffe enthält",
+"schwelle_kg": null
+},
+{
+"code": "19 07 03",
+"klassierung": "",
+"special": false,
+"beschreibung": "Deponiesickerwasser mit Ausnahme desjenigen, das unter 19 07 02 fällt",
+"schwelle_kg": null
+},
+{
+"code": "19 08 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Sieb- und Rechenrückstände",
+"schwelle_kg": null
+},
+{
+"code": "19 08 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Sandfangrückstände",
+"schwelle_kg": null
+},
+{
+"code": "19 08 05",
+"klassierung": "",
+"special": false,
+"beschreibung": "Klärschlämme aus öffentlichen Abwasserreinigungsanlagen",
+"schwelle_kg": null
+},
+{
+"code": "19 08 06",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Gesättigte oder verbrauchte Ionenaustauscherharze",
+"schwelle_kg": null
+},
+{
+"code": "19 08 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Lösungen und Schlämme aus der Regeneration von Ionenaustauschern",
+"schwelle_kg": null
+},
+{
+"code": "19 08 08",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schwermetallhaltige Schlämme aus Membransystemen",
+"schwelle_kg": null
+},
+{
+"code": "19 08 09",
+"klassierung": "ak",
+"special": false,
+"beschreibung": "Fett- und Ölmischungen aus Ölabscheidern, die ausschliesslich Speiseöle und -fette enthalten",
+"schwelle_kg": null
+},
+{
+"code": "19 08 10",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Fett- und Ölmischungen aus Ölabscheidern mit Ausnahme derjenigen, die unter 19 08 09 fallen",
+"schwelle_kg": null
+},
+{
+"code": "19 08 11",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlämme aus der biologischen Behandlung von industriellem Abwasser, die gefährliche Stoffe enthalten",
+"schwelle_kg": 2000
+},
+{
+"code": "19 08 12",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme aus der biologischen Behandlung von industriellem Abwasser mit Ausnahme derjenigen, die unter 19 08 11 fallen",
+"schwelle_kg": null
+},
+{
+"code": "19 08 13",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlämme aus einer anderen Behandlung von industriellem Abwasser, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "19 08 14",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme aus einer anderen Behandlung von industriellem Abwasser mit Ausnahme derjenigen, die unter 19 08 13 fallen",
+"schwelle_kg": null
+},
+{
+"code": "19 08 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "19 09 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Feste Abfälle aus der Erstfiltration und Siebrückstände",
+"schwelle_kg": null
+},
+{
+"code": "19 09 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme aus der Wasserklärung",
+"schwelle_kg": null
+},
+{
+"code": "19 09 03",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme aus der Dekarbonatisierung",
+"schwelle_kg": null
+},
+{
+"code": "19 09 04",
+"klassierung": "",
+"special": false,
+"beschreibung": "Gebrauchte Aktivkohle",
+"schwelle_kg": null
+},
+{
+"code": "19 09 05",
+"klassierung": "",
+"special": false,
+"beschreibung": "Gesättigte oder gebrauchte Ionenaustauscherharze",
+"schwelle_kg": null
+},
+{
+"code": "19 09 06",
+"klassierung": "",
+"special": false,
+"beschreibung": "Lösungen und Schlämme aus der Regeneration von Ionenaustauschern",
+"schwelle_kg": null
+},
+{
+"code": "19 09 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "19 10 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Eisen- und Stahlabfälle",
+"schwelle_kg": null
+},
+{
+"code": "19 10 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Nichteisenmetall-Abfälle",
+"schwelle_kg": null
+},
+{
+"code": "19 10 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schredderleichtfraktion und Staub",
+"schwelle_kg": null
+},
+{
+"code": "19 10 05",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Andere Fraktionen, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "19 10 06",
+"klassierung": "",
+"special": false,
+"beschreibung": "Andere Fraktionen mit Ausnahme derjenigen, die unter 19 10 05 fallen",
+"schwelle_kg": null
+},
+{
+"code": "19 10 98",
+"klassierung": "ak",
+"special": false,
+"beschreibung": null,
+"schwelle_kg": null
+},
+{
+"code": "19 11 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Gebrauchte Filtertone",
+"schwelle_kg": null
+},
+{
+"code": "19 11 02",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Säureteere",
+"schwelle_kg": 200
+},
+{
+"code": "19 11 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Wässrige flüssige Abfälle",
+"schwelle_kg": null
+},
+{
+"code": "19 11 04",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Abfälle aus der Brennstoffreinigung mit Basen",
+"schwelle_kg": null
+},
+{
+"code": "19 11 05",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlämme aus der betriebseigenen Abwasserbehandlung, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "19 11 06",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme aus der betriebseigenen Abwasserbehandlung mit Ausnahme derjenigen, die unter 19 11 05 fallen",
+"schwelle_kg": null
+},
+{
+"code": "19 11 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Abfälle aus der Abgasreinigung",
+"schwelle_kg": null
+},
+{
+"code": "19 11 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "19 12 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Papier und Karton",
+"schwelle_kg": null
+},
+{
+"code": "19 12 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Eisenmetalle",
+"schwelle_kg": null
+},
+{
+"code": "19 12 03",
+"klassierung": "",
+"special": false,
+"beschreibung": "Nichteisenmetalle",
+"schwelle_kg": null
+},
+{
+"code": "19 12 04",
+"klassierung": "",
+"special": false,
+"beschreibung": "Kunststoff und Gummi",
+"schwelle_kg": null
+},
+{
+"code": "19 12 05",
+"klassierung": "",
+"special": false,
+"beschreibung": "Glas",
+"schwelle_kg": null
+},
+{
+"code": "19 12 06",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Problematische Holzabfälle",
+"schwelle_kg": null
+},
+{
+"code": "19 12 07",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle von naturbelassenem Holz",
+"schwelle_kg": null
+},
+{
+"code": "19 12 08",
+"klassierung": "",
+"special": false,
+"beschreibung": "Textilien",
+"schwelle_kg": null
+},
+{
+"code": "19 12 09",
+"klassierung": "",
+"special": false,
+"beschreibung": "Mineralien (z.B. Sand, Steine)",
+"schwelle_kg": null
+},
+{
+"code": "19 12 10",
+"klassierung": "",
+"special": false,
+"beschreibung": "Brennbare Abfälle (Brennstoff aus Abfällen)",
+"schwelle_kg": null
+},
+{
+"code": "19 12 11",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Sonstige Abfälle (einschliesslich Materialmischungen) aus der mechanischen Behandlung von Abfällen, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "19 12 12",
+"klassierung": "",
+"special": false,
+"beschreibung": "Sonstige Abfälle (einschliesslich Materialmischungen) aus der mechanischen Behandlung von Abfällen mit Ausnahme derjenigen, die unter 19 12 11 fallen",
+"schwelle_kg": null
+},
+{
+"code": "19 12 95",
+"klassierung": "ak",
+"special": false,
+"beschreibung": "Schrottschutt und Wagenwischgut",
+"schwelle_kg": null
+},
+{
+"code": "19 12 96",
+"klassierung": "ak",
+"special": false,
+"beschreibung": "Feinmaterial aus der Bauabfallsortierung",
+"schwelle_kg": null
+},
+{
+"code": "19 12 97",
+"klassierung": "S",
+"special": true,
+"beschreibung": "",
+"schwelle_kg": null
+},
+{
+"code": "19 12 98",
+"klassierung": "ak",
+"special": false,
+"beschreibung": "Holzabfälle mit Ausnahme derjenigen, die unter 19 12 06 oder 19 12 07 fallen (Altholz)",
+"schwelle_kg": null
+},
+{
+"code": "19 13 01",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Feste Abfälle aus der Sanierung von Böden oder von Aushub, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "19 13 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Feste Abfälle aus der Sanierung von Böden oder von Aushub mit Ausnahme derjenigen, die unter 19 13 01 fallen",
+"schwelle_kg": null
+},
+{
+"code": "19 13 03",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlämme aus der Sanierung von Böden oder von Aushub, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "19 13 04",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme aus der Sanierung von Böden oder von Aushub mit Ausnahme derjenigen, die unter 19 13 03 fallen",
+"schwelle_kg": null
+},
+{
+"code": "19 13 05",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlämme aus der Sanierung von Grundwasser, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "19 13 06",
+"klassierung": "",
+"special": false,
+"beschreibung": "Schlämme aus der Sanierung von Grundwasser mit Ausnahme derjenigen, die unter 19 13 05 fallen",
+"schwelle_kg": null
+},
+{
+"code": "19 13 07",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Wässrige flüssige Abfälle und wässrige Konzentrate aus der Sanierung von Grundwasser, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "19 13 08",
+"klassierung": "",
+"special": false,
+"beschreibung": "Wässrige flüssige Abfälle und wässrige Konzentrate aus der Sanierung von Grundwasser mit Ausnahme derjenigen, die unter 19 13 07 fallen",
+"schwelle_kg": null
+},
+{
+"code": "20 01 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Papier und Karton",
+"schwelle_kg": null
+},
+{
+"code": "20 01 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Glas",
+"schwelle_kg": null
+},
+{
+"code": "20 01 08",
+"klassierung": "",
+"special": false,
+"beschreibung": "Biologisch abbaubare Küchen- und Kantinenabfälle",
+"schwelle_kg": null
+},
+{
+"code": "20 01 10",
+"klassierung": "",
+"special": false,
+"beschreibung": "Bekleidung",
+"schwelle_kg": null
+},
+{
+"code": "20 01 11",
+"klassierung": "",
+"special": false,
+"beschreibung": "Textilien",
+"schwelle_kg": null
+},
+{
+"code": "20 01 13",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Lösungsmittel",
+"schwelle_kg": null
+},
+{
+"code": "20 01 14",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Säuren",
+"schwelle_kg": null
+},
+{
+"code": "20 01 15",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Laugen",
+"schwelle_kg": 20000
+},
+{
+"code": "20 01 17",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Fotochemikalien",
+"schwelle_kg": null
+},
+{
+"code": "20 01 19",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Pestizide",
+"schwelle_kg": 200
+},
+{
+"code": "20 01 21",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Quecksilberhaltige Leuchtmittel",
+"schwelle_kg": null
+},
+{
+"code": "20 01 25",
+"klassierung": "ak",
+"special": false,
+"beschreibung": "Speiseöle und -fette, ohne diejenigen, die aus öffentlichen Sammelstellen stammen",
+"schwelle_kg": null
+},
+{
+"code": "20 01 26",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Öle und Fette mit Ausnahme derjenigen, die unter 20 01 25 fallen",
+"schwelle_kg": 200000
+},
+{
+"code": "20 01 27",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Farben, Druckfarben, Klebstoffe und Kunstharze, die gefährliche Stoffe enthalten",
+"schwelle_kg": 20000
+},
+{
+"code": "20 01 28",
+"klassierung": "",
+"special": false,
+"beschreibung": "Farben, Druckfarben, Klebstoffe und Kunstharze mit Ausnahme derjenigen, die unter 20 01 27 fallen",
+"schwelle_kg": null
+},
+{
+"code": "20 01 29",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Reinigungsmittel, die gefährliche Stoffe enthalten",
+"schwelle_kg": null
+},
+{
+"code": "20 01 30",
+"klassierung": "",
+"special": false,
+"beschreibung": "Reinigungsmittel mit Ausnahme derjenigen, die unter 20 01 29 fallen",
+"schwelle_kg": null
+},
+{
+"code": "20 01 31",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Zytostatika-Abfälle",
+"schwelle_kg": null
+},
+{
+"code": "20 01 32",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Altmedikamente mit Ausnahme derjenigen, die unter 20 01 31 fallen",
+"schwelle_kg": null
+},
+{
+"code": "20 01 37",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Problematische Holzabfälle",
+"schwelle_kg": null
+},
+{
+"code": "20 01 38",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle von naturbelassenem Holz",
+"schwelle_kg": null
+},
+{
+"code": "20 01 39",
+"klassierung": "",
+"special": false,
+"beschreibung": "Kunststoffe",
+"schwelle_kg": null
+},
+{
+"code": "20 01 40",
+"klassierung": "",
+"special": false,
+"beschreibung": "Metalle",
+"schwelle_kg": null
+},
+{
+"code": "20 01 41",
+"klassierung": "",
+"special": false,
+"beschreibung": "Abfälle aus der Reinigung von Schornsteinen mit Ausnahme derjenigen, die unter 20 01 96 fallen",
+"schwelle_kg": null
+},
+{
+"code": "20 01 94",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Quecksilberhaltige Abfälle mit Ausnahme derjenigen, die unter 20 01 21 fallen",
+"schwelle_kg": null
+},
+{
+"code": "20 01 96",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Ofenwaschwässer, Kaminfegwässer",
+"schwelle_kg": null
+},
+{
+"code": "20 01 97",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Kleinmengen vermischter Sonderabfälle aus Haushalten",
+"schwelle_kg": null
+},
+{
+"code": "20 01 98",
+"klassierung": "ak",
+"special": false,
+"beschreibung": "Holzabfälle mit Ausnahme derjenigen, die unter 20 01 37 oder 20 01 38 fallen",
+"schwelle_kg": null
+},
+{
+"code": "20 01 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Sonstige Fraktionen anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "20 02 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Biologisch abbaubare Abfälle",
+"schwelle_kg": null
+},
+{
+"code": "20 02 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Boden und Steine",
+"schwelle_kg": null
+},
+{
+"code": "20 02 03",
+"klassierung": "",
+"special": false,
+"beschreibung": "Andere nicht biologisch abbaubare Abfälle",
+"schwelle_kg": null
+},
+{
+"code": "20 03 01",
+"klassierung": "",
+"special": false,
+"beschreibung": "Gemischte Siedlungsabfälle",
+"schwelle_kg": null
+},
+{
+"code": "20 03 02",
+"klassierung": "",
+"special": false,
+"beschreibung": "Marktabfälle",
+"schwelle_kg": null
+},
+{
+"code": "20 03 03",
+"klassierung": "",
+"special": false,
+"beschreibung": "Strassenwischgut",
+"schwelle_kg": null
+},
+{
+"code": "20 03 04",
+"klassierung": "",
+"special": false,
+"beschreibung": "Fäkalschlamm",
+"schwelle_kg": null
+},
+{
+"code": "20 03 06",
+"klassierung": "S",
+"special": true,
+"beschreibung": "Schlämme aus Strassenschächten (Strassensammlerschlämme)",
+"schwelle_kg": null
+},
+{
+"code": "20 03 07",
+"klassierung": "",
+"special": false,
+"beschreibung": "Sperrmüll",
+"schwelle_kg": null
+},
+{
+"code": "20 03 98",
+"klassierung": "",
+"special": false,
+"beschreibung": "Brandschutt und anderer Schutt anderswo nicht genannt",
+"schwelle_kg": null
+},
+{
+"code": "20 03 99",
+"klassierung": "",
+"special": false,
+"beschreibung": "Siedlungsabfälle anderswo nicht genannt",
+"schwelle_kg": null
+}
+]

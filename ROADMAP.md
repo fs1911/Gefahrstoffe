@@ -71,9 +71,17 @@ komplette UN/VeVA/CAS-Validierung in einem Zug mit offizieller Datenanbindung.
   `validate-substance` fragt jetzt diese Tabelle ab (nicht mehr den Auszug). Verifiziert:
   UN 1223 → Kerosin/Klasse 3, UN 1202 → Diesel/Heizöl, ungültige → `valid:false`.
   Refresh jederzeit per erneutem Aufruf von `import-un-reference` (idempotenter Upsert).
-- **Noch offen VeVA-Codes:** aktuell noch KERN-AUSZUG im Function-Code. Wikipedia hat keine
-  saubere VeVA-Liste → amtliches LVA-/VeVA-Abfallverzeichnis (CSV) importieren, dann analog
-  eine Tabelle `waste_codes` + Import-Function.
+- **VeVA-/Abfallcodes: ERLEDIGT (2026-09).** Tabelle `public.waste_codes` (Migration 0010) mit
+  **860 amtlichen Codes** aus dem VeVA/LVA-Abfallverzeichnis (SR 814.610.1, UVEK-Verordnung),
+  geparst aus dem Fedlex-PDF: Code, Beschreibung, Sonderabfall-Flag (`special`, 421 Sonderabfälle),
+  Klassierung (S/ak) und **StFV-Mengenschwelle** (`schwelle_kg`, 99 Werte aus Anhang 3).
+  Seed-Daten versioniert in `supabase/data/waste_codes.json`. `validate-substance` (v3) prüft
+  VeVA-Codes jetzt gegen diese Tabelle (Beschreibung + Sonderabfall + Mengenschwelle).
+  Verifiziert: `14 06 03* → „Andere Lösungsmittel…", Sonderabfall, 20 000 kg`; ungültige → invalid.
+- **Bonus:** die 99 echten StFV-Mengenschwellen (`schwelle_kg`) können Block 17 (Mengenschwellen-
+  Frühwarnung) von den groben „Richtwerten" auf die **amtlichen Schwellen je Abfallcode** umstellen.
+- **Datenqualität UN + VeVA damit erledigt.** Rest: UI-Anbindung (Button „Daten prüfen" auf der
+  Stoffkarte → `validate-substance`) und optional CAS-Feld auf der Stoffkarte für die Anreicherung.
 - **Noch offen:** UI-Anbindung in `live/` (Button „Daten prüfen/anreichern" auf der
   Stoffkarte → `sbc.functions.invoke('validate-substance', …)` → Ergebnis anzeigen).
 
