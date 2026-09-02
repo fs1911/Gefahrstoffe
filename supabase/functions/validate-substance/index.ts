@@ -1,43 +1,15 @@
 // validate-substance — StoffScan Datenqualität
-// Validiert UN-Nummer & VeVA-/Abfallcode gegen eine Referenzliste und
-// reichert per CAS aus PubChem (PUG-REST) an (GHS / H-Sätze, live).
-//
-// Referenzlisten sind ein KERN-AUSZUG (source: "seed"); die vollständigen
-// amtlichen Listen (ADR/SDR-Gefahrgutliste, LVA/VeVA-Abfallverzeichnis)
-// werden 1:1 nachgeladen. So ist jede UN-Nr / jeder Code gegen einen echten
-// Eintrag geprüft statt frei geraten.
+// UN-Nummer wird gegen public.un_reference geprüft (vollständige Liste,
+// importiert aus Wikipedia "Liste der UN-Nummern"). VeVA-Code gegen einen
+// eingebetteten Auszug (amtliche LVA-Liste folgt). CAS-Anreicherung live
+// aus PubChem PUG-REST (GHS / H-Sätze).
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from "jsr:@supabase/supabase-js@2";
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
-};
-
-// ---- UN-Referenz (ADR/SDR, Auszug) : UN -> [Stoffname, Klasse, VG] ----
-const UN_REF: Record<string, [string, string, string]> = {
-  "1090": ["Aceton", "3", "II"],
-  "1133": ["Klebstoffe (entzündbar)", "3", "II/III"],
-  "1170": ["Ethanol / Ethanol-Lösung", "3", "II/III"],
-  "1202": ["Dieselkraftstoff / Heizöl (leicht)", "3", "III"],
-  "1203": ["Benzin (Ottokraftstoff)", "3", "II"],
-  "1263": ["Farbe / Farbzubehörstoffe", "3", "II/III"],
-  "1268": ["Erdöldestillate a.n.g.", "3", "I/II/III"],
-  "1300": ["Terpentinersatz / White Spirit", "3", "III"],
-  "1760": ["Ätzender flüssiger Stoff, a.n.g.", "8", "I/II/III"],
-  "1789": ["Salzsäure (Chlorwasserstoffsäure)", "8", "II/III"],
-  "1805": ["Phosphorsäure, Lösung", "8", "III"],
-  "1824": ["Natriumhydroxid-Lösung (Natronlauge)", "8", "II/III"],
-  "1830": ["Schwefelsäure", "8", "II"],
-  "1863": ["Kraftstoff für Luftfahrzeuge (Turbine)", "3", "I/II/III"],
-  "1866": ["Harzlösung (entzündbar)", "3", "II/III"],
-  "1950": ["Druckgaspackungen (Aerosole)", "2", "-"],
-  "1965": ["Kohlenwasserstoffgas-Gemisch, verflüssigt a.n.g.", "2", "-"],
-  "1978": ["Propan", "2", "-"],
-  "1993": ["Entzündbarer flüssiger Stoff, a.n.g.", "3", "I/II/III"],
-  "2789": ["Essigsäure, Eisessig oder Lösung > 80 %", "8", "II"],
-  "3077": ["Umweltgefährdender Stoff, fest, a.n.g.", "9", "III"],
-  "3082": ["Umweltgefährdender Stoff, flüssig, a.n.g.", "9", "III"],
 };
 
 // ---- VeVA/LVA-Referenz (Auszug) : Code -> [Beschreibung, Sonderabfall] ----
@@ -61,16 +33,20 @@ const VEVA_REF: Record<string, [string, boolean]> = {
   "20 01 30": ["Reinigungsmittel mit Ausnahme derjenigen, die unter 20 01 29 fallen", false],
 };
 
-function normUn(x: string) { return String(x || "").replace(/[^0-9]/g, ""); }
-function normCode(x: string) { return String(x || "").replace(/\s+/g, " ").trim().toUpperCase().replace(/\*$/, "*"); }
+const sb = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
 
-function lookupUn(un?: string) {
+function normUn(x: string) { return String(x || "").replace(/[^0-9]/g, "").padStart(4, "0"); }
+function normCode(x: string) { return String(x || "").replace(/\s+/g, " ").trim().toUpperCase(); }
+
+async function lookupUn(un?: string) {
   if (!un) return null;
   const key = normUn(un);
-  const hit = UN_REF[key];
-  return hit
-    ? { input: un, normalized: "UN " + key, valid: true, name: hit[0], class: hit[1], packingGroup: hit[2], source: "ADR/SDR-Auszug" }
-    : { input: un, normalized: key ? "UN " + key : "", valid: false, source: "ADR/SDR-Auszug", note: "Nicht im Referenz-Auszug – gegen SDB Abschnitt 14 / vollständige ADR-Liste prüfen." };
+  if (!/^\d{4}$/.test(key)) return { input: un, valid: false, source: "un_reference", note: "Keine gültige 4-stellige UN-Nummer." };
+  const { data, error } = await sb.from("un_reference").select("un_number, benennung, klasse, gefahrenzahl, source").eq("un_number", key).maybeSingle();
+  if (error) return { input: un, valid: false, source: "un_reference", note: "Abfrage-Fehler: " + error.message };
+  return data
+    ? { input: un, normalized: "UN " + key, valid: true, name: data.benennung, class: data.klasse, gefahrenzahl: data.gefahrenzahl, source: data.source || "un_reference" }
+    : { input: un, normalized: "UN " + key, valid: false, source: "un_reference", note: "Nicht in der UN-Referenzliste – SDB Abschnitt 14 prüfen." };
 }
 function lookupVeva(code?: string) {
   if (!code) return null;
@@ -78,7 +54,7 @@ function lookupVeva(code?: string) {
   const hit = VEVA_REF[key] || VEVA_REF[key.replace(/\s*\*$/, "") + "*"] || VEVA_REF[key.replace(/\*$/, "")];
   return hit
     ? { input: code, valid: true, description: hit[0], special: hit[1], source: "LVA/VeVA-Auszug" }
-    : { input: code, valid: false, source: "LVA/VeVA-Auszug", note: "Nicht im Referenz-Auszug – gegen amtliches Abfallverzeichnis prüfen." };
+    : { input: code, valid: false, source: "LVA/VeVA-Auszug", note: "Nicht im Referenz-Auszug – amtliches Abfallverzeichnis prüfen." };
 }
 
 async function pubchem(cas?: string, name?: string) {
@@ -114,13 +90,12 @@ Deno.serve(async (req: Request) => {
   try { body = await req.json(); } catch (_) { /* leerer Body ok */ }
   const { cas, name, un, veva } = body || {};
 
-  const [casRes] = await Promise.all([pubchem(cas, name)]);
-  const unRes = lookupUn(un);
+  const [casRes, unRes] = await Promise.all([pubchem(cas, name), lookupUn(un)]);
   const vevaRes = lookupVeva(veva);
 
   const notes: string[] = [];
   if (casRes?.found && casRes.hCodes?.length) notes.push("H-Sätze aus PubChem geladen – mit der Einstufung im SDB abgleichen.");
-  if (unRes && !unRes.valid) notes.push("UN-Nummer nicht im Referenz-Auszug. Massgeblich ist SDB Abschnitt 14.");
+  if (unRes && !unRes.valid) notes.push("UN-Nummer nicht in der Referenzliste. Massgeblich ist SDB Abschnitt 14.");
   if (vevaRes && !vevaRes.valid) notes.push("VeVA-Code nicht im Referenz-Auszug. Massgeblich ist das amtliche Abfallverzeichnis.");
 
   const out = {
@@ -130,7 +105,7 @@ Deno.serve(async (req: Request) => {
     un: unRes,
     veva: vevaRes,
     notes,
-    disclaimer: "Referenzlisten sind ein Auszug; vollständige amtliche Listen (ADR/SDR, LVA/VeVA) werden nachgeladen. UN-Nummern sind produktspezifisch – SDB Abschnitt 14 bleibt massgeblich.",
+    disclaimer: "UN-Referenz aus Wikipedia (Liste der UN-Nummern); VeVA-Auszug, amtliche LVA-Liste folgt. UN-Nummern sind produktspezifisch – SDB Abschnitt 14 bleibt massgeblich.",
     generatedAt: new Date().toISOString(),
   };
   return new Response(JSON.stringify(out), { headers: { ...cors, "Content-Type": "application/json" } });

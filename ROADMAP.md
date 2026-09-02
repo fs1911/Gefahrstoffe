@@ -65,10 +65,15 @@ komplette UN/VeVA/CAS-Validierung in einem Zug mit offizieller Datenanbindung.
   UN 1090 → Aceton, Klasse 3, VG II; VeVA 14 06 03* → gültig, Sonderabfall. Ungültige
   UN/Code werden als `valid:false` mit Hinweis erkannt. Bestätigt: **PubChem ist aus dem
   Edge-Runtime erreichbar** (die Build-Sandbox nicht).
-- **Noch offen für „100 %":** die Referenzlisten sind aktuell nur ein KERN-AUSZUG (im
-  Function-Code, `source: seed`). Amtliche Vollständigkeit = ADR/SDR- + LVA/VeVA-Liste
-  1:1 laden (dann besser als DB-Tabellen `un_reference` / `waste_codes`, die die Function
-  abfragt). GESTIS/VeVA-online haben keine saubere API → Import via CSV vom Kunden.
+- **UN-Nummern: ERLEDIGT (2026-09).** Tabelle `public.un_reference` (Migration 0009) mit
+  **~2365 UN-Nummern** (0004–9006, Benennung/Klasse/Gefahrenzahl), importiert per Edge
+  Function `import-un-reference` aus der dt. Wikipedia „Liste der UN-Nummern". Die Function
+  `validate-substance` fragt jetzt diese Tabelle ab (nicht mehr den Auszug). Verifiziert:
+  UN 1223 → Kerosin/Klasse 3, UN 1202 → Diesel/Heizöl, ungültige → `valid:false`.
+  Refresh jederzeit per erneutem Aufruf von `import-un-reference` (idempotenter Upsert).
+- **Noch offen VeVA-Codes:** aktuell noch KERN-AUSZUG im Function-Code. Wikipedia hat keine
+  saubere VeVA-Liste → amtliches LVA-/VeVA-Abfallverzeichnis (CSV) importieren, dann analog
+  eine Tabelle `waste_codes` + Import-Function.
 - **Noch offen:** UI-Anbindung in `live/` (Button „Daten prüfen/anreichern" auf der
   Stoffkarte → `sbc.functions.invoke('validate-substance', …)` → Ergebnis anzeigen).
 
