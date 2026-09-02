@@ -3,6 +3,8 @@
 // "Liste der UN-Nummern"). VeVA-/Abfallcode gegen public.waste_codes (amtliches
 // Abfallverzeichnis SR 814.610.1, inkl. Sonderabfall-Flag & StFV-Mengenschwelle).
 // CAS-Anreicherung live aus PubChem PUG-REST (GHS / H-Sätze).
+// Öffentlich aufrufbar (verify_jwt=false): liefert nur öffentliche Regulierungs-
+// daten, keine mandantenspezifischen Inhalte. Service-Role bleibt serverseitig.
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
 

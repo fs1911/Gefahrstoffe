@@ -25,6 +25,7 @@
     --accent:#0c6b4f;--accent-ink:#0a5540;
     --danger:#c0261f;--danger-bg:#fbe9e7;--danger-line:#eec6c0;
     --warn:#a85e05;--warn-bg:#f7edd6;--warn-line:#ecd6a4;
+    --sun:#a85e05;--sun-bg:#f7edd6;--sun-line:#ecd6a4;
     --ok:#1f7a4d;--ok-bg:#e4f0e9;--ok-line:#c2ddcd;
     --green:#123b2c;--green-2:#1f7a4d;
     --ghs-red:#cc1717;
@@ -1010,6 +1011,10 @@
   .stfv-bar i{display:block;height:100%;border-radius:6px}
   .stfv-bar i.r{background:var(--danger)}.stfv-bar i.y{background:var(--sun)}.stfv-bar i.i{background:var(--ink-3)}
   .stfv-meta{font-size:11.5px;color:var(--ink-3);font-family:var(--mono)}
+  .stfv-badge.o{background:#fff3e0;color:#9a5b00}
+  .stfv-bar i.o{background:#e8912a}.stfv-bar i.g{background:#2f9e5f}
+  .stfv-pct{font-size:11px;font-weight:700;color:var(--ink-3);flex:none;font-family:var(--mono)}
+  .stfv-rest{font-size:11.5px;color:var(--ink-3);padding:10px 14px;border-top:1px solid var(--line-2)}
   #printArea{display:none}
   @media print{
     @page{size:A4;margin:12mm}
@@ -1731,7 +1736,8 @@ const DB={
     {id:'s9',name:'Reinigungsmittel alkalisch',hersteller:'Kärcher',signal:'Gefahr',ghs:['aetz'],h:'H314 schwere Verätzungen / Augenschäden',p:'P280 · P305+P351+P338',un:'–',sdb:{status:'ok',rev:'2024-07',link:'kaercher_alkalisch_sdb.pdf'}},
     {id:'s10',name:'Leim / Lösemittelreiniger',hersteller:'Henkel',signal:'Achtung',ghs:['flamm','reiz'],h:'H226 entzündbar · H319 Augenreizung',p:'P210 von Zündquellen fernhalten',un:'1133',sdb:{status:'fehlt',rev:null,link:null}},
     {id:'s11',name:'Heizöl (Tanklager)',hersteller:'Migrol',signal:'Achtung',ghs:['flamm','gesundheit'],h:'H226 entzündbar · H304 Aspiration',p:'P210 · P301+P310',un:'1202',sdb:{status:'ok',rev:'2025-02',link:'migrol_heizoel_sdb.pdf'}},
-    {id:'s12',name:'Dieselkraftstoff',hersteller:'Branchenüblich',signal:'Gefahr',ghs:['flamm','gesundheit','umwelt'],h:'H226 entzündbar · H304 Aspiration · H351 Verdacht auf Krebs · H332 · H315 Hautreizung · H411',p:'P210 · P280 · P301+P310',un:'1202',sdb:{status:'ok',rev:'2025-06',link:'diesel_sdb.pdf'}}
+    {id:'s12',name:'Dieselkraftstoff',hersteller:'Branchenüblich',signal:'Gefahr',ghs:['flamm','gesundheit','umwelt'],h:'H226 entzündbar · H304 Aspiration · H351 Verdacht auf Krebs · H332 · H315 Hautreizung · H411',p:'P210 · P280 · P301+P310',un:'1202',sdb:{status:'ok',rev:'2025-06',link:'diesel_sdb.pdf'}},
+    {id:'s13',name:'Natriumhypochlorit-Lösung 13% (technisch)',hersteller:'Chemie AG',signal:'Gefahr',ghs:['aetz','umwelt'],h:'H314 schwere Verätzungen / Augenschäden · H400 sehr giftig für Wasserorganismen · H290 kann Metalle angreifen',p:'P280 Schutzhandschuhe · P273 nicht in die Umwelt · P305+P351+P338',un:'1791',cas:'7681-52-9',sdb:{status:'ok',rev:'2025-04',link:'natriumhypochlorit_sdb.pdf'}}
   ],
   instances:[
     {id:'i1',sub:'s2',loc:'l1',gebinde:'Dose',groesse:'0.5 l',anzahl:6,menge:3,einheit:'l',status:'im Einsatz',qr:'INST-000118',last:'2026-05-28'},
@@ -1749,7 +1755,8 @@ const DB={
     {id:'i13',sub:'s5',loc:'l6',gebinde:'Kanister',groesse:'25 l',anzahl:1,menge:null,einheit:'l',status:'Lager',qr:'INST-000171',last:'2026-05-10'},
     {id:'i14',sub:'s3',loc:'l4',gebinde:'Flasche',groesse:'1 l',anzahl:2,menge:2,einheit:'l',status:'im Einsatz',qr:'INST-000153',last:'2026-05-08'},
     {id:'i15',sub:'s11',loc:'l2',gebinde:'Tank',groesse:'2000 l',anzahl:1,menge:4200,einheit:'l',status:'Lager',qr:'INST-000180',last:'2026-05-30'},
-    {id:'i16',sub:'s12',loc:'l3',gebinde:'Kanister',groesse:'20 l',anzahl:2,menge:40,einheit:'l',status:'im Einsatz',qr:'INST-000181',last:'2026-06-02'}
+    {id:'i16',sub:'s12',loc:'l3',gebinde:'Kanister',groesse:'20 l',anzahl:2,menge:40,einheit:'l',status:'im Einsatz',qr:'INST-000181',last:'2026-06-02'},
+    {id:'i17',sub:'s13',loc:'l5',gebinde:'IBC',groesse:'1000 l',anzahl:2,menge:1700,einheit:'kg',status:'Lager',qr:'INST-000190',last:'2026-06-10'}
   ],
   history:[
     {t:'28.05. 09:42',who:'M. Brunner',a:'Bestand erfasst',m:'Bremsenreiniger · Werkhof Nord',cid:'c2',alert:false},
@@ -3301,39 +3308,103 @@ function emplBaNote(s,l){var e=emplLimits(s);if(!e.restricted)return '';
   return {de:'Beschäftigungsbeschränkungen beachten: Einsatz von Schwangeren/Stillenden und Jugendlichen (<18) nur nach Mutterschutz- und Jugendschutzvorschriften.',
    fr:'Respecter les restrictions d’emploi : femmes enceintes/allaitantes et jeunes (<18 ans) uniquement selon les prescriptions de protection de la maternité et des jeunes.',
    it:'Osservare le restrizioni d’impiego: gestanti/allattanti e giovani (<18) solo secondo le norme di protezione della maternità e dei giovani.'}[l]||'';}
-/* ---------- Mengenschwellen-Frühwarnung (StFV, Block 17) ---------- */
-/* Richtwerte (kg) je Gefahrenkategorie – im Einzelfall StFV Anhang 1.1 prüfen. */
-var STFV_CATS={explosiv:[100,'Explosive Stoffe'],giftig:[2000,'Giftige Stoffe'],druckgas:[2000,'Gase unter Druck'],oxid:[5000,'Brandfördernde Stoffe'],flamm:[5000,'Entzündbare Flüssigkeiten'],umwelt:[2000,'Gewässergefährdende Stoffe']};
-function stfvThreshold(s){
-  var ghs=s.ghs||[],codes={};hCodes(s.h).forEach(function(c){codes[c]=1;});
-  var best=null;
-  ['explosiv','giftig','druckgas','oxid','flamm'].forEach(function(k){if(ghs.indexOf(k)>-1){var c=STFV_CATS[k];if(!best||c[0]<best.t)best={t:c[0],n:c[1],k:k};}});
-  if(ghs.indexOf('umwelt')>-1&&(codes['H400']||codes['H410']||codes['H411'])){var c=STFV_CATS.umwelt;if(!best||c[0]<best.t)best={t:c[0],n:c[1],k:'umwelt'};}
-  return best;
+/* ---------- Mengenschwellen-Frühwarnung (StFV Anhang 1.1, Block 17) ---------- */
+/* Amtliche Mengenschwellen aus der Störfallverordnung (SR 814.012), Anhang 1.1,
+   Fassung in Kraft seit 1.10.2025:
+   - Ziffer 3: benannte Stoffe/Zubereitungen (CAS bzw. Name -> Mengenschwelle).
+   - Ziffer 4: Kriterien nach GHS-Gefahrenklasse (H-Satz -> Mengenschwelle).
+   Massgebend ist die TIEFSTE zutreffende Mengenschwelle. Footnote 3 (nicht
+   inhalativ/dermal toxisch) und Ziffer 5 (hochaktive Stoffe, 20 kg) sind
+   Einzelfallbeurteilungen und hier bewusst nicht automatisch angewendet. */
+var STFV_HCRIT={
+  H330:200, H300:2000,H310:2000,H331:2000,H370:2000,
+  H301:20000,H302:20000,H311:20000,H312:20000,H314:20000,H332:20000,H371:20000,
+  H200:2000,H201:2000,H202:2000,H203:2000,H240:2000,H241:2000,
+  H220:20000,H221:20000,H224:20000,H225:20000,H226:20000,H242:20000,H250:20000,H251:20000,H252:20000,H260:20000,H261:20000,H270:20000,H271:20000,H272:20000,
+  H222:50000,H223:50000,H228:50000,
+  H400:2000,H410:2000,H411:20000,
+  EUH032:200,EUH014:2000,EUH029:2000,EUH031:2000
+};
+var STFV_NAMED=[
+  {n:'Acetylen',cas:'74-86-2',kg:5000,rx:/\bacetylen\b/i},
+  {n:'4-Aminodiphenyl und Salze',kg:500,rx:/aminodiphenyl/i},
+  {n:'Arsen(III)oxid/-säure und Salze',cas:'1327-53-3',kg:100},
+  {n:'Arsen(V)oxid/-säure und Salze',cas:'1303-28-2',kg:1000},
+  {n:'Benzidin und Salze',kg:500,rx:/benzidin/i},
+  {n:'Benzin (Normal-/Superbenzin)',kg:200000,rx:/\bbenzin\b/i},
+  {n:'Chlor',cas:'7782-50-5',kg:200,rx:/\bchlor\b/i},
+  {n:'Chrom(VI) und Salze',kg:200,rx:/chrom\s*\(?\s*vi/i},
+  {n:'1,2-Dibrom-3-chlorpropan',cas:'96-12-8',kg:500},
+  {n:'1,2-Dibromethan',cas:'106-93-4',kg:500},
+  {n:'Diethylsulfat',cas:'64-67-5',kg:500},
+  {n:'Dimethylcarbamoylchlorid',cas:'79-44-7',kg:500},
+  {n:'1,2-Dimethylhydrazin',cas:'540-73-8',kg:500},
+  {n:'Ethanol-Kraftstoffe',kg:200000,rx:/ethanol[-\s]?kraftstoff|bioethanol|\bE85\b/i},
+  {n:'Heizöl / Dieselöl',kg:500000,rx:/heiz(ö|oe)l|\bdiesel(kraftstoff|öl|oel)?\b/i},
+  {n:'Hexamethylphosphortriamid',cas:'680-31-9',kg:500},
+  {n:'Hydrazin',cas:'302-01-2',kg:500,rx:/\bhydrazin\b/i},
+  {n:'Kerosin',kg:200000,rx:/kerosin/i},
+  {n:'Methanol',cas:'67-56-1',kg:20000,rx:/\bmethanol\b/i},
+  {n:'Methylisocyanat',cas:'624-83-9',kg:150},
+  {n:'2-Naphthylamin und Salze',kg:500,rx:/naphthylamin/i},
+  {n:'Nickelverbindungen (atemgängig, pulverförmig)',kg:1000},
+  {n:'4-Nitrodiphenyl',cas:'92-93-3',kg:500},
+  {n:'1,3-Propansulton',cas:'1120-71-4',kg:500},
+  {n:'Schwefeldichlorid',cas:'10545-99-0',kg:1000},
+  {n:'Wasserstoff',cas:'1333-74-0',kg:5000,rx:/\bwasserstoff\b/i},
+  {n:'Salpetersäure ≥10 % bis <65 %',cas:'7697-37-2',kg:20000,rx:/salpeters(ä|ae)ure/i}
+];
+function stfvNamed(s){
+  var cas=(s.cas||'').replace(/\s/g,'');
+  var i,e;
+  for(i=0;i<STFV_NAMED.length;i++){e=STFV_NAMED[i];if(cas&&e.cas&&cas===e.cas)return {t:e.kg,basis:'benannt: '+e.n};}
+  var uniq={},nm=s.name||'';
+  for(i=0;i<STFV_NAMED.length;i++){e=STFV_NAMED[i];if(e.rx&&e.rx.test(nm))uniq[e.n]=e;}
+  var keys=Object.keys(uniq);
+  if(keys.length===1)return {t:uniq[keys[0]].kg,basis:'benannt: '+uniq[keys[0]].n};
+  return null;
 }
-function stfvKg(i){if(i.menge==null)return 0;var u=(i.einheit||'').toLowerCase();return i.menge*(u==='t'?1000:1);}
-function stfvLevel(pct){return pct>=100?'r':pct>=80?'y':pct>=50?'i':'';}
+function stfvHcrit(s){
+  var best=null,driver=null,seen={},c,v;
+  hCodes(s.h).forEach(function(c){seen[c]=1;});
+  (String(s.h||'').toUpperCase().match(/EUH\d{3}/g)||[]).forEach(function(c){seen[c]=1;});
+  for(c in seen){v=STFV_HCRIT[c];if(v!=null&&(best==null||v<best)){best=v;driver=c;}}
+  if(best==null)return null;
+  if(seen['H314']&&(seen['H280']||seen['H281']||seen['H270']||seen['H271']||seen['H272'])&&best>2000){best=2000;driver='H314+Gas/Oxid';}
+  return {t:best,basis:'Kriterium '+driver};
+}
+function stfvThreshold(s){return stfvNamed(s)||stfvHcrit(s);}
+function stfvKg(i){if(i.menge==null)return 0;var u=(i.einheit||'').toLowerCase();var f=u==='t'?1000:(u==='ml'?0.001:1);return i.menge*f;}
+function stfvLevel(pct){return pct>=100?'r':pct>=80?'y':pct>=50?'o':'';}
+function stfvKgFmt(kg){return kg>=1000?((Math.round(kg/100)/10)+' t'):(Math.round(kg)+' kg');}
 function stfvForSub(subId,insts){var s=substance(subId);if(!s)return null;var thr=stfvThreshold(s);if(!thr)return null;
   var kg=0;insts.forEach(function(i){if(i.sub===subId)kg+=stfvKg(i);});
   if(kg<=0)return null;var pct=Math.round(kg/thr.t*100);
-  return {sub:subId,kg:kg,thr:thr.t,cat:thr.n,pct:pct,level:stfvLevel(pct)};
+  return {sub:subId,kg:kg,thr:thr.t,basis:thr.basis,pct:pct,level:stfvLevel(pct)};
 }
 function stfvScopeInsts(fc){return DB.instances.filter(function(i){return !fc||location_(i.loc).company===fc;});}
 function stfvList(fc){var insts=stfvScopeInsts(fc),seen={},out=[];
-  insts.forEach(function(i){if(seen[i.sub])return;seen[i.sub]=1;var r=stfvForSub(i.sub,insts);if(r&&r.level)out.push(r);});
+  insts.forEach(function(i){if(seen[i.sub])return;seen[i.sub]=1;var r=stfvForSub(i.sub,insts);if(r)out.push(r);});
   out.sort(function(a,b){return b.pct-a.pct;});return out;}
-function stfvLabel(lv){return lv==='r'?'Schwelle erreicht':lv==='y'?'Frühwarnung':'Beobachten';}
+function stfvLabel(lv){return lv==='r'?'Schwelle erreicht':lv==='y'?'Frühwarnung':lv==='o'?'erhöht':'';}
 function stfvCard(fc){
   var list=stfvList(fc);if(!list.length)return '';
-  var rows=list.map(function(r){var s=substance(r.sub);var w=Math.min(100,r.pct);
-    return '<button class="stfv-row" data-action="openSub" data-id="'+r.sub+'"><div class="stfv-top"><b>'+esc(s.name)+'</b><span class="stfv-badge '+r.level+'">'+stfvLabel(r.level)+'</span></div>'+
-      '<div class="stfv-bar"><i class="'+r.level+'" style="width:'+w+'%"></i></div>'+
-      '<div class="stfv-meta">'+Math.round(r.kg)+' kg von Richtwert '+r.thr+' kg · '+r.pct+'% · '+esc(r.cat)+'</div></button>';}).join('');
-  return '<div class="stfv-card"><div class="stfv-h">'+ICO.warn+'<div><b>Mengenschwellen (StFV) – Frühwarnung</b><small>Gelagerte Mengen nähern sich der Störfall-Schwelle. Richtwerte (l ≈ kg) – im Einzelfall StFV Anhang 1.1 prüfen.</small></div></div>'+rows+'</div>';
+  var shown=list.filter(function(r){return r.pct>=5;});
+  if(!shown.length)shown=[list[0]];
+  var rest=list.length-shown.length;
+  var warn=list.filter(function(r){return r.level==='r'||r.level==='y';}).length;
+  var rows=shown.map(function(r){var s=substance(r.sub);var w=Math.max(2,Math.min(100,r.pct));var lv=r.level||'g';
+    var badge=stfvLabel(r.level)?'<span class="stfv-badge '+r.level+'">'+stfvLabel(r.level)+'</span>':'<span class="stfv-pct">'+r.pct+'%</span>';
+    return '<button class="stfv-row" data-action="openSub" data-id="'+r.sub+'"><div class="stfv-top"><b>'+esc(s.name)+'</b>'+badge+'</div>'+
+      '<div class="stfv-bar"><i class="'+lv+'" style="width:'+w+'%"></i></div>'+
+      '<div class="stfv-meta">'+stfvKgFmt(r.kg)+' von Schwelle '+stfvKgFmt(r.thr)+' · '+r.pct+'% · '+esc(r.basis)+'</div></button>';}).join('');
+  var restLine=rest>0?'<div class="stfv-rest">+ '+rest+' weitere StFV-relevante Stoff'+(rest>1?'e':'')+' deutlich unter der Schwelle</div>':'';
+  var head=warn?('<b>Mengenschwellen (StFV) – Frühwarnung</b><small>'+warn+' Stoff'+(warn>1?'e':'')+' nahe der Störfall-Mengenschwelle. Amtliche Schwellen nach StFV Anhang 1.1 (SR 814.012); Mengen l ≈ kg.</small>'):('<b>Mengenschwellen (StFV) – Übersicht</b><small>Alle Stoffe unter der Störfall-Mengenschwelle. Amtliche Schwellen nach StFV Anhang 1.1 (SR 814.012); Mengen l ≈ kg.</small>');
+  return '<div class="stfv-card"><div class="stfv-h">'+ICO.warn+'<div>'+head+'</div></div>'+rows+restLine+'</div>';
 }
-function stfvNoticeForSub(subId,fc){var r=stfvForSub(subId,stfvScopeInsts(fc));if(!r||!r.level||r.level==='i')return '';
-  var lab=r.level==='r'?'Störfall-Schwelle erreicht/überschritten':'Frühwarnung: Störfall-Schwelle';
-  return '<div class="notice '+(r.level==='r'?'danger':'warn')+'">'+ICO.warn+'<div><b>'+lab+'.</b> '+Math.round(r.kg)+' kg von Richtwert '+r.thr+' kg ('+r.pct+'%, '+esc(r.cat)+'). StFV Anhang 1.1 prüfen.</div></div>';}
+function stfvNoticeForSub(subId,fc){var r=stfvForSub(subId,stfvScopeInsts(fc));if(!r||(r.level!=='r'&&r.level!=='y'))return '';
+  var lab=r.level==='r'?'Störfall-Mengenschwelle erreicht/überschritten':'Frühwarnung: Störfall-Mengenschwelle';
+  return '<div class="notice '+(r.level==='r'?'danger':'warn')+'">'+ICO.warn+'<div><b>'+lab+'.</b> '+stfvKgFmt(r.kg)+' von '+stfvKgFmt(r.thr)+' ('+r.pct+'%, '+esc(r.basis)+'). Massgebend: StFV Anhang 1.1 (SR 814.012).</div></div>';}
 function baCodes(str){var out=[];(String(str||'').match(/[HP]\d{3}(?:\s*\+\s*[HP]\d{3})*/g)||[]).forEach(function(c){out.push(c.replace(/\s+/g,''));});return out;}
 function baText(code,map){if(map[code])return map[code];if(code.indexOf('+')>-1){return code.split('+').map(function(c){return map[c]||c;}).join(' ');}return code;}
 function baList(codes,map){return codes.length?('<ul>'+codes.map(function(c){return '<li><b>'+c+'</b> '+esc(baText(c,map))+'</li>';}).join('')+'</ul>'):'<p class="ba-empty">Keine Angaben hinterlegt.</p>';}
