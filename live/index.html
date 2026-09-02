@@ -831,6 +831,32 @@
   .um-prevlab{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-3);margin:6px 0 6px}
   .um-prev{background:repeating-linear-gradient(45deg,var(--surface-2),var(--surface-2) 9px,transparent 9px,transparent 18px);border-radius:10px;padding:12px}
   .um-note{font-size:10.5px;color:var(--ink-3);margin:12px 0 0;line-height:1.5}
+  /* Block 26: Datenqualitaet-Check (validate-substance) */
+  .vs-result{margin-top:14px}
+  .vs-load{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-2);padding:16px 4px}
+  .vs-spin{width:18px;height:18px;border:2.5px solid var(--line-2);border-top-color:var(--accent);border-radius:50%;animation:vs-rot .8s linear infinite;flex:none}
+  @keyframes vs-rot{to{transform:rotate(360deg)}}
+  .vs-block{border:1px solid var(--line);border-radius:11px;padding:12px 13px;margin-bottom:10px;background:var(--surface)}
+  .vs-block.vs-err{border-color:#e6b7b1;background:#fdf3f1;color:#8a231a;font-size:12.5px}
+  .vs-h{display:flex;align-items:center;gap:8px;font-weight:700;font-size:13.5px;color:var(--ink);margin-bottom:9px}
+  .vs-h svg{width:16px;height:16px;flex:none;color:var(--ink-3)}
+  .vs-row{display:flex;justify-content:space-between;gap:12px;font-size:12.5px;padding:3px 0;border-top:1px dashed var(--line-2)}
+  .vs-row:first-of-type{border-top:0}
+  .vs-k{color:var(--ink-3);flex:none}
+  .vs-v{color:var(--ink);text-align:right;font-weight:600}
+  .vs-chip{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:.02em}
+  .vs-chip.vs-ok{background:#e5f4ec;color:#1c6b41}
+  .vs-chip.vs-bad{background:#fbe9e7;color:#a3140b}
+  .vs-badge-sb{display:inline-block;background:#a3140b;color:#fff;font-weight:800;font-size:10.5px;letter-spacing:.04em;padding:2px 9px;border-radius:4px}
+  .vs-note{font-size:12px;color:var(--ink-2);line-height:1.5}
+  .vs-hcs{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+  .vs-hc{font-family:var(--mono);font-size:11px;font-weight:700;padding:2px 7px;border-radius:5px}
+  .vs-hc-ok{background:#e5f4ec;color:#1c6b41}
+  .vs-hc-new{background:#fff3e0;color:#9a5b00;border:1px solid #f0d19a}
+  .vs-legend{font-size:11px;color:var(--ink-3);margin-top:7px;line-height:1.5}
+  .vs-notes{font-size:11.5px;color:var(--ink-2);line-height:1.6;margin:2px 0 8px;padding-left:2px}
+  .vs-disc{font-size:10.5px;color:var(--ink-3);line-height:1.5;border-top:1px solid var(--line-2);padding-top:8px;margin-top:4px}
+  .vs-src{font-size:10px;color:var(--ink-3);margin-top:6px}
   .lbl{box-sizing:border-box;border:2.5px solid #111;border-radius:6px;padding:12px 13px;background:#fff;color:#111;font-size:12px;line-height:1.35}
   .lbl-preview{max-width:100%;margin:0 auto}
   .lbl-hd{display:flex;justify-content:space-between;align-items:baseline;gap:10px;border-bottom:1.5px solid #111;padding-bottom:7px;margin-bottom:8px}
@@ -2882,6 +2908,83 @@ function vevaPrint(subId){
     datum:(document.getElementById('vvDatum')||{}).value||todayStr()};
   closeModal();doPrint(vevaBelegHtml(s,o));
 }
+/* ---------- Datenqualitaet-Check gegen amtliche Referenzen (Block 26) ---------- */
+var VS_URL='https://pvzjxzunhhbgfimirbkl.supabase.co/functions/v1/validate-substance';
+var VS_KEY='sb_publishable_dV_7ME6EOrTKbqHYlYlfcw_GV8e6XW_';
+async function vsFetch(body){
+  var r=await fetch(VS_URL,{method:'POST',headers:{'Content-Type':'application/json','apikey':VS_KEY,'Authorization':'Bearer '+VS_KEY},body:JSON.stringify(body)});
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  return await r.json();
+}
+function vsHset(str){return ((str||'').match(/H\d{3}/g))||[];}
+function vsChip(ok,txt){return '<span class="vs-chip '+(ok?'vs-ok':'vs-bad')+'">'+txt+'</span>';}
+function vsRow(k,v){return '<div class="vs-row"><span class="vs-k">'+k+'</span><span class="vs-v">'+v+'</span></div>';}
+function vsRender(res,s){
+  if(!res||!res.ok)return '<div class="vs-block vs-err">Pruefung fehlgeschlagen. Bitte spaeter erneut versuchen.</div>';
+  var out='';
+  var u=res.un;
+  if(u){
+    out+='<div class="vs-block"><div class="vs-h">'+ICO.doc+' UN-Nummer '+vsChip(u.valid,u.valid?'in Referenzliste':'nicht gefunden')+'</div>';
+    if(u.valid){out+=vsRow('Benennung',esc(u.name||'–'))+vsRow('Gefahrgutklasse',esc(u.class||'–'))+vsRow('Gefahrnummer (Kemler)',esc(u.gefahrenzahl||'–'));}
+    else out+='<div class="vs-note">'+esc(u.note||'Nicht in der Referenzliste.')+'</div>';
+    out+='</div>';
+  }
+  var v=res.veva;
+  if(v){
+    out+='<div class="vs-block"><div class="vs-h">'+ICO.doc+' Abfallcode (VeVA) '+vsChip(v.valid,v.valid?'amtlich':'nicht gefunden')+'</div>';
+    if(v.valid){
+      out+=vsRow('Code',esc(v.normalized||v.input||''));
+      out+=vsRow('Bezeichnung',esc(v.description||'–'));
+      out+=vsRow('Einstufung',(v.special?'<span class="vs-badge-sb">SONDERABFALL</span>':'Kontrollierter Abfall'));
+      if(v.schwelle_kg!=null)out+=vsRow('StFV-Mengenschwelle',esc(String(v.schwelle_kg))+' kg');
+    } else out+='<div class="vs-note">'+esc(v.note||'Nicht im amtlichen Abfallverzeichnis.')+'</div>';
+    out+='</div>';
+  }
+  var c=res.cas;
+  if(c){
+    out+='<div class="vs-block"><div class="vs-h">'+ICO.doc+' GHS-Einstufung (PubChem) '+vsChip(!!c.found,c.found?'gefunden':'kein Treffer')+'</div>';
+    if(c.found){
+      if(c.signal)out+=vsRow('Signalwort',esc(c.signal));
+      var sdb=vsHset(s&&s.h);
+      var chips=(c.hCodes||[]).map(function(h){
+        var base=h.replace(/[A-Za-z]$/,'');
+        var inSdb=sdb.indexOf(h)>-1||sdb.indexOf(base)>-1;
+        return '<span class="vs-hc '+(inSdb?'vs-hc-ok':'vs-hc-new')+'">'+esc(h)+'</span>';
+      }).join('');
+      if(chips){
+        out+='<div style="font-size:12px;color:var(--ink-3);margin-top:4px">H-Saetze aus PubChem:</div><div class="vs-hcs">'+chips+'</div>';
+        out+='<div class="vs-legend"><span class="vs-hc vs-hc-ok" style="padding:1px 6px">grün</span> auch im SDB · <span class="vs-hc vs-hc-new" style="padding:1px 6px">orange</span> zusätzlich bei PubChem – im SDB gegenprüfen</div>';
+      } else out+='<div class="vs-note">Keine GHS-H-Saetze hinterlegt.</div>';
+      if(c.pubchemUrl)out+='<div class="vs-src">Quelle: <b>'+esc(c.pubchemUrl)+'</b></div>';
+    } else out+='<div class="vs-note">'+esc(c.note||'Kein Treffer – CAS-Nummer oder Name pruefen.')+'</div>';
+    out+='</div>';
+  }
+  if(res.notes&&res.notes.length)out+='<div class="vs-notes">'+res.notes.map(function(n){return '• '+esc(n);}).join('<br>')+'</div>';
+  out+='<div class="vs-disc">'+esc(res.disclaimer||'')+'</div>';
+  return out;
+}
+function vsGV(id){var e=document.getElementById(id);return e?(''+e.value).trim():'';}
+function modalValidate(subId){
+  var s=substance(subId);if(!s)return;
+  var un=(s.un&&s.un!=='–')?s.un:'';
+  var vv=vevaSuggest(s);
+  var body='<p class="ls-lead">Gleicht die Stammdaten gegen amtliche Referenzen ab: UN-Nummer (ADR-Gefahrgutliste), Abfallcode (VeVA/LVA SR 814.610.1) und – über CAS-Nummer oder Name – die GHS-Einstufung aus PubChem. So fallen Tippfehler und veraltete Einstufungen auf.</p>'+
+    '<div class="um-grid"><label class="um-f"><span>CAS-Nummer (optional)</span><input id="vsCas" type="text" placeholder="z. B. 67-64-1" value="'+esc(s.cas||'')+'"></label>'+
+    '<label class="um-f"><span>Stoffname</span><input id="vsName" type="text" value="'+esc(s.name||'')+'"></label></div>'+
+    '<div class="um-grid"><label class="um-f"><span>UN-Nummer</span><input id="vsUn" type="text" placeholder="z. B. 1090" value="'+esc(un)+'"></label>'+
+    '<label class="um-f"><span>Abfallcode (VeVA)</span><input id="vsVeva" type="text" value="'+esc(vv.code)+'"></label></div>'+
+    '<button class="btn" data-action="vsRun" data-id="'+subId+'" style="width:100%;margin-top:10px">'+ICO.doc+' Jetzt prüfen</button>'+
+    '<div id="vsResult" class="vs-result"></div>';
+  openModal('Daten prüfen / anreichern · '+esc(s.name),body);
+}
+async function vsRun(subId){
+  var s=substance(subId);if(!s)return;
+  var box=document.getElementById('vsResult');if(!box)return;
+  var body={cas:vsGV('vsCas'),name:vsGV('vsName'),un:vsGV('vsUn'),veva:vsGV('vsVeva')};
+  box.innerHTML='<div class="vs-load"><span class="vs-spin"></span>Prüfe gegen amtliche Referenzen …</div>';
+  try{var res=await vsFetch(body);box.innerHTML=vsRender(res,s);}
+  catch(e){box.innerHTML='<div class="vs-block vs-err">Verbindung fehlgeschlagen ('+esc(String((e&&e.message)||e))+'). Die Prüfung läuft über den StoffScan-Server und benötigt eine Internetverbindung.</div>';}
+}
 /* ---------- Lieferschein / Rechnung -> Bestand (Block 20) ---------- */
 var LS_SAMPLE=['Muster Chemie AG · Lieferschein Nr. 48213','Datum 28.08.2026 · Kunde: Werkhof Muster','',
  'Pos  Menge  Artikel-Nr  Bezeichnung                 Preis',
@@ -3333,7 +3436,7 @@ function scrDetail(){
     '<div class="instr-head"><div><b>Instruktionsnachweis</b><small>'+(iCount?('Instruiert: '+iCount+' · zuletzt '+fmtDate(iLast)):'Noch keine Instruktion erfasst')+'</small></div>'+(iDue?'<span class="instr-badge due">fällig</span>':'<span class="instr-badge ok">aktuell</span>')+'</div>'+
     '<div class="btn-row" style="margin-top:11px"><button class="btn secondary" data-action="instrList" data-id="'+s.id+'">Nachweise</button><button class="btn secondary" data-action="instrQr" data-id="'+s.id+'">'+ICO.qr+' Instruktions-QR</button></div>'+
     '<button class="btn" data-action="instrConfirm" data-id="'+s.id+'" style="width:100%;margin-top:9px">'+ICO.ok+' Instruktion bestätigen</button></div>';
-  return '<div class="view">'+hero+notes+bestand+(inst?weCheckCard(s.id,inst.loc):'')+stamm+psaCard(s)+emplCard(s)+substCard(s)+'<button class="btn secondary" data-action="genBA" data-id="'+s.id+'" style="width:100%;margin-top:14px">'+ICO.doc+' Betriebsanweisung erstellen</button>'+'<button class="btn secondary" data-action="gbOpen" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Gefährdungsbeurteilung erstellen</button>'+'<button class="btn secondary" data-action="umfuell" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Umfüll-Etikett drucken</button>'+'<button class="btn secondary" data-action="veva" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Entsorgungsbeleg (VeVA)</button>'+instrBlock+oth+disclaimer()+'</div>';
+  return '<div class="view">'+hero+notes+bestand+(inst?weCheckCard(s.id,inst.loc):'')+stamm+psaCard(s)+emplCard(s)+substCard(s)+'<button class="btn secondary" data-action="genBA" data-id="'+s.id+'" style="width:100%;margin-top:14px">'+ICO.doc+' Betriebsanweisung erstellen</button>'+'<button class="btn secondary" data-action="gbOpen" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Gefährdungsbeurteilung erstellen</button>'+'<button class="btn secondary" data-action="umfuell" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Umfüll-Etikett drucken</button>'+'<button class="btn secondary" data-action="veva" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Entsorgungsbeleg (VeVA)</button>'+'<button class="btn secondary" data-action="vsOpen" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Daten prüfen / anreichern</button>'+instrBlock+oth+disclaimer()+'</div>';
 }
 
 /* ===== LAGERORTDETAIL (nützlicher) ===== */
@@ -3656,6 +3759,8 @@ document.addEventListener('click',e=>{
     case 'lsExample':lsExample();break;
     case 'lsApply':lsApply();break;
     case 'veva':modalVeVA(id);break;
+    case 'vsOpen':modalValidate(id);break;
+    case 'vsRun':vsRun(id);break;
     case 'vevaPrint':vevaPrint(id);break;
     case 'auditVerify':render();break;
     case 'auditPdf':auditReportPdf();break;
