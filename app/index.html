@@ -1799,7 +1799,7 @@ function firmTag(cid,alt){return '<span class="firmtag '+(alt?'alt':'')+'">'+com
 /* ---------- State / Router ---------- */
 const state={view:'start',stack:[],activeLoc:null,nav:'start',currentUser:'u1',scanPrefill:null,plan:'starter',aiExtract:null,
   filter:{company:'',loc:'',status:'',hb:false},
-  curSub:null,curInst:null,curLoc:null,adminTab:'hb',adminCompany:'',adminHbView:'all'};
+  curSub:null,curInst:null,curLoc:null,adminTab:'uebersicht',adminCompany:'',adminHbView:'all'};
 function curUser(){return DB.users.find(u=>u.id===state.currentUser)||DB.users[0];}
 function isAdmin(){const u=curUser();return !!u && (u.role==='Firmenadmin'||u.role==='Gruppenadmin / IMS');}
 function goTo(v,o){o=o||{};stopCamera();if(o.reset)state.stack=[];else if(state.view!==v||o.push)state.stack.push(state.view);
@@ -3616,7 +3616,7 @@ function scrAdmin(){
   const allHb=DB.instances.filter(i=>inScope(i)&&instWarn(i));
   const ampRed=DB.locations.filter(function(l){return (!fc||l.company===fc)&&locAmpel(l.id).level==='r';}).length;
   const pruefDue=checksDueCount();
-  const tabs=[['ampel','Ampel',ampRed],['hb','Handlungsbedarf',allHb.length],['stoffe','Stoffstamm',null],['lager','Lagerorte',null],['firmen','Firmen',null],['personen','Personen',null],['pruef','Prüffristen',pruefDue],['verlauf','Audit-Log',null]];
+  const tabs=[['uebersicht','Übersicht',null],['ampel','Ampel',ampRed],['hb','Handlungsbedarf',allHb.length],['stoffe','Stoffstamm',null],['lager','Lagerorte',null],['firmen','Firmen',null],['personen','Personen',null],['pruef','Prüffristen',pruefDue],['verlauf','Audit-Log',null]];
   const tabsHtml='<div class="tabs">'+tabs.map(t=>'<button class="tab '+(tab===t[0]?'active':'')+'" data-action="adminTab" data-id="'+t[0]+'">'+t[1]+(t[2]!=null?'<span class="cnt'+(t[2]?' alert':'')+'">'+t[2]+'</span>':'')+'</button>').join('')+'</div>';
   const fOpts='<option value="">Alle Firmen (Gruppe)</option>'+DB.companies.filter(c=>!c.group).map(c=>'<option value="'+c.id+'" '+(fc===c.id?'selected':'')+'>'+c.name+'</option>').join('');
   const filterBar='<div class="field admin-filter"><label>Firma eingrenzen</label><select data-action="adminCompany">'+fOpts+'</select></div>';
@@ -3668,8 +3668,9 @@ function scrAdmin(){
       '<button class="exp-btn" data-action="printReport">'+ICO.doc+'<span><b>Bericht als PDF</b><small>Druckansicht · «Als PDF speichern»</small></span></button>'+
       '<button class="exp-btn" data-action="printLabels">'+ICO.qr+'<span><b>Etiketten-Druckbogen</b><small>Lagerort- &amp; Artikel-QR</small></span></button>'+
     '</div>';
-  return '<div class="view"><h2 class="title">Verwaltung</h2><p class="sub">Arbeitsübersicht: was ist offen, wo und in welcher Firma.</p>'+logoCardHtml()+'<div class="dossier-card"><div class="dossier-ic">'+ICO.doc+'</div><div class="dossier-tx"><b>Prüf-Dossier</b><small>Alles für die Kontrolle auf einen Klick: Gefahrstoffliste, SDB-Status, Zusammenlagerung, Instruktionsnachweise und offene Punkte – als PDF.</small></div><button class="btn" data-action="dossier">'+ICO.print+' Erstellen</button></div>'+starterCardHtml()+pwaInstallCard()+substAdminCard(fc)+stfvCard(fc)+tabsHtml+body+exportBar+
-    '<div style="height:14px"></div><button class="btn ghost" data-action="resetDB">'+ICO.trash+' Demo-Daten zurücksetzen</button>'+disclaimer()+'</div>';
+  const dossierCard='<div class="dossier-card"><div class="dossier-ic">'+ICO.doc+'</div><div class="dossier-tx"><b>Prüf-Dossier</b><small>Alles für die Kontrolle auf einen Klick: Gefahrstoffliste, SDB-Status, Zusammenlagerung, Instruktionsnachweise und offene Punkte – als PDF.</small></div><button class="btn" data-action="dossier">'+ICO.print+' Erstellen</button></div>';
+  if(tab==='uebersicht'){body=filterBar+logoCardHtml()+dossierCard+starterCardHtml()+pwaInstallCard()+substAdminCard(fc)+stfvCard(fc)+exportBar+'<div style="height:14px"></div><button class="btn ghost" data-action="resetDB">'+ICO.trash+' Demo-Daten zurücksetzen</button>';}
+  return '<div class="view"><h2 class="title">Verwaltung</h2><p class="sub">Arbeitsübersicht: was ist offen, wo und in welcher Firma.</p>'+tabsHtml+body+disclaimer()+'</div>';
 }
 function adminHbRow(i){
   const s=substance(i.sub),l=location_(i.loc);
