@@ -57,6 +57,21 @@ komplette UN/VeVA/CAS-Validierung in einem Zug mit offizieller Datenanbindung.
   Import daher über: (a) manueller Export/CSV vom Kunden, oder (b) Fetch aus einer
   Umgebung mit Egress (Supabase Edge Function / einmaliges Import-Skript beim Deploy).
 
+**Stand 2026-09 – Edge Function `validate-substance` LIVE (deployed & getestet):**
+- Projekt StoffScan (`pvzjxzunhhbgfimirbkl`), `supabase/functions/validate-substance/`.
+- Input `{cas?, name?, un?, veva?}` → validiert UN-Nr & VeVA-Code gegen eine Referenz
+  und reichert per CAS **live aus PubChem PUG-REST** an (GHS/H-Sätze, Signalwort, CID).
+- End-to-End verifiziert: CAS 67-64-1 → CID 180, H-Sätze H225/H319/H335/H336/…, „Gefahr";
+  UN 1090 → Aceton, Klasse 3, VG II; VeVA 14 06 03* → gültig, Sonderabfall. Ungültige
+  UN/Code werden als `valid:false` mit Hinweis erkannt. Bestätigt: **PubChem ist aus dem
+  Edge-Runtime erreichbar** (die Build-Sandbox nicht).
+- **Noch offen für „100 %":** die Referenzlisten sind aktuell nur ein KERN-AUSZUG (im
+  Function-Code, `source: seed`). Amtliche Vollständigkeit = ADR/SDR- + LVA/VeVA-Liste
+  1:1 laden (dann besser als DB-Tabellen `un_reference` / `waste_codes`, die die Function
+  abfragt). GESTIS/VeVA-online haben keine saubere API → Import via CSV vom Kunden.
+- **Noch offen:** UI-Anbindung in `live/` (Button „Daten prüfen/anreichern" auf der
+  Stoffkarte → `sbc.functions.invoke('validate-substance', …)` → Ergebnis anzeigen).
+
 **Von tozzo zum Produkt:** Ursprung war ein Prototyp für die tozzo gruppe. Ziel
 jetzt: ein **generisches, verkaufbares Mehrmandanten-SaaS** ohne Kundenbezug.
 
