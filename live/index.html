@@ -1775,7 +1775,7 @@ async function loadDB(){
   DB.companies=(c.data||[]).map(x=>({id:x.id,name:x.name,short:x.short||x.name,group:!!x.is_group}));
   DB.locations=(l.data||[]).map(x=>({id:x.id,company:x.company_id,name:x.name,bereich:x.bereich||'',typ:x.typ||'Lager'}));
   const sdBySub={}; (sd.data||[]).forEach(d=>{(sdBySub[d.substance_id]=sdBySub[d.substance_id]||[]).push(d);});
-  DB.substances=(s.data||[]).map(x=>({id:x.id,name:x.produktname,hersteller:x.hersteller||'unbekannt',signal:x.signalwort||'Achtung',ghs:x.ghs_piktogramme||[],h:x.h_saetze||'–',p:x.p_saetze||'–',un:x.un_nummer||'–',barcode:x.externer_barcode||'',info:x.info_link||'',lk:x.lagerklasse||null,sdb:sdbFrom(sdBySub[x.id])}));
+  DB.substances=(s.data||[]).map(x=>({id:x.id,name:x.produktname,hersteller:x.hersteller||'unbekannt',signal:x.signalwort||'Achtung',ghs:x.ghs_piktogramme||[],h:x.h_saetze||'–',p:x.p_saetze||'–',un:x.un_nummer||'–',barcode:x.externer_barcode||'',info:x.info_link||'',lk:x.lagerklasse||null,status:x.status||'approved',source:x.source||'manual',sdb:sdbFrom(sdBySub[x.id])}));
   DB.instances=(i.data||[]).map(x=>({id:x.id,sub:x.substance_id,loc:x.storage_location_id,gebinde:x.gebindeart||'Gebinde',groesse:x.gebindegroesse||'–',anzahl:x.anzahl_gebinde||1,menge:x.menge_aktuell,einheit:x.mengeneinheit||'',status:x.status||'Lager',qr:x.internal_qr,last:(x.updated_at||x.created_at||'').slice(0,10)}));
   DB.users=(p.data||[]).map(x=>({id:x.id,name:x.name||x.email||'Benutzer',role:ROLE_DB2UI[x.role]||'Mitarbeitend',company:x.company_id}));
   DB.history=(h.data||[]).map(x=>({t:fmtTs(x.created_at),ts:x.created_at,who:(x.neu_wert&&x.neu_wert.who)||'—',a:x.aktion,m:(x.neu_wert&&x.neu_wert.m)||'',cid:(x.neu_wert&&x.neu_wert.cid)||'',alert:!!(x.neu_wert&&x.neu_wert.alert)}));
@@ -1802,6 +1802,35 @@ const instWarn=i=>instIncomplete(i)||substance(i.sub).sdb.status==='fehlt';
 const instsAtLoc=lid=>DB.instances.filter(i=>i.loc===lid);
 function sdbBadge(s){if(s.sdb.status==='fehlt')return '<span class="badge b-danger">'+ICO.warn+'SDB fehlt</span>';if(s.sdb.status==='alt')return '<span class="badge b-warn">'+ICO.warn+'SDB prüfen</span>';return '<span class="badge b-ok">'+ICO.ok+'SDB '+s.sdb.rev+'</span>';}
 function signalBadge(s){return '<span class="badge b-signal '+(s.signal==='Gefahr'?'b-danger':'b-warn')+'">'+s.signal+'</span>';}
+/* ---- Stoff-Freigabe-Lifecycle (P0-2) ---- */
+function subStatus(s){return (s&&s.status)||'approved';}
+function isApproved(s){return subStatus(s)==='approved';}
+function subStatusMeta(s){var m={approved:{lbl:'Freigegeben',cls:'b-ok',ico:ICO.ok},needs_review:{lbl:'Zur Freigabe',cls:'b-warn',ico:ICO.warn},draft:{lbl:'Entwurf',cls:'b-neutral',ico:ICO.doc},restricted:{lbl:'Eingeschränkt',cls:'b-danger',ico:ICO.warn},archived:{lbl:'Archiviert',cls:'b-neutral',ico:ICO.doc},superseded:{lbl:'Ersetzt',cls:'b-neutral',ico:ICO.doc}};return m[subStatus(s)]||m.approved;}
+function statusBadge(s){var m=subStatusMeta(s);return '<span class="badge '+m.cls+'">'+m.ico+m.lbl+'</span>';}
+// Hartes Gate: verbindliche Dokumente nur nach Freigabe.
+function requireApproved(s){if(isApproved(s))return true;toast('Stoff nicht freigegeben – zuerst freigeben.',false);return false;}
+function approvalCard(s){
+  if(isApproved(s))return '';
+  var adm=isAdmin(),m=subStatusMeta(s);
+  var btns=adm
+    ? '<div class="btn-row"><button class="btn" data-action="subApprove" data-id="'+s.id+'">'+ICO.ok+' Freigeben</button><button class="btn ghost" data-action="subReject" data-id="'+s.id+'">Zurückweisen</button></div>'
+    : '<div class="notice info" style="margin:0">'+ICO.info+'<div>Zur Freigabe durch eine Admin-Person vorgemerkt.</div></div>';
+  return '<div class="card flag-warn" style="padding:13px 14px;margin-bottom:11px">'+
+    '<b style="font-size:14.5px">Freigabe · '+m.lbl+'</b>'+
+    '<p style="margin:5px 0 10px;font-size:12.5px;color:var(--ink-2)">Dieser Stoff ist nicht freigegeben. <b>Betriebsanweisung, Instruktions-QR und Umfüll-Etikett</b> sind erst nach fachlicher Freigabe verfügbar.'+(s.source==='ai'?' Quelle: KI-Auslesung – bitte gegen das SDB prüfen.':'')+'</p>'+btns+'</div>';
+}
+function reviewQueueCard(fc){
+  var q=DB.substances.filter(function(s){return subStatus(s)==='needs_review';});
+  if(!q.length)return '';
+  var rows=q.map(function(s){return '<button class="arow flag-warn" data-action="openSub" data-id="'+s.id+'"><span class="am"><span class="at">'+esc(s.name)+'</span><span class="as">'+esc(s.hersteller)+(s.source==='ai'?' · KI-Auslesung':'')+'</span></span><span class="reason w">prüfen</span><span class="chev">'+ICO.chev+'</span></button>';}).join('');
+  return '<div class="panel" style="margin-bottom:14px"><div class="panel-h"><span>'+ICO.warn+' Zur Freigabe</span><span class="cnt alert">'+q.length+'</span></div>'+
+    '<div style="padding:10px 12px 12px"><p style="margin:0 0 8px;font-size:12.5px;color:var(--ink-2)">Diese Stoffe warten auf fachliche Freigabe. Bis dahin lassen sich keine verbindlichen Dokumente erzeugen.</p>'+rows+'</div></div>';
+}
+async function subApprove(id){var r=await sbc.rpc('substance_set_status',{p_id:id,p_status:'approved'});if(r&&r.error){toast(r.error.message,false);return;}await loadDB();toast('Stoff freigegeben.');render();}
+async function subReject(id){var r=await sbc.rpc('substance_set_status',{p_id:id,p_status:'draft'});if(r&&r.error){toast(r.error.message,false);return;}await loadDB();toast('Zurückgewiesen – zurück in Entwurf.');render();}
+// Neu erfasste Stoffe: KI-Auslesung immer needs_review; sonst Admin -> approved.
+function erfSource(){return state.aiExtract?'ai':((state.scanPrefill&&state.scanPrefill.catalog)?'catalog':'manual');}
+function erfStatus(){return (erfSource()==='ai')?'needs_review':(isAdmin()?'approved':'needs_review');}
 function firmTag(cid,alt){return '<span class="firmtag '+(alt?'alt':'')+'">'+company(cid).short+'</span>';}
 
 /* ---------- State / Router ---------- */
@@ -3128,7 +3157,7 @@ async function lsApply(){
   try{
     for(var k=0;k<items.length;k++){var it=items[k];var sid=it.match;
       if(sid==='__new'){
-        var {data:sub,error:e1}=await sbc.from('substances').insert({organization_id:orgId(),produktname:it.desc,hersteller:'unbekannt',signalwort:'Achtung',ghs_piktogramme:[],h_saetze:'– (aus Lieferschein, bitte ergänzen)',p_saetze:'–',un_nummer:null,lagerklasse:null,externer_barcode:it.art||null,info_link:null}).select().single();
+        var {data:sub,error:e1}=await sbc.from('substances').insert({organization_id:orgId(),produktname:it.desc,hersteller:'unbekannt',signalwort:'Achtung',ghs_piktogramme:[],h_saetze:'– (aus Lieferschein, bitte ergänzen)',p_saetze:'–',un_nummer:null,lagerklasse:null,externer_barcode:it.art||null,info_link:null,status:'needs_review',source:'import'}).select().single();
         if(e1){toast('Stoff: '+e1.message,false);return;}sid=sub.id;newSubs++;
       }
       var qr='INST-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,5).toUpperCase();
@@ -3168,7 +3197,7 @@ function umfuellReadOpts(){return {inhalt:((document.getElementById('umInhalt')|
 function umfuellPreview(subId){var s=substance(subId),p=document.getElementById('umPrev');if(!s||!p)return;var o=umfuellReadOpts();o.preview=true;p.innerHTML=umfuellLabelHtml(s,o);}
 function umfuellPrint(subId){var s=substance(subId);if(!s)return;var o=umfuellReadOpts();closeModal();doPrint(umfuellLabelHtml(s,o));}
 function modalUmfuell(subId){
-  var s=substance(subId);if(!s)return;var today=todayStr();
+  var s=substance(subId);if(!s)return;if(!requireApproved(s))return;var today=todayStr();
   var body='<p class="um-lead">Etikett für ein umgefülltes oder kleineres Gebinde. Produktname, GHS-Piktogramme, Signalwort und H-/P-Sätze werden automatisch aus dem Stoffstamm übernommen.</p>'+
    '<label class="um-f"><span>Inhalt / Menge</span><input id="umInhalt" type="text" placeholder="z. B. 1 l Sprühflasche"></label>'+
    '<div class="um-grid"><label class="um-f"><span>Umgefüllt am</span><input id="umDatum" type="date" value="'+today+'"></label>'+
@@ -3426,13 +3455,13 @@ function modalInstrList(subId){var s=substance(subId);if(!s)return;var a=instrFo
   openModal('Nachweise · '+esc(s.name),rows+'<div class="notice info" style="margin-top:12px">'+ICO.info+'<div>Instruktionen sind jährlich zu wiederholen. Nach 12 Monaten wird ein Eintrag als <b>fällig</b> markiert.</div></div>'+
     '<div class="btn-row"><button class="btn secondary" data-action="instrNachweisPdf" data-id="'+subId+'">'+ICO.print+' Nachweis als PDF</button><button class="btn secondary" data-action="instrQr" data-id="'+subId+'">'+ICO.qr+' Instruktions-QR</button></div>'+
     '<button class="btn" data-action="instrConfirm" data-id="'+subId+'" style="width:100%;margin-top:9px">'+ICO.ok+' Bestätigen</button>');}
-function modalInstrQr(subId){var s=substance(subId);if(!s)return;
+function modalInstrQr(subId){var s=substance(subId);if(!s)return;if(!requireApproved(s))return;
   openModal('Instruktions-QR · '+esc(s.name),'<div class="qr-wrap"><div class="qr-frame" id="qrBox"></div><div class="qr-sub">Scannen → Betriebsanweisung lesen → «gelesen» bestätigen</div></div>'+
     '<div class="notice info" style="margin-top:15px">'+ICO.info+'<div>QR neben dem Gefahrstoff oder auf der ausgehängten Betriebsanweisung anbringen. Mitarbeitende scannen, lesen und bestätigen – der Nachweis entsteht automatisch.</div></div>'+
     '<div class="btn-row"><button class="btn secondary" data-action="printQr">'+ICO.print+' Etikette drucken</button><button class="btn" data-action="simInstrScan" data-id="'+subId+'">'+ICO.qr+' Öffnen</button></div>');
   renderRealQr('qrBox',qrTextInstr(subId));}
 function baHintText(l){return {de:'Bitte die Betriebsanweisung lesen und anschliessend oben «Als gelesen bestätigen».',fr:'Veuillez lire les instructions de service, puis confirmer la lecture ci-dessus.',it:'Leggere le istruzioni operative e confermare la lettura qui sopra.'}[l]||'';}
-function openBA(subId,confirm){var s=substance(subId);if(!s)return;closeBA();state.baSub=subId;state.baConfirm=!!confirm;
+function openBA(subId,confirm){var s=substance(subId);if(!s)return;if(!requireApproved(s))return;closeBA();state.baSub=subId;state.baConfirm=!!confirm;
   var l=baLangCur(),T=BA_I18N[l];
   var langBtns='<div class="ba-lang">'+['de','fr','it'].map(function(L){return '<button class="ba-lang-b'+(L===l?' on':'')+'" data-action="baLang" data-id="'+L+'">'+L.toUpperCase()+'</button>';}).join('')+'</div>';
   var el=document.createElement('div');el.className='ba-overlay';el.id='baOverlay';
@@ -3449,11 +3478,12 @@ function scrDetail(){
 
   // 1) HERO: Name, Signal+SDB-Badges, GHS gross
   const ghs=s.ghs.length?'<div class="sk-ghs">'+s.ghs.map(g=>ghsBadge(g,'big')).join('')+'</div>':'<div class="sk-ghs none">Keine GHS-Piktogramme hinterlegt</div>';
-  const hero='<div class="sk-hero"><div class="sk-badges">'+signalBadge(s)+sdbBadge(s)+cmrBadge(s)+'</div>'+
+  const hero='<div class="sk-hero"><div class="sk-badges">'+signalBadge(s)+statusBadge(s)+sdbBadge(s)+cmrBadge(s)+'</div>'+
     '<h1 class="sk-name">'+s.name+'</h1><div class="sk-mfr">'+s.hersteller+(s.un!=='–'?' · UN '+s.un:'')+'</div>'+ghs+'</div>';
 
   // 2) WARNHINWEISE direkt unter Hero
   let notes='';
+  notes+=approvalCard(s);
   if(s.sdb.status==='fehlt')notes+='<div class="notice danger">'+ICO.warn+'<div><b>Kein SDB hinterlegt.</b> Sicherheitsdatenblatt ergänzen.</div></div>';
   else if(s.sdb.status==='alt')notes+='<div class="notice warn">'+ICO.warn+'<div><b>SDB älter als 3 Jahre</b> (Stand '+s.sdb.rev+'). Auf Aktualität prüfen.</div></div>';
   if(inst&&instIncomplete(inst))notes+='<div class="notice warn">'+ICO.warn+'<div><b>Menge fehlt</b> bei diesem Bestand – bitte ergänzen.</div></div>';
@@ -3637,7 +3667,7 @@ function scrAdmin(){
       '<button class="exp-btn" data-action="printLabels">'+ICO.qr+'<span><b>Etiketten-Druckbogen</b><small>Lagerort- &amp; Artikel-QR</small></span></button>'+
     '</div>';
   const dossierCard='<div class="dossier-card"><div class="dossier-ic">'+ICO.doc+'</div><div class="dossier-tx"><b>Prüf-Dossier</b><small>Alles für die Kontrolle auf einen Klick: Gefahrstoffliste, SDB-Status, Zusammenlagerung, Instruktionsnachweise und offene Punkte – als PDF.</small></div><button class="btn" data-action="dossier">'+ICO.print+' Erstellen</button></div>';
-  if(tab==='uebersicht'){body=filterBar+logoCardHtml()+dossierCard+starterCardHtml()+pwaInstallCard()+substAdminCard(fc)+stfvCard(fc)+exportBar;}
+  if(tab==='uebersicht'){body=filterBar+reviewQueueCard(fc)+logoCardHtml()+dossierCard+starterCardHtml()+pwaInstallCard()+substAdminCard(fc)+stfvCard(fc)+exportBar;}
   return '<div class="view"><h2 class="title">Verwaltung</h2><p class="sub">Arbeitsübersicht: was ist offen, wo und in welcher Firma.</p>'+tabsHtml+body+disclaimer()+'</div>';
 }
 function adminHbRow(i){
@@ -3688,6 +3718,7 @@ window.aiAnalyze=async function(file){
     const d=r.data||{};
     if(d.configured===false){closeModal();toast('KI-Analyse noch nicht aktiviert – Datei wird trotzdem angehängt.',false);return;}
     state.aiExtract={hersteller:d.hersteller||'',h:d.h_saetze||'',p:d.p_saetze||'',un:d.un_nummer||'',lk:d.lagerklasse||''};
+    state.aiExtractionId=d.extraction_id||null;
     if(d.signalwort)state._sig=d.signalwort;
     state.scanPrefill={barcode:(state.scanPrefill&&state.scanPrefill.barcode)||'',info:'',name:d.produktname||'',sig:d.signalwort||'',haz:Array.isArray(d.ghs)?d.ghs:[],ai:{h:d.h_saetze,un:d.un_nummer,lk:d.lagerklasse}};
     closeModal();toast('KI hat das SDB erkannt – bitte prüfen und speichern.');render();
@@ -3828,6 +3859,8 @@ document.addEventListener('click',e=>{
     case 'captureWithLink':closeModal();state.scanPrefill={barcode:'',info:decodeURIComponent(id)};goTo('erfassung',{reset:true,nav:'scan'});break;
     case 'openInst':{const i=instance(id);state.activeLoc=i.loc;goTo('detail',{sub:i.sub,inst:id});break;}
     case 'openSub':goTo('detail',{sub:id,inst:null});break;
+    case 'subApprove':subApprove(id);break;
+    case 'subReject':subReject(id);break;
     case 'openLoc':goTo('locDetail',{loc:id});break;
     case 'addBestand':goTo('erfassung',{});break;
     case 'showQr':modalQr(id);break;
@@ -3998,8 +4031,10 @@ async function saveErf(){const f=document.getElementById('erfForm');const name=f
   const compId=state.activeLoc?location_(state.activeLoc).company:defaultCompanyId();
   if(!compId){toast('Keine Firma vorhanden – zuerst in der Verwaltung anlegen.',false);return;}
   try{
-    const {data:sub,error:e1}=await sbc.from('substances').insert({organization_id:orgId(),produktname:name,hersteller:ex.hersteller||'unbekannt',signalwort:sig,ghs_piktogramme:haz,h_saetze:ex.h||'– (manuell, bitte ergänzen)',p_saetze:ex.p||'–',un_nummer:ex.un||null,lagerklasse:ex.lk||null,externer_barcode:bc||null,info_link:(/^https?:\/\//i.test(sdb)?sdb:null)}).select().single();
+    const {data:sub,error:e1}=await sbc.from('substances').insert({organization_id:orgId(),produktname:name,hersteller:ex.hersteller||'unbekannt',signalwort:sig,ghs_piktogramme:haz,h_saetze:ex.h||'– (manuell, bitte ergänzen)',p_saetze:ex.p||'–',un_nummer:ex.un||null,lagerklasse:ex.lk||null,externer_barcode:bc||null,info_link:(/^https?:\/\//i.test(sdb)?sdb:null),status:erfStatus(),source:erfSource()}).select().single();
     if(e1){toast('Stoff: '+e1.message,false);return;}
+    // KI-Extraktion (Provenienz) mit dem neuen Stoff verknüpfen
+    if(state.aiExtractionId){try{await sbc.from('sds_extractions').update({substance_id:sub.id}).eq('id',state.aiExtractionId);}catch(_){}state.aiExtractionId=null;}
     // Beitrag in den mandantenübergreifenden Schweizer Katalog (anonym, nur wenn Barcode vorhanden)
     if(bc){try{sbc.rpc('catalog_contribute',{p_barcode:bc,p_produktname:name,p_hersteller:ex.hersteller||null,p_signalwort:sig,p_ghs:haz,p_h:ex.h||null,p_p:ex.p||null,p_un:ex.un||null,p_lk:ex.lk||null,p_quelle:(state.scanPrefill&&state.scanPrefill.catalog)?'bestaetigt':'neu'}).then(()=>{},()=>{});}catch(_){}}
     if(sdbfile){try{await uploadSdbFile(sub.id,sdbfile);}catch(err){toast('SDB-Upload: '+(err&&err.message||err),false);}}

@@ -72,7 +72,19 @@ Ohne `WITH CHECK` darf eine Person die **eigene** Profilzeile beliebig ändern �
 | Konto / Organisation löschen (revDSG-Löschrecht) | ❌ offen → **P1** |
 | MFA | ❌ offen → **P1** |
 
-### 2.3 SDB-Lifecycle & KI-Governance — ❌ (grösste Baustelle, Haftungskern)
+### 2.3 SDB-Lifecycle & KI-Governance — 🟢 Kern erledigt (2026-09-04), Rest P1
+
+**Umgesetzt (Migration `0013`, live + deploy-ready):**
+- Stoff-**Lebenszyklus** `status` (draft/needs_review/approved/restricted/archived/superseded) + `approved_by`/`approved_at`/`source`. Bestehende Stoffe grandfathered = `approved`.
+- **Freigabe-RPC** `substance_set_status` + Integritäts-Trigger: Nicht-Admins können nicht direkt freigeben (INSERT `approved`→`needs_review`, UPDATE blockiert). 4/4 SQL-Tests grün (`tests/lifecycle.sql`).
+- **Hartes Gate**: Betriebsanweisung, Instruktions-QR und Umfüll-Etikett nur bei `approved`. Status-Badge + Freigabe-Karte auf der Stoffkarte, „Zur Freigabe"-Board in der Verwaltung.
+- Neu erfasste Stoffe: KI → `needs_review`; sonst Admin → `approved`, Nicht-Admin → `needs_review`. Lieferschein-Import → `needs_review`.
+- **`parse-sdb`-Governance** (deployt, `verify_jwt=true`, aktiv sobald `ANTHROPIC_API_KEY` gesetzt): Auth+Org, Rate-Limit pro Nutzer, **Prompt-Injection-Härtung**, **Confidence pro Feld**, **serverseitige UN-Validierung**, **Persistenz** in `sds_extractions` (Modell-/Prompt-Version), Rückgabe `needs_review:true`.
+- `sds_documents`: Spalten `sha256`/`mime`/`size_bytes`/`original_name` angelegt.
+
+**Rest → P1:** Malware-Scan/Quarantäne (externer Dienst), asynchroner Verarbeitungs-Job, Client-Datei-Härtung beim Upload (MIME/Signatur/Grösse/Hash wirklich befüllen), BA-Versionierung.
+
+<details><summary>Ursprünglicher Befund (vor der Umsetzung)</summary>
 `sds_documents` (`0001:90-101`) speichert Pfad/Link/Revision/Version/`uploaded_by` — aber:
 - ❌ **Kein Status-Lifecycle** (`draft/needs_review/approved/restricted/archived/superseded`), kein `approved_by/at`.
 - ❌ **Kein Datei-Hash** (SHA-256), kein Duplikat-Dedupe.
@@ -80,6 +92,7 @@ Ohne `WITH CHECK` darf eine Person die **eigene** Profilzeile beliebig ändern �
 - ❌ Kein asynchroner Verarbeitungs-Job (`sds_processing_jobs`).
 
 > Kern-Regel des Leitfadens („keine verbindliche KI-Ausgabe ohne menschliche Freigabe") ist **technisch noch nicht erzwungen**.
+</details>
 
 ### 2.4 Betriebsanweisung / Instruktion — 🟡
 - ✅ Instruktionsnachweise (`0007_instructions.sql`), BA-Generierung (DE/FR/IT), QR.
@@ -145,7 +158,7 @@ Ohne `WITH CHECK` darf eine Person die **eigene** Profilzeile beliebig ändern �
 
 ### P0 – Blocker vor dem ersten zahlenden Fremdkunden
 1. ✅ **ERLEDIGT (2026-09-04):** RLS-Fix S1 (Migration `0011`) + Cross-Tenant-Negativtests (`supabase/tests/rls_cross_tenant.sql`, 6/6 grün, gegen Prod verifiziert & zurückgerollt).
-2. **SDB-Lifecycle + Freigabe-Gate + Datei-Härtung + KI-Governance** (S3, S8): Status-Felder, Datei-Hash, MIME/Signatur/Grösse, Quarantäne, Confidence/Quelle je Feld, serverseitige Validierung, Prompt-Injection-Schutz, Audit. *Grösster Block.*
+2. 🟢 **KERN ERLEDIGT (2026-09-04):** SDB-Lifecycle + hartes Freigabe-Gate + KI-Governance (Migration `0013`, `parse-sdb` v-gov, `tests/lifecycle.sql`). **Rest P1:** Malware-Scan/Quarantäne, async Job, Client-Upload-Härtung (Hash/MIME wirklich befüllen), BA-Versionierung.
 3. ✅ **ERLEDIGT (2026-09-04):** Infra-Härtung (S5/S6/S7) – Security-Header in `netlify.toml` (CSP validiert), CORS-Allowlist, Rate-Limit für `validate-substance` (Migration `0012`, live verifiziert). Offen als P1: `'unsafe-inline'`-Refactor, least-privilege-Client für Public-Reads.
 4. **Entitlements serverseitig** (S2, S4): `plan_features`/`usage_counters`, Limit-Checks, Webhook-Idempotenz, Grace/Read-only. Danach Stripe live.
 5. **Betrieb-Minimum**: Staging≠Prod, automatische Backups + **1 dokumentierter Restore-Test**, Error-Tracking, Secret-Scanning/CI.
