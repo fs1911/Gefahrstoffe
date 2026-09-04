@@ -110,7 +110,7 @@ Ohne `WITH CHECK` darf eine Person die **eigene** Profilzeile beliebig ändern �
 
 | # | Schwere | Finding | Ort | Fix |
 |---|---|---|---|---|
-| S1 | **Kritisch** | Selbst-Hochstufung: `prof_update_self` ohne `WITH CHECK` | `0002_rls.sql:62` | `WITH CHECK` (role/org/company/active immutable) |
+| S1 | ~~Kritisch~~ **✅ behoben** | Selbst-Hochstufung: `prof_update_self` ohne `WITH CHECK` | `0002_rls.sql:62` | **Gefixt in `0011` (Policy `WITH CHECK` + Guard-Trigger); 6/6 Cross-Tenant-Tests grün.** |
 | S2 | Hoch | Keine serverseitige Limit-Durchsetzung (Plan-Umgehung) | `0005` + Live-Client | `usage_counters` + Checks vor limitrelevanten Aktionen |
 | S3 | Hoch | KI-Ergebnis ohne Freigabe-Gate direkt übernommen | `parse-sdb` + Client | Status-Lifecycle + Review-Gate |
 | S4 | Hoch | Webhook nicht idempotent | `stripe-webhook` | `billing_events`-Dedupe über `event.id` |
@@ -126,7 +126,7 @@ Ohne `WITH CHECK` darf eine Person die **eigene** Profilzeile beliebig ändern �
 ## 4. Priorisierte Umsetzungsreihenfolge
 
 ### P0 – Blocker vor dem ersten zahlenden Fremdkunden
-1. **RLS-Fix S1** + **automatisierte Cross-Tenant-Negativtests** (6 Fälle). *Klein, hoher Hebel.*
+1. ✅ **ERLEDIGT (2026-09-04):** RLS-Fix S1 (Migration `0011`) + Cross-Tenant-Negativtests (`supabase/tests/rls_cross_tenant.sql`, 6/6 grün, gegen Prod verifiziert & zurückgerollt).
 2. **SDB-Lifecycle + Freigabe-Gate + Datei-Härtung + KI-Governance** (S3, S8): Status-Felder, Datei-Hash, MIME/Signatur/Grösse, Quarantäne, Confidence/Quelle je Feld, serverseitige Validierung, Prompt-Injection-Schutz, Audit. *Grösster Block.*
 3. **Infra-Härtung** (S5, S6, S7): Security-Header, CORS-Allowlist, Rate-Limit/Origin für Public-Endpunkte, least-privilege statt Service-Role.
 4. **Entitlements serverseitig** (S2, S4): `plan_features`/`usage_counters`, Limit-Checks, Webhook-Idempotenz, Grace/Read-only. Danach Stripe live.
