@@ -54,8 +54,23 @@ Ohne `WITH CHECK` darf eine Person die **eigene** Profilzeile beliebig ändern �
 ### 2.2 Auth / Account-Schutz — 🟡
 - ✅ Supabase-Auth; Einladungs-Flow (`0004_invitations.sql`, `redeem_invite`).
 - ❌ **Keine MFA/2FA** (auch nicht optional für Owner/Admin/SIBE).
-- ❌ **Keine Rate-Limits** für Login/Reset/Invite/Upload/KI (keine im Code).
-- 🟡 E-Mail-Verifikation, Session-Dauer, Enumeration-Schutz: Supabase-Standard — zu prüfen/konfigurieren, nicht im Repo dokumentiert.
+- 🟡 Rate-Limits: Login/Reset/Invite laufen über GoTrue (built-in Limits); App-eigene KI-/Upload-Limits noch offen.
+- 🟡 E-Mail-Verifikation, Session-Dauer, Enumeration-Schutz: Supabase-Standard — zu prüfen/konfigurieren.
+
+**Konto-Lebenszyklus (Sweep 2026-09-04)** — nach dem Fund der fehlenden Passwort-Änderung systematisch geprüft:
+
+| Funktion | Status |
+|---|---|
+| Login / Logout / Signup | ✅ vorhanden |
+| **Passwort ändern** (eingeloggt) | ✅ neu (`58d429a`), Konto-Menü |
+| **Passwort-Reset** («vergessen» → E-Mail → neues Passwort) | ✅ neu — Login-Link + `resetPasswordForEmail` + `PASSWORD_RECOVERY`-Handling. **Config nötig:** Redirect-URL `…/live/` in Supabase-Auth-Allowlist + SMTP für Versand |
+| Enumeration-Schutz beim Reset | ✅ generische Meldung, egal ob E-Mail existiert |
+| Passwort-Mindestlänge | ✅ vereinheitlicht auf 8 (Signup + Änderung + Reset) |
+| Session-Handling (`onAuthStateChange`) | 🟡 Recovery-Event gehandhabt; automatischer Redirect bei `SIGNED_OUT`/Token-Ablauf noch offen |
+| E-Mail-Verifikation erzwingen | 🟡 Supabase-Toggle (nicht Code) — vor Fremdverkauf aktivieren |
+| Re-Auth bei Passwortänderung («secure password change») | 🟡 Supabase-Toggle — empfohlen |
+| Konto / Organisation löschen (revDSG-Löschrecht) | ❌ offen → **P1** |
+| MFA | ❌ offen → **P1** |
 
 ### 2.3 SDB-Lifecycle & KI-Governance — ❌ (grösste Baustelle, Haftungskern)
 `sds_documents` (`0001:90-101`) speichert Pfad/Link/Revision/Version/`uploaded_by` — aber:

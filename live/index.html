@@ -1697,6 +1697,9 @@ function startCamera(){
 const SB_URL='https://pvzjxzunhhbgfimirbkl.supabase.co';
 const SB_KEY='sb_publishable_dV_7ME6EOrTKbqHYlYlfcw_GV8e6XW_';
 const sbc=window.supabase.createClient(SB_URL,SB_KEY);
+// Passwort-Reset: klickt jemand den E-Mail-Link, liefert Supabase eine
+// Recovery-Session + Event 'PASSWORD_RECOVERY' -> Formular «neues Passwort setzen».
+sbc.auth.onAuthStateChange(function(event){ if(event==='PASSWORD_RECOVERY'){ renderResetPassword(); } });
 const AUTH={user:null,profile:null};
 const LEGAL_HTML='<div class="legal-links"><a href="../impressum.html" target="_blank" rel="noopener">Impressum</a><span>·</span><a href="../datenschutz.html" target="_blank" rel="noopener">Datenschutz</a><span>·</span><a href="../agb.html" target="_blank" rel="noopener">AGB</a></div>';
 const PLANS=[
@@ -3919,6 +3922,8 @@ document.addEventListener('click',e=>{
     case 'authLogin':doLogin();break;
     case 'authSignup':doSignup();break;
     case 'authCreateOrg':doCreateOrg();break;
+    case 'pwForgot':doForgotPassword();break;
+    case 'rpSave':doResetSave();break;
     case 'resetDB':resetDB();break;
     case 'saveErf':saveErf();break;
     case 'wkTab':state.wkTab=el.dataset.id;render();break;
@@ -4023,7 +4028,8 @@ function renderLogin(){overlay('<div style="max-width:390px;margin:0 auto;paddin
   '<div class="card" style="padding:18px"><div id="authNote"></div>'+
   '<div class="field"><label>E-Mail</label><input id="aEmail" type="email" autocomplete="email" placeholder="name@firma.ch"></div>'+
   '<div class="field"><label>Passwort</label><input id="aPw" type="password" autocomplete="current-password" placeholder="••••••••"></div>'+
-  '<button class="btn" data-action="authLogin">Anmelden</button><div style="height:9px"></div>'+
+  '<button class="btn" data-action="authLogin">Anmelden</button>'+
+  '<div style="text-align:center;margin:9px 0"><a href="#" data-action="pwForgot" style="color:var(--accent);font-size:12.5px;font-weight:600;text-decoration:none">Passwort vergessen?</a></div>'+
   '<button class="btn secondary" data-action="authSignup">Neues Konto erstellen</button></div>'+
   '<div class="disclaimer" style="text-align:center">Betriebliche Unterstützung – ersetzt keine Beurteilung vor Ort.<br><a href="../app/" style="color:var(--accent)">Zur Login-freien Demo</a></div>'+
   '<div style="margin-top:12px">'+LEGAL_HTML+'</div></div>');}
@@ -4036,7 +4042,34 @@ function renderOnboarding(){overlay('<div style="max-width:390px;margin:0 auto;p
   '<button class="btn" data-action="authCreateOrg">Organisation anlegen</button><div style="height:9px"></div>'+
   '<button class="btn ghost" data-action="logout">Abmelden</button></div></div>');}
 async function doLogin(){const em=(document.getElementById('aEmail').value||'').trim(),pw=document.getElementById('aPw').value||'';if(!em||!pw){authNote('E-Mail und Passwort eingeben.','danger');return;}authNote('Anmelden…');const {error}=await sbc.auth.signInWithPassword({email:em,password:pw});if(error){authNote(error.message,'danger');return;}initApp();}
-async function doSignup(){const em=(document.getElementById('aEmail').value||'').trim(),pw=document.getElementById('aPw').value||'';if(!em||pw.length<6){authNote('E-Mail angeben und Passwort mit mind. 6 Zeichen.','danger');return;}authNote('Konto wird erstellt…');const {data,error}=await sbc.auth.signUp({email:em,password:pw});if(error){authNote(error.message,'danger');return;}if(data.session){initApp();}else{authNote('Konto erstellt. Bitte E-Mail bestätigen und dann anmelden. (Für schnelle Tests: E-Mail-Bestätigung in Supabase → Auth deaktivieren.)','ok');}}
+async function doSignup(){const em=(document.getElementById('aEmail').value||'').trim(),pw=document.getElementById('aPw').value||'';if(!em||pw.length<8){authNote('E-Mail angeben und Passwort mit mind. 8 Zeichen.','danger');return;}authNote('Konto wird erstellt…');const {data,error}=await sbc.auth.signUp({email:em,password:pw});if(error){authNote(error.message,'danger');return;}if(data.session){initApp();}else{authNote('Konto erstellt. Bitte E-Mail bestätigen und dann anmelden. (Für schnelle Tests: E-Mail-Bestätigung in Supabase → Auth deaktivieren.)','ok');}}
+async function doForgotPassword(){
+  var em=(document.getElementById('aEmail').value||'').trim();
+  if(!em){authNote('Bitte zuerst deine E-Mail-Adresse oben eingeben.','warn');return;}
+  authNote('E-Mail wird gesendet…');
+  try{ await sbc.auth.resetPasswordForEmail(em,{redirectTo:location.origin+location.pathname}); }catch(e){ /* generisch bleiben */ }
+  // Immer dieselbe Meldung – kein Rückschluss, ob die E-Mail existiert (Enumeration-Schutz).
+  authNote('Falls ein Konto mit dieser E-Mail existiert, wurde ein Link zum Zurücksetzen gesendet. Bitte auch den Spam-Ordner prüfen.','ok');
+}
+function renderResetPassword(){overlay('<div style="max-width:390px;margin:0 auto;padding:44px 20px">'+
+  '<div style="text-align:center;margin-bottom:18px"><div class="logo" style="margin:0 auto 12px;width:46px;height:46px;font-size:17px">St</div><h2 class="title" style="text-align:center;margin:0">Neues Passwort setzen</h2><p class="sub" style="text-align:center">Wähle ein neues Passwort für dein Konto.</p></div>'+
+  '<div class="card" style="padding:18px"><div id="authNote"></div>'+
+  '<div class="field"><label>Neues Passwort</label><input id="rp1" type="password" autocomplete="new-password" placeholder="mind. 8 Zeichen"></div>'+
+  '<div class="field"><label>Wiederholen</label><input id="rp2" type="password" autocomplete="new-password" placeholder="nochmals eingeben"></div>'+
+  '<button class="btn" data-action="rpSave">'+ICO.ok+' Passwort speichern</button></div></div>');}
+async function doResetSave(){
+  var p1=(document.getElementById('rp1')||{}).value||'', p2=(document.getElementById('rp2')||{}).value||'';
+  if(p1.length<8){authNote('Bitte ein Passwort mit mindestens 8 Zeichen wählen.','warn');return;}
+  if(p1!==p2){authNote('Die beiden Passwörter stimmen nicht überein.','danger');return;}
+  authNote('Wird gespeichert…');
+  try{
+    var res=await sbc.auth.updateUser({password:p1});
+    if(res&&res.error){authNote(res.error.message,'danger');return;}
+    toast('Passwort gesetzt. Du bist angemeldet.');
+    history.replaceState(null,'',location.pathname);
+    initApp();
+  }catch(e){authNote((e&&e.message)||'Speichern fehlgeschlagen.','danger');}
+}
 async function doCreateOrg(){const on=(document.getElementById('obOrg').value||'').trim(),nm=(document.getElementById('obName').value||'').trim();if(!on){authNote('Organisationsname fehlt.','danger');return;}authNote('Wird angelegt…');const {error}=await sbc.rpc('create_org_and_profile',{p_org_name:on,p_user_name:nm});if(error){authNote(error.message,'danger');return;}
   if(ONB_PLAN&&ONB_PLAN!=='starter'){try{await sbc.rpc('set_org_plan',{p_plan:ONB_PLAN});}catch(e){}}
   initApp();}
