@@ -20,7 +20,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import Stripe from "https://esm.sh/stripe@16?target=deno";
 
 const cors = {
-  "Access-Control-Allow-Origin": "*",
+  // Härtung P0-3: keine Wildcard-CORS. Origin via PRIMARY_ORIGIN (Default = Prod-Site).
+  "Access-Control-Allow-Origin": Deno.env.get("PRIMARY_ORIGIN") ?? "https://gefahrstoff.netlify.app",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };

@@ -5,16 +5,49 @@
 // CAS-Anreicherung live aus PubChem PUG-REST (GHS / H-Sätze).
 // Öffentlich aufrufbar (verify_jwt=false): liefert nur öffentliche Regulierungs-
 // daten, keine mandantenspezifischen Inhalte. Service-Role bleibt serverseitig.
+//
+// Härtung (Audit P0-3):
+//  - CORS: nur erlaubte Origins (ALLOWED_ORIGINS, Default = Produktions-Site)
+//    statt "*". Browser-Aufrufe fremder Seiten werden so blockiert.
+//  - Rate-Limit pro IP (rl_hit): begrenzt Missbrauch/Kosten des öffentlichen
+//    Endpunkts (PubChem-Fetches, DB-Reads) auch für Nicht-Browser-Clients.
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
-const cors = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-};
+const ALLOWED = (Deno.env.get("ALLOWED_ORIGINS") ?? "https://gefahrstoff.netlify.app")
+  .split(",").map((s) => s.trim()).filter(Boolean);
+
+function corsFor(req: Request) {
+  const origin = req.headers.get("Origin") ?? "";
+  const allow = ALLOWED.includes(origin) ? origin : ALLOWED[0];
+  return {
+    "Access-Control-Allow-Origin": allow,
+    "Vary": "Origin",
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+  };
+}
+
+// Rate-Limit: max. Anfragen je IP pro Zeitfenster.
+const RL_LIMIT = Number(Deno.env.get("RL_LIMIT") ?? "30");
+const RL_WINDOW = Number(Deno.env.get("RL_WINDOW_SECONDS") ?? "60");
 
 const sb = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+
+function clientIp(req: Request) {
+  return (req.headers.get("x-forwarded-for") ?? "").split(",")[0].trim() || "unknown";
+}
+async function underLimit(req: Request): Promise<boolean> {
+  try {
+    const { data, error } = await sb.rpc("rl_hit", {
+      p_key: "vs:" + clientIp(req), p_limit: RL_LIMIT, p_window_seconds: RL_WINDOW,
+    });
+    if (error) return true;           // fail-open bei Infra-Fehler (Verfügbarkeit)
+    return data !== false;
+  } catch (_) {
+    return true;
+  }
+}
 
 function normUn(x: string) { return String(x || "").replace(/[^0-9]/g, "").padStart(4, "0"); }
 function normCode(x: string) { return String(x || "").replace(/\*/g, "").replace(/\s+/g, " ").trim(); }
@@ -66,8 +99,15 @@ async function pubchem(cas?: string, name?: string) {
 }
 
 Deno.serve(async (req: Request) => {
+  const cors = corsFor(req);
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   if (req.method !== "POST") return new Response(JSON.stringify({ error: "POST erwartet" }), { status: 405, headers: { ...cors, "Content-Type": "application/json" } });
+
+  if (!(await underLimit(req))) {
+    return new Response(JSON.stringify({ error: "Zu viele Anfragen. Bitte kurz warten." }),
+      { status: 429, headers: { ...cors, "Content-Type": "application/json", "Retry-After": String(RL_WINDOW) } });
+  }
+
   let body: any = {};
   try { body = await req.json(); } catch (_) { /* leerer Body ok */ }
   const { cas, name, un, veva } = body || {};

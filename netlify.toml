@@ -1,14 +1,27 @@
 # Netlify-Konfiguration für StoffScan
-# Statische Site, kein Build. Root = Marketing-Landingpage, /app/ = Produkt-Demo.
+# Statische Site, kein Build. Root = Marketing-Landingpage, /app/ = Produkt-Demo,
+# /live/ = Supabase-Produkt.
 
 [build]
   publish = "."
   command = ""
 
-# Sicherheits-Header (Kamera-Scan braucht HTTPS – von Netlify automatisch bereitgestellt)
+# ---------------------------------------------------------------------------
+# Sicherheits-Header (Audit P0-3)
+# ---------------------------------------------------------------------------
+# Hinweis CSP: Die App ist eine Single-File-HTML mit inline <script>/<style>
+# UND inline Event-Handlern (onclick=...). Eine strikte script-src ohne
+# 'unsafe-inline' würde die App komplett brechen. Deshalb bleibt 'unsafe-inline'
+# für script/style vorerst nötig (P1-Folgeaufgabe: JS/CSS auslagern + Nonces).
+# Trotzdem sperrt die CSP: Framing (Clickjacking), fremde connect-/Exfil-Ziele,
+# object/embed, base-uri-Hijack und begrenzt Quellen auf die genutzten CDNs.
 [[headers]]
   for = "/*"
   [headers.values]
+    Content-Security-Policy = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data: blob: https://pvzjxzunhhbgfimirbkl.supabase.co; media-src 'self' blob:; font-src 'self' https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' https://pvzjxzunhhbgfimirbkl.supabase.co wss://pvzjxzunhhbgfimirbkl.supabase.co https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self' blob:; manifest-src 'self'; frame-src 'self'"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "camera=(self)"
+    Permissions-Policy = "camera=(self), microphone=(), geolocation=(self), payment=()"
+    Cross-Origin-Opener-Policy = "same-origin-allow-popups"

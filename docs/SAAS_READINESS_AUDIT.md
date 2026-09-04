@@ -114,9 +114,9 @@ Ohne `WITH CHECK` darf eine Person die **eigene** Profilzeile beliebig ändern �
 | S2 | Hoch | Keine serverseitige Limit-Durchsetzung (Plan-Umgehung) | `0005` + Live-Client | `usage_counters` + Checks vor limitrelevanten Aktionen |
 | S3 | Hoch | KI-Ergebnis ohne Freigabe-Gate direkt übernommen | `parse-sdb` + Client | Status-Lifecycle + Review-Gate |
 | S4 | Hoch | Webhook nicht idempotent | `stripe-webhook` | `billing_events`-Dedupe über `event.id` |
-| S5 | Hoch | Keine Security-Header (CSP/HSTS/Clickjacking) | `netlify.toml` | Header-Block ergänzen |
-| S6 | Mittel | CORS `*` auf authentifizierten Functions | alle `functions/*` | Origin-Allowlist je Umgebung |
-| S7 | Mittel | `verify_jwt=false` ohne Rate-Limit + Service-Role für Public-Reads | `validate-substance` | Rate-Limit/Origin + least-privilege-Client |
+| S5 | ~~Hoch~~ **✅ behoben** | Keine Security-Header (CSP/HSTS/Clickjacking) | `netlify.toml` | **CSP (validiert, 0 Violations) + HSTS + X-Frame-Options/frame-ancestors + COOP + Permissions-Policy.** `'unsafe-inline'` bleibt nötig (Single-File-Inline-JS) → P1-Refactor. |
+| S6 | ~~Mittel~~ **✅ behoben** | CORS `*` auf Functions | `functions/*` | **Wildcard entfernt:** `validate-substance` mit Origin-Allowlist (live verifiziert), die 3 (noch nicht deployten) Auth-Functions auf feste Prod-Origin umgestellt. |
+| S7 | ~~Mittel~~ **✅ behoben** | `verify_jwt=false` ohne Rate-Limit | `validate-substance` | **Rate-Limit pro IP (`rl_hit`, 30/min) + Origin-Allowlist**, live verifiziert (5/2-Test, 200/ACAO-Test). Least-privilege statt Service-Role → P1. |
 | S8 | Mittel | Upload ohne MIME/Signatur/Grösse/Scan/Hash | `parse-sdb`, Storage | Validierung + Quarantäne + Hash |
 | S9 | Mittel | Keine MFA für Admin/SIBE | Auth | TOTP-Enrollment (Option) |
 | S10 | ~~Niedrig~~ **✅ teilw.** | Kein Cross-Tenant-Testset | Repo | Testset da (`tests/rls_cross_tenant.sql`); CI/Secret-Scanning noch offen |
@@ -131,7 +131,7 @@ Ohne `WITH CHECK` darf eine Person die **eigene** Profilzeile beliebig ändern �
 ### P0 – Blocker vor dem ersten zahlenden Fremdkunden
 1. ✅ **ERLEDIGT (2026-09-04):** RLS-Fix S1 (Migration `0011`) + Cross-Tenant-Negativtests (`supabase/tests/rls_cross_tenant.sql`, 6/6 grün, gegen Prod verifiziert & zurückgerollt).
 2. **SDB-Lifecycle + Freigabe-Gate + Datei-Härtung + KI-Governance** (S3, S8): Status-Felder, Datei-Hash, MIME/Signatur/Grösse, Quarantäne, Confidence/Quelle je Feld, serverseitige Validierung, Prompt-Injection-Schutz, Audit. *Grösster Block.*
-3. **Infra-Härtung** (S5, S6, S7): Security-Header, CORS-Allowlist, Rate-Limit/Origin für Public-Endpunkte, least-privilege statt Service-Role.
+3. ✅ **ERLEDIGT (2026-09-04):** Infra-Härtung (S5/S6/S7) – Security-Header in `netlify.toml` (CSP validiert), CORS-Allowlist, Rate-Limit für `validate-substance` (Migration `0012`, live verifiziert). Offen als P1: `'unsafe-inline'`-Refactor, least-privilege-Client für Public-Reads.
 4. **Entitlements serverseitig** (S2, S4): `plan_features`/`usage_counters`, Limit-Checks, Webhook-Idempotenz, Grace/Read-only. Danach Stripe live.
 5. **Betrieb-Minimum**: Staging≠Prod, automatische Backups + **1 dokumentierter Restore-Test**, Error-Tracking, Secret-Scanning/CI.
 
