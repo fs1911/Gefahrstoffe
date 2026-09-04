@@ -119,7 +119,10 @@ Ohne `WITH CHECK` darf eine Person die **eigene** Profilzeile beliebig ändern �
 | S7 | Mittel | `verify_jwt=false` ohne Rate-Limit + Service-Role für Public-Reads | `validate-substance` | Rate-Limit/Origin + least-privilege-Client |
 | S8 | Mittel | Upload ohne MIME/Signatur/Grösse/Scan/Hash | `parse-sdb`, Storage | Validierung + Quarantäne + Hash |
 | S9 | Mittel | Keine MFA für Admin/SIBE | Auth | TOTP-Enrollment (Option) |
-| S10 | Niedrig | Kein Cross-Tenant-Testset, keine CI/Secret-Scanning | Repo | Tests + CI-Workflow |
+| S10 | ~~Niedrig~~ **✅ teilw.** | Kein Cross-Tenant-Testset | Repo | Testset da (`tests/rls_cross_tenant.sql`); CI/Secret-Scanning noch offen |
+| S11 | Niedrig | `sx_*`-RLS-Helfer als `/rest/v1/rpc/` exponiert (Advisor 0028/0029) | `0002` | In privates Schema verschieben (nicht aus `public`) – **darf nicht** aus `authenticated` revoked werden (RLS braucht sie). Trigger-Fn bereits entzogen. |
+| S12 | Niedrig | Leaked-Password-Protection (HaveIBeenPwned) deaktiviert | Auth-Config | Im Dashboard aktivieren |
+| S13 | Info | `product_catalog(_contributors)`: RLS aktiv, keine Policy | `0006` | Beabsichtigt (Zugriff nur via RPC) – explizite Deny-Doku/Policy ergänzen |
 
 ---
 

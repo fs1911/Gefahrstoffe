@@ -55,3 +55,7 @@ drop trigger if exists trg_profiles_guard_privileged on profiles;
 create trigger trg_profiles_guard_privileged
   before update on profiles
   for each row execute function sx_guard_profile_privileged();
+
+-- Trigger-Funktion nicht als RPC exponieren (Supabase-Advisor 0028/0029).
+-- Trigger feuern unabhängig von EXECUTE-Grants – der Guard bleibt wirksam.
+revoke execute on function public.sx_guard_profile_privileged() from anon, authenticated, public;
