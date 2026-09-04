@@ -3738,9 +3738,30 @@ async function uploadSdbFromModal(subId){const inp=document.getElementById('sdbF
 function modalSwitchUser(){
   const u=curUser();const em=(AUTH.user&&AUTH.user.email)||'';
   openModal('Konto','<div class="notice info" style="margin-bottom:14px">'+ICO.user+'<div>Angemeldet als <b>'+u.name+'</b><br>'+em+' · Rolle: '+u.role+'</div></div>'+
+    '<button class="btn secondary" data-action="pwChange" style="width:100%;margin-bottom:10px">'+ICO.user+' Passwort ändern</button>'+
     '<button class="btn secondary" data-action="openAbo" style="width:100%;margin-bottom:10px">'+ICO.card+' Abo &amp; Plan</button>'+
     '<div class="btn-row" style="margin-top:0"><button class="btn ghost" data-action="closeModal">Schliessen</button><button class="btn danger" data-action="logout">'+ICO.user+' Abmelden</button></div>'+
     '<div style="margin-top:16px">'+LEGAL_HTML+'</div>');
+}
+function modalPassword(){
+  openModal('Passwort ändern',
+    '<div class="field"><label>Neues Passwort</label><input id="pw1" type="password" autocomplete="new-password" placeholder="mind. 8 Zeichen"></div>'+
+    '<div class="field"><label>Wiederholen</label><input id="pw2" type="password" autocomplete="new-password" placeholder="nochmals eingeben"></div>'+
+    '<div id="pwNote" class="notice info" style="display:none"></div>'+
+    '<div class="btn-row"><button class="btn ghost" data-action="closeModal">Abbrechen</button><button class="btn" data-action="pwSave">'+ICO.ok+' Speichern</button></div>');
+}
+async function doChangePassword(){
+  var p1=(document.getElementById('pw1')||{}).value||'', p2=(document.getElementById('pw2')||{}).value||'';
+  var note=document.getElementById('pwNote');
+  function show(msg,kind){ if(note){note.style.display='';note.className='notice '+(kind||'info');note.innerHTML='<div>'+msg+'</div>';} }
+  if(p1.length<8){show('Bitte ein Passwort mit mindestens 8 Zeichen wählen.','warn');return;}
+  if(p1!==p2){show('Die beiden Passwörter stimmen nicht überein.','danger');return;}
+  show('Wird gespeichert…');
+  try{
+    var res=await sbc.auth.updateUser({password:p1});
+    if(res&&res.error){show(res.error.message,'danger');return;}
+    closeModal();toast('Passwort geändert.');
+  }catch(e){show((e&&e.message)||'Änderung fehlgeschlagen.','danger');}
 }
 
 function modalAddUser(){
@@ -3818,6 +3839,8 @@ document.addEventListener('click',e=>{
     case 'reScanGo':reScanGo();break;
     case 'reScanCam':closeModal();goTo('scanArt',{reset:true,nav:'scan'});break;
     case 'switchUser':modalSwitchUser();break;
+    case 'pwChange':modalPassword();break;
+    case 'pwSave':doChangePassword();break;
     case 'genBA':openBA(id);break;
     case 'notfall':openNotfall(state.view==='detail'?state.curSub:null);break;
     case 'closeNotfall':closeNotfall();break;
