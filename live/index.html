@@ -1885,7 +1885,7 @@ function renderNav(){
   const admin=isAdmin();
   const u=curUser();
   const items=[['start','start',ICO.home,'Start'],['bestand','bestand',ICO.list,'Bestand'],['__scan','scan',ICO.scan,'Aufnehmen'],['firmen','firmen',ICO.firma,'Firmen']];
-  if(admin)items.push(['admin','admin',ICO.admin,'Admin']);
+  if(admin)items.push(['admin','admin',ICO.admin,'Verwaltung']);
   document.getElementById('bottomNav').innerHTML=items.map(it=>it[0]==='__scan'
     ?'<button class="scan-btn" data-action="capture"><span class="sc">'+ICO.plus+'</span><span>'+it[3]+'</span></button>'
     :'<button class="'+(state.nav===it[1]?'active':'')+'" data-action="nav" data-v="'+it[0]+'" data-nav="'+it[1]+'">'+it[2]+'<span>'+it[3]+'</span></button>').join('');
@@ -1925,7 +1925,8 @@ function scrStart(){
     '</div>'+
     '<div class="panel" style="margin-top:14px"><div class="panel-h"><span>Letzte Änderungen</span><a data-action="goAdminVerlauf">Verlauf</a></div>'+
       '<div class="panel-body"><div class="timeline">'+recent+'</div></div></div>'+
-    '<button class="userline" data-action="nav" data-v="wissen" data-nav="wissen" style="margin-top:14px">'+ICO.doc+'<span>Wissen · Lagerklassen, Zusammenlagerung &amp; H-Sätze</span><span class="chg">öffnen</span></button>'+
+    '<button class="userline" data-action="goAdminLager" style="margin-top:14px">'+ICO.doc+'<span>Feuerwehr-Einsatzpläne · je Lagerort, für Einsatzkräfte</span><span class="chg">öffnen</span></button>'+
+    '<button class="userline" data-action="nav" data-v="wissen" data-nav="wissen" style="margin-top:10px">'+ICO.doc+'<span>Wissen · Lagerklassen, Zusammenlagerung &amp; H-Sätze</span><span class="chg">öffnen</span></button>'+
     disclaimer()+'</div>';
 }
 
@@ -3525,6 +3526,7 @@ function scrDetail(){
       '</div>'+
       '<div class="qr-cta"><button class="btn" data-action="showQr" data-id="'+inst.id+'">'+ICO.qr+' QR-Code anzeigen</button>'+
         '<button class="btn secondary" data-action="showSdb" data-id="'+s.id+'">'+ICO.doc+' SDB</button></div>'+
+      '<button class="btn secondary" data-action="openLoc" data-id="'+inst.loc+'" style="width:100%;margin-top:9px">'+ICO.loc+' Lagerort öffnen · Feuerwehr-Einsatzkarte</button>'+
     '</div>';
   }else{
     bestand='<div class="bestand"><div class="bestand-h">'+ICO.box+'<span class="tag">Bestand · dieser Lagerort</span></div>'+
