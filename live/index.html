@@ -1330,6 +1330,23 @@ function deriveLK(hStr,ghs){
   return null;
 }
 function lkOf(sub){if(!sub)return null;if(sub.lk&&LK_INFO[sub.lk])return sub.lk;return deriveLK(sub.h,sub.ghs);}
+/* Rohwert einer Lagerklasse (z. B. aus KI/SDB) auf einen gueltigen LK_INFO-Schluessel
+   normalisieren. Die KI liefert oft die reine LGK-Nummer (10, 11, 12, 13) oder Freitext;
+   die App fasst 10/12 (Fluessigkeiten) bzw. 11/13 (Feststoffe) zu kombinierten Schluesseln
+   zusammen. Nicht zuordenbare Werte -> null (Feld bleibt leer, kein Absturz). */
+function normalizeLK(raw){
+  if(raw==null)return null;
+  if(LK_INFO[raw])return raw;
+  var s=String(raw).trim().toUpperCase().replace(/,/g,'.');
+  if(!s)return null;
+  if(/NG\b|NICHT.?GEF/.test(s))return 'NG';
+  if(/10\s*\/\s*12/.test(s))return '10/12';
+  if(/11\s*\/\s*13/.test(s))return '11/13';
+  var m=s.match(/(\d+(?:\.\d+)?)/);
+  if(!m)return null;
+  var map={'1':'1','2':'2','3':'3','4.1':'4.1','4.2':'4.2','4.3':'4.3','5':'5','5.1':'5','5.2':'5','6.1':'6.1','6.2':'6.2','7':'7','8':'8','10':'10/12','12':'10/12','11':'11/13','13':'11/13'};
+  return map[m[1]]||(LK_INFO[m[1]]?m[1]:null);
+}
 
 /* Zusammenlagerungsmatrix (Beilage 2, «Generelle Zusammenlagerung»).
    Gleiche Lagerklasse = grün. Aufgeführte Paare = gelb (bedingt). Alles Übrige = rot (getrennt). */
@@ -3718,10 +3735,11 @@ window.aiAnalyze=async function(file){
     if(r.error){closeModal();toast('KI-Analyse fehlgeschlagen – bitte manuell ausfüllen.',false);return;}
     const d=r.data||{};
     if(d.configured===false){closeModal();toast('KI-Analyse noch nicht aktiviert – Datei wird trotzdem angehängt.',false);return;}
-    state.aiExtract={hersteller:d.hersteller||'',h:d.h_saetze||'',p:d.p_saetze||'',un:d.un_nummer||'',lk:d.lagerklasse||''};
+    var lkNorm=normalizeLK(d.lagerklasse);
+    state.aiExtract={hersteller:d.hersteller||'',h:d.h_saetze||'',p:d.p_saetze||'',un:d.un_nummer||'',lk:lkNorm||''};
     state.aiExtractionId=d.extraction_id||null;
     if(d.signalwort)state._sig=d.signalwort;
-    state.scanPrefill={barcode:(state.scanPrefill&&state.scanPrefill.barcode)||'',info:'',name:d.produktname||'',sig:d.signalwort||'',haz:Array.isArray(d.ghs)?d.ghs:[],ai:{h:d.h_saetze,un:d.un_nummer,lk:d.lagerklasse}};
+    state.scanPrefill={barcode:(state.scanPrefill&&state.scanPrefill.barcode)||'',info:'',name:d.produktname||'',sig:d.signalwort||'',haz:Array.isArray(d.ghs)?d.ghs:[],ai:{h:d.h_saetze,un:d.un_nummer,lk:lkNorm||''}};
     closeModal();toast('KI hat das SDB erkannt – bitte prüfen und speichern.');render();
   }catch(e){closeModal();toast('Analyse fehlgeschlagen: '+(e&&e.message||e),false);}
 };
@@ -4033,12 +4051,12 @@ async function saveErf(){const f=document.getElementById('erfForm');const name=f
   const compId=state.activeLoc?location_(state.activeLoc).company:defaultCompanyId();
   if(!compId){toast('Keine Firma vorhanden – zuerst in der Verwaltung anlegen.',false);return;}
   try{
-    const {data:sub,error:e1}=await sbc.from('substances').insert({organization_id:orgId(),produktname:name,hersteller:ex.hersteller||'unbekannt',signalwort:sig,ghs_piktogramme:haz,h_saetze:ex.h||'– (manuell, bitte ergänzen)',p_saetze:ex.p||'–',un_nummer:ex.un||null,lagerklasse:(ex.lk&&LK_INFO[ex.lk]?ex.lk:null),externer_barcode:bc||null,info_link:(/^https?:\/\//i.test(sdb)?sdb:null),status:erfStatus(),source:erfSource()}).select().single();
+    const {data:sub,error:e1}=await sbc.from('substances').insert({organization_id:orgId(),produktname:name,hersteller:ex.hersteller||'unbekannt',signalwort:sig,ghs_piktogramme:haz,h_saetze:ex.h||'– (manuell, bitte ergänzen)',p_saetze:ex.p||'–',un_nummer:ex.un||null,lagerklasse:normalizeLK(ex.lk),externer_barcode:bc||null,info_link:(/^https?:\/\//i.test(sdb)?sdb:null),status:erfStatus(),source:erfSource()}).select().single();
     if(e1){toast('Stoff: '+e1.message,false);return;}
     // KI-Extraktion (Provenienz) mit dem neuen Stoff verknüpfen
     if(state.aiExtractionId){try{await sbc.from('sds_extractions').update({substance_id:sub.id}).eq('id',state.aiExtractionId);}catch(_){}state.aiExtractionId=null;}
     // Beitrag in den mandantenübergreifenden Schweizer Katalog (anonym, nur wenn Barcode vorhanden)
-    if(bc){try{sbc.rpc('catalog_contribute',{p_barcode:bc,p_produktname:name,p_hersteller:ex.hersteller||null,p_signalwort:sig,p_ghs:haz,p_h:ex.h||null,p_p:ex.p||null,p_un:ex.un||null,p_lk:ex.lk||null,p_quelle:(state.scanPrefill&&state.scanPrefill.catalog)?'bestaetigt':'neu'}).then(()=>{},()=>{});}catch(_){}}
+    if(bc){try{sbc.rpc('catalog_contribute',{p_barcode:bc,p_produktname:name,p_hersteller:ex.hersteller||null,p_signalwort:sig,p_ghs:haz,p_h:ex.h||null,p_p:ex.p||null,p_un:ex.un||null,p_lk:normalizeLK(ex.lk),p_quelle:(state.scanPrefill&&state.scanPrefill.catalog)?'bestaetigt':'neu'}).then(()=>{},()=>{});}catch(_){}}
     if(sdbfile){try{await uploadSdbFile(sub.id,sdbfile);}catch(err){toast('SDB-Upload: '+(err&&err.message||err),false);}}
     else if(sdb){await sbc.from('sds_documents').insert({organization_id:orgId(),substance_id:sub.id,external_link:sdb,revisionsdatum:new Date().toISOString().slice(0,10),uploaded_by:AUTH.profile.id});}
     const qr='INST-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,5).toUpperCase();
