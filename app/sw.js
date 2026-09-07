@@ -1,5 +1,5 @@
 /* StoffScan Service Worker (Block 14) – App-Shell-Cache fuer Offline */
-var CACHE='stoffscan-v1';
+var CACHE='stoffscan-v2';
 var SHELL=['./','./index.html','./manifest.webmanifest','./icon.svg'];
 self.addEventListener('install',function(e){
   e.waitUntil(caches.open(CACHE).then(function(c){return c.addAll(SHELL).catch(function(){});}).then(function(){return self.skipWaiting();}));
