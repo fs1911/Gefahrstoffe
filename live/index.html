@@ -1854,7 +1854,7 @@ function firmTag(cid,alt){return '<span class="firmtag '+(alt?'alt':'')+'">'+com
 const state={view:'start',stack:[],activeLoc:null,nav:'start',currentUser:'u1',scanPrefill:null,
   filter:{company:'',loc:'',status:'',hb:false},
   curSub:null,curInst:null,curLoc:null,adminTab:'uebersicht',adminCompany:'',adminHbView:'all'};
-function curUser(){return DB.users.find(u=>u.id===state.currentUser)||DB.users[0];}
+function curUser(){return DB.users.find(u=>u.id===state.currentUser)||DB.users[0]||{id:state.currentUser,name:(AUTH.profile&&(AUTH.profile.name||AUTH.profile.email))||'Benutzer',role:'Mitarbeitend',company:null};}
 function isAdmin(){const u=curUser();return !!u && (u.role==='Firmenadmin'||u.role==='Gruppenadmin / IMS');}
 function goTo(v,o){o=o||{};stopCamera();if(o.reset)state.stack=[];else if(state.view!==v||o.push)state.stack.push(state.view);
   state.view=v;if(o.sub!==undefined)state.curSub=o.sub;if(o.inst!==undefined)state.curInst=o.inst;if(o.loc!==undefined)state.curLoc=o.loc;if(o.nav)state.nav=o.nav;window.scrollTo(0,0);render();}
