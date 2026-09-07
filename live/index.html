@@ -1329,7 +1329,7 @@ function deriveLK(hStr,ghs){
   for(i=0;i<GHS_SCHEME.length;i++){if(g.indexOf(GHS_SCHEME[i][1])>=0)return GHS_SCHEME[i][0];}
   return null;
 }
-function lkOf(sub){if(!sub)return null;if(sub.lk)return sub.lk;return deriveLK(sub.h,sub.ghs);}
+function lkOf(sub){if(!sub)return null;if(sub.lk&&LK_INFO[sub.lk])return sub.lk;return deriveLK(sub.h,sub.ghs);}
 
 /* Zusammenlagerungsmatrix (Beilage 2, «Generelle Zusammenlagerung»).
    Gleiche Lagerklasse = grün. Aufgeführte Paare = gelb (bedingt). Alles Übrige = rot (getrennt). */
@@ -1358,7 +1358,7 @@ function allZlConflicts(inScope){
 }
 
 /* ---------- Badges & Anzeige ---------- */
-function lkBadge(lk){if(!lk)return '<span class="lk-badge lk-unk">LK ?</span>';return '<span class="lk-badge" style="background:'+LK_INFO[lk].c+'">LK '+lk+'</span>';}
+function lkBadge(lk){if(!lk||!LK_INFO[lk])return '<span class="lk-badge lk-unk">LK '+(lk?esc(String(lk)):'?')+'</span>';return '<span class="lk-badge" style="background:'+LK_INFO[lk].c+'">LK '+lk+'</span>';}
 function lkChipPair(a,b,rate,star){return '<span class="zl-pair">'+lkBadge(a)+'<span class="zl-arrow">+</span>'+lkBadge(b)+(star?' <span title="Zusätzlich SDB prüfen">*</span>':'')+'</span>';}
 
 function zlAlertHtml(cf){
@@ -3687,9 +3687,10 @@ function scrErfassung(){
   const catSum=pf.catalog?'<div class="notice ok">'+ICO.ok+'<div><b>Aus dem Schweizer Katalog übernommen.</b> Ein anderer Betrieb hat dieses Produkt bereits erfasst:<br>'+esc(pf.catalog.hersteller||'–')+' · '+esc(pf.catalog.h||'–')+' · '+esc(pf.catalog.un||'–')+(pf.catalog.lk?' · Lagerklasse '+esc(pf.catalog.lk):'')+'<br><small>Von '+(pf.catalog.n||1)+' Betrieben bestätigt · bitte kurz prüfen und speichern.</small></div></div>':'';
   const aiBtn='<input type="file" id="aiFile" accept="application/pdf,image/*" style="display:none" onchange="aiAnalyze(this.files&&this.files[0])">'+
     '<button type="button" class="act-primary" onclick="document.getElementById(\'aiFile\').click()" style="margin-bottom:14px"><span class="ico">'+ICO.doc+'</span><span><b>SDB analysieren (KI)</b><span style="display:block;font-weight:500;opacity:.92;font-size:13px">PDF/Foto hochladen – Felder füllen sich selbst</span></span></button>';
+  const aiFileNote=state.aiFile?'<div class="notice ok">'+ICO.ok+'<div><b>SDB angehängt:</b> '+esc(state.aiFile.name||'Datei')+'<br><small>Wird beim Speichern automatisch mitgesichert – kein erneutes Hochladen nötig. <a href="#" data-action="clearAiFile" style="color:var(--accent);font-weight:600">Entfernen</a></small></div></div>':'';
   const sigAon=pf.sig==='Gefahr'?'':' on',sigGon=pf.sig==='Gefahr'?' on':'';
   return '<div class="view"><h2 class="title">Stoff erfassen</h2><p class="sub">Nur das Nötigste. Lagerort: <b>'+ctx+'</b></p>'+
-    (!l?'<div class="notice warn">'+ICO.warn+'<div>Kein Lagerort gesetzt – Datensatz wird ohne Lagerort gespeichert.</div></div>':'')+aiBtn+scanInfo+aiSum+catSum+
+    (!l?'<div class="notice warn">'+ICO.warn+'<div>Kein Lagerort gesetzt – Datensatz wird ohne Lagerort gespeichert.</div></div>':'')+aiBtn+aiFileNote+scanInfo+aiSum+catSum+
     '<form id="erfForm">'+
     '<div class="field"><label>Produktname *</label><input name="name" placeholder="z. B. Spezialkleber X" value="'+esc(pf.name||'')+'"></div>'+
     '<div class="field"><label>Menge *</label><div style="display:flex;gap:9px"><input name="menge" type="number" inputmode="decimal" placeholder="z. B. 5" style="flex:2"><select name="einheit" style="flex:1"><option>l</option><option>kg</option><option>Stk</option><option>ml</option></select></div></div>'+
@@ -3698,7 +3699,7 @@ function scrErfassung(){
     '<div class="field"><label>Gefahrmerkmale (GHS)</label><div class="chips" style="margin:0">'+haz+'</div></div>'+
     '<div id="zlCheck"></div>'+
     '<div class="field"><label>Externer Barcode (optional)</label><input name="barcode" placeholder="EAN / Barcode" value="'+(pf.barcode||'')+'"></div>'+
-    '<div class="field"><label>SDB-Datei hochladen (PDF, optional)</label><input name="sdbfile" type="file" accept="application/pdf,image/*"></div>'+
+    (state.aiFile?'':'<div class="field"><label>SDB-Datei hochladen (PDF, optional)</label><input name="sdbfile" type="file" accept="application/pdf,image/*"></div>')+
     '<div class="field"><label>oder SDB-Link / Infoseite (optional)</label><input name="sdb" placeholder="Link – leer = SDB fehlt" value="'+(pf.info||'')+'"></div>'+
     '<div class="notice info" style="margin-top:4px">'+ICO.info+'<div>Es entstehen ein <b>Stoffstamm</b> und ein <b>Bestand</b> am Lagerort. Eine <b>SDB-Datei</b> wird sicher ins Storage geladen; alternativ wird ein Link hinterlegt. Interner QR wird automatisch erzeugt.</div></div>'+
     '<div class="btn-row"><button type="button" class="btn ghost" data-action="back">Abbrechen</button><button type="button" class="btn" data-action="saveErf">Speichern</button></div></form>'+disclaimer()+'</div>';
@@ -3855,6 +3856,7 @@ document.addEventListener('click',e=>{
     case 'setLocFromDetail':state.activeLoc=id;toast('Lagerort gesetzt · Artikel scannen');goTo('scanArt',{reset:true,nav:'scan'});break;
     case 'pickArt':goTo('detail',{sub:id,inst:null,nav:'scan'});break;
     case 'newArt':state.scanPrefill=null;goTo('erfassung',{nav:'scan'});break;
+    case 'clearAiFile':e.preventDefault();state.aiFile=null;render();break;
     case 'openExtLink':try{window.open(decodeURIComponent(id),'_blank');}catch(e){}break;
     case 'captureWithLink':closeModal();state.scanPrefill={barcode:'',info:decodeURIComponent(id)};goTo('erfassung',{reset:true,nav:'scan'});break;
     case 'openInst':{const i=instance(id);state.activeLoc=i.loc;goTo('detail',{sub:i.sub,inst:id});break;}
@@ -4031,7 +4033,7 @@ async function saveErf(){const f=document.getElementById('erfForm');const name=f
   const compId=state.activeLoc?location_(state.activeLoc).company:defaultCompanyId();
   if(!compId){toast('Keine Firma vorhanden – zuerst in der Verwaltung anlegen.',false);return;}
   try{
-    const {data:sub,error:e1}=await sbc.from('substances').insert({organization_id:orgId(),produktname:name,hersteller:ex.hersteller||'unbekannt',signalwort:sig,ghs_piktogramme:haz,h_saetze:ex.h||'– (manuell, bitte ergänzen)',p_saetze:ex.p||'–',un_nummer:ex.un||null,lagerklasse:ex.lk||null,externer_barcode:bc||null,info_link:(/^https?:\/\//i.test(sdb)?sdb:null),status:erfStatus(),source:erfSource()}).select().single();
+    const {data:sub,error:e1}=await sbc.from('substances').insert({organization_id:orgId(),produktname:name,hersteller:ex.hersteller||'unbekannt',signalwort:sig,ghs_piktogramme:haz,h_saetze:ex.h||'– (manuell, bitte ergänzen)',p_saetze:ex.p||'–',un_nummer:ex.un||null,lagerklasse:(ex.lk&&LK_INFO[ex.lk]?ex.lk:null),externer_barcode:bc||null,info_link:(/^https?:\/\//i.test(sdb)?sdb:null),status:erfStatus(),source:erfSource()}).select().single();
     if(e1){toast('Stoff: '+e1.message,false);return;}
     // KI-Extraktion (Provenienz) mit dem neuen Stoff verknüpfen
     if(state.aiExtractionId){try{await sbc.from('sds_extractions').update({substance_id:sub.id}).eq('id',state.aiExtractionId);}catch(_){}state.aiExtractionId=null;}

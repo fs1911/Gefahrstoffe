@@ -1337,7 +1337,7 @@ function deriveLK(hStr,ghs){
   for(i=0;i<GHS_SCHEME.length;i++){if(g.indexOf(GHS_SCHEME[i][1])>=0)return GHS_SCHEME[i][0];}
   return null;
 }
-function lkOf(sub){if(!sub)return null;if(sub.lk)return sub.lk;return deriveLK(sub.h,sub.ghs);}
+function lkOf(sub){if(!sub)return null;if(sub.lk&&LK_INFO[sub.lk])return sub.lk;return deriveLK(sub.h,sub.ghs);}
 
 /* Zusammenlagerungsmatrix (Beilage 2, «Generelle Zusammenlagerung»).
    Gleiche Lagerklasse = grün. Aufgeführte Paare = gelb (bedingt). Alles Übrige = rot (getrennt). */
@@ -1366,7 +1366,7 @@ function allZlConflicts(inScope){
 }
 
 /* ---------- Badges & Anzeige ---------- */
-function lkBadge(lk){if(!lk)return '<span class="lk-badge lk-unk">LK ?</span>';return '<span class="lk-badge" style="background:'+LK_INFO[lk].c+'">LK '+lk+'</span>';}
+function lkBadge(lk){if(!lk||!LK_INFO[lk])return '<span class="lk-badge lk-unk">LK '+(lk?esc(String(lk)):'?')+'</span>';return '<span class="lk-badge" style="background:'+LK_INFO[lk].c+'">LK '+lk+'</span>';}
 function lkChipPair(a,b,rate,star){return '<span class="zl-pair">'+lkBadge(a)+'<span class="zl-arrow">+</span>'+lkBadge(b)+(star?' <span title="Zusätzlich SDB prüfen">*</span>':'')+'</span>';}
 
 function zlAlertHtml(cf){
