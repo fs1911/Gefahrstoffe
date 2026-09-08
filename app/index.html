@@ -3969,7 +3969,7 @@ document.addEventListener('change',e=>{
   const ac=e.target.closest('[data-action="adminCompany"]');if(ac){state.adminCompany=ac.value;render();}
   const lf=e.target.closest('[data-action="lsFile"]');if(lf){lsFile(lf);return;}
 });
-function addHistory(a,m,cid){const n=new Date();const t=('0'+n.getDate()).slice(-2)+'.'+('0'+(n.getMonth()+1)).slice(-2)+'. '+('0'+n.getHours()).slice(-2)+':'+('0'+n.getMinutes()).slice(-2);auditEnsure();var newest=DB.history[0];var prev=newest?newest.hash:'GENESIS';var seq=(newest&&newest.seq?newest.seq:DB.history.length)+1;var e={t:t,who:'Sie',a:a,m:m,cid:cid||'',alert:false,ts:n.toISOString(),seq:seq};e.hash=cyrb53(prev+'|'+auditCanon(e));DB.history.unshift(e);if(typeof saveDB==='function')saveDB();}
+function addHistory(a,m,cid){if(['Lagerort gescannt','Artikel-QR gescannt','Feuerwehr-Einsatzkarte geöffnet','Notfall-Modus geöffnet'].indexOf(a)>=0)return;const n=new Date();const t=('0'+n.getDate()).slice(-2)+'.'+('0'+(n.getMonth()+1)).slice(-2)+'. '+('0'+n.getHours()).slice(-2)+':'+('0'+n.getMinutes()).slice(-2);auditEnsure();var newest=DB.history[0];var prev=newest?newest.hash:'GENESIS';var seq=(newest&&newest.seq?newest.seq:DB.history.length)+1;var e={t:t,who:'Sie',a:a,m:m,cid:cid||'',alert:false,ts:n.toISOString(),seq:seq};e.hash=cyrb53(prev+'|'+auditCanon(e));DB.history.unshift(e);if(typeof saveDB==='function')saveDB();}
 
 function saveUser(id){const f=document.getElementById('mForm');const name=f.name.value.trim();if(!name){toast('Name fehlt.',false);f.name.focus();return;}
   if(id){const u=DB.users.find(x=>x.id===id);if(u){u.name=name;u.role=f.role.value;u.company=f.company.value;}}

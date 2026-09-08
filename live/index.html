@@ -3994,7 +3994,11 @@ document.addEventListener('change',e=>{
   const ac=e.target.closest('[data-action="adminCompany"]');if(ac){state.adminCompany=ac.value;render();}
   const lf=e.target.closest('[data-action="lsFile"]');if(lf){lsFile(lf);return;}
 });
-function addHistory(a,m,cid){const who=(AUTH.profile&&AUTH.profile.name)||'Sie';const ts=new Date().toISOString();auditEnsure();var newest=DB.history[0];var prev=newest?newest.hash:'GENESIS';var seq=(newest&&newest.seq?newest.seq:DB.history.length)+1;var e={t:fmtTs(ts),who:who,a:a,m:m,cid:cid||'',alert:false,ts:ts,seq:seq};e.hash=cyrb53(prev+'|'+auditCanon(e));DB.history.unshift(e);
+function addHistory(a,m,cid){
+  // Reine Ansicht-/Scan-Aktionen NICHT protokollieren – der Verlauf bleibt auf
+  // nachweisrelevante Änderungen (Erfassen, Freigabe, Instruktion, SDB …) beschränkt.
+  if(['Lagerort gescannt','Artikel-QR gescannt','Feuerwehr-Einsatzkarte geöffnet','Notfall-Modus geöffnet'].indexOf(a)>=0)return;
+  const who=(AUTH.profile&&AUTH.profile.name)||'Sie';const ts=new Date().toISOString();auditEnsure();var newest=DB.history[0];var prev=newest?newest.hash:'GENESIS';var seq=(newest&&newest.seq?newest.seq:DB.history.length)+1;var e={t:fmtTs(ts),who:who,a:a,m:m,cid:cid||'',alert:false,ts:ts,seq:seq};e.hash=cyrb53(prev+'|'+auditCanon(e));DB.history.unshift(e);
   try{sbc.from('audit_logs').insert({organization_id:orgId(),entity_typ:'history',aktion:a,user_id:AUTH.profile&&AUTH.profile.id,neu_wert:{who,m,cid:cid||'',alert:false}}).then(()=>{});}catch(e){}}
 
 async function saveUser(){const f=document.getElementById('mForm');const email=((f.email&&f.email.value)||'').trim().toLowerCase();
