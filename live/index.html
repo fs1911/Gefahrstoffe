@@ -1789,7 +1789,7 @@ async function loadDB(){
   AUTH.org=(og&&og.data)||AUTH.org||null;
   const err=c.error||l.error||s.error||sd.error||i.error||p.error||h.error;
   if(err){toast('Laden: '+err.message,false);}
-  DB.companies=(c.data||[]).map(x=>({id:x.id,name:x.name,short:x.short||x.name,group:!!x.is_group}));
+  DB.companies=(c.data||[]).map(x=>({id:x.id,name:x.name,short:x.short||x.name,group:!!x.is_group,logo:x.logo_url||null}));
   DB.locations=(l.data||[]).map(x=>({id:x.id,company:x.company_id,name:x.name,bereich:x.bereich||'',typ:x.typ||'Lager'}));
   const sdBySub={}; (sd.data||[]).forEach(d=>{(sdBySub[d.substance_id]=sdBySub[d.substance_id]||[]).push(d);});
   DB.substances=(s.data||[]).map(x=>({id:x.id,name:x.produktname,hersteller:x.hersteller||'unbekannt',signal:x.signalwort||'Achtung',ghs:x.ghs_piktogramme||[],h:x.h_saetze||'–',p:x.p_saetze||'–',un:x.un_nummer||'–',barcode:x.externer_barcode||'',info:x.info_link||'',lk:x.lagerklasse||null,status:x.status||'approved',source:x.source||'manual',sdb:sdbFrom(sdBySub[x.id])}));
@@ -2227,7 +2227,7 @@ async function chatAnswer(q,cb){
   setTimeout(function(){cb(askLocal(q));},250);
 }
 /* ---------- Prüf-Dossier: komplettes prüffertiges PDF (Block 8) ---------- */
-function dossierHead(title){return '<div class="pr-h"><div>'+prLogoHtml()+'<div style="font-family:var(--mono);font-size:11px;color:#333;margin-top:5px">'+esc(orgName())+'</div></div><div class="pr-meta">'+esc(title)+'<br>'+new Date().toLocaleDateString('de-CH')+'</div></div>';}
+function dossierHead(title){return '<div class="pr-h"><div>'+prLogoHtml(expScope())+'<div style="font-family:var(--mono);font-size:11px;color:#333;margin-top:5px">'+esc(scopeName())+'</div></div><div class="pr-meta">'+esc(title)+'<br>'+new Date().toLocaleDateString('de-CH')+'</div></div>';}
 function dossierPdf(){
   var fc=expScope();
   var scope=scopeName();
@@ -2252,7 +2252,7 @@ function dossierPdf(){
   var prio={Hoch:0,Mittel:1,Tief:2};m.sort(function(a,b){return prio[a[0]]-prio[b[0]];});
 
   // 1) Deckblatt
-  var cover='<div class="dos-cover"><div class="dos-logo">'+prLogoHtml()+'</div>'+
+  var cover='<div class="dos-cover"><div class="dos-logo">'+prLogoHtml(expScope())+'</div>'+
     '<div class="dos-kick">Prüf-Dossier · Gefahrstoffe</div>'+
     '<div class="dos-org">'+esc(orgName())+'</div>'+
     '<table class="dos-meta"><tr><td>Umfang</td><td>'+esc(scope)+'</td></tr><tr><td>Erstellt am</td><td>'+today+'</td></tr>'+(who?'<tr><td>Verantwortlich</td><td>'+esc(who)+'</td></tr>':'')+'<tr><td>Inhalt</td><td>Kennzahlen · offene Punkte · Gefahrstoffliste · SDB-Status · Zusammenlagerung · Instruktionsnachweise · Betriebsanweisungen</td></tr></table>'+
@@ -2485,13 +2485,14 @@ function fwNum(v){return (Math.round(v*10)/10);}
 function einsatzHtml(locId){
   var d=einsatzData(locId);if(!d)return '<div class="fw-card"><div class="fw-band"><div class="fw-t">Kein Lager</div></div></div>';
   var l=d.l,c=d.c,today=new Date().toLocaleDateString('de-CH');
+  var fwLogo=companyLogo(l.company);
   var piktos=d.ghs.length?('<div class="fw-piktos">'+d.ghs.map(function(k){return '<span class="fw-pik">'+(GHS_SVG[k]||'')+'<small>'+esc(GHS_LABEL[k]||k)+'</small></span>';}).join('')+'</div>'):'<div class="fw-none">Keine GHS-Einstufung erfasst.</div>';
   var lks=d.lkList.length?d.lkList.map(function(lk){return '<span class="fw-lk" style="background:'+LK_INFO[lk].c+'">LK '+lk+' · '+esc(LK_INFO[lk].name)+'</span>';}).join(''):'<span class="fw-dim">keine</span>';
   var qty=Object.keys(d.byUnit).map(function(u){return fwNum(d.byUnit[u])+' '+esc(u);}).join(' · ');
   var rows=d.subs.map(function(o){var s=o.s;var m=o.insts.reduce(function(a,i){return a+(i.menge||0);},0);var unit=o.insts[0].einheit||'';var geb=o.insts.reduce(function(a,i){return a+(i.anzahl||0);},0);var lk=lkOf(s);
     return '<tr><td><b>'+esc(s.name)+'</b><br><span class="fw-mfr">'+esc(s.hersteller||'')+'</span></td><td>'+(m?(fwNum(m)+' '+esc(unit)):'–')+'<br><span class="fw-mfr">'+geb+' Gebinde</span></td><td>'+(lk||'–')+'</td><td>'+((s.ghs||[]).map(function(x){return esc(GHS_LABEL[x]||x);}).join(', ')||'–')+'</td><td>'+esc(s.un||'–')+'</td></tr>';}).join('');
   return '<div class="fw-card">'+
-    '<div class="fw-band"><div><div class="fw-t">Gefahrstofflager</div><div class="fw-s">Einsatzkarte für Rettungskräfte</div></div><div class="fw-badge">'+d.subs.length+' Stoffe</div></div>'+
+    '<div class="fw-band"><div><div class="fw-t">Gefahrstofflager</div><div class="fw-s">Einsatzkarte für Rettungskräfte</div></div>'+(fwLogo?'<img src="'+fwLogo+'" alt="" style="max-height:34px;max-width:120px;object-fit:contain;background:#fff;border-radius:4px;padding:2px">':'<div class="fw-badge">'+d.subs.length+' Stoffe</div>')+'</div>'+
     '<div class="fw-emerg"><span>Notruf</span><b>118</b>&nbsp;Feuerwehr · <b>144</b>&nbsp;Sanität · <b>145</b>&nbsp;Tox&nbsp;Info&nbsp;Suisse</div>'+
     '<table class="fw-meta"><tr><td>Standort</td><td><b>'+esc(l.name)+'</b> · '+esc(l.bereich||'')+'</td></tr><tr><td>Betrieb</td><td>'+esc(c?c.name:'')+(l.typ?' · '+esc(l.typ):'')+'</td></tr><tr><td>Stand</td><td>'+today+'</td></tr></table>'+
     piktos+
@@ -3434,7 +3435,7 @@ function baHtml(s){
   var sig=s.signal||'Achtung',today=new Date().toLocaleDateString('de-CH');
   var codeNote=(l!=='de'&&T.codeNote)?'<div class="ba-note" style="margin-top:6px">'+T.codeNote+'</div>':'';
   return '<div class="ba-doc" id="baDoc">'+
-    '<div class="ba-top"><div><div class="ba-kick">'+T.kick+'</div><div class="ba-sub">'+T.sub+'</div></div>'+baBrandHtml()+'</div>'+
+    '<div class="ba-top"><div><div class="ba-kick">'+T.kick+'</div><div class="ba-sub">'+T.sub+'</div></div>'+baBrandHtml(docCompany(s))+'</div>'+
     '<table class="ba-meta"><tr><td><span>'+T.betrieb+'</span>'+esc(orgName)+'</td><td><span>'+T.bereich+'</span>'+T.allg+'</td></tr><tr><td><span>'+T.stoff+'</span><b>'+esc(s.name)+'</b></td><td><span>'+T.stand+'</span>'+today+'</td></tr></table>'+
     '<div class="ba-sigbar sig-'+(sig==='Gefahr'?'danger':'warn')+'"><b>'+esc((SIGNAL_L[l][sig]||sig))+'</b>'+pikto+'</div>'+
     '<div class="ba-sec"><h3>'+T.s1+'</h3><p><b>'+esc(s.name)+'</b> · '+T.hersteller+': '+esc(s.hersteller||'–')+((s.un&&s.un!=='–')?' · UN '+esc(s.un):'')+'<br>'+T.lk+' '+(lk||'–')+' ('+esc(lkName)+')</p></div>'+
@@ -4028,7 +4029,13 @@ function modalEditCompany(id){const c=company(id);if(!c)return;
   openModal('Firma bearbeiten','<form id="mForm">'+
     '<div class="field"><label>Firmenname *</label><input name="name" value="'+esc(c.name)+'"></div>'+
     '<div class="field"><label>Kurzname (für Tags)</label><input name="short" value="'+esc(c.short||'')+'"></div>'+
+    '<div class="logo-card"><div class="logo-prev">'+(c.logo?'<img src="'+c.logo+'" alt="Logo">':'<span class="logo-ph">Logo</span>')+'</div>'+
+    '<div class="logo-txt"><b>Firmenlogo</b><small>Erscheint auf Betriebsanweisung &amp; Feuerwehr-Einsatzkarte dieser Firma. Fehlt es, gilt das Gruppen-Logo.</small>'+
+    '<div class="btn-row" style="margin-top:9px"><input type="file" id="clogoFile" accept="image/png,image/jpeg,image/svg+xml" style="display:none" onchange="saveCompanyLogo(\''+id+'\',this.files&&this.files[0])"><button type="button" class="btn secondary" onclick="document.getElementById(\'clogoFile\').click()">'+ICO.plus+' Logo hochladen</button>'+(c.logo?'<button type="button" class="btn ghost" onclick="rmCompanyLogo(\''+id+'\')">Entfernen</button>':'')+'</div></div></div>'+
     '<div class="btn-row" style="margin-top:0"><button type="button" class="btn ghost" data-action="closeModal">Abbrechen</button><button type="button" class="btn" data-action="saveCompany" data-id="'+id+'">Speichern</button></div></form>');}
+window.saveCompanyLogo=function(id,file){if(!file)return;if(file.size>2*1024*1024){toast('Bild zu gross (max 2 MB).',false);return;}var r=new FileReader();r.onload=function(){var img=new Image();img.onload=function(){var data;if(img.width&&img.height){var mx=360,sc=Math.min(1,mx/img.width,mx/img.height);var cv=document.createElement('canvas');cv.width=Math.round(img.width*sc);cv.height=Math.round(img.height*sc);try{cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);data=cv.toDataURL('image/png');}catch(e){data=r.result;}}else{data=r.result;}storeCompanyLogo(id,data);};img.onerror=function(){storeCompanyLogo(id,r.result);};img.src=r.result;};r.readAsDataURL(file);};
+async function storeCompanyLogo(id,data){const {error}=await sbc.rpc('set_company_logo',{p_company_id:id,p_logo:data});if(error){toast('Logo: '+error.message,false);return;}var c=company(id);if(c)c.logo=data;toast('Firmenlogo gespeichert.');modalEditCompany(id);}
+async function rmCompanyLogo(id){const {error}=await sbc.rpc('set_company_logo',{p_company_id:id,p_logo:null});if(error){toast(error.message,false);return;}var c=company(id);if(c)c.logo=null;toast('Logo entfernt');modalEditCompany(id);}
 function modalEditLocation(id){const l=location_(id);if(!l)return;
   const fOpts=DB.companies.filter(c=>!c.group).map(c=>'<option value="'+c.id+'"'+(c.id===l.company?' selected':'')+'>'+esc(c.name)+'</option>').join('');
   const tOpts=['Werkhof','Baustelle','Magazin','Werkstatt','Containerlager','Zwischenlager','Sonderabfall'].map(t=>'<option'+(t===l.typ?' selected':'')+'>'+t+'</option>').join('');
@@ -4140,9 +4147,17 @@ function expInsts(){const fc=expScope();return DB.instances.filter(i=>{const l=l
 function expLocs(){const fc=expScope();return DB.locations.filter(l=>!fc||l.company===fc);}
 function orgName(){const g=DB.companies.find(c=>c.group);return (g&&g.name)||(DB.companies[0]&&DB.companies[0].name)||'StoffScan';}
 function orgLogo(){return (AUTH.org&&AUTH.org.logo_url)||null;}
+// Logo der Firma (Tochtergesellschaft), sonst Gruppen-/Org-Logo als Rückfall.
+function companyLogo(cid){var c=cid?company(cid):null;return (c&&c.logo)||orgLogo();}
+// Firma für ein Stoff-Dokument: aktiver Lagerort, sonst eindeutige Firma des Stoffs, sonst Gruppe.
+function docCompany(s){
+  if(state.activeLoc){var al=location_(state.activeLoc);if(al)return al.company;}
+  if(s){var comps={};DB.instances.filter(function(i){return i.sub===s.id;}).forEach(function(i){var l=location_(i.loc);if(l)comps[l.company]=1;});var ks=Object.keys(comps);if(ks.length===1)return ks[0];}
+  return '';
+}
 function baOrgName(){return (AUTH.org&&AUTH.org.name)||orgName();}
-function baBrandHtml(){var lg=orgLogo();return lg?'<div class="ba-logo"><img class="ba-logo-img" src="'+lg+'" alt=""></div>':'<div class="ba-logo"><span class="logo">St</span>StoffScan</div>';}
-function prLogoHtml(){return orgLogo()?'<img src="'+orgLogo()+'" style="max-height:44px;max-width:150px;object-fit:contain">':'<div class="pr-logo">StoffScan</div>';}
+function baBrandHtml(cid){var lg=companyLogo(cid);return lg?'<div class="ba-logo"><img class="ba-logo-img" src="'+lg+'" alt=""></div>':'<div class="ba-logo"><span class="logo">St</span>StoffScan</div>';}
+function prLogoHtml(cid){var lg=companyLogo(cid);return lg?'<img src="'+lg+'" style="max-height:44px;max-width:150px;object-fit:contain">':'<div class="pr-logo">StoffScan</div>';}
 window.saveOrgLogo=function(file){if(!file)return;if(file.size>2*1024*1024){toast('Bild zu gross (max 2 MB).',false);return;}var r=new FileReader();r.onload=function(){var img=new Image();img.onload=function(){var data;if(img.width&&img.height){var mx=360,sc=Math.min(1,mx/img.width,mx/img.height);var c=document.createElement('canvas');c.width=Math.round(img.width*sc);c.height=Math.round(img.height*sc);try{c.getContext('2d').drawImage(img,0,0,c.width,c.height);data=c.toDataURL('image/png');}catch(e){data=r.result;}}else{data=r.result;}storeLogo(data);};img.onerror=function(){storeLogo(r.result);};img.src=r.result;};r.readAsDataURL(file);};
 async function storeLogo(data){const {error}=await sbc.rpc('set_org_logo',{p_logo:data});if(error){toast('Logo: '+error.message,false);return;}if(AUTH.org)AUTH.org.logo_url=data;toast('Firmenlogo gespeichert.');render();}
 async function rmOrgLogo(){const {error}=await sbc.rpc('set_org_logo',{p_logo:null});if(error){toast(error.message,false);return;}if(AUTH.org)AUTH.org.logo_url=null;toast('Logo entfernt');render();}
@@ -4151,7 +4166,7 @@ function logoCardHtml(){return '<div class="logo-card"><div class="logo-prev">'+
   '<div class="btn-row" style="margin-top:9px"><input type="file" id="logoFile" accept="image/png,image/jpeg,image/svg+xml" style="display:none" onchange="saveOrgLogo(this.files&&this.files[0])"><button class="btn secondary" onclick="document.getElementById(\'logoFile\').click()">'+ICO.plus+' Logo hochladen</button>'+(orgLogo()?'<button class="btn ghost" data-action="rmOrgLogo">Entfernen</button>':'')+'</div></div></div>';}
 function instrNachweisPdf(subId){var s=substance(subId);if(!s)return;var a=instrFor(subId);
   var rows=a.length?a.map(function(x){var due=daysSince(x.date)>365;return '<tr><td>'+esc(x.name)+'</td><td>'+fmtDate(x.date)+'</td><td>'+(due?'fällig (über 12 Monate)':'aktuell')+'</td></tr>';}).join(''):'<tr><td colspan="3">Noch keine Instruktion erfasst.</td></tr>';
-  var html='<div class="pr-h"><div>'+prLogoHtml()+'<div style="font-family:var(--mono);font-size:11px;color:#333;margin-top:5px">'+esc(baOrgName())+'</div></div>'+
+  var html='<div class="pr-h"><div>'+prLogoHtml(docCompany(s))+'<div style="font-family:var(--mono);font-size:11px;color:#333;margin-top:5px">'+esc(baOrgName())+'</div></div>'+
     '<div class="pr-meta">Instruktionsnachweis<br>Stand '+new Date().toISOString().slice(0,10)+'</div></div>'+
     '<div class="pr-title">Instruktionsnachweis · '+esc(s.name)+'</div>'+
     '<p style="margin:-4px 0 12px;font-size:11px;color:#333">Betriebsanweisung für <b>'+esc(s.name)+'</b>'+(s.hersteller?' · '+esc(s.hersteller):'')+'. Kenntnisnahme durch die instruierten Personen:</p>'+
