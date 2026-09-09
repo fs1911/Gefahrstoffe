@@ -485,6 +485,23 @@
   .bst-pill{font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;letter-spacing:.02em;white-space:nowrap}
   .bst-pill.open{background:rgba(12,107,79,.14);color:var(--accent)}
   .bst-pill.done{background:var(--surface-2);color:var(--ink-3)}
+  .wiz-done{display:flex;align-items:center;gap:10px;background:rgba(12,107,79,.10);border-radius:10px;padding:11px 13px;margin-bottom:10px}
+  .wiz-done svg{width:22px;height:22px;color:var(--accent);flex:none}
+  .wiz-done b{display:block;font-size:14px}
+  .wiz-done small{color:var(--ink-2);font-size:12px}
+  .wiz-lead{font-size:12.5px;color:var(--ink-2);margin:0 0 10px}
+  .wiz-steps{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+  .wiz-step{display:flex;align-items:center;gap:11px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:12px 13px;cursor:pointer;font-family:var(--font)}
+  .wiz-step:active{background:var(--surface-2)}
+  .wiz-step.lock{opacity:.6;cursor:not-allowed}
+  .wiz-num{width:26px;height:26px;flex:none;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;font-family:var(--font-display)}
+  .wiz-step.lock .wiz-num{background:var(--ink-3)}
+  .wiz-tx{flex:1;min-width:0}
+  .wiz-tx b{display:block;font-size:13.5px;color:var(--ink)}
+  .wiz-tx small{color:var(--ink-2);font-size:12px}
+  .wiz-cta{flex:none;color:var(--accent);display:flex}
+  .wiz-cta svg{width:18px;height:18px}
+  .wiz-cta.muted{color:var(--ink-3);font-size:11px;font-weight:600}
 
   /* Verwaltung: Hinzufügen + Zeilen mit Löschen */
   .add-btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:48px;border:1.5px dashed var(--accent);background:var(--surface);color:var(--accent);border-radius:9px;font-size:14.5px;font-weight:600;margin-bottom:12px}
@@ -4051,6 +4068,27 @@ function modalEditUser(id){const u=DB.users.find(x=>x.id===id);if(!u)return;
     '<div class="field"><label>Firma</label><select name="company">'+fOpts+'</select></div>'+
     '<div class="btn-row" style="margin-top:0"><button type="button" class="btn ghost" data-action="closeModal">Abbrechen</button><button type="button" class="btn" data-action="saveUser" data-id="'+id+'">Speichern</button></div></form>');}
 
+/* ---------- Geführter Erfassungs-Assistent (Phase 1) ----------
+   Verkettet nach dem Erfassen: Gefährdungsbeurteilung (STOP, je Tätigkeit)
+   → Betriebsanweisung → Unterweisung vor Einsatz. */
+function modalErfWizard(subId,instId){var s=substance(subId);if(!s){if(instId)modalQr(instId);return;}
+  var inst=instId?instance(instId):null;var loc=inst?location_(inst.loc):(state.activeLoc?location_(state.activeLoc):null);
+  var ort=loc?((isBaustelle(loc)?'Baustelle · ':'')+esc(loc.name)+(loc.bereich?' · '+esc(loc.bereich):'')):'ohne Lagerort';
+  var appr=(s.status?s.status==='approved':true);
+  function step(n,title,sub,action,enabled){var lock=!enabled;
+    return '<button class="wiz-step'+(lock?' lock':'')+'"'+(lock?' disabled':' data-action="'+action+'" data-id="'+subId+'"')+'>'+
+      '<span class="wiz-num">'+n+'</span><span class="wiz-tx"><b>'+title+'</b><small>'+sub+'</small></span>'+
+      '<span class="wiz-cta'+(lock?' muted':'')+'">'+(lock?'nach Freigabe':ICO.chev)+'</span></button>';}
+  openModal('Sicher einsetzen',
+    '<div class="wiz-done">'+ICO.ok+'<div><b>'+esc(s.name)+' erfasst · QR erstellt</b><small>'+ort+'</small></div></div>'+
+    '<p class="wiz-lead">Empfohlene nächste Schritte für den sicheren Einsatz – der wichtigste zuerst:</p>'+
+    (appr?'':'<div class="notice warnb" style="margin:0 0 12px">'+ICO.warn+'<div>Dieser Stoff wartet auf die fachliche <b>Freigabe</b>. Betriebsanweisung und Unterweisung werden erst danach freigeschaltet.</div></div>')+
+    '<div class="wiz-steps">'+
+      step(1,'Gefährdungsbeurteilung','Tätigkeit wählen → STOP-Massnahmen &amp; PSA','gbOpen',true)+
+      step(2,'Betriebsanweisung','Aushängefertig aus H-/P-Sätzen &amp; GHS','genBA',appr)+
+      step(3,'Unterweisung vor Einsatz','Mitarbeitende instruieren &amp; digital bestätigen','instrConfirm',appr)+
+    '</div>'+
+    '<div class="btn-row" style="margin-top:4px">'+(instId?'<button class="btn ghost" data-action="showQr" data-id="'+instId+'">'+ICO.qr+' QR anzeigen</button>':'')+'<button class="btn secondary" data-action="closeModal">Später</button></div>');}
 function saveErf(){const f=document.getElementById('erfForm');const name=f.name.value.trim();if(!name){toast('Produktname fehlt.',false);f.name.focus();return;}
   const mr=f.menge.value.trim();if(!mr){toast('Menge fehlt.',false);f.menge.focus();return;}
   const haz=[...f.querySelectorAll('.chip.on[data-haz]')].map(c=>c.dataset.haz);const sdb=f.sdb.value.trim();const bc=(f.barcode&&f.barcode.value.trim())||'';const sig=state._sig||'Achtung';
@@ -4059,7 +4097,7 @@ function saveErf(){const f=document.getElementById('erfForm');const name=f.name.
   qrCounter++;const qr='INST-'+String(qrCounter).padStart(6,'0');const iid='i_'+Date.now();
   DB.instances.push({id:iid,sub:sid,loc:state.activeLoc,gebinde:f.gebinde.value,groesse:'–',anzahl:parseInt(f.anzahl.value||'1',10),menge:parseFloat(mr),einheit:f.einheit.value,status:'Lager',qr,last:new Date().toISOString().slice(0,10)});
   addHistory('Bestand erfasst',name+(state.activeLoc?' · '+location_(state.activeLoc).name:''),state.activeLoc?location_(state.activeLoc).company:'');
-  state._sig=null;state.scanPrefill=null;state.aiExtract=null;saveDB();toast('Bestand erfasst · QR erstellt');goTo('detail',{sub:sid,inst:iid,reset:true,nav:'start'});setTimeout(()=>modalQr(iid),350);}
+  state._sig=null;state.scanPrefill=null;state.aiExtract=null;saveDB();toast('Bestand erfasst · QR erstellt');goTo('detail',{sub:sid,inst:iid,reset:true,nav:'start'});setTimeout(()=>modalErfWizard(sid,iid),350);}
 
 loadDB();
 render();
