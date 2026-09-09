@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developers.cloudflare.com/workers/wrangler/configuration/",
+  "name": "gefahrstoffe",
+  "compatibility_date": "2026-09-01",
+  // Reine statische Seite (kein Worker-Code): index.html liegt in der Repo-Wurzel,
+  // Produkt unter /live/, Demo unter /app/. Ohne diese Assets-Konfiguration lädt
+  // Workers Builds bei jedem Push nur eine neue Worker-Version hoch, aber NICHT die
+  // aktualisierten HTML-Dateien – deshalb blieb die ausgelieferte Seite eingefroren.
+  "assets": {
+    "directory": "."
+  }
+}

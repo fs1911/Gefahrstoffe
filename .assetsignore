@@ -1,0 +1,7 @@
+supabase
+docs
+.github
+node_modules
+wrangler.jsonc
+.assetsignore
+netlify.toml
