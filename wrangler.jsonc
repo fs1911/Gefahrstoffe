@@ -9,4 +9,5 @@
   "assets": {
     "directory": "."
   }
+  // Build-Trigger: Deploy-Befehl greift jetzt (npx wrangler deploy -> 100% Produktion).
 }
