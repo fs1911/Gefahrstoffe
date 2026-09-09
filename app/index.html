@@ -482,6 +482,9 @@
   .dash-tile svg{width:18px;height:18px;flex:none;color:var(--accent)}
   .dash-tile b{color:var(--ink)}
   .dash-tile .chg{margin-left:auto;color:var(--accent);font-weight:600;font-size:12.5px}
+  .bst-pill{font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;letter-spacing:.02em;white-space:nowrap}
+  .bst-pill.open{background:rgba(12,107,79,.14);color:var(--accent)}
+  .bst-pill.done{background:var(--surface-2);color:var(--ink-3)}
 
   /* Verwaltung: Hinzufügen + Zeilen mit Löschen */
   .add-btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:48px;border:1.5px dashed var(--accent);background:var(--surface);color:var(--accent);border-radius:9px;font-size:14.5px;font-weight:600;margin-bottom:12px}
@@ -3653,9 +3656,21 @@ function scrAdmin(){
       return '<button class="arow" data-action="openSub" data-id="'+s.id+'"><span class="ag"><span class="ghs-row">'+s.ghs.map(g=>ghsBadge(g,'mini')).join('')+'</span></span><span class="am"><span class="at">'+s.name+'</span><span class="as">'+s.hersteller+' · '+vk.length+' Vorkommen</span></span><span class="lk-badge" style="background:'+(lkOf(s)?LK_INFO[lkOf(s)].c:'#999')+';margin-right:6px">LK '+(lkOf(s)||'?')+'</span>'+(s.sdb.status==='fehlt'?'<span class="reason d">SDB fehlt</span>':(s.sdb.status==='alt'?'<span class="reason w">SDB alt</span>':''))+'<span class="chev">'+ICO.chev+'</span></button>';}).join('');
   }else if(tab==='lager'){
     const locs=DB.locations.filter(l=>!fc||l.company===fc);
-    body=filterBar+'<button class="add-btn" data-action="addLocation">'+ICO.plus+' Lagerort hinzufügen</button>'+
-      (locs.length?locs.map(l=>{const ins=instsAtLoc(l.id);const w=ins.filter(instWarn).length;
-      return '<div class="mrow amp-'+locAmpel(l.id).level+'"><button class="ag" style="all:unset;flex:1;min-width:0;display:flex;align-items:center;gap:11px;cursor:pointer" data-action="openLoc" data-id="'+l.id+'"><span class="mg">'+ICO.loc+'</span><span class="mm"><span class="mt">'+l.name+'</span><span class="ms">'+firmTag(l.company)+' '+l.bereich+' · '+ins.length+' Stoffe'+(w?' · <b style="color:var(--warn)">'+w+' offen</b>':'')+'</span></span></button><span class="row-actions"><button class="edit-btn" data-action="editLocation" data-id="'+l.id+'" aria-label="Bearbeiten">'+ICO.edit+'</button><button class="del-btn" data-action="delLocation" data-id="'+l.id+'" aria-label="Löschen">'+ICO.trash+'</button></span></div>';}).join(''):'<div class="empty">'+ICO.loc+'<div>Keine Lagerorte.</div></div>');
+    const bst=locs.filter(isBaustelle),lag=locs.filter(l=>!isBaustelle(l));
+    const openB=bst.filter(l=>l.active!==false),doneB=bst.filter(l=>l.active===false);
+    const locRow=l=>{const ins=instsAtLoc(l.id);const w=ins.filter(instWarn).length;const b=isBaustelle(l);
+      const bz=bauzeitLabel(l);
+      const meta=b?(firmTag(l.company)+' '+(l.bauleiter?'· '+esc(l.bauleiter)+' ':'')+(bz?'· '+bz+' ':'')+'· '+ins.length+' Stoffe'+(w?' · <b style="color:var(--warn)">'+w+' offen</b>':''))
+                 :(firmTag(l.company)+' '+esc(l.bereich||'')+' · '+ins.length+' Stoffe'+(w?' · <b style="color:var(--warn)">'+w+' offen</b>':''));
+      const badge=b?' <span class="bst-pill '+(l.active===false?'done':'open')+'">'+(l.active===false?'abgeschlossen':'offen')+'</span>':'';
+      const toggle=b?'<button class="edit-btn" data-action="toggleBaustelle" data-id="'+l.id+'" aria-label="'+(l.active===false?'Wieder öffnen':'Abschliessen')+'" title="'+(l.active===false?'Wieder öffnen':'Abschliessen')+'">'+(l.active===false?ICO.plus:ICO.ok)+'</button>':'';
+      return '<div class="mrow amp-'+locAmpel(l.id).level+'"><button class="ag" style="all:unset;flex:1;min-width:0;display:flex;align-items:center;gap:11px;cursor:pointer" data-action="openLoc" data-id="'+l.id+'"><span class="mg">'+(b?ICO.firma:ICO.loc)+'</span><span class="mm"><span class="mt">'+esc(l.name)+badge+'</span><span class="ms">'+meta+'</span></span></button><span class="row-actions">'+toggle+'<button class="edit-btn" data-action="editLocation" data-id="'+l.id+'" aria-label="Bearbeiten">'+ICO.edit+'</button><button class="del-btn" data-action="delLocation" data-id="'+l.id+'" aria-label="Löschen">'+ICO.trash+'</button></span></div>';};
+    body=filterBar+'<button class="add-btn" data-action="addLocation">'+ICO.plus+' Lagerort / Baustelle hinzufügen</button>';
+    if(bst.length){body+='<div class="label-h" style="margin-top:14px">Baustellen <span class="cnt">'+openB.length+' offen</span></div>'+
+      (openB.length?openB.map(locRow).join(''):'<div class="empty" style="padding:16px">'+ICO.info+'<div>Keine offenen Baustellen.</div></div>')+
+      (doneB.length?'<div class="label-h" style="margin-top:10px;opacity:.65">Abgeschlossen</div>'+doneB.map(locRow).join(''):'');}
+    body+='<div class="label-h" style="margin-top:14px">Lager &amp; Standorte</div>'+
+      (lag.length?lag.map(locRow).join(''):'<div class="empty">'+ICO.loc+'<div>Keine Lagerorte erfasst.</div></div>');
   }else if(tab==='firmen'){
     body='<button class="add-btn" data-action="addCompany">'+ICO.plus+' Firma hinzufügen</button>'+
       DB.companies.filter(c=>!c.group).map(c=>{const n=DB.instances.filter(i=>location_(i.loc).company===c.id).length;const lc=DB.locations.filter(l=>l.company===c.id).length;
@@ -3830,15 +3845,32 @@ function modalAddCompany(){
     '<div class="field"><label>Kurzname (für Tags)</label><input name="short" placeholder="z. B. Muster"></div>'+
     '<button type="button" class="btn" data-action="saveCompany">'+ICO.plus+' Firma speichern</button></form>');
 }
+/* ---------- Baustellenmodus: Typ-Auswahl + baustellenspezifische Felder ---------- */
+function isBaustelle(l){return !!l&&l.typ==='Baustelle';}
+function bauzeitLabel(l){if(!l)return '';var a=l.start?fmtDate(l.start):'',b=l.end?fmtDate(l.end):'';if(a&&b)return a+'–'+b;if(a)return 'ab '+a;if(b)return 'bis '+b;return '';}
+function toggleBaustelleDo(id){var l=location_(id);if(!l)return;l.active=(l.active===false);saveDB();addHistory(l.active?'Baustelle geöffnet':'Baustelle abgeschlossen',l.name,'');toast(l.active?'Baustelle wieder geöffnet':'Baustelle abgeschlossen');render();}
+function locTypOpts(sel){return ['Werkhof','Baustelle','Magazin','Werkstatt','Containerlager','Zwischenlager','Sonderabfall'].map(t=>'<option'+(t===sel?' selected':'')+'>'+t+'</option>').join('');}
+function baustelleFieldsHtml(l){l=l||{};var on=isBaustelle(l);
+  return '<div id="bstFields"'+(on?'':' hidden')+'>'+
+    '<div class="notice info" style="margin:2px 0 10px">'+ICO.info+'<div>Baustellen erhalten wie Lagerorte QR-Code, Feuerwehr-Einsatzplan und Bestände. Nach Bauende «abschliessen» – die Daten bleiben fürs Audit erhalten.</div></div>'+
+    '<div class="field"><label>Bauleiter / verantwortlich vor Ort</label><input name="bauleiter" value="'+esc(l.bauleiter||'')+'" placeholder="z. B. M. Meier"></div>'+
+    '<div class="field"><label>Adresse / Ort</label><input name="adresse" value="'+esc(l.adresse||'')+'" placeholder="z. B. Bahnhofstrasse 10, 4500 Solothurn"></div>'+
+    '<div style="display:flex;gap:10px">'+
+      '<div class="field" style="flex:1"><label>Bauzeit von</label><input type="date" name="start_date" value="'+esc(l.start||'')+'"></div>'+
+      '<div class="field" style="flex:1"><label>Bauzeit bis</label><input type="date" name="end_date" value="'+esc(l.end||'')+'"></div>'+
+    '</div>'+
+    '<div class="field"><label>Status</label><select name="active"><option value="1"'+(l.active!==false?' selected':'')+'>offen</option><option value="0"'+(l.active===false?' selected':'')+'>abgeschlossen</option></select></div>'+
+  '</div>';}
+window.locTypChange=function(sel){var b=document.getElementById('bstFields');if(b)b.hidden=(sel.value!=='Baustelle');};
 function modalAddLocation(){
   const fOpts=DB.companies.filter(c=>!c.group).map(c=>'<option value="'+c.id+'"'+(c.id===state.adminCompany?' selected':'')+'>'+c.name+'</option>').join('');
-  const tOpts=['Werkhof','Baustelle','Magazin','Werkstatt','Containerlager','Zwischenlager','Sonderabfall'].map(t=>'<option>'+t+'</option>').join('');
-  openModal('Lagerort hinzufügen','<form id="mForm">'+
+  openModal('Lagerort / Baustelle hinzufügen','<form id="mForm">'+
     '<div class="field"><label>Firma *</label><select name="company">'+fOpts+'</select></div>'+
     '<div class="field"><label>Standort / Name *</label><input name="name" placeholder="z. B. Werkhof Sissach"></div>'+
     '<div class="field"><label>Bereich *</label><input name="bereich" placeholder="z. B. Gefahrstoffschrank B"></div>'+
-    '<div class="field"><label>Typ</label><select name="typ">'+tOpts+'</select></div>'+
-    '<button type="button" class="btn" data-action="saveLocation">'+ICO.plus+' Lagerort speichern</button></form>');
+    '<div class="field"><label>Typ</label><select name="typ" onchange="locTypChange(this)">'+locTypOpts('Werkhof')+'</select></div>'+
+    baustelleFieldsHtml({})+
+    '<button type="button" class="btn" data-action="saveLocation">'+ICO.plus+' Speichern</button></form>');
 }
 function confirmModal(title,text,actionId,id){
   openModal(title,'<div class="notice danger" style="margin-bottom:14px">'+ICO.warn+'<div>'+text+'</div></div>'+
@@ -3950,6 +3982,7 @@ document.addEventListener('click',e=>{
     case 'addLocation':modalAddLocation();break;
     case 'editCompany':modalEditCompany(id);break;
     case 'editLocation':modalEditLocation(id);break;
+    case 'toggleBaustelle':toggleBaustelleDo(id);break;
     case 'editUser':modalEditUser(id);break;
     case 'saveUser':saveUser(id);break;
     case 'saveCompany':saveCompany(id);break;
@@ -3986,9 +4019,15 @@ function saveCompany(id){const f=document.getElementById('mForm');const name=f.n
   saveDB();closeModal();toast(id?'Firma gespeichert':'Firma hinzugefügt');render();}
 function saveLocation(id){const f=document.getElementById('mForm');const name=f.name.value.trim(),ber=f.bereich.value.trim();
   if(!name){toast('Name fehlt.',false);f.name.focus();return;}if(!ber){toast('Bereich fehlt.',false);f.bereich.focus();return;}
-  if(id){const l=location_(id);if(l){l.company=f.company.value;l.name=name;l.bereich=ber;l.typ=f.typ.value;}}
-  else DB.locations.push({id:'l_'+Date.now(),company:f.company.value,name,bereich:ber,typ:f.typ.value});
-  saveDB();closeModal();toast(id?'Lagerort gespeichert':'Lagerort hinzugefügt');render();}
+  const typ=f.typ.value,bau=typ==='Baustelle';
+  const bst={active:bau?(f.active&&f.active.value==='1'):true,
+    bauleiter:bau&&f.bauleiter?f.bauleiter.value.trim():'',
+    adresse:bau&&f.adresse?f.adresse.value.trim():'',
+    start:bau&&f.start_date?f.start_date.value:'',
+    end:bau&&f.end_date?f.end_date.value:''};
+  if(id){const l=location_(id);if(l){l.company=f.company.value;l.name=name;l.bereich=ber;l.typ=typ;Object.assign(l,bst);}}
+  else DB.locations.push(Object.assign({id:'l_'+Date.now(),company:f.company.value,name,bereich:ber,typ},bst));
+  saveDB();closeModal();toast(id?(bau?'Baustelle gespeichert':'Lagerort gespeichert'):(bau?'Baustelle hinzugefügt':'Lagerort hinzugefügt'));render();}
 function modalEditCompany(id){const c=company(id);if(!c)return;
   openModal('Firma bearbeiten','<form id="mForm">'+
     '<div class="field"><label>Firmenname *</label><input name="name" value="'+esc(c.name)+'"></div>'+
@@ -3996,12 +4035,12 @@ function modalEditCompany(id){const c=company(id);if(!c)return;
     '<div class="btn-row" style="margin-top:0"><button type="button" class="btn ghost" data-action="closeModal">Abbrechen</button><button type="button" class="btn" data-action="saveCompany" data-id="'+id+'">Speichern</button></div></form>');}
 function modalEditLocation(id){const l=location_(id);if(!l)return;
   const fOpts=DB.companies.filter(c=>!c.group).map(c=>'<option value="'+c.id+'"'+(c.id===l.company?' selected':'')+'>'+esc(c.name)+'</option>').join('');
-  const tOpts=['Werkhof','Baustelle','Magazin','Werkstatt','Containerlager','Zwischenlager','Sonderabfall'].map(t=>'<option'+(t===l.typ?' selected':'')+'>'+t+'</option>').join('');
-  openModal('Lagerort bearbeiten','<form id="mForm">'+
+  openModal((isBaustelle(l)?'Baustelle':'Lagerort')+' bearbeiten','<form id="mForm">'+
     '<div class="field"><label>Firma *</label><select name="company">'+fOpts+'</select></div>'+
     '<div class="field"><label>Standort / Name *</label><input name="name" value="'+esc(l.name)+'"></div>'+
     '<div class="field"><label>Bereich *</label><input name="bereich" value="'+esc(l.bereich||'')+'"></div>'+
-    '<div class="field"><label>Typ</label><select name="typ">'+tOpts+'</select></div>'+
+    '<div class="field"><label>Typ</label><select name="typ" onchange="locTypChange(this)">'+locTypOpts(l.typ)+'</select></div>'+
+    baustelleFieldsHtml(l)+
     '<div class="btn-row" style="margin-top:0"><button type="button" class="btn ghost" data-action="closeModal">Abbrechen</button><button type="button" class="btn" data-action="saveLocation" data-id="'+id+'">Speichern</button></div></form>');}
 function modalEditUser(id){const u=DB.users.find(x=>x.id===id);if(!u)return;
   const fOpts=DB.companies.map(c=>'<option value="'+c.id+'"'+(c.id===u.company?' selected':'')+'>'+esc(c.name)+'</option>').join('');
