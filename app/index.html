@@ -3719,7 +3719,7 @@ function scrBestand(){
   if(f.hb)list=list.filter(instWarn);
   list.sort((a,b)=>instWarn(b)-instWarn(a));
   const compOpts='<option value="">Alle Firmen (Gruppe)</option>'+DB.companies.filter(c=>!c.group).map(c=>'<option value="'+c.id+'" '+(f.company===c.id?'selected':'')+'>'+c.name+'</option>').join('');
-  const locOpts='<option value="">Alle Lagerorte</option>'+DB.locations.map(l=>'<option value="'+l.id+'" '+(f.loc===l.id?'selected':'')+'>'+l.name+'</option>').join('');
+  const locOpts='<option value="">Alle Lagerorte</option>'+DB.locations.filter(l=>!f.company||l.company===f.company).map(l=>'<option value="'+l.id+'" '+(f.loc===l.id?'selected':'')+'>'+l.name+'</option>').join('');
   const statusChips=['Lager','im Einsatz','zur Entsorgung'].map(st=>'<button class="chip '+(f.status===st?'on':'')+'" data-action="statusChip" data-id="'+st+'">'+st+'</button>').join('');
   const cards=list.length?list.map(instCard).join(''):'<div class="empty">'+ICO.search+'<div>Keine Treffer. Filter anpassen.</div></div>';
   return '<div class="view"><h2 class="title">Bestände</h2><p class="sub">Vorkommen über alle Firmen und Lagerorte.</p>'+'<button class="btn secondary" data-action="lieferschein" style="width:100%;margin:2px 0 14px">'+ICO.box+' Lieferschein / Rechnung erfassen</button>'+
@@ -4094,7 +4094,7 @@ document.addEventListener('click',e=>{
   }
 });
 document.addEventListener('change',e=>{
-  const f=e.target.closest('[data-action="filter"]');if(f){state.filter[f.dataset.key]=f.value;render();return;}
+  const f=e.target.closest('[data-action="filter"]');if(f){state.filter[f.dataset.key]=f.value;if(f.dataset.key==='company')state.filter.loc='';render();return;}
   const ac=e.target.closest('[data-action="adminCompany"]');if(ac){state.adminCompany=ac.value;render();}
   const lf=e.target.closest('[data-action="lsFile"]');if(lf){lsFile(lf);return;}
 });
