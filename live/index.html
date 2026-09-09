@@ -1778,6 +1778,9 @@ function sdbFrom(rows){ // neuestes SDB je Stoff -> {status,rev,link,path,url}
 }
 function fmtTs(iso){const n=new Date(iso);return ('0'+n.getDate()).slice(-2)+'.'+('0'+(n.getMonth()+1)).slice(-2)+'. '+('0'+n.getHours()).slice(-2)+':'+('0'+n.getMinutes()).slice(-2);}
 
+/* UN-Nummer immer OHNE Präfix speichern (die Anzeige stellt «UN » voran).
+   Verhindert «UN UN 1090», wenn parse-sdb/Katalog bereits «UN 1090» liefert. */
+function unBare(v){v=String(v==null?'':v).trim();if(!v||v==='–')return '–';v=v.replace(/^UN[\s.:-]*/i,'').trim();return v||'–';}
 async function loadDB(){
   const [c,l,s,sd,i,p,h,iv,og,ins]=await Promise.all([
     sbc.from('companies').select('*').order('name'),
@@ -1797,7 +1800,7 @@ async function loadDB(){
   DB.companies=(c.data||[]).map(x=>({id:x.id,name:x.name,short:x.short||x.name,group:!!x.is_group,logo:x.logo_url||null}));
   DB.locations=(l.data||[]).map(x=>({id:x.id,company:x.company_id,name:x.name,bereich:x.bereich||'',typ:x.typ||'Lager'}));
   const sdBySub={}; (sd.data||[]).forEach(d=>{(sdBySub[d.substance_id]=sdBySub[d.substance_id]||[]).push(d);});
-  DB.substances=(s.data||[]).map(x=>({id:x.id,name:x.produktname,hersteller:x.hersteller||'unbekannt',signal:x.signalwort||'Achtung',ghs:x.ghs_piktogramme||[],h:x.h_saetze||'–',p:x.p_saetze||'–',un:x.un_nummer||'–',barcode:x.externer_barcode||'',info:x.info_link||'',lk:x.lagerklasse||null,status:x.status||'approved',source:x.source||'manual',sdb:sdbFrom(sdBySub[x.id])}));
+  DB.substances=(s.data||[]).map(x=>({id:x.id,name:x.produktname,hersteller:x.hersteller||'unbekannt',signal:x.signalwort||'Achtung',ghs:x.ghs_piktogramme||[],h:x.h_saetze||'–',p:x.p_saetze||'–',un:unBare(x.un_nummer),barcode:x.externer_barcode||'',info:x.info_link||'',lk:x.lagerklasse||null,status:x.status||'approved',source:x.source||'manual',sdb:sdbFrom(sdBySub[x.id])}));
   DB.instances=(i.data||[]).map(x=>({id:x.id,sub:x.substance_id,loc:x.storage_location_id,gebinde:x.gebindeart||'Gebinde',groesse:x.gebindegroesse||'–',anzahl:x.anzahl_gebinde||1,menge:x.menge_aktuell,einheit:x.mengeneinheit||'',status:x.status||'Lager',qr:x.internal_qr,last:(x.updated_at||x.created_at||'').slice(0,10)}));
   DB.users=(p.data||[]).map(x=>({id:x.id,name:x.name||x.email||'Benutzer',role:ROLE_DB2UI[x.role]||'Mitarbeitend',company:x.company_id}));
   DB.history=(h.data||[]).map(x=>({t:fmtTs(x.created_at),ts:x.created_at,who:(x.neu_wert&&x.neu_wert.who)||'—',a:x.aktion,m:(x.neu_wert&&x.neu_wert.m)||'',cid:(x.neu_wert&&x.neu_wert.cid)||'',alert:!!(x.neu_wert&&x.neu_wert.alert)}));
