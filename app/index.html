@@ -494,6 +494,17 @@
   .sh-warn{color:var(--danger);font-weight:600;margin-top:3px!important}
   .sh-note{display:flex;gap:6px;align-items:flex-start;font-size:11px;color:var(--ink-3);margin-top:10px;line-height:1.4}
   .sh-note svg{width:14px;height:14px;flex:none;margin-top:1px}
+  .hb{border:1px solid var(--line);border-radius:11px;margin-bottom:8px;background:var(--surface);overflow:hidden}
+  .hb>summary{list-style:none;cursor:pointer;padding:13px 14px;font-weight:600;font-size:14px;color:var(--ink);display:flex;align-items:center;gap:8px}
+  .hb>summary::-webkit-details-marker{display:none}
+  .hb>summary .chev{margin-left:auto;color:var(--ink-3);transition:transform .2s}
+  .hb[open]>summary .chev{transform:rotate(90deg)}
+  .hb-body{padding:0 14px 14px}
+  .hb-body p{font-size:13px;line-height:1.5;color:var(--ink-2);margin:0 0 8px}
+  .hb-body ul,.hb-body ol{margin:6px 0;padding-left:18px}
+  .hb-body li{font-size:13px;line-height:1.5;color:var(--ink-2);margin:4px 0}
+  .hb-body b{color:var(--ink)}
+  .hb-tip{font-size:12px!important;color:var(--ink-3)!important;background:var(--surface-2);border-radius:8px;padding:8px 10px;margin-top:6px!important}
 
   /* Verwaltung: Hinzufügen + Zeilen mit Löschen */
   .add-btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:48px;border:1.5px dashed var(--accent);background:var(--surface);color:var(--accent);border-radius:9px;font-size:14.5px;font-weight:600;margin-bottom:12px}
@@ -1580,12 +1591,62 @@ function piktoHtml(){
   }).join('');
 }
 
+/* ---------- Handbuch: was die App kann & wie sie funktioniert ---------- */
+function hbItem(title,inner,open){return '<details class="hb"'+(open?' open':'')+'><summary>'+esc(title)+'<span class="chev">'+ICO.chev+'</span></summary><div class="hb-body">'+inner+'</div></details>';}
+function handbuchHtml(){
+  return '<div class="wk-card"><h3>So funktioniert StoffScan</h3>'+
+      '<p>StoffScan ist dein digitales Gefahrstoff-Kataster: erfassen, per QR-Code am Lager sofort sehen, was zu tun ist, und alle Nachweise auf Knopfdruck. Dieses Handbuch erklärt jede Funktion kurz. Tippe einen Abschnitt an, um ihn zu öffnen.</p></div>'+
+    hbItem('In 3 Schritten sicher (der Kern)',
+      '<ol class="hb-ol"><li><b>Lagerort scannen</b> – den <b>LOC-QR</b> am Regal/Schrank scannen. Damit ist der Lagerort als Kontext gesetzt.</li>'+
+      '<li><b>Artikel scannen</b> – den <b>INST-QR</b> am Gebinde scannen. Es öffnet sich die Stoffkarte.</li>'+
+      '<li><b>Sehen &amp; handeln</b> – Gefahren, PSA und «Sofort-Hilfe» auf einen Blick. Im Ernstfall der rote <b>Notfall</b>-Knopf oben.</li></ol>'+
+      '<p class="hb-tip">Tipp: Ohne Kamera kannst du oben «Artikel-QR öffnen» tippen und den Code (z. B. INST-000123) eingeben.</p>',true)+
+    hbItem('Gefahrstoff erfassen',
+      '<p>Über <b>«Gefahrstoff aufnehmen»</b>. Drei Wege:</p><ul>'+
+      '<li><b>SDB per KI:</b> Sicherheitsdatenblatt als PDF oder Foto hochladen – die KI liest Produktname, H-/P-Sätze, GHS, UN-Nummer und Lagerklasse aus. Du prüfst und speicherst.</li>'+
+      '<li><b>Barcode:</b> Herstellerbarcode scannen – bekannte Artikel kommen aus dem Schweizer Katalog vorbefüllt.</li>'+
+      '<li><b>Manuell:</b> Felder selbst ausfüllen.</li></ul>'+
+      '<p>KI-ausgelesene Stoffe sind zuerst <b>im Entwurf</b> und werden erst nach fachlicher <b>Freigabe</b> voll nutzbar (Betriebsanweisung/Unterweisung).</p>')+
+    hbItem('QR-Codes & Etiketten',
+      '<p>Zwei QR-Typen:</p><ul>'+
+      '<li><b>Lagerort-QR (LOC-…):</b> am Lager anbringen – scannen setzt den Lagerort-Kontext fürs Erfassen.</li>'+
+      '<li><b>Artikel-QR (INST-…):</b> am Gebinde – scannen öffnet direkt die Stoffkarte, auch für Mitarbeitende ohne Login-Wissen.</li></ul>'+
+      '<p>Druckfertige Etikettenbögen findest du in der <b>Verwaltung → Export</b>.</p>')+
+    hbItem('Die Stoffkarte lesen',
+      '<p>Alles zu einem Stoff an einem Ort:</p><ul>'+
+      '<li><b>GHS-Symbole &amp; Signalwort</b> – die Gefahr auf einen Blick.</li>'+
+      '<li><b>Bestand</b> – Menge, Gebinde, Lagerort, interner QR.</li>'+
+      '<li><b>PSA</b> – nötige Schutzausrüstung, aus der Einstufung abgeleitet.</li>'+
+      '<li><b>Sofort-Hilfe</b> (einklappbar) – Erste Hilfe, Brand/Löschen, Austritt, Lagerung, Entsorgung.</li>'+
+      '<li><b>Stoffstamm</b> – H-/P-Sätze, Lagerklasse (automatisch, überschreibbar), UN-Nummer.</li></ul>')+
+    hbItem('Notfall-Modus',
+      '<p>Der rote <b>Notfall</b>-Knopf oben rechts – immer erreichbar, auch offline:</p><ul>'+
+      '<li>Notrufnummern <b>144</b> (Sanität), <b>145</b> (Tox Info Suisse), <b>118</b> (Feuerwehr), <b>1414</b> (Rega).</li>'+
+      '<li>Stoffbezogene <b>Erste Hilfe</b>, <b>Löschmittel</b> und Verhalten bei <b>Austritt</b>.</li></ul>')+
+    hbItem('Feuerwehr-Einsatzkarte',
+      '<p>Je Lagerort automatisch erstellt: gelagerte Stoffe, Mengen, Lagerklassen, Löschmittel und besondere Gefahren. Als <b>QR am Lagereingang</b> – wer scannt (auch Feuerwehr/Sanität) sieht sofort die Einsatzkarte. Öffnen über die Stoffkarte oder den Lagerort.</p>')+
+    hbItem('Zusammenlagerung',
+      '<p>StoffScan warnt automatisch, wenn Stoffe verschiedener <b>Lagerklassen</b> nicht zusammen gelagert werden dürfen – rot (getrennt lagern) oder gelb (nur bedingt). Details unter <b>Wissen → Zusammenlagern</b>.</p>')+
+    hbItem('Betriebsanweisung & Unterweisung',
+      '<p><b>Betriebsanweisung</b> auf Knopfdruck aus H-/P-Sätzen und GHS – aushängefertig in <b>Deutsch, Französisch, Italienisch</b>.</p>'+
+      '<p><b>Unterweisung:</b> Mitarbeitende bestätigen per <b>Instruktions-QR</b> digital (Name + Datum, keine Unterschriftenliste). Nötig vor dem ersten Einsatz eines neuen Stoffs und erneut bei einer neuen SDB-Version. Jeder Nachweis landet im <b>Audit-Log</b>.</p>')+
+    hbItem('Verwaltung',
+      '<p>Für Admins: <b>Firmen</b>, <b>Lagerorte</b> und <b>Personen/Rollen</b> pflegen. Die <b>Ampel</b> und <b>Handlungsbedarf</b> zeigen, wo etwas offen ist (fehlendes SDB, Menge, Zusammenlagerung). KI-Stoffe hier <b>freigeben</b>. Das <b>Audit-Log</b> protokolliert manipulationssicher.</p>')+
+    hbItem('Dossier & Export',
+      '<p><b>Prüf-Dossier</b> auf einen Klick als PDF: Gefahrstoffliste, SDB-Status, Zusammenlagerung, Instruktionsnachweise und offene Punkte – alles für die Kontrolle. Zusätzlich <b>CSV-Export</b> und <b>Etiketten-Druckbogen</b> (Verwaltung → Export).</p>')+
+    hbItem('Frag StoffScan (KI-Chat)',
+      '<p>Der Funken-Knopf unten rechts: Fragen zu deinen eigenen Gefahrstoffen («Wo steht Aceton?», «Erste Hilfe bei …», «Was darf ich nicht zusammenlagern?»). Antwortet nur aus deinen erfassten Daten – ein Anhaltspunkt, <b>ohne Gewähr</b>; im Zweifel das SDB prüfen.</p>')+
+    hbItem('Offline & als App installieren',
+      '<p>StoffScan lässt sich wie eine App auf den Startbildschirm legen (Teilen → «Zum Home-Bildschirm» bzw. Menü → «App installieren»). <b>Stoffkarten, Betriebsanweisungen und der Notfall-Modus funktionieren auch ohne Internet.</b></p>')+
+    '<div class="wk-card"><h3>Wichtig</h3><p>StoffScan ist eine <b>betriebliche Unterstützung</b>. Es ersetzt weder das Sicherheitsdatenblatt noch eine Gefährdungsbeurteilung oder die Beratung durch eine Fachperson. Massgeblich bleibt immer das SDB des Herstellers.</p></div>';
+}
 function scrWissen(){
   var tab=state.wkTab||'lk';
-  var tabs=[['lk','Lagerklassen'],['pikto','Piktogramme'],['matrix','Zusammenlagern'],['hsaetze','H-Sätze'],['psaetze','P-Sätze'],['praxis','Praxis']];
+  var tabs=[['handbuch','Handbuch'],['lk','Lagerklassen'],['pikto','Piktogramme'],['matrix','Zusammenlagern'],['hsaetze','H-Sätze'],['psaetze','P-Sätze'],['praxis','Praxis']];
   var tabsHtml='<div class="wk-tabs">'+tabs.map(function(t){return '<button class="'+(tab===t[0]?'on':'')+'" data-action="wkTab" data-id="'+t[0]+'">'+t[1]+'</button>';}).join('')+'</div>';
   var body='';
-  if(tab==='lk'){
+  if(tab==='handbuch'){body=handbuchHtml();}
+  else if(tab==='lk'){
     body='<div class="wk-card"><h3>Was ist eine Lagerklasse?</h3>'+
       '<p>In einer <b>Lagerklasse (LK)</b> werden Stoffe mit gleichartigen Gefahrenmerkmalen zusammengefasst – sie erfordern gleichartige Schutzmassnahmen. Die Zuordnung erfolgt über die H-Sätze bzw. GHS-Kennzeichnung nach einem festen Ablaufschema: der Stoff wird der <b>ersten</b> zutreffenden Klasse zugeordnet, auch wenn er weitere Merkmale hat.</p>'+
       '<p class="src">Quelle: Leitfaden «Lagerung gefährlicher Stoffe», 3. Aufl. 2018, Kap. 5 & Beilage 1.</p></div>'+
