@@ -497,6 +497,15 @@
   .hb-body li{font-size:13px;line-height:1.5;color:var(--ink-2);margin:4px 0}
   .hb-body b{color:var(--ink)}
   .hb-tip{font-size:12px!important;color:var(--ink-3)!important;background:var(--surface-2);border-radius:8px;padding:8px 10px;margin-top:6px!important}
+  .law-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+  .law-row{display:flex;align-items:center;gap:11px;text-decoration:none;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:11px 13px;color:var(--ink)}
+  .law-row:active{background:var(--line-2)}
+  .law-abbr{flex:none;min-width:66px;font-weight:800;font-size:12px;color:var(--accent);font-family:var(--font-display)}
+  .law-tx{flex:1;min-width:0}
+  .law-tx b{display:block;font-size:13px;font-weight:600;line-height:1.3}
+  .law-tx small{color:var(--ink-3);font-size:11px;font-family:var(--mono)}
+  .law-ext{flex:none;color:var(--ink-3)}
+  .law-ext svg{width:16px;height:16px}
 
   /* Verwaltung: Hinzufügen + Zeilen mit Löschen */
   .add-btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:48px;border:1.5px dashed var(--accent);background:var(--surface);color:var(--accent);border-radius:9px;font-size:14.5px;font-weight:600;margin-bottom:12px}
@@ -1649,12 +1658,35 @@ function handbuchHtml(){
       '<p>StoffScan lässt sich wie eine App auf den Startbildschirm legen (Teilen → «Zum Home-Bildschirm» bzw. Menü → «App installieren»). <b>Stoffkarten, Betriebsanweisungen und der Notfall-Modus funktionieren auch ohne Internet.</b></p>')+
     '<div class="wk-card"><h3>Wichtig</h3><p>StoffScan ist eine <b>betriebliche Unterstützung</b>. Es ersetzt weder das Sicherheitsdatenblatt noch eine Gefährdungsbeurteilung oder die Beratung durch eine Fachperson. Massgeblich bleibt immer das SDB des Herstellers.</p></div>';
 }
+/* ---------- Gesetze & Vorschriften: offizielle Schweizer Quellen (verifiziert) ---------- */
+function lawRow(abbr,title,sr,url){return '<a class="law-row" href="'+url+'" target="_blank" rel="noopener noreferrer"><span class="law-abbr">'+esc(abbr)+'</span><span class="law-tx"><b>'+esc(title)+'</b>'+(sr?'<small>'+esc(sr)+'</small>':'')+'</span><span class="law-ext">'+ICO.doc+'</span></a>';}
+function gesetzeHtml(){
+  return '<div class="wk-card"><h3>Gesetze &amp; Vorschriften (Schweiz)</h3>'+
+      '<p>Die wichtigsten rechtlichen Grundlagen für den Umgang mit Gefahrstoffen. Die Links führen zu den <b>amtlichen Texten</b> (fedlex.admin.ch) bzw. offiziellen Wegleitungen. Massgeblich ist immer die aktuelle Fassung.</p></div>'+
+    '<div class="wk-card"><h3>Bundesrecht</h3><div class="law-list">'+
+      lawRow('ChemG','Chemikaliengesetz','SR 813.1','https://www.fedlex.admin.ch/eli/cc/2004/724/de')+
+      lawRow('ChemV','Chemikalienverordnung','SR 813.11','https://www.fedlex.admin.ch/eli/cc/2015/366/de')+
+      lawRow('ChemRRV','Chemikalien-Risikoreduktions-Verordnung','SR 814.81','https://www.fedlex.admin.ch/eli/cc/2005/478/de')+
+      lawRow('StFV','Störfallverordnung','SR 814.012','https://www.fedlex.admin.ch/eli/cc/1991/748_748_748/de')+
+      lawRow('VeVA','Verordnung über den Verkehr mit Abfällen','SR 814.610','https://www.fedlex.admin.ch/eli/cc/2005/551/de')+
+      lawRow('VUV','Verordnung über die Verhütung von Unfällen','SR 832.30','https://www.fedlex.admin.ch/eli/cc/1983/1968_1968_1968/de')+
+      lawRow('SDR','Beförderung gefährlicher Güter auf der Strasse','SR 741.621','https://www.fedlex.admin.ch/eli/cc/2002/685/de')+
+    '</div><p class="src">Quelle: Fedlex – Systematische Rechtssammlung des Bundes.</p></div>'+
+    '<div class="wk-card"><h3>Wegleitungen &amp; Praxishilfen</h3><div class="law-list">'+
+      lawRow('SECO','Chemikalien und Arbeit (Sorgfaltspflichten)','seco.admin.ch','https://www.seco.admin.ch/de/chemikalien')+
+      lawRow('Suva','Sicherer Umgang mit Chemikalien (Factsheet)','suva.ch','https://www.suva.ch/de-ch/download/factsheets/sicherer-umgang-mit-chemikalien/standard-variante--33107.D')+
+      lawRow('Suva','Chemikalien im Baugewerbe (Merkblatt)','suva.ch','https://www.suva.ch/de-ch/download/dokument/chemikalien-im-baugewerbe/chemikalien-im-baugewerbe--44013.D')+
+      lawRow('Leitfaden','Lagerung gefährlicher Stoffe (2018)','KVU / Kantone','https://www.kvu.ch/de/themen/stoffe-und-produkte')+
+    '</div><p class="src">Amtliche Wegleitungen von SECO, Suva und den kantonalen Fachstellen (KVU).</p></div>'+
+    '<div class="wk-card"><h3>Hinweis</h3><p>Diese Sammlung dient der Orientierung und erhebt keinen Anspruch auf Vollständigkeit. Rechtsverbindlich sind ausschliesslich die amtlichen Texte in ihrer aktuellen Fassung.</p></div>';
+}
 function scrWissen(){
   var tab=state.wkTab||'lk';
-  var tabs=[['handbuch','Handbuch'],['lk','Lagerklassen'],['pikto','Piktogramme'],['matrix','Zusammenlagern'],['hsaetze','H-Sätze'],['psaetze','P-Sätze'],['praxis','Praxis']];
+  var tabs=[['handbuch','Handbuch'],['gesetze','Gesetze'],['lk','Lagerklassen'],['pikto','Piktogramme'],['matrix','Zusammenlagern'],['hsaetze','H-Sätze'],['psaetze','P-Sätze'],['praxis','Praxis']];
   var tabsHtml='<div class="wk-tabs">'+tabs.map(function(t){return '<button class="'+(tab===t[0]?'on':'')+'" data-action="wkTab" data-id="'+t[0]+'">'+t[1]+'</button>';}).join('')+'</div>';
   var body='';
   if(tab==='handbuch'){body=handbuchHtml();}
+  else if(tab==='gesetze'){body=gesetzeHtml();}
   else if(tab==='lk'){
     body='<div class="wk-card"><h3>Was ist eine Lagerklasse?</h3>'+
       '<p>In einer <b>Lagerklasse (LK)</b> werden Stoffe mit gleichartigen Gefahrenmerkmalen zusammengefasst – sie erfordern gleichartige Schutzmassnahmen. Die Zuordnung erfolgt über die H-Sätze bzw. GHS-Kennzeichnung nach einem festen Ablaufschema: der Stoff wird der <b>ersten</b> zutreffenden Klasse zugeordnet, auch wenn er weitere Merkmale hat.</p>'+
