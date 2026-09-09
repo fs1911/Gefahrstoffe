@@ -474,26 +474,6 @@
   .dash-tile svg{width:18px;height:18px;flex:none;color:var(--accent)}
   .dash-tile b{color:var(--ink)}
   .dash-tile .chg{margin-left:auto;color:var(--accent);font-weight:600;font-size:12.5px}
-  .bst-pill{font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;letter-spacing:.02em;white-space:nowrap}
-  .bst-pill.open{background:rgba(12,107,79,.14);color:var(--accent)}
-  .bst-pill.done{background:var(--surface-2);color:var(--ink-3)}
-  .wiz-done{display:flex;align-items:center;gap:10px;background:rgba(12,107,79,.10);border-radius:10px;padding:11px 13px;margin-bottom:10px}
-  .wiz-done svg{width:22px;height:22px;color:var(--accent);flex:none}
-  .wiz-done b{display:block;font-size:14px}
-  .wiz-done small{color:var(--ink-2);font-size:12px}
-  .wiz-lead{font-size:12.5px;color:var(--ink-2);margin:0 0 10px}
-  .wiz-steps{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
-  .wiz-step{display:flex;align-items:center;gap:11px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:12px 13px;cursor:pointer;font-family:var(--font)}
-  .wiz-step:active{background:var(--surface-2)}
-  .wiz-step.lock{opacity:.6;cursor:not-allowed}
-  .wiz-num{width:26px;height:26px;flex:none;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;font-family:var(--font-display)}
-  .wiz-step.lock .wiz-num{background:var(--ink-3)}
-  .wiz-tx{flex:1;min-width:0}
-  .wiz-tx b{display:block;font-size:13.5px;color:var(--ink)}
-  .wiz-tx small{color:var(--ink-2);font-size:12px}
-  .wiz-cta{flex:none;color:var(--accent);display:flex}
-  .wiz-cta svg{width:18px;height:18px}
-  .wiz-cta.muted{color:var(--ink-3);font-size:11px;font-weight:600}
 
   /* Verwaltung: Hinzufügen + Zeilen mit Löschen */
   .add-btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:48px;border:1.5px dashed var(--accent);background:var(--surface);color:var(--accent);border-radius:9px;font-size:14.5px;font-weight:600;margin-bottom:12px}
@@ -1815,7 +1795,7 @@ async function loadDB(){
   const err=c.error||l.error||s.error||sd.error||i.error||p.error||h.error;
   if(err){toast('Laden: '+err.message,false);}
   DB.companies=(c.data||[]).map(x=>({id:x.id,name:x.name,short:x.short||x.name,group:!!x.is_group,logo:x.logo_url||null}));
-  DB.locations=(l.data||[]).map(x=>({id:x.id,company:x.company_id,name:x.name,bereich:x.bereich||'',typ:x.typ||'Lager',active:x.active!==false,start:x.start_date||'',end:x.end_date||'',bauleiter:x.bauleiter||'',adresse:x.adresse||''}));
+  DB.locations=(l.data||[]).map(x=>({id:x.id,company:x.company_id,name:x.name,bereich:x.bereich||'',typ:x.typ||'Lager'}));
   const sdBySub={}; (sd.data||[]).forEach(d=>{(sdBySub[d.substance_id]=sdBySub[d.substance_id]||[]).push(d);});
   DB.substances=(s.data||[]).map(x=>({id:x.id,name:x.produktname,hersteller:x.hersteller||'unbekannt',signal:x.signalwort||'Achtung',ghs:x.ghs_piktogramme||[],h:x.h_saetze||'–',p:x.p_saetze||'–',un:x.un_nummer||'–',barcode:x.externer_barcode||'',info:x.info_link||'',lk:x.lagerklasse||null,status:x.status||'approved',source:x.source||'manual',sdb:sdbFrom(sdBySub[x.id])}));
   DB.instances=(i.data||[]).map(x=>({id:x.id,sub:x.substance_id,loc:x.storage_location_id,gebinde:x.gebindeart||'Gebinde',groesse:x.gebindegroesse||'–',anzahl:x.anzahl_gebinde||1,menge:x.menge_aktuell,einheit:x.mengeneinheit||'',status:x.status||'Lager',qr:x.internal_qr,last:(x.updated_at||x.created_at||'').slice(0,10)}));
@@ -2115,7 +2095,7 @@ const BA_I18N={
   fDate:'Datum',fSup:'Unterschrift Vorgesetzte(r)',fEmp:'Unterschrift Mitarbeiter(in)',
   note:'Automatisch erstellt mit StoffScan aus H-/P-Sätzen und GHS-Einstufung. Ersetzt keine betriebsspezifische Gefährdungsbeurteilung; vor Aushang prüfen und Arbeitsbereich/PSA konkretisieren.',
   codeNote:'',
-  iTitle:'Instruktion bestätigen',iIntro:'Mit der Bestätigung entsteht ein <b>Instruktionsnachweis</b> für <b>%</b> (Datum + Name). Empfohlen jährlich zu wiederholen.',iName:'Name der instruierten Person',iCheck:'Ich habe die Betriebsanweisung gelesen und verstanden.',iBtn:'Bestätigen',iRead:'Als gelesen bestätigen',digi:'Kenntnisnahme digital: Mitarbeitende bestätigen diese Betriebsanweisung per Instruktions-QR in StoffScan – der Nachweis (Name + Datum) wird elektronisch geführt. Keine Unterschriftenliste nötig.'},
+  iTitle:'Instruktion bestätigen',iIntro:'Mit der Bestätigung entsteht ein <b>Instruktionsnachweis</b> für <b>%</b> (Datum + Name). Erneut bei einer neuen SDB-Version.',iName:'Name der instruierten Person',iCheck:'Ich habe die Betriebsanweisung gelesen und verstanden.',iBtn:'Bestätigen',iRead:'Als gelesen bestätigen',digi:'Kenntnisnahme digital: Mitarbeitende bestätigen diese Betriebsanweisung per Instruktions-QR in StoffScan – der Nachweis (Name + Datum) wird elektronisch geführt. Keine Unterschriftenliste nötig.'},
  fr:{kick:'Instructions de service',sub:'selon le droit des produits chimiques – activités avec des substances dangereuses',betrieb:'Entreprise',bereich:'Zone de travail',allg:'général',stoff:'Substance dangereuse',stand:'État au',
   s1:'1 · Désignation de la substance',s2:'2 · Dangers pour l’homme et l’environnement',s3:'3 · Mesures de protection et règles de comportement',s4:'4 · Conduite en cas de danger',s5:'5 · Premiers secours',s6:'6 · Élimination conforme',
   hersteller:'Fabricant',lk:'Classe de stockage',noData:'Aucune indication enregistrée.',
@@ -2217,6 +2197,7 @@ function openChat(prefill){
   var send='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg>';
   var el=document.createElement('div');el.className='chat-overlay';el.id='chatOverlay';
   el.innerHTML='<div class="chat-panel"><div class="chat-head"><span class="chat-ci"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.9 4.6L18.5 8.5 13.9 10.4 12 15l-1.9-4.6L5.5 8.5l4.6-1.9z"/></svg></span><div class="chat-hd"><b>Frag StoffScan</b><small>Antworten aus deinen Gefahrstoff-Daten</small></div><button class="chat-x" data-action="closeChat" aria-label="Schliessen">×</button></div>'+
+    '<div style="font-size:11px;color:var(--ink-3);padding:8px 16px;border-bottom:1px solid var(--line);display:flex;gap:6px;align-items:flex-start;line-height:1.4">'+ICO.info+'<span>KI-Assistent · Antworten nur aus deinen erfassten Daten. Ohne Gewähr – im Zweifel das Sicherheitsdatenblatt prüfen. Ersetzt keine Gefährdungsbeurteilung.</span></div>'+
     '<div class="chat-msgs" id="chatMsgs"></div>'+
     '<div class="chat-chips" id="chatChips">'+CHAT_SUG.map(function(x){return '<button type="button" class="chat-chip" data-action="chatChip" data-q="'+encodeURIComponent(x)+'">'+chatEsc(x)+'</button>';}).join('')+'</div>'+
     '<form class="chat-input" id="chatForm"><input id="chatInput" placeholder="Frage eingeben…" autocomplete="off"><button class="chat-send" type="submit" aria-label="Senden">'+send+'</button></form></div>';
@@ -2320,7 +2301,7 @@ function dossierPdf(){
     return '<tr><td><b>'+esc(s.name)+'</b></td><td>'+a.length+'</td><td>'+(last?fmtDate(last):'–')+'</td><td class="'+(due?'pr-warn':'')+'">'+(due?'fällig':'aktuell')+'</td></tr>';}).join('');
   var page6=dossierHead('Instruktionsnachweise')+'<div class="pr-title">Instruktionsnachweise ('+instrDueSubs.length+' fällig)</div>'+
     (subs.length?'<table class="pr-tbl"><thead><tr><th style="width:45%">Betriebsanweisung / Stoff</th><th>Instruiert</th><th>Zuletzt</th><th>Status</th></tr></thead><tbody>'+instrRows+'</tbody></table>':'<p class="dos-ok">Keine Stoffe erfasst.</p>')+
-    '<p class="dos-legend">Instruktionen sind jährlich zu wiederholen; nach 12 Monaten gilt ein Eintrag als «fällig».</p>';
+    '<p class="dos-legend">Instruktion vor dem ersten Einsatz eines neuen Gefahrstoffs und erneut bei einer neuen SDB-Version. Nachweise dauerhaft im Audit-Log.</p>';
 
   // 7) Betriebsanweisungen (Checkliste)
   var baRows=subs.map(function(s){return '<tr><td><b>'+esc(s.name)+'</b></td><td>'+esc(s.hersteller||'')+'</td><td>aus H-/P-Sätzen erzeugbar</td><td>☐ aushängen</td></tr>';}).join('');
@@ -2612,7 +2593,7 @@ function lotseItems(){
     if(!lotseInStock(s))return;
     if(s.sdb.status==='fehlt')items.push({p:0,kind:'SDB fehlt',txt:s.name+' – Sicherheitsdatenblatt beschaffen und hinterlegen.',act:'openSub',id:s.id,cta:'Stoffkarte öffnen'});
     else if(s.sdb.status==='alt')items.push({p:1,kind:'SDB veraltet',txt:s.name+' – SDB über 3 Jahre alt, Aktualität prüfen.',act:'openSub',id:s.id,cta:'Stoffkarte öffnen'});
-    if(typeof instrDue==='function'&&instrDue(s.id))items.push({p:1,kind:'Instruktion fällig',txt:s.name+' – Mitarbeitende instruieren (jährlich zu wiederholen).',act:'openSub',id:s.id,cta:'Instruktion'});
+    if(typeof instrDue==='function'&&instrDue(s.id))items.push({p:1,kind:'Instruktion offen',txt:s.name+' – Mitarbeitende vor erstem Einsatz instruieren.',act:'openSub',id:s.id,cta:'Instruktion'});
   });
   DB.instances.forEach(function(i){if(i.menge==null){var s=substance(i.sub),l=location_(i.loc);items.push({p:2,kind:'Menge offen',txt:s.name+' · '+(l?l.name:'–')+' – Menge ergänzen.',act:'openInst',id:i.id,cta:'Bestand öffnen'});}});
   allZlConflicts().forEach(function(e){var red=e.cf.some(function(c){return c.rate==='r';});var l=location_(e.loc);
@@ -3477,7 +3458,10 @@ function baHtml(s){
 function instrFor(subId){return (DB.instructions||[]).filter(function(x){return x.sub===subId;}).slice().sort(function(a,b){return String(b.date).localeCompare(String(a.date));});}
 function instrLast(subId){var a=instrFor(subId);return a.length?a[0].date:null;}
 function daysSince(iso){return Math.floor((Date.now()-new Date(iso+'T00:00:00').getTime())/864e5);}
-function instrDue(subId){var l=instrLast(subId);return !l||daysSince(l)>365;}
+/* Unterweisung: kein Kalender-Zwang. «Fällig» nur, solange ein Gefahrstoff
+   noch NIE instruiert wurde (neues Produkt). Wiederholung erfolgt anlassbezogen
+   (neue SDB-Version), nicht nach starrem 12-Monats-Takt. */
+function instrDue(subId){return !instrLast(subId);}
 function fmtDate(iso){var p=String(iso).split('-');return p.length===3?(p[2]+'.'+p[1]+'.'+p[0]):iso;}
 function qrTextInstr(subId){return baseUrl()+'#instr='+subId;}
 function modalInstrConfirm(subId){var s=substance(subId);if(!s)return;var T=BA_I18N[baLangCur()];
@@ -3495,8 +3479,8 @@ async function saveInstr(subId){var s=substance(subId);if(!s)return;
   addHistory('Instruktion bestätigt',s.name+' · '+n,'');closeModal();await loadDB();toast('Instruktionsnachweis gespeichert.');
   if(state.view==='detail')render();}
 function modalInstrList(subId){var s=substance(subId);if(!s)return;var a=instrFor(subId);
-  var rows=a.length?a.map(function(x){var due=daysSince(x.date)>365;return '<div class="instr-li"><div><b>'+esc(x.name)+'</b><small>'+fmtDate(x.date)+(due?' · über 12 Monate':'')+'</small></div>'+(due?'<span class="instr-badge due">fällig</span>':'<span class="instr-badge ok">aktuell</span>')+'</div>';}).join(''):'<div class="empty" style="padding:16px">'+ICO.info+'<div>Noch keine Instruktion erfasst.</div></div>';
-  openModal('Nachweise · '+esc(s.name),rows+'<div class="notice info" style="margin-top:12px">'+ICO.info+'<div>Instruktionen sind jährlich zu wiederholen. Nach 12 Monaten wird ein Eintrag als <b>fällig</b> markiert.</div></div>'+
+  var rows=a.length?a.map(function(x){return '<div class="instr-li"><div><b>'+esc(x.name)+'</b><small>'+fmtDate(x.date)+'</small></div><span class="instr-badge ok">instruiert</span></div>';}).join(''):'<div class="empty" style="padding:16px">'+ICO.info+'<div>Noch keine Instruktion erfasst.</div></div>';
+  openModal('Nachweise · '+esc(s.name),rows+'<div class="notice info" style="margin-top:12px">'+ICO.info+'<div>Instruktion vor dem ersten Einsatz eines neuen Gefahrstoffs und erneut bei einer neuen SDB-Version. Jeder Nachweis wird dauerhaft im Audit-Log dokumentiert.</div></div>'+
     '<div class="btn-row"><button class="btn secondary" data-action="instrNachweisPdf" data-id="'+subId+'">'+ICO.print+' Nachweis als PDF</button><button class="btn secondary" data-action="instrQr" data-id="'+subId+'">'+ICO.qr+' Instruktions-QR</button></div>'+
     '<button class="btn" data-action="instrConfirm" data-id="'+subId+'" style="width:100%;margin-top:9px">'+ICO.ok+' Bestätigen</button>');}
 function modalInstrQr(subId){var s=substance(subId);if(!s)return;if(!requireApproved(s))return;
@@ -3655,7 +3639,7 @@ function scrAdmin(){
   const allHb=DB.instances.filter(i=>inScope(i)&&instWarn(i));
   const ampRed=DB.locations.filter(function(l){return (!fc||l.company===fc)&&locAmpel(l.id).level==='r';}).length;
   const pruefDue=checksDueCount();
-  const tabs=[['uebersicht','Übersicht',null],['ampel','Ampel',ampRed],['hb','Handlungsbedarf',allHb.length],['stoffe','Stoffstamm',null],['lager','Lagerorte',null],['firmen','Firmen',null],['personen','Personen',null],['pruef','Prüffristen',pruefDue],['verlauf','Audit-Log',null]];
+  const tabs=[['uebersicht','Übersicht',null],['ampel','Ampel',ampRed],['hb','Handlungsbedarf',allHb.length],['stoffe','Stoffstamm',null],['lager','Lagerorte',null],['firmen','Firmen',null],['personen','Personen',null],['verlauf','Audit-Log',null]];
   const tabsHtml='<div class="tabs">'+tabs.map(t=>'<button class="tab '+(tab===t[0]?'active':'')+'" data-action="adminTab" data-id="'+t[0]+'">'+t[1]+(t[2]!=null?'<span class="cnt'+(t[2]?' alert':'')+'">'+t[2]+'</span>':'')+'</button>').join('')+'</div>';
   const fOpts='<option value="">Alle Firmen (Gruppe)</option>'+DB.companies.filter(c=>!c.group).map(c=>'<option value="'+c.id+'" '+(fc===c.id?'selected':'')+'>'+c.name+'</option>').join('');
   const filterBar='<div class="field admin-filter"><label>Firma eingrenzen</label><select data-action="adminCompany">'+fOpts+'</select></div>';
@@ -3685,21 +3669,9 @@ function scrAdmin(){
       return '<button class="arow" data-action="openSub" data-id="'+s.id+'"><span class="ag"><span class="ghs-row">'+s.ghs.map(g=>ghsBadge(g,'mini')).join('')+'</span></span><span class="am"><span class="at">'+s.name+'</span><span class="as">'+s.hersteller+' · '+vk.length+' Vorkommen</span></span><span class="lk-badge" style="background:'+(lkOf(s)?LK_INFO[lkOf(s)].c:'#999')+';margin-right:6px">LK '+(lkOf(s)||'?')+'</span>'+(s.sdb.status==='fehlt'?'<span class="reason d">SDB fehlt</span>':(s.sdb.status==='alt'?'<span class="reason w">SDB alt</span>':''))+'<span class="chev">'+ICO.chev+'</span></button>';}).join('');
   }else if(tab==='lager'){
     const locs=DB.locations.filter(l=>!fc||l.company===fc);
-    const bst=locs.filter(isBaustelle),lag=locs.filter(l=>!isBaustelle(l));
-    const openB=bst.filter(l=>l.active!==false),doneB=bst.filter(l=>l.active===false);
-    const locRow=l=>{const ins=instsAtLoc(l.id);const w=ins.filter(instWarn).length;const b=isBaustelle(l);
-      const bz=bauzeitLabel(l);
-      const meta=b?(firmTag(l.company)+' '+(l.bauleiter?'· '+esc(l.bauleiter)+' ':'')+(bz?'· '+bz+' ':'')+'· '+ins.length+' Stoffe'+(w?' · <b style="color:var(--warn)">'+w+' offen</b>':''))
-                 :(firmTag(l.company)+' '+esc(l.bereich||'')+' · '+ins.length+' Stoffe'+(w?' · <b style="color:var(--warn)">'+w+' offen</b>':''));
-      const badge=b?' <span class="bst-pill '+(l.active===false?'done':'open')+'">'+(l.active===false?'abgeschlossen':'offen')+'</span>':'';
-      const toggle=b?'<button class="edit-btn" data-action="toggleBaustelle" data-id="'+l.id+'" aria-label="'+(l.active===false?'Wieder öffnen':'Abschliessen')+'" title="'+(l.active===false?'Wieder öffnen':'Abschliessen')+'">'+(l.active===false?ICO.plus:ICO.ok)+'</button>':'';
-      return '<div class="mrow amp-'+locAmpel(l.id).level+'"><button class="ag" style="all:unset;flex:1;min-width:0;display:flex;align-items:center;gap:11px;cursor:pointer" data-action="openLoc" data-id="'+l.id+'"><span class="mg">'+(b?ICO.firma:ICO.loc)+'</span><span class="mm"><span class="mt">'+esc(l.name)+badge+'</span><span class="ms">'+meta+'</span></span></button><span class="row-actions">'+toggle+'<button class="edit-btn" data-action="editLocation" data-id="'+l.id+'" aria-label="Bearbeiten">'+ICO.edit+'</button><button class="del-btn" data-action="delLocation" data-id="'+l.id+'" aria-label="Löschen">'+ICO.trash+'</button></span></div>';};
-    body=filterBar+'<button class="add-btn" data-action="addLocation">'+ICO.plus+' Lagerort / Baustelle hinzufügen</button>';
-    if(bst.length){body+='<div class="label-h" style="margin-top:14px">Baustellen <span class="cnt">'+openB.length+' offen</span></div>'+
-      (openB.length?openB.map(locRow).join(''):'<div class="empty" style="padding:16px">'+ICO.info+'<div>Keine offenen Baustellen.</div></div>')+
-      (doneB.length?'<div class="label-h" style="margin-top:10px;opacity:.65">Abgeschlossen</div>'+doneB.map(locRow).join(''):'');}
-    body+='<div class="label-h" style="margin-top:14px">Lager &amp; Standorte</div>'+
-      (lag.length?lag.map(locRow).join(''):'<div class="empty">'+ICO.loc+'<div>Keine Lagerorte erfasst.</div></div>');
+    body=filterBar+'<button class="add-btn" data-action="addLocation">'+ICO.plus+' Lagerort hinzufügen</button>'+
+      (locs.length?locs.map(l=>{const ins=instsAtLoc(l.id);const w=ins.filter(instWarn).length;
+      return '<div class="mrow amp-'+locAmpel(l.id).level+'"><button class="ag" style="all:unset;flex:1;min-width:0;display:flex;align-items:center;gap:11px;cursor:pointer" data-action="openLoc" data-id="'+l.id+'"><span class="mg">'+ICO.loc+'</span><span class="mm"><span class="mt">'+l.name+'</span><span class="ms">'+firmTag(l.company)+' '+l.bereich+' · '+ins.length+' Stoffe'+(w?' · <b style="color:var(--warn)">'+w+' offen</b>':'')+'</span></span></button><span class="row-actions"><button class="edit-btn" data-action="editLocation" data-id="'+l.id+'" aria-label="Bearbeiten">'+ICO.edit+'</button><button class="del-btn" data-action="delLocation" data-id="'+l.id+'" aria-label="Löschen">'+ICO.trash+'</button></span></div>';}).join(''):'<div class="empty">'+ICO.loc+'<div>Keine Lagerorte.</div></div>');
   }else if(tab==='firmen'){
     body='<button class="add-btn" data-action="addCompany">'+ICO.plus+' Firma hinzufügen</button>'+
       DB.companies.filter(c=>!c.group).map(c=>{const n=DB.instances.filter(i=>location_(i.loc).company===c.id).length;const lc=DB.locations.filter(l=>l.company===c.id).length;
@@ -3832,7 +3804,6 @@ function modalSwitchUser(){
   const u=curUser();const em=(AUTH.user&&AUTH.user.email)||'';
   openModal('Konto','<div class="notice info" style="margin-bottom:14px">'+ICO.user+'<div>Angemeldet als <b>'+u.name+'</b><br>'+em+' · Rolle: '+u.role+'</div></div>'+
     '<button class="btn secondary" data-action="pwChange" style="width:100%;margin-bottom:10px">'+ICO.user+' Passwort ändern</button>'+
-    '<button class="btn secondary" data-action="openAbo" style="width:100%;margin-bottom:10px">'+ICO.card+' Abo &amp; Plan</button>'+
     '<div class="btn-row" style="margin-top:0"><button class="btn ghost" data-action="closeModal">Schliessen</button><button class="btn danger" data-action="logout">'+ICO.user+' Abmelden</button></div>'+
     '<div style="margin-top:16px">'+LEGAL_HTML+'</div>');
 }
@@ -3873,32 +3844,15 @@ function modalAddCompany(){
     '<div class="field"><label>Kurzname (für Tags)</label><input name="short" placeholder="z. B. Muster"></div>'+
     '<button type="button" class="btn" data-action="saveCompany">'+ICO.plus+' Firma speichern</button></form>');
 }
-/* ---------- Baustellenmodus: Typ-Auswahl + baustellenspezifische Felder ---------- */
-function isBaustelle(l){return !!l&&l.typ==='Baustelle';}
-function bauzeitLabel(l){if(!l)return '';var a=l.start?fmtDate(l.start):'',b=l.end?fmtDate(l.end):'';if(a&&b)return a+'–'+b;if(a)return 'ab '+a;if(b)return 'bis '+b;return '';}
-async function toggleBaustelleDo(id){var l=location_(id);if(!l)return;var nv=(l.active===false);var r=await sbc.from('storage_locations').update({active:nv}).eq('id',id);if(r&&r.error){toast(r.error.message,false);return;}addHistory(nv?'Baustelle geöffnet':'Baustelle abgeschlossen',l.name,'');await loadDB();toast(nv?'Baustelle wieder geöffnet':'Baustelle abgeschlossen');render();}
-function locTypOpts(sel){return ['Werkhof','Baustelle','Magazin','Werkstatt','Containerlager','Zwischenlager','Sonderabfall'].map(t=>'<option'+(t===sel?' selected':'')+'>'+t+'</option>').join('');}
-function baustelleFieldsHtml(l){l=l||{};var on=isBaustelle(l);
-  return '<div id="bstFields"'+(on?'':' hidden')+'>'+
-    '<div class="notice info" style="margin:2px 0 10px">'+ICO.info+'<div>Baustellen erhalten wie Lagerorte QR-Code, Feuerwehr-Einsatzplan und Bestände. Nach Bauende «abschliessen» – die Daten bleiben fürs Audit erhalten.</div></div>'+
-    '<div class="field"><label>Bauleiter / verantwortlich vor Ort</label><input name="bauleiter" value="'+esc(l.bauleiter||'')+'" placeholder="z. B. M. Meier"></div>'+
-    '<div class="field"><label>Adresse / Ort</label><input name="adresse" value="'+esc(l.adresse||'')+'" placeholder="z. B. Bahnhofstrasse 10, 4500 Solothurn"></div>'+
-    '<div style="display:flex;gap:10px">'+
-      '<div class="field" style="flex:1"><label>Bauzeit von</label><input type="date" name="start_date" value="'+esc(l.start||'')+'"></div>'+
-      '<div class="field" style="flex:1"><label>Bauzeit bis</label><input type="date" name="end_date" value="'+esc(l.end||'')+'"></div>'+
-    '</div>'+
-    '<div class="field"><label>Status</label><select name="active"><option value="1"'+(l.active!==false?' selected':'')+'>offen</option><option value="0"'+(l.active===false?' selected':'')+'>abgeschlossen</option></select></div>'+
-  '</div>';}
-window.locTypChange=function(sel){var b=document.getElementById('bstFields');if(b)b.hidden=(sel.value!=='Baustelle');};
 function modalAddLocation(){
   const fOpts=DB.companies.filter(c=>!c.group).map(c=>'<option value="'+c.id+'"'+(c.id===state.adminCompany?' selected':'')+'>'+c.name+'</option>').join('');
-  openModal('Lagerort / Baustelle hinzufügen','<form id="mForm">'+
+  const tOpts=['Werkhof','Baustelle','Magazin','Werkstatt','Containerlager','Zwischenlager','Sonderabfall'].map(t=>'<option>'+t+'</option>').join('');
+  openModal('Lagerort hinzufügen','<form id="mForm">'+
     '<div class="field"><label>Firma *</label><select name="company">'+fOpts+'</select></div>'+
     '<div class="field"><label>Standort / Name *</label><input name="name" placeholder="z. B. Werkhof Sissach"></div>'+
     '<div class="field"><label>Bereich *</label><input name="bereich" placeholder="z. B. Gefahrstoffschrank B"></div>'+
-    '<div class="field"><label>Typ</label><select name="typ" onchange="locTypChange(this)">'+locTypOpts('Werkhof')+'</select></div>'+
-    baustelleFieldsHtml({})+
-    '<button type="button" class="btn" data-action="saveLocation">'+ICO.plus+' Speichern</button></form>');
+    '<div class="field"><label>Typ</label><select name="typ">'+tOpts+'</select></div>'+
+    '<button type="button" class="btn" data-action="saveLocation">'+ICO.plus+' Lagerort speichern</button></form>');
 }
 function confirmModal(title,text,actionId,id){
   openModal(title,'<div class="notice danger" style="margin-bottom:14px">'+ICO.warn+'<div>'+text+'</div></div>'+
@@ -4013,7 +3967,6 @@ document.addEventListener('click',e=>{
     case 'addLocation':modalAddLocation();break;
     case 'editCompany':modalEditCompany(id);break;
     case 'editLocation':modalEditLocation(id);break;
-    case 'toggleBaustelle':toggleBaustelleDo(id);break;
     case 'editUser':modalEditUser(id);break;
     case 'saveUser':saveUser();break;
     case 'saveCompany':saveCompany(id);break;
@@ -4072,16 +4025,10 @@ async function saveCompany(id){const f=document.getElementById('mForm');const na
   closeModal();await loadDB();toast(id?'Firma gespeichert':'Firma hinzugefügt');render();}
 async function saveLocation(id){const f=document.getElementById('mForm');const name=f.name.value.trim(),ber=f.bereich.value.trim();
   if(!name){toast('Name fehlt.',false);f.name.focus();return;}if(!ber){toast('Bereich fehlt.',false);f.bereich.focus();return;}
-  const typ=f.typ.value;const bau=typ==='Baustelle';
-  const vals={company_id:f.company.value,name,bereich:ber,typ,
-    active:bau?(f.active&&f.active.value==='1'):true,
-    bauleiter:bau&&f.bauleiter?(f.bauleiter.value.trim()||null):null,
-    adresse:bau&&f.adresse?(f.adresse.value.trim()||null):null,
-    start_date:bau&&f.start_date&&f.start_date.value?f.start_date.value:null,
-    end_date:bau&&f.end_date&&f.end_date.value?f.end_date.value:null};
+  const vals={company_id:f.company.value,name,bereich:ber,typ:f.typ.value};
   const {error}=id?await sbc.from('storage_locations').update(vals).eq('id',id):await sbc.from('storage_locations').insert(Object.assign({organization_id:orgId()},vals));
   if(error){toast(error.message,false);return;}
-  closeModal();await loadDB();toast(id?(bau?'Baustelle gespeichert':'Lagerort gespeichert'):(bau?'Baustelle hinzugefügt':'Lagerort hinzugefügt'));render();}
+  closeModal();await loadDB();toast(id?'Lagerort gespeichert':'Lagerort hinzugefügt');render();}
 async function saveProfile(id){const f=document.getElementById('mForm');const role=ROLE_UI2DB[f.role.value]||'mitarbeitend';
   const {error}=await sbc.from('profiles').update({role,company_id:f.company.value||null}).eq('id',id);
   if(error){toast(error.message,false);return;}
@@ -4099,12 +4046,12 @@ async function storeCompanyLogo(id,data){const {error}=await sbc.rpc('set_compan
 async function rmCompanyLogo(id){const {error}=await sbc.rpc('set_company_logo',{p_company_id:id,p_logo:null});if(error){toast(error.message,false);return;}var c=company(id);if(c)c.logo=null;toast('Logo entfernt');modalEditCompany(id);}
 function modalEditLocation(id){const l=location_(id);if(!l)return;
   const fOpts=DB.companies.filter(c=>!c.group).map(c=>'<option value="'+c.id+'"'+(c.id===l.company?' selected':'')+'>'+esc(c.name)+'</option>').join('');
-  openModal((isBaustelle(l)?'Baustelle':'Lagerort')+' bearbeiten','<form id="mForm">'+
+  const tOpts=['Werkhof','Baustelle','Magazin','Werkstatt','Containerlager','Zwischenlager','Sonderabfall'].map(t=>'<option'+(t===l.typ?' selected':'')+'>'+t+'</option>').join('');
+  openModal('Lagerort bearbeiten','<form id="mForm">'+
     '<div class="field"><label>Firma *</label><select name="company">'+fOpts+'</select></div>'+
     '<div class="field"><label>Standort / Name *</label><input name="name" value="'+esc(l.name)+'"></div>'+
     '<div class="field"><label>Bereich *</label><input name="bereich" value="'+esc(l.bereich||'')+'"></div>'+
-    '<div class="field"><label>Typ</label><select name="typ" onchange="locTypChange(this)">'+locTypOpts(l.typ)+'</select></div>'+
-    baustelleFieldsHtml(l)+
+    '<div class="field"><label>Typ</label><select name="typ">'+tOpts+'</select></div>'+
     '<div class="btn-row" style="margin-top:0"><button type="button" class="btn ghost" data-action="closeModal">Abbrechen</button><button type="button" class="btn" data-action="saveLocation" data-id="'+id+'">Speichern</button></div></form>');}
 function modalEditUser(id){const u=DB.users.find(x=>x.id===id);if(!u)return;
   const fOpts=DB.companies.map(c=>'<option value="'+c.id+'"'+(c.id===u.company?' selected':'')+'>'+esc(c.name)+'</option>').join('');
@@ -4118,29 +4065,6 @@ async function delCompanyDo(id){const {error}=await sbc.from('companies').delete
 async function delLocationDo(id){const {error}=await sbc.from('storage_locations').delete().eq('id',id);if(state.activeLoc===id)state.activeLoc=null;closeModal();if(error){toast(error.message,false);return;}await loadDB();toast('Lagerort gelöscht');render();}
 
 function defaultCompanyId(){const g=DB.companies.find(c=>c.group);return (g||DB.companies[0]||{}).id;}
-/* ---------- Geführter Erfassungs-Assistent (Phase 1) ----------
-   Verkettet nach dem Erfassen die vorhandenen Bausteine zu einem Ablauf:
-   Gefährdungsbeurteilung (STOP, je Tätigkeit) → Betriebsanweisung →
-   Unterweisung vor Einsatz. Betriebsanweisung/Unterweisung erst nach
-   fachlicher Freigabe (needs_review-Stoffe bleiben gesperrt). */
-function modalErfWizard(subId,instId){var s=substance(subId);if(!s){if(instId)modalQr(instId);return;}
-  var inst=instId?instance(instId):null;var loc=inst?location_(inst.loc):(state.activeLoc?location_(state.activeLoc):null);
-  var ort=loc?((isBaustelle(loc)?'Baustelle · ':'')+esc(loc.name)+(loc.bereich?' · '+esc(loc.bereich):'')):'ohne Lagerort';
-  var appr=isApproved(s);
-  function step(n,title,sub,action,enabled){var lock=!enabled;
-    return '<button class="wiz-step'+(lock?' lock':'')+'"'+(lock?' disabled':' data-action="'+action+'" data-id="'+subId+'"')+'>'+
-      '<span class="wiz-num">'+n+'</span><span class="wiz-tx"><b>'+title+'</b><small>'+sub+'</small></span>'+
-      '<span class="wiz-cta'+(lock?' muted':'')+'">'+(lock?'nach Freigabe':ICO.chev)+'</span></button>';}
-  openModal('Sicher einsetzen',
-    '<div class="wiz-done">'+ICO.ok+'<div><b>'+esc(s.name)+' erfasst · QR erstellt</b><small>'+ort+'</small></div></div>'+
-    '<p class="wiz-lead">Empfohlene nächste Schritte für den sicheren Einsatz – der wichtigste zuerst:</p>'+
-    (appr?'':'<div class="notice warnb" style="margin:0 0 12px">'+ICO.warn+'<div>Dieser Stoff wartet auf die fachliche <b>Freigabe</b>. Betriebsanweisung und Unterweisung werden erst danach freigeschaltet.</div></div>')+
-    '<div class="wiz-steps">'+
-      step(1,'Gefährdungsbeurteilung','Tätigkeit wählen → STOP-Massnahmen &amp; PSA','gbOpen',true)+
-      step(2,'Betriebsanweisung','Aushängefertig aus H-/P-Sätzen &amp; GHS','genBA',appr)+
-      step(3,'Unterweisung vor Einsatz','Mitarbeitende instruieren &amp; digital bestätigen','instrConfirm',appr)+
-    '</div>'+
-    '<div class="btn-row" style="margin-top:4px">'+(instId?'<button class="btn ghost" data-action="showQr" data-id="'+instId+'">'+ICO.qr+' QR anzeigen</button>':'')+'<button class="btn secondary" data-action="closeModal">Später</button></div>');}
 async function saveErf(){const f=document.getElementById('erfForm');const name=f.name.value.trim();if(!name){toast('Produktname fehlt.',false);f.name.focus();return;}
   const mr=f.menge.value.trim();if(!mr){toast('Menge fehlt.',false);f.menge.focus();return;}
   const haz=[...f.querySelectorAll('.chip.on[data-haz]')].map(c=>c.dataset.haz);const sdb=f.sdb.value.trim();const sdbfile=(state.aiFile)||(f.sdbfile&&f.sdbfile.files&&f.sdbfile.files[0]);const bc=(f.barcode&&f.barcode.value.trim())||'';const sig=state._sig||'Achtung';
@@ -4161,7 +4085,7 @@ async function saveErf(){const f=document.getElementById('erfForm');const name=f
     if(e2){toast('Bestand: '+e2.message,false);return;}
     addHistory('Bestand erfasst',name+(state.activeLoc?' · '+location_(state.activeLoc).name:''),state.activeLoc?location_(state.activeLoc).company:'');
     state._sig=null;state.scanPrefill=null;state.aiExtract=null;state.aiFile=null;
-    await loadDB();toast('Bestand erfasst · QR erstellt');goTo('detail',{sub:sub.id,inst:inst.id,reset:true,nav:'start'});setTimeout(()=>modalErfWizard(sub.id,inst.id),350);
+    await loadDB();toast('Bestand erfasst · QR erstellt');goTo('detail',{sub:sub.id,inst:inst.id,reset:true,nav:'start'});setTimeout(()=>modalQr(inst.id),350);
   }catch(e){toast('Fehler: '+e.message,false);}}
 
 async function saveLkDo(id){
@@ -4255,7 +4179,7 @@ function instrNachweisPdf(subId){var s=substance(subId);if(!s)return;var a=instr
     '<div class="pr-title">Instruktionsnachweis · '+esc(s.name)+'</div>'+
     '<p style="margin:-4px 0 12px;font-size:11px;color:#333">Betriebsanweisung für <b>'+esc(s.name)+'</b>'+(s.hersteller?' · '+esc(s.hersteller):'')+'. Kenntnisnahme durch die instruierten Personen:</p>'+
     '<table class="pr-tbl"><thead><tr><th style="width:55%">Name</th><th>Instruiert am</th><th>Status</th></tr></thead><tbody>'+rows+'</tbody></table>'+
-    '<p style="margin-top:14px;font-size:10px;color:#555">Digital erfasste Kenntnisnahme der Betriebsanweisung in StoffScan. Instruktionen sind jährlich zu wiederholen; nach 12 Monaten gilt ein Eintrag als «fällig».</p>'+prFooter();
+    '<p style="margin-top:14px;font-size:10px;color:#555">Digital erfasste Kenntnisnahme der Betriebsanweisung in StoffScan. Instruktion vor dem ersten Einsatz und erneut bei einer neuen SDB-Version.</p>'+prFooter();
   doPrint(html);}
 function scopeName(){const fc=expScope();return fc?(company(fc)||{}).name:'ganze Gruppe';}
 function sdbText(s){if(s.sdb.status==='fehlt')return 'SDB fehlt';if(s.sdb.status==='alt')return 'SDB '+(s.sdb.rev||'')+' (prüfen)';return 'SDB '+(s.sdb.rev||'ok');}
