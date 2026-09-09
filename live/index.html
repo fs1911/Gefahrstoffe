@@ -506,6 +506,7 @@
   .law-tx small{color:var(--ink-3);font-size:11px;font-family:var(--mono)}
   .law-ext{flex:none;color:var(--ink-3)}
   .law-ext svg{width:16px;height:16px}
+  .act-primary.drag-on{outline:3px dashed rgba(255,255,255,.75);outline-offset:-5px;filter:brightness(1.05)}
 
   /* Verwaltung: Hinzufügen + Zeilen mit Löschen */
   .add-btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:48px;border:1.5px dashed var(--accent);background:var(--surface);color:var(--accent);border-radius:9px;font-size:14.5px;font-weight:600;margin-bottom:12px}
@@ -3842,7 +3843,7 @@ function scrErfassung(){
   const aiSum=pf.ai?'<div class="notice ok">'+ICO.ok+'<div><b>KI hat aus dem SDB erkannt:</b><br>'+esc(pf.ai.h||'–')+' · '+esc(pf.ai.un||'–')+(pf.ai.lk?' · Lagerklasse '+esc(pf.ai.lk):'')+'<br><small>Bitte kurz prüfen und speichern.</small></div></div>':'';
   const catSum=pf.catalog?'<div class="notice ok">'+ICO.ok+'<div><b>Aus dem Schweizer Katalog übernommen.</b> Ein anderer Betrieb hat dieses Produkt bereits erfasst:<br>'+esc(pf.catalog.hersteller||'–')+' · '+esc(pf.catalog.h||'–')+' · '+esc(pf.catalog.un||'–')+(pf.catalog.lk?' · Lagerklasse '+esc(pf.catalog.lk):'')+'<br><small>Von '+(pf.catalog.n||1)+' Betrieben bestätigt · bitte kurz prüfen und speichern.</small></div></div>':'';
   const aiBtn='<input type="file" id="aiFile" accept="application/pdf,image/*" style="display:none" onchange="aiAnalyze(this.files&&this.files[0])">'+
-    '<button type="button" class="act-primary" onclick="document.getElementById(\'aiFile\').click()" style="margin-bottom:14px"><span class="ico">'+ICO.doc+'</span><span><b>SDB analysieren (KI)</b><span style="display:block;font-weight:500;opacity:.92;font-size:13px">PDF/Foto hochladen – Felder füllen sich selbst</span></span></button>';
+    '<button type="button" class="act-primary" onclick="document.getElementById(\'aiFile\').click()" ondragover="dropDragOver(event,this)" ondragleave="dropDragLeave(this)" ondrop="dropAi(event,this)" style="margin-bottom:14px"><span class="ico">'+ICO.doc+'</span><span><b>SDB analysieren (KI)</b><span style="display:block;font-weight:500;opacity:.92;font-size:13px">PDF/Foto hochladen oder hierher ziehen – Felder füllen sich selbst</span></span></button>';
   const aiFileNote=state.aiFile?'<div class="notice ok">'+ICO.ok+'<div><b>SDB angehängt:</b> '+esc(state.aiFile.name||'Datei')+'<br><small>Wird beim Speichern automatisch mitgesichert – kein erneutes Hochladen nötig. <a href="#" data-action="clearAiFile" style="color:var(--accent);font-weight:600">Entfernen</a></small></div></div>':'';
   const sigAon=pf.sig==='Gefahr'?'':' on',sigGon=pf.sig==='Gefahr'?' on':'';
   return '<div class="view"><h2 class="title">Stoff erfassen</h2><p class="sub">Nur das Nötigste. Lagerort: <b>'+ctx+'</b></p>'+
@@ -3862,6 +3863,14 @@ function scrErfassung(){
 }
 window.setSig=function(v){state._sig=v;document.getElementById('sigA').classList.toggle('on',v==='Achtung');document.getElementById('sigG').classList.toggle('on',v==='Gefahr');};
 function fileToB64(file){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){var s=String(r.result||'');res(s.slice(s.indexOf(',')+1));};r.onerror=rej;r.readAsDataURL(file);});}
+/* ---------- Drag & Drop für den SDB/KI-Upload ---------- */
+window.dropDragOver=function(ev,el){ev.preventDefault();ev.stopPropagation();if(el)el.classList.add('drag-on');};
+window.dropDragLeave=function(el){if(el)el.classList.remove('drag-on');};
+window.dropAi=function(ev,el){ev.preventDefault();ev.stopPropagation();if(el)el.classList.remove('drag-on');
+  var f=ev.dataTransfer&&ev.dataTransfer.files&&ev.dataTransfer.files[0];if(!f)return;
+  var ok=/pdf/i.test(f.type)||/^image\//i.test(f.type)||/\.(pdf|png|jpe?g|webp|heic|heif)$/i.test(f.name||'');
+  if(!ok){toast('Bitte ein PDF oder Bild ablegen.',false);return;}
+  aiAnalyze(f);};
 window.aiAnalyze=async function(file){
   if(!file)return;
   state.aiFile=file;
