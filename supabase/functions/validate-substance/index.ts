@@ -14,7 +14,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
-const ALLOWED = (Deno.env.get("ALLOWED_ORIGINS") ?? "https://gefahrstoffe.filip-subara.workers.dev,https://gefahrstoff.netlify.app")
+const ALLOWED = (Deno.env.get("ALLOWED_ORIGINS") ?? "https://gefahrstoffe-neu.filip-subara.workers.dev,https://gefahrstoffe.filip-subara.workers.dev,https://gefahrstoff.netlify.app")
   .split(",").map((s) => s.trim()).filter(Boolean);
 
 function corsFor(req: Request) {

@@ -25,7 +25,7 @@ const MODEL = "claude-sonnet-5";
 const RL_LIMIT = Number(Deno.env.get("RL_LIMIT_SDB") ?? "20");
 const RL_WINDOW = Number(Deno.env.get("RL_WINDOW_SECONDS") ?? "60");
 
-const ALLOWED = (Deno.env.get("PRIMARY_ORIGIN") ?? "https://gefahrstoffe.filip-subara.workers.dev,https://gefahrstoff.netlify.app")
+const ALLOWED = (Deno.env.get("PRIMARY_ORIGIN") ?? "https://gefahrstoffe-neu.filip-subara.workers.dev,https://gefahrstoffe.filip-subara.workers.dev,https://gefahrstoff.netlify.app")
   .split(",").map((s) => s.trim()).filter(Boolean);
 function corsFor(req: Request) {
   const o = req.headers.get("Origin") ?? "";
