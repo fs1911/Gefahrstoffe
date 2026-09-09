@@ -477,6 +477,11 @@
   .userline b{color:var(--ink)}
   .userline .chg{margin-left:auto;color:var(--accent);font-weight:600;font-size:12.5px}
   @media(min-width:980px){.userline{display:none}}
+  /* Dashboard-Kachel: wie userline, aber IMMER sichtbar (auch auf Desktop >=980px). */
+  .dash-tile{display:flex;align-items:center;gap:9px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:11px 13px;margin-bottom:14px;font-size:13px;color:var(--ink-2);cursor:pointer}
+  .dash-tile svg{width:18px;height:18px;flex:none;color:var(--accent)}
+  .dash-tile b{color:var(--ink)}
+  .dash-tile .chg{margin-left:auto;color:var(--accent);font-weight:600;font-size:12.5px}
 
   /* Verwaltung: Hinzufügen + Zeilen mit Löschen */
   .add-btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:48px;border:1.5px dashed var(--accent);background:var(--surface);color:var(--accent);border-radius:9px;font-size:14.5px;font-weight:600;margin-bottom:12px}
@@ -1933,7 +1938,7 @@ function scrStart(){
       '<button class="kpi warnb" data-action="goAdminMenge"><span class="n">'+incompl.length+'</span><span class="t">'+ICO.warn+' unvollständig</span></button>'+
       '<button class="kpi" data-action="goAdminLager"><span class="n">'+DB.locations.length+'</span><span class="t">'+ICO.loc+' Lagerorte</span></button>'+
     '</div>'+
-    '<button class="userline" data-action="goAdminLager" style="margin-top:14px">'+ICO.doc+'<span><b>Feuerwehr-Einsatzpläne</b> · je Lagerort, für Einsatzkräfte</span><span class="chg">öffnen</span></button>'+
+    '<button class="dash-tile" data-action="goAdminLager" style="margin-top:14px">'+ICO.doc+'<span><b>Feuerwehr-Einsatzpläne</b> · je Lagerort, für Einsatzkräfte</span><span class="chg">öffnen</span></button>'+
     '<div class="panel" style="margin-top:14px"><div class="panel-h"><span>Letzte Änderungen</span><a data-action="goAdminVerlauf">Verlauf</a></div>'+
       '<div class="panel-body"><div class="timeline">'+recent+'</div></div></div>'+
     '<button class="userline" data-action="nav" data-v="wissen" data-nav="wissen" style="margin-top:14px">'+ICO.doc+'<span>Wissen · Lagerklassen, Zusammenlagerung &amp; H-Sätze</span><span class="chg">öffnen</span></button>'+
