@@ -2737,7 +2737,7 @@ function lotseCard(){
   if(!top)return '<div class="lotse-card done">'+head+'<div class="lotse-ok">'+ICO.ok+'<span>Kein Handlungsbedarf – dein Kataster ist prüfbereit.</span></div></div>';
   var next='<div class="lotse-next"><div class="ln-head"><span class="ln-badge p'+top.p+'">'+top.kind+'</span><span class="ln-step">Nächster Schritt</span></div>'+
     '<div class="ln-txt">'+esc(top.txt)+'</div>'+
-    '<button class="btn" data-action="'+top.act+'" data-id="'+top.id+'">'+top.cta+' →</button></div>';
+    '<button class="btn" data-action="'+top.act+'" data-id="'+top.id+'">'+top.cta+'</button></div>';
   var rest=items.slice(1,5).map(function(it){return '<button class="lotse-li" data-action="'+it.act+'" data-id="'+it.id+'"><span class="ll-badge p'+it.p+'">'+it.kind+'</span><span class="ll-tx">'+esc(it.txt)+'</span><span class="chev">'+ICO.chev+'</span></button>';}).join('');
   return '<div class="lotse-card">'+head+next+(rest?'<div class="lotse-list">'+rest+'</div>':'')+(items.length>5?'<a class="lotse-all" data-action="goAdminHB">Alle '+items.length+' Punkte ansehen '+ICO.chev+'</a>':'')+'</div>';
 }
