@@ -514,6 +514,13 @@
   .law-tx small{color:var(--ink-3);font-size:11px;font-family:var(--mono)}
   .law-ext{flex:none;color:var(--ink-3)}
   .law-ext svg{width:16px;height:16px}
+  .zl-def{display:flex;gap:10px;align-items:flex-start;margin:11px 0}
+  .zl-def .zl-dot{flex:none;width:14px;height:14px;border-radius:50%;margin-top:3px}
+  .zl-dot.g{background:#3a9b4e}.zl-dot.y{background:#f2c200}.zl-dot.r{background:#d5342b}
+  .zl-def b{font-size:13.5px;color:var(--ink)}
+  .zl-def p{font-size:12.5px;line-height:1.45;color:var(--ink-2);margin:3px 0}
+  .zl-def ul{margin:4px 0;padding-left:18px}
+  .zl-def li{font-size:12.5px;line-height:1.45;color:var(--ink-2);margin:4px 0}
 
   /* Verwaltung: Hinzufügen + Zeilen mit Löschen */
   .add-btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:48px;border:1.5px dashed var(--accent);background:var(--surface);color:var(--accent);border-radius:9px;font-size:14.5px;font-weight:600;margin-bottom:12px}
@@ -1687,7 +1694,17 @@ function scrWissen(){
     body='<div class="wk-card"><h3>Zusammenlagerung von gefährlichen Stoffen</h3>'+
       '<p>Die Matrix zeigt, welche Lagerklassen zusammen gelagert werden dürfen. Grundsatz: Die Zusammenlagerung von Stoffen, die <b>in gefährlicher Weise miteinander reagieren</b> können, ist nicht erlaubt. Schutzmassnahmen richten sich immer nach dem gefährlichsten Stoff.</p>'+
       zlMatrixHtml()+
-      '<p class="src" style="margin-top:12px">Quelle: Leitfaden «Lagerung gefährlicher Stoffe», 3. Aufl. 2018, Beilage 2 («Generelle Zusammenlagerung»). Gefährliche Reaktionen können auch innerhalb derselben Lagerklasse auftreten – H-Sätze und SDB beachten.</p></div>';
+      '<p class="src" style="margin-top:12px">Quelle: Leitfaden «Lagerung gefährlicher Stoffe», 3. Aufl. 2018, Beilage 2 («Generelle Zusammenlagerung»). Gefährliche Reaktionen können auch innerhalb derselben Lagerklasse auftreten – H-Sätze und SDB beachten.</p></div>'+
+      '<div class="wk-card"><h3>Was bedeutet das Ergebnis konkret?</h3>'+
+        '<div class="zl-def"><span class="zl-dot g"></span><div><b>Erlaubt – Zusammenlagerung</b><p>Die Stoffe dürfen zusammen gelagert werden, solange keine Gefährdungserhöhung entsteht (z. B. gleiche Löschmittel, keine gefährliche Reaktion).</p></div></div>'+
+        '<div class="zl-def"><span class="zl-dot y"></span><div><b>Nur bedingt</b><p>Im Einzelfall zulässig. H-Sätze und Sicherheitsdatenblatt (Abschnitte 7 und 10) prüfen, im Zweifel getrennt lagern.</p></div></div>'+
+        '<div class="zl-def"><span class="zl-dot r"></span><div><b>Getrennt lagern (Getrenntlagerung)</b><p>Die Stoffe dürfen im <b>gleichen Raum / Brandabschnitt</b> bleiben, müssen aber voneinander <b>getrennt</b> werden – durch mindestens eine dieser Massnahmen:</p><ul>'+
+          '<li><b>Ausreichender Abstand</b> zwischen den Stoffen (kein fix vorgeschriebenes Mass – so gross, dass sie sich im Ereignisfall nicht gegenseitig gefährden; Menge und Stoff bestimmen den nötigen Abstand).</li>'+
+          '<li><b>Barriere aus nicht brennbarem Material</b> – z. B. eine Wand, ein Schrank aus nicht brennbarem Material, oder nicht brennbare Güter (LK 12/13) dazwischen.</li>'+
+          '<li><b>Getrennte Auffangwannen</b>, damit auslaufende Stoffe sich nicht vermischen.</li>'+
+        '</ul><p>Praktisch heisst das: zwei verschiedene Regale mit genügend Abstand oder einer nicht brennbaren Trennung genügen oft – ein eigener Brandabschnitt ist dafür <b>nicht</b> nötig.</p></div></div>'+
+        '<div class="zl-def"><span class="zl-dot r"></span><div><b>Separatlagerung (verschärft)</b><p>Reicht die Getrenntlagerung nicht, braucht es einen <b>eigenen Lagerabschnitt mit mindestens 90 Minuten Feuerwiderstand</b>. Darin nur Stoffe derselben Lagerklasse. Massgeblich ist das SDB bzw. der Leitfaden.</p></div></div>'+
+        '<p class="src">Begriffe nach Leitfaden «Lagerung gefährlicher Stoffe» 2018 bzw. TRGS 510. Der konkrete Abstand bzw. die nötige Massnahme ergibt sich aus Stoff, Menge und Sicherheitsdatenblatt.</p></div>';
   }else if(tab==='pikto'){
     body='<div class="wk-card"><h3>Gefahrenpiktogramme (GHS/CLP)</h3><p>Die neun GHS-Piktogramme signalisieren auf einen Blick, welche Gefahr von einem Stoff ausgeht. Hier je Symbol die <b>Gefährdung</b> und die wichtigsten <b>Schutzmassnahmen</b>.</p><p class="src">Quelle: «Gefahrenpiktogramme im Blick – Informieren. Erkennen. Handeln.» (Merkblatt 88353.d).</p></div>'+piktoHtml();
   }else if(tab==='hsaetze'){
