@@ -482,6 +482,18 @@
   .dash-tile svg{width:18px;height:18px;flex:none;color:var(--accent)}
   .dash-tile b{color:var(--ink)}
   .dash-tile .chg{margin-left:auto;color:var(--accent);font-weight:600;font-size:12.5px}
+  .sh-card summary .sh-tag{background:var(--danger);color:#fff}
+  .sh-sec{margin:10px 0}
+  .sh-sec h4{margin:0 0 4px;font-size:11px;color:var(--ink-2);text-transform:uppercase;letter-spacing:.03em;font-weight:700}
+  .sh-sec p{margin:0;font-size:12.5px;line-height:1.45;color:var(--ink)}
+  .sh-sec ul{margin:4px 0 0;padding-left:16px}
+  .sh-sec li{font-size:12.5px;line-height:1.4;color:var(--ink);margin:2px 0}
+  .sh-eh{display:flex;gap:8px;margin:5px 0}
+  .sh-eh span{flex:none;width:82px;font-weight:700;font-size:12px;color:var(--ink)}
+  .sh-eh p{margin:0;font-size:12px;line-height:1.4;flex:1}
+  .sh-warn{color:var(--danger);font-weight:600;margin-top:3px!important}
+  .sh-note{display:flex;gap:6px;align-items:flex-start;font-size:11px;color:var(--ink-3);margin-top:10px;line-height:1.4}
+  .sh-note svg{width:14px;height:14px;flex:none;margin-top:1px}
 
   /* Verwaltung: Hinzufügen + Zeilen mit Löschen */
   .add-btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:48px;border:1.5px dashed var(--accent);background:var(--surface);color:var(--accent);border-radius:9px;font-size:14.5px;font-weight:600;margin-bottom:12px}
@@ -3277,6 +3289,23 @@ function psaCard(s){
     return '<div class="psa-row"><span class="psa-ic">'+PSA_ICON[r.ic]+'</span><div class="psa-tx"><div class="psa-t">'+esc(r.t)+'<span class="psa-tag '+t[0]+'">'+t[1]+'</span></div><div class="psa-v">'+esc(r.val)+'</div>'+(r.sub?'<div class="psa-s">'+esc(r.sub)+'</div>':'')+'</div></div>';}).join('');
   return '<div class="psa-card"><div class="psa-h">'+ICO.info+'<div><b>Persönliche Schutzausrüstung – stoffbezogen</b><small>Aus der GHS-Einstufung abgeleitet. Massgeblich ist das SDB Abschnitt 8 des Herstellers.</small></div></div>'+body+'</div>';
 }
+/* ---------- Sofort-Hilfe direkt auf der Stoffkarte (Kern: beim Scannen sehen) ---------- */
+function sofortHilfeCard(s){
+  var d=(typeof notfallData==='function')?notfallData(s.id):null;
+  var lk=lkOf(s);
+  var lagerung=lk?('Lagerklasse '+lk+' – '+((LK_INFO[lk]&&LK_INFO[lk].name)||'')+'. Zusammenlagerung beachten (siehe Feuerwehr-Einsatzkarte des Lagerorts).'):'Lagerklasse unbestimmt – im SDB (Abschnitt 7) prüfen.';
+  var entsorgung='Reste und nicht gereinigte Gebinde als Sonderabfall (VeVA) entsorgen – nicht in Kanalisation oder Hauskehricht. SDB Abschnitt 13 beachten.';
+  var eh=d?d.eh.map(function(r){return '<div class="sh-eh"><span>'+esc(r.k)+'</span><p>'+esc(r.t)+'</p></div>';}).join(''):'';
+  return '<details class="stamm sh-card"><summary><span class="tag sh-tag">Sofort-Hilfe</span> Bei Kontakt, Brand &amp; Austritt<span class="chev">'+ICO.chev+'</span></summary>'+
+    '<div class="body">'+
+      (d?'<div class="sh-sec"><h4>Erste Hilfe</h4>'+eh+'</div>'+
+         '<div class="sh-sec"><h4>Brand / Löschen</h4><p>'+esc(d.loesch)+'</p>'+(d.loeschWarn?'<p class="sh-warn">⚠ '+esc(d.loeschWarn)+'</p>':'')+'</div>'+
+         '<div class="sh-sec"><h4>Bei Austritt / Verschütten</h4><ul>'+d.spill.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul></div>':'')+
+      '<div class="sh-sec"><h4>Lagerung</h4><p>'+esc(lagerung)+'</p></div>'+
+      '<div class="sh-sec"><h4>Entsorgung</h4><p>'+esc(entsorgung)+'</p></div>'+
+      '<div class="sh-note">'+ICO.info+'<span>Automatisch aus GHS/H-/P-Sätzen abgeleitet – massgeblich ist das SDB. Im Notfall: roter Knopf «Notfall» oben.</span></div>'+
+    '</div></details>';
+}
 /* ---------- Beschäftigungsbeschränkungen (Block 16) ---------- */
 function emplLimits(s){
   var codes={};hCodes(s.h).forEach(function(c){codes[c]=1;});var ghs=s.ghs||[];
@@ -3556,7 +3585,7 @@ function scrDetail(){
     '<div class="instr-head"><div><b>Instruktionsnachweis</b><small>'+(iCount?('Instruiert: '+iCount+' · zuletzt '+fmtDate(iLast)):'Noch keine Instruktion erfasst')+'</small></div>'+(iDue?'<span class="instr-badge due">fällig</span>':'<span class="instr-badge ok">aktuell</span>')+'</div>'+
     '<div class="btn-row" style="margin-top:11px"><button class="btn secondary" data-action="instrList" data-id="'+s.id+'">Nachweise</button><button class="btn secondary" data-action="instrQr" data-id="'+s.id+'">'+ICO.qr+' Instruktions-QR</button></div>'+
     '<button class="btn" data-action="instrConfirm" data-id="'+s.id+'" style="width:100%;margin-top:9px">'+ICO.ok+' Instruktion bestätigen</button></div>';
-  return '<div class="view">'+hero+notes+bestand+(inst?weCheckCard(s.id,inst.loc):'')+stamm+psaCard(s)+emplCard(s)+substCard(s)+'<button class="btn secondary" data-action="genBA" data-id="'+s.id+'" style="width:100%;margin-top:14px">'+ICO.doc+' Betriebsanweisung erstellen</button>'+'<button class="btn secondary" data-action="gbOpen" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Gefährdungsbeurteilung erstellen</button>'+'<button class="btn secondary" data-action="umfuell" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Umfüll-Etikett drucken</button>'+'<button class="btn secondary" data-action="veva" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Entsorgungsbeleg (VeVA)</button>'+'<button class="btn secondary" data-action="vsOpen" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Daten prüfen / anreichern</button>'+instrBlock+oth+disclaimer()+'</div>';
+  return '<div class="view">'+hero+notes+bestand+(inst?weCheckCard(s.id,inst.loc):'')+stamm+psaCard(s)+sofortHilfeCard(s)+emplCard(s)+substCard(s)+'<button class="btn secondary" data-action="genBA" data-id="'+s.id+'" style="width:100%;margin-top:14px">'+ICO.doc+' Betriebsanweisung erstellen</button>'+'<button class="btn secondary" data-action="gbOpen" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Gefährdungsbeurteilung erstellen</button>'+'<button class="btn secondary" data-action="umfuell" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Umfüll-Etikett drucken</button>'+'<button class="btn secondary" data-action="veva" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Entsorgungsbeleg (VeVA)</button>'+'<button class="btn secondary" data-action="vsOpen" data-id="'+s.id+'" style="width:100%;margin-top:10px">'+ICO.doc+' Daten prüfen / anreichern</button>'+instrBlock+oth+disclaimer()+'</div>';
 }
 
 /* ===== LAGERORTDETAIL (nützlicher) ===== */
