@@ -1585,6 +1585,8 @@ function psListHtml(q){
 function wkFilterP(v){var el=document.getElementById('psList');if(el)el.innerHTML=psListHtml(v);}
 
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+// Nur http(s)-URLs zulassen (blockt javascript:, data: usw.); sonst leer.
+function safeUrl(u){u=String(u==null?'':u).trim();return /^https?:\/\//i.test(u)?u:'';}
 /* ---------- GHS-Gefahrenpiktogramme (Gefährdung & Massnahmen) ---------- */
 const PIKTO=[
  {k:'explosiv',code:'GHS01',name:'Explosiv',
@@ -1756,7 +1758,7 @@ function zlLocRow(e){
   var l=location_(e.loc);var red=e.cf.some(function(c){return c.rate==='r';});
   var flag=red?'flag-danger':'flag-warn';
   var txt=e.cf.slice(0,3).map(function(c){return 'LK '+c.a+'+'+c.b;}).join(' · ');
-  return '<button class="arow '+flag+'" data-action="openLoc" data-id="'+e.loc+'"><span class="ag">'+firmTag(l.company)+'</span><span class="am"><span class="at">'+l.name+'</span><span class="as">'+txt+'</span></span><span class="reason '+(red?'d':'w')+'">'+(red?'nicht zusammen':'bedingt')+'</span><span class="chev">'+ICO.chev+'</span></button>';
+  return '<button class="arow '+flag+'" data-action="openLoc" data-id="'+e.loc+'"><span class="ag">'+firmTag(l.company)+'</span><span class="am"><span class="at">'+esc(l.name)+'</span><span class="as">'+txt+'</span></span><span class="reason '+(red?'d':'w')+'">'+(red?'nicht zusammen':'bedingt')+'</span><span class="chev">'+ICO.chev+'</span></button>';
 }
 
 
@@ -1956,8 +1958,8 @@ const locCompany=lid=>company(location_(lid).company);
 const instIncomplete=i=>i.menge==null;
 const instWarn=i=>instIncomplete(i)||substance(i.sub).sdb.status==='fehlt';
 const instsAtLoc=lid=>DB.instances.filter(i=>i.loc===lid);
-function sdbBadge(s){if(s.sdb.status==='fehlt')return '<span class="badge b-danger">'+ICO.warn+'SDB fehlt</span>';if(s.sdb.status==='alt')return '<span class="badge b-warn">'+ICO.warn+'SDB prüfen</span>';return '<span class="badge b-ok">'+ICO.ok+'SDB '+s.sdb.rev+'</span>';}
-function signalBadge(s){return '<span class="badge b-signal '+(s.signal==='Gefahr'?'b-danger':'b-warn')+'">'+s.signal+'</span>';}
+function sdbBadge(s){if(s.sdb.status==='fehlt')return '<span class="badge b-danger">'+ICO.warn+'SDB fehlt</span>';if(s.sdb.status==='alt')return '<span class="badge b-warn">'+ICO.warn+'SDB prüfen</span>';return '<span class="badge b-ok">'+ICO.ok+'SDB '+esc(s.sdb.rev)+'</span>';}
+function signalBadge(s){return '<span class="badge b-signal '+(s.signal==='Gefahr'?'b-danger':'b-warn')+'">'+esc(s.signal)+'</span>';}
 /* ---- Stoff-Freigabe-Lifecycle (P0-2) ---- */
 function subStatus(s){return (s&&s.status)||'approved';}
 function isApproved(s){return subStatus(s)==='approved';}
@@ -1987,7 +1989,7 @@ async function subReject(id){var r=await sbc.rpc('substance_set_status',{p_id:id
 // Neu erfasste Stoffe: KI-Auslesung immer needs_review; sonst Admin -> approved.
 function erfSource(){return state.aiExtract?'ai':((state.scanPrefill&&state.scanPrefill.catalog)?'catalog':'manual');}
 function erfStatus(){return (erfSource()==='ai')?'needs_review':(isAdmin()?'approved':'needs_review');}
-function firmTag(cid,alt){return '<span class="firmtag '+(alt?'alt':'')+'">'+company(cid).short+'</span>';}
+function firmTag(cid,alt){return '<span class="firmtag '+(alt?'alt':'')+'">'+esc(company(cid).short)+'</span>';}
 
 /* ---------- State / Router ---------- */
 const state={view:'start',stack:[],activeLoc:null,nav:'start',currentUser:'u1',scanPrefill:null,
@@ -2007,8 +2009,8 @@ function renderLocband(){
     el.className='locband set';
     el.innerHTML='<button class="lb-tap" data-action="openLoc" data-id="'+l.id+'"><span class="lb-ico">'+ICO.loc+'</span>'+
       '<span class="lb-txt"><span class="lb-kicker">Aktiver Lagerort</span>'+
-      '<span class="lb-main">'+l.name+' · '+l.bereich+'</span>'+
-      '<span class="lb-sub">'+c.name+' · '+n+' Stoffe</span></span></button>'+
+      '<span class="lb-main">'+esc(l.name)+' · '+esc(l.bereich)+'</span>'+
+      '<span class="lb-sub">'+esc(c.name)+' · '+n+' Stoffe</span></span></button>'+
       '<button class="lb-act" data-action="nav" data-v="scanLoc" data-nav="scan">'+ICO.scan+'Wechseln</button>';
   }else{
     el.className='locband unset';
@@ -2034,7 +2036,7 @@ function renderNav(){
     '<div class="sb-sep"></div>'+
     '<button class="sb-item" data-action="reScan">'+ICO.qr+' Artikel-QR öffnen</button>'+
     '<div class="sb-sep"></div>'+
-    '<button class="sb-user" data-action="switchUser">'+ICO.user+'<span class="su-txt"><b>'+u.name+'</b><small>'+u.role+(admin?' · Admin':'')+'</small></span></button>'+
+    '<button class="sb-user" data-action="switchUser">'+ICO.user+'<span class="su-txt"><b>'+esc(u.name)+'</b><small>'+esc(u.role)+(admin?' · Admin':'')+'</small></span></button>'+
     '<div class="sb-foot">Angemeldet · Rolle bestimmt den Zugriff. Verwaltung nur für Admin sichtbar.</div>'+
     '<div style="padding:8px 8px 2px">'+LEGAL_HTML+'</div>';}
 }
@@ -2078,7 +2080,7 @@ function scannerPanel(label,fb){
 }
 function scrScanLoc(){
   const list=DB.locations.map(l=>{const c=company(l.company);
-    return '<button class="pick" data-action="setLoc" data-id="'+l.id+'"><span class="qr-ico">'+ICO.qr+'</span><span class="pm"><b>'+l.name+' · '+l.bereich+'</b><small>'+c.name+' · '+l.typ+'</small></span>'+ICO.chev+'</button>';}).join('');
+    return '<button class="pick" data-action="setLoc" data-id="'+l.id+'"><span class="qr-ico">'+ICO.qr+'</span><span class="pm"><b>'+esc(l.name)+' · '+esc(l.bereich)+'</b><small>'+esc(c.name)+' · '+esc(l.typ)+'</small></span>'+ICO.chev+'</button>';}).join('');
   const cur=state.activeLoc?'<div class="ctx-line">'+ICO.ok+' Aktuell: '+location_(state.activeLoc).name+' – anderen Lagerort wählen</div>':'';
   return '<div class="view"><h2 class="title">Lagerort '+(state.activeLoc?'wechseln':'scannen')+'</h2><p class="sub">QR scannen oder unten manuell wählen.</p>'+cur+
     scannerPanel('Lagerort-QR scannen',false)+
@@ -2087,10 +2089,10 @@ function scrScanLoc(){
 
 function scrScanArt(){
   const fb=!state.activeLoc;const l=state.activeLoc?location_(state.activeLoc):null;
-  const known=DB.substances.slice(0,6).map(s=>'<button class="pick" data-action="pickArt" data-id="'+s.id+'"><span class="qr-ico">'+ICO.qr+'</span><span class="pm"><b>'+s.name+'</b><small>'+s.hersteller+(s.un!=='–'?' · UN '+s.un:'')+'</small></span>'+ICO.chev+'</button>').join('');
+  const known=DB.substances.slice(0,6).map(s=>'<button class="pick" data-action="pickArt" data-id="'+s.id+'"><span class="qr-ico">'+ICO.qr+'</span><span class="pm"><b>'+esc(s.name)+'</b><small>'+esc(s.hersteller)+(s.un!=='–'?' · UN '+esc(s.un):'')+'</small></span>'+ICO.chev+'</button>').join('');
   return '<div class="view"><h2 class="title">Artikel scannen</h2>'+
     (fb?'<div class="notice warn">'+ICO.warn+'<div><b>Kein Lagerort gesetzt.</b> Normal ist «zuerst Lagerort». <a data-action="nav" data-v="scanLoc" data-nav="scan" style="color:#5e3800;font-weight:700;text-decoration:underline">Jetzt Lagerort wählen</a> – oder ausnahmsweise ohne erfassen.</div></div>'
-       :'<div class="ctx-line">'+ICO.ok+' Lagerort: '+l.name+' · '+l.bereich+'</div>')+
+       :'<div class="ctx-line">'+ICO.ok+' Lagerort: '+esc(l.name)+' · '+esc(l.bereich)+'</div>')+
     scannerPanel('Barcode oder internen QR scannen',fb)+
     '<button class="pick new" data-action="newArt" style="margin-top:16px"><span class="qr-ico">'+ICO.plus+'</span><span class="pm"><b>Unbekannter Artikel – neu erfassen</b><small>Externer Barcode ohne Treffer</small></span></button>'+
     '<div class="label-h">Bekannte Artikel (Treffer simulieren)</div>'+known+disclaimer()+'</div>';
@@ -2302,7 +2304,7 @@ function askLocal(qraw){
   }
   if(isSdb){
     var miss=DB.instances.map(function(i){return substance(i.sub);}).filter(function(x,ix,arr){return x.sdb.status==='fehlt'&&arr.indexOf(x)===ix;});
-    if(s&&/\b(hat|von|für)\b/.test(q)&&!/welche|alle|liste/.test(q))return '<b>'+chatEsc(s.name)+'</b>: SDB '+(s.sdb.status==='ok'?'vorhanden (Stand '+s.sdb.rev+')':s.sdb.status==='alt'?'älter als 3 Jahre (Stand '+s.sdb.rev+') – prüfen':'fehlt – bitte ergänzen')+'.'+chatSubActions(s);
+    if(s&&/\b(hat|von|für)\b/.test(q)&&!/welche|alle|liste/.test(q))return '<b>'+chatEsc(s.name)+'</b>: SDB '+(s.sdb.status==='ok'?'vorhanden (Stand '+esc(s.sdb.rev)+')':s.sdb.status==='alt'?'älter als 3 Jahre (Stand '+esc(s.sdb.rev)+') – prüfen':'fehlt – bitte ergänzen')+'.'+chatSubActions(s);
     if(!miss.length)return 'Alle Stoffe mit Bestand haben ein hinterlegtes Sicherheitsdatenblatt. 👍';
     return miss.length+' Stoff'+(miss.length>1?'e':'')+' ohne SDB:<ul class="chat-ul">'+miss.map(function(x){return '<li>'+chatEsc(x.name)+' · '+chatEsc(x.hersteller||'')+'</li>';}).join('')+'</ul>';
   }
@@ -3670,13 +3672,13 @@ function scrDetail(){
   // 1) HERO: Name, Signal+SDB-Badges, GHS gross
   const ghs=s.ghs.length?'<div class="sk-ghs">'+s.ghs.map(g=>ghsBadge(g,'big')).join('')+'</div>':'<div class="sk-ghs none">Keine GHS-Piktogramme hinterlegt</div>';
   const hero='<div class="sk-hero"><div class="sk-badges">'+signalBadge(s)+statusBadge(s)+sdbBadge(s)+cmrBadge(s)+'</div>'+
-    '<h1 class="sk-name">'+s.name+'</h1><div class="sk-mfr">'+s.hersteller+(s.un!=='–'?' · UN '+s.un:'')+'</div>'+ghs+'</div>';
+    '<h1 class="sk-name">'+esc(s.name)+'</h1><div class="sk-mfr">'+esc(s.hersteller)+(s.un!=='–'?' · UN '+esc(s.un):'')+'</div>'+ghs+'</div>';
 
   // 2) WARNHINWEISE direkt unter Hero
   let notes='';
   notes+=approvalCard(s);
   if(s.sdb.status==='fehlt')notes+='<div class="notice danger">'+ICO.warn+'<div><b>Kein SDB hinterlegt.</b> Sicherheitsdatenblatt ergänzen.</div></div>';
-  else if(s.sdb.status==='alt')notes+='<div class="notice warn">'+ICO.warn+'<div><b>SDB älter als 3 Jahre</b> (Stand '+s.sdb.rev+'). Auf Aktualität prüfen.</div></div>';
+  else if(s.sdb.status==='alt')notes+='<div class="notice warn">'+ICO.warn+'<div><b>SDB älter als 3 Jahre</b> (Stand '+esc(s.sdb.rev)+'). Auf Aktualität prüfen.</div></div>';
   if(inst&&instIncomplete(inst))notes+='<div class="notice warn">'+ICO.warn+'<div><b>Menge fehlt</b> bei diesem Bestand – bitte ergänzen.</div></div>';
   if(cmrFlag(s).cmr)notes+='<div class="notice" style="background:#f3e9f7">'+ICO.warn+'<div><b>CMR-Stoff – Substitution prüfen.</b> Ersatz durch ein weniger gefährliches Produkt/Verfahren ist zu prüfen und zu dokumentieren (Ersatzpflicht).</div></div>';
   if(inst)notes+=zlNoticeForInst(inst);
@@ -3686,16 +3688,16 @@ function scrDetail(){
   let bestand;
   if(inst){
     const l=location_(inst.loc),c=locCompany(inst.loc);
-    const mengeV=inst.menge==null?'<span class="open">offen</span>':inst.menge+' '+inst.einheit;
+    const mengeV=inst.menge==null?'<span class="open">offen</span>':inst.menge+' '+esc(inst.einheit);
     bestand='<div class="bestand">'+
-      '<div class="bestand-h">'+ICO.box+'<span class="tag">Bestand · dieser Lagerort</span><span class="where">'+l.name+'</span></div>'+
+      '<div class="bestand-h">'+ICO.box+'<span class="tag">Bestand · dieser Lagerort</span><span class="where">'+esc(l.name)+'</span></div>'+
       '<div class="bf-grid">'+
         '<div class="bf menge"><div class="k">Menge</div><div class="v">'+mengeV+'</div></div>'+
-        '<div class="bf"><div class="k">Gebinde</div><div class="v">'+inst.anzahl+' × '+inst.gebinde+'</div></div>'+
-        '<div class="bf full"><div class="k">Firma</div><div class="v">'+firmTag(l.company)+' '+c.name+'</div></div>'+
-        '<div class="bf full"><div class="k">Lagerort</div><div class="v">'+l.name+' · '+l.bereich+'</div></div>'+
-        '<div class="bf"><div class="k">Status</div><div class="v">'+inst.status+'</div></div>'+
-        '<div class="bf"><div class="k">Interner QR</div><div class="v mono">'+inst.qr+'</div></div>'+
+        '<div class="bf"><div class="k">Gebinde</div><div class="v">'+inst.anzahl+' × '+esc(inst.gebinde)+'</div></div>'+
+        '<div class="bf full"><div class="k">Firma</div><div class="v">'+firmTag(l.company)+' '+esc(c.name)+'</div></div>'+
+        '<div class="bf full"><div class="k">Lagerort</div><div class="v">'+esc(l.name)+' · '+esc(l.bereich)+'</div></div>'+
+        '<div class="bf"><div class="k">Status</div><div class="v">'+esc(inst.status)+'</div></div>'+
+        '<div class="bf"><div class="k">Interner QR</div><div class="v mono">'+esc(inst.qr)+'</div></div>'+
       '</div>'+
       '<div class="qr-cta"><button class="btn" data-action="showQr" data-id="'+inst.id+'">'+ICO.qr+' QR-Code anzeigen</button>'+
         '<button class="btn secondary" data-action="showSdb" data-id="'+s.id+'">'+ICO.doc+' SDB</button></div>'+
@@ -3711,20 +3713,20 @@ function scrDetail(){
   // 4) STOFFSTAMM einklappbar (H/P) – klar als "gilt für alle Vorkommen"
   const stamm='<details class="stamm"><summary><span class="tag">Stoffstamm</span> Gefahren- &amp; Sicherheitshinweise<span class="chev">'+ICO.chev+'</span></summary>'+
     '<div class="body"><div class="phr" style="color:var(--ink-3);padding-top:0">Gilt für alle Vorkommen dieses Stoffs in der Gruppe.</div>'+
-    '<div class="phr"><b>H-Sätze:</b> '+s.h+'</div><div class="phr"><b>P-Sätze:</b> '+s.p+'</div>'+
+    '<div class="phr"><b>H-Sätze:</b> '+esc(s.h)+'</div><div class="phr"><b>P-Sätze:</b> '+esc(s.p)+'</div>'+
     (function(){var lk=lkOf(s);return '<div class="kv"><span class="k">Lagerklasse</span><span class="v">'+lkBadge(lk)+' <span style="font-weight:500;color:var(--ink-2)">'+(lk?LK_INFO[lk].name:'unbestimmt')+'</span>'+(isAdmin()?' <button class="lk-edit" data-action="lkEdit" data-id="'+s.id+'">ändern</button>':'')+'</span></div>';})()+
-    '<div class="kv"><span class="k">Signalwort</span><span class="v">'+s.signal+'</span></div>'+
-    '<div class="kv"><span class="k">UN-Nummer</span><span class="v mono">'+s.un+'</span></div>'+
-    (s.barcode?'<div class="kv"><span class="k">Barcode</span><span class="v mono">'+s.barcode+'</span></div>':'')+
-    (s.info?'<div class="kv"><span class="k">Infoseite</span><span class="v"><a data-action="openExtLink" data-id="'+encodeURIComponent(s.info)+'" style="color:var(--accent);text-decoration:none;font-weight:600">Link öffnen</a></span></div>':'')+
-    '<div class="kv"><span class="k">Hersteller</span><span class="v">'+s.hersteller+'</span></div></div></details>';
+    '<div class="kv"><span class="k">Signalwort</span><span class="v">'+esc(s.signal)+'</span></div>'+
+    '<div class="kv"><span class="k">UN-Nummer</span><span class="v mono">'+esc(s.un)+'</span></div>'+
+    (s.barcode?'<div class="kv"><span class="k">Barcode</span><span class="v mono">'+esc(s.barcode)+'</span></div>':'')+
+    (safeUrl(s.info)?'<div class="kv"><span class="k">Infoseite</span><span class="v"><a data-action="openExtLink" data-id="'+encodeURIComponent(safeUrl(s.info))+'" style="color:var(--accent);text-decoration:none;font-weight:600">Link öffnen</a></span></div>':'')+
+    '<div class="kv"><span class="k">Hersteller</span><span class="v">'+esc(s.hersteller)+'</span></div></div></details>';
 
   // 5) Weitere Vorkommen (Datenlogik sichtbar)
   const others=DB.instances.filter(i=>i.sub===s.id&&(!inst||i.id!==inst.id));
   let oth='';
   if(others.length){
     oth='<div class="label-h">Gleicher Stoff – weitere Vorkommen <span class="cnt">'+others.length+'</span></div>'+
-      others.map(i=>{const l=location_(i.loc);return '<button class="arow" data-action="openInst" data-id="'+i.id+'"><span class="ag">'+firmTag(l.company)+'</span><span class="am"><span class="at">'+l.name+'</span><span class="as">'+l.bereich+' · <b>'+(i.menge==null?'Menge offen':i.menge+' '+i.einheit)+'</b> · '+i.status+'</span></span><span class="chev">'+ICO.chev+'</span></button>';}).join('');
+      others.map(i=>{const l=location_(i.loc);return '<button class="arow" data-action="openInst" data-id="'+i.id+'"><span class="ag">'+firmTag(l.company)+'</span><span class="am"><span class="at">'+esc(l.name)+'</span><span class="as">'+esc(l.bereich)+' · <b>'+(i.menge==null?'Menge offen':i.menge+' '+esc(i.einheit))+'</b> · '+esc(i.status)+'</span></span><span class="chev">'+ICO.chev+'</span></button>';}).join('');
   }
 
   const iLast=instrLast(s.id),iCount=instrFor(s.id).length,iDue=instrDue(s.id);
@@ -3745,7 +3747,7 @@ function scrLocDetail(){
     (noSdb?'<span class="lh-stat d">'+noSdb+' ohne SDB</span>':'')+
     (incompl?'<span class="lh-stat w">'+incompl+' unvollständig</span>':'')+
     (!noSdb&&!incompl?'<span class="lh-stat">vollständig</span>':'')+'</div>';
-  const hero='<div class="loc-hero"><div class="kicker">Lagerort</div><h2>'+l.name+'</h2><p class="sub">'+l.bereich+' · '+l.typ+' · '+firmTag(l.company).replace('firmtag','firmtag')+'</p>'+stats+
+  const hero='<div class="loc-hero"><div class="kicker">Lagerort</div><h2>'+esc(l.name)+'</h2><p class="sub">'+esc(l.bereich)+' · '+esc(l.typ)+' · '+firmTag(l.company).replace('firmtag','firmtag')+'</p>'+stats+
     (isActive?'<div class="loc-active-pill">'+ICO.ok+' Aktiver Lagerort</div>':'')+'</div>';
   const action=isActive
     ?'<button class="btn" data-action="goArtikel">'+ICO.plus+' Gefahrstoff hier aufnehmen</button>'+
@@ -3761,8 +3763,8 @@ function instCard(i){
   const flag=substance(i.sub).sdb.status==='fehlt'?'flag-danger':(instIncomplete(i)?'flag-warn':'');
   let wb='';if(s.sdb.status==='fehlt')wb='<span class="badge b-danger">'+ICO.warn+'SDB fehlt</span>';else if(instIncomplete(i))wb='<span class="badge b-warn">'+ICO.warn+'Menge offen</span>';else if(s.sdb.status==='alt')wb='<span class="badge b-warn">'+ICO.warn+'SDB prüfen</span>';
   return '<div class="card '+flag+'"><button class="ctap" data-action="openInst" data-id="'+i.id+'"><div class="ghs-row">'+s.ghs.map(g=>ghsBadge(g,'mini')).join('')+'</div>'+
-    '<div class="cmain"><div class="ctitle">'+s.name+'</div><div class="cmeta"><b>'+(i.menge==null?'Menge offen':i.menge+' '+i.einheit)+'</b> · '+i.anzahl+' × '+i.gebinde+' · '+i.status+'</div>'+
-    '<div class="cbadges">'+firmTag(l.company)+'<span class="badge b-neutral">'+l.name+'</span>'+wb+'</div></div><span class="chev">'+ICO.chev+'</span></button></div>';
+    '<div class="cmain"><div class="ctitle">'+esc(s.name)+'</div><div class="cmeta"><b>'+(i.menge==null?'Menge offen':i.menge+' '+esc(i.einheit))+'</b> · '+i.anzahl+' × '+esc(i.gebinde)+' · '+esc(i.status)+'</div>'+
+    '<div class="cbadges">'+firmTag(l.company)+'<span class="badge b-neutral">'+esc(l.name)+'</span>'+wb+'</div></div><span class="chev">'+ICO.chev+'</span></button></div>';
 }
 
 function scrBestand(){
@@ -3772,8 +3774,8 @@ function scrBestand(){
   if(f.status)list=list.filter(i=>i.status===f.status);
   if(f.hb)list=list.filter(instWarn);
   list.sort((a,b)=>instWarn(b)-instWarn(a));
-  const compOpts='<option value="">Alle Firmen (Gruppe)</option>'+DB.companies.filter(c=>!c.group).map(c=>'<option value="'+c.id+'" '+(f.company===c.id?'selected':'')+'>'+c.name+'</option>').join('');
-  const locOpts='<option value="">Alle Lagerorte</option>'+DB.locations.filter(l=>!f.company||l.company===f.company).map(l=>'<option value="'+l.id+'" '+(f.loc===l.id?'selected':'')+'>'+l.name+'</option>').join('');
+  const compOpts='<option value="">Alle Firmen (Gruppe)</option>'+DB.companies.filter(c=>!c.group).map(c=>'<option value="'+c.id+'" '+(f.company===c.id?'selected':'')+'>'+esc(c.name)+'</option>').join('');
+  const locOpts='<option value="">Alle Lagerorte</option>'+DB.locations.filter(l=>!f.company||l.company===f.company).map(l=>'<option value="'+l.id+'" '+(f.loc===l.id?'selected':'')+'>'+esc(l.name)+'</option>').join('');
   const statusChips=['Lager','im Einsatz','zur Entsorgung'].map(st=>'<button class="chip '+(f.status===st?'on':'')+'" data-action="statusChip" data-id="'+st+'">'+st+'</button>').join('');
   const cards=list.length?list.map(instCard).join(''):'<div class="empty">'+ICO.search+'<div>Keine Treffer. Filter anpassen.</div></div>';
   return '<div class="view"><h2 class="title">Bestände</h2><p class="sub">Vorkommen über alle Firmen und Lagerorte.</p>'+'<button class="btn secondary" data-action="lieferschein" style="width:100%;margin:2px 0 14px">'+ICO.box+' Lieferschein / Rechnung erfassen</button>'+
@@ -3787,7 +3789,7 @@ function scrFirmen(){
   function st(cid){const ins=DB.instances.filter(i=>location_(i.loc).company===cid);return {n:ins.length,m:ins.filter(i=>substance(i.sub).sdb.status==='fehlt').length,u:ins.filter(instIncomplete).length};}
   const all=DB.instances;const g={n:all.length,m:all.filter(i=>substance(i.sub).sdb.status==='fehlt').length,u:all.filter(instIncomplete).length};
   const grp='<button class="firma group" data-action="filterCompany" data-id=""><span class="ficon">'+ICO.firma+'</span><div class="fm"><b>Gruppe – Gesamtsicht</b><div class="meta">Muster Gruppe AG · alle Firmen</div><div class="nums"><span class="mini-num">'+g.n+' Datensätze</span>'+(g.m?'<span class="mini-num d">'+g.m+' SDB fehlt</span>':'')+(g.u?'<span class="mini-num w">'+g.u+' unvollst.</span>':'')+'</div></div><span class="chev">'+ICO.chev+'</span></button>';
-  const cards=DB.companies.filter(c=>!c.group).map(c=>{const s=st(c.id);return '<button class="firma" data-action="filterCompany" data-id="'+c.id+'"><span class="ficon">'+ICO.firma+'</span><div class="fm"><b>'+c.name+'</b><div class="meta">'+s.n+' Datensätze</div><div class="nums">'+(s.m?'<span class="mini-num d">'+s.m+' SDB fehlt</span>':'')+(s.u?'<span class="mini-num w">'+s.u+' unvollst.</span>':'')+(!s.m&&!s.u&&s.n?'<span class="mini-num">ok</span>':'')+(!s.n?'<span class="mini-num">keine Daten</span>':'')+'</div></div><span class="chev">'+ICO.chev+'</span></button>';}).join('');
+  const cards=DB.companies.filter(c=>!c.group).map(c=>{const s=st(c.id);return '<button class="firma" data-action="filterCompany" data-id="'+c.id+'"><span class="ficon">'+ICO.firma+'</span><div class="fm"><b>'+esc(c.name)+'</b><div class="meta">'+s.n+' Datensätze</div><div class="nums">'+(s.m?'<span class="mini-num d">'+s.m+' SDB fehlt</span>':'')+(s.u?'<span class="mini-num w">'+s.u+' unvollst.</span>':'')+(!s.m&&!s.u&&s.n?'<span class="mini-num">ok</span>':'')+(!s.n?'<span class="mini-num">keine Daten</span>':'')+'</div></div><span class="chev">'+ICO.chev+'</span></button>';}).join('');
   return '<div class="view"><h2 class="title">Firmen</h2><p class="sub">Tippen filtert die Bestandsliste nach Firma.</p>'+grp+cards+disclaimer()+'</div>';
 }
 
@@ -3804,7 +3806,7 @@ function scrAdmin(){
   const pruefDue=checksDueCount();
   const tabs=[['uebersicht','Übersicht',null],['ampel','Ampel',ampRed],['hb','Handlungsbedarf',allHb.length],['stoffe','Stoffstamm',null],['lager','Lagerorte',null],['firmen','Firmen',null],['personen','Personen',null],['verlauf','Audit-Log',null]];
   const tabsHtml='<div class="tabs">'+tabs.map(t=>'<button class="tab '+(tab===t[0]?'active':'')+'" data-action="adminTab" data-id="'+t[0]+'">'+t[1]+(t[2]!=null?'<span class="cnt'+(t[2]?' alert':'')+'">'+t[2]+'</span>':'')+'</button>').join('')+'</div>';
-  const fOpts='<option value="">Alle Firmen (Gruppe)</option>'+DB.companies.filter(c=>!c.group).map(c=>'<option value="'+c.id+'" '+(fc===c.id?'selected':'')+'>'+c.name+'</option>').join('');
+  const fOpts='<option value="">Alle Firmen (Gruppe)</option>'+DB.companies.filter(c=>!c.group).map(c=>'<option value="'+c.id+'" '+(fc===c.id?'selected':'')+'>'+esc(c.name)+'</option>').join('');
   const filterBar='<div class="field admin-filter"><label>Firma eingrenzen</label><select data-action="adminCompany">'+fOpts+'</select></div>';
 
   let body='';
@@ -3829,19 +3831,19 @@ function scrAdmin(){
     }
   }else if(tab==='stoffe'){
     body=filterBar+DB.substances.map(s=>{const vk=DB.instances.filter(i=>i.sub===s.id&&inScope(i));if(fc&&!vk.length)return '';
-      return '<button class="arow" data-action="openSub" data-id="'+s.id+'"><span class="ag"><span class="ghs-row">'+s.ghs.map(g=>ghsBadge(g,'mini')).join('')+'</span></span><span class="am"><span class="at">'+s.name+'</span><span class="as">'+s.hersteller+' · '+vk.length+' Vorkommen</span></span><span class="lk-badge" style="background:'+(lkOf(s)?LK_INFO[lkOf(s)].c:'#999')+';margin-right:6px">LK '+(lkOf(s)||'?')+'</span>'+(s.sdb.status==='fehlt'?'<span class="reason d">SDB fehlt</span>':(s.sdb.status==='alt'?'<span class="reason w">SDB alt</span>':''))+'<span class="chev">'+ICO.chev+'</span></button>';}).join('');
+      return '<button class="arow" data-action="openSub" data-id="'+s.id+'"><span class="ag"><span class="ghs-row">'+s.ghs.map(g=>ghsBadge(g,'mini')).join('')+'</span></span><span class="am"><span class="at">'+esc(s.name)+'</span><span class="as">'+esc(s.hersteller)+' · '+vk.length+' Vorkommen</span></span><span class="lk-badge" style="background:'+(lkOf(s)?LK_INFO[lkOf(s)].c:'#999')+';margin-right:6px">LK '+(lkOf(s)||'?')+'</span>'+(s.sdb.status==='fehlt'?'<span class="reason d">SDB fehlt</span>':(s.sdb.status==='alt'?'<span class="reason w">SDB alt</span>':''))+'<span class="chev">'+ICO.chev+'</span></button>';}).join('');
   }else if(tab==='lager'){
     const locs=DB.locations.filter(l=>!fc||l.company===fc);
     body=filterBar+'<button class="add-btn" data-action="addLocation">'+ICO.plus+' Lagerort hinzufügen</button>'+
       (locs.length?locs.map(l=>{const ins=instsAtLoc(l.id);const w=ins.filter(instWarn).length;
-      return '<div class="mrow amp-'+locAmpel(l.id).level+'"><button class="ag" style="all:unset;flex:1;min-width:0;display:flex;align-items:center;gap:11px;cursor:pointer" data-action="openLoc" data-id="'+l.id+'"><span class="mg">'+ICO.loc+'</span><span class="mm"><span class="mt">'+l.name+'</span><span class="ms">'+firmTag(l.company)+' '+l.bereich+' · '+ins.length+' Stoffe'+(w?' · <b style="color:var(--warn)">'+w+' offen</b>':'')+'</span></span></button><span class="row-actions"><button class="edit-btn" data-action="editLocation" data-id="'+l.id+'" aria-label="Bearbeiten">'+ICO.edit+'</button><button class="del-btn" data-action="delLocation" data-id="'+l.id+'" aria-label="Löschen">'+ICO.trash+'</button></span></div>';}).join(''):'<div class="empty">'+ICO.loc+'<div>Keine Lagerorte.</div></div>');
+      return '<div class="mrow amp-'+locAmpel(l.id).level+'"><button class="ag" style="all:unset;flex:1;min-width:0;display:flex;align-items:center;gap:11px;cursor:pointer" data-action="openLoc" data-id="'+l.id+'"><span class="mg">'+ICO.loc+'</span><span class="mm"><span class="mt">'+esc(l.name)+'</span><span class="ms">'+firmTag(l.company)+' '+esc(l.bereich)+' · '+ins.length+' Stoffe'+(w?' · <b style="color:var(--warn)">'+w+' offen</b>':'')+'</span></span></button><span class="row-actions"><button class="edit-btn" data-action="editLocation" data-id="'+l.id+'" aria-label="Bearbeiten">'+ICO.edit+'</button><button class="del-btn" data-action="delLocation" data-id="'+l.id+'" aria-label="Löschen">'+ICO.trash+'</button></span></div>';}).join(''):'<div class="empty">'+ICO.loc+'<div>Keine Lagerorte.</div></div>');
   }else if(tab==='firmen'){
     body='<button class="add-btn" data-action="addCompany">'+ICO.plus+' Firma hinzufügen</button>'+
       DB.companies.filter(c=>!c.group).map(c=>{const n=DB.instances.filter(i=>location_(i.loc).company===c.id).length;const lc=DB.locations.filter(l=>l.company===c.id).length;
-      return '<div class="mrow amp-'+companyAmpel(c.id).level+'"><span class="mg">'+ICO.firma+'</span><span class="mm"><span class="mt">'+c.name+'</span><span class="ms">'+lc+' Lagerorte · '+n+' Bestände</span></span><span class="row-actions"><button class="edit-btn" data-action="editCompany" data-id="'+c.id+'" aria-label="Bearbeiten">'+ICO.edit+'</button><button class="del-btn" data-action="delCompany" data-id="'+c.id+'" aria-label="Löschen">'+ICO.trash+'</button></span></div>';}).join('');
+      return '<div class="mrow amp-'+companyAmpel(c.id).level+'"><span class="mg">'+ICO.firma+'</span><span class="mm"><span class="mt">'+esc(c.name)+'</span><span class="ms">'+lc+' Lagerorte · '+n+' Bestände</span></span><span class="row-actions"><button class="edit-btn" data-action="editCompany" data-id="'+c.id+'" aria-label="Bearbeiten">'+ICO.edit+'</button><button class="del-btn" data-action="delCompany" data-id="'+c.id+'" aria-label="Löschen">'+ICO.trash+'</button></span></div>';}).join('');
   }else if(tab==='personen'){
     const users=DB.users.filter(u=>!fc||u.company===fc).map(u=>{const c=company(u.company);const self=AUTH.profile&&u.id===AUTH.profile.id;
-      return '<div class="mrow"><span class="mg">'+ICO.user+'</span><span class="mm"><span class="mt">'+u.name+(self?' (Sie)':'')+'</span><span class="ms">'+(c?firmTag(u.company):'')+' <span class="role-tag">'+u.role+'</span></span></span><span class="row-actions"><button class="edit-btn" data-action="editUser" data-id="'+u.id+'" aria-label="Bearbeiten">'+ICO.edit+'</button>'+(self?'':'<button class="del-btn" data-action="delUser" data-id="'+u.id+'" aria-label="Entfernen">'+ICO.trash+'</button>')+'</span></div>';}).join('');
+      return '<div class="mrow"><span class="mg">'+ICO.user+'</span><span class="mm"><span class="mt">'+esc(u.name)+(self?' (Sie)':'')+'</span><span class="ms">'+(c?firmTag(u.company):'')+' <span class="role-tag">'+esc(u.role)+'</span></span></span><span class="row-actions"><button class="edit-btn" data-action="editUser" data-id="'+u.id+'" aria-label="Bearbeiten">'+ICO.edit+'</button>'+(self?'':'<button class="del-btn" data-action="delUser" data-id="'+u.id+'" aria-label="Entfernen">'+ICO.trash+'</button>')+'</span></div>';}).join('');
     const invs=(DB.invites||[]).filter(iv=>!fc||iv.company===fc);
     const invHtml=invs.length?('<div class="label-h">Offene Einladungen <span class="cnt">'+invs.length+'</span></div>'+invs.map(iv=>{const c=company(iv.company);
       return '<div class="mrow"><span class="mg" style="color:var(--warn)">'+ICO.user+'</span><span class="mm"><span class="mt">'+iv.email+'</span><span class="ms">'+(c?firmTag(iv.company):'')+' <span class="role-tag">'+iv.role+'</span> · <b style="color:var(--warn)">wartet auf Registrierung</b></span></span><button class="del-btn" data-action="delInvite" data-id="'+iv.id+'" aria-label="Zurückziehen">'+ICO.trash+'</button></div>';}).join('')):'';
@@ -3866,7 +3868,7 @@ function adminHbRow(i){
   const s=substance(i.sub),l=location_(i.loc);
   const reason=s.sdb.status==='fehlt'?'<span class="reason d">SDB fehlt</span>':(instIncomplete(i)?'<span class="reason w">Menge fehlt</span>':(s.sdb.status==='alt'?'<span class="reason w">SDB alt</span>':''));
   const flag=s.sdb.status==='fehlt'?'flag-danger':'flag-warn';
-  return '<button class="arow '+flag+'" data-action="openInst" data-id="'+i.id+'"><span class="ag">'+firmTag(l.company)+'</span><span class="am"><span class="at">'+s.name+'</span><span class="as">'+l.name+' · '+l.bereich+'</span></span>'+reason+'<span class="chev">'+ICO.chev+'</span></button>';
+  return '<button class="arow '+flag+'" data-action="openInst" data-id="'+i.id+'"><span class="ag">'+firmTag(l.company)+'</span><span class="am"><span class="at">'+esc(s.name)+'</span><span class="as">'+esc(l.name)+' · '+esc(l.bereich)+'</span></span>'+reason+'<span class="chev">'+ICO.chev+'</span></button>';
 }
 
 function scrErfassung(){
@@ -3874,14 +3876,14 @@ function scrErfassung(){
   const ctx=l?(l.name+' · '+l.bereich+' · '+company(l.company).name):'kein Lagerort';
   const pf=state.scanPrefill||{};
   const haz=['flamm','aetz','giftig','umwelt','druckgas','reiz'].map(h=>'<button type="button" class="chip'+((pf.haz&&pf.haz.indexOf(h)>-1)?' on':'')+'" data-haz="'+h+'" onclick="this.classList.toggle(\'on\');zlCheckErf()">'+GHS_LABEL[h]+'</button>').join('');
-  const scanInfo=((pf.barcode||pf.info)&&!pf.catalog)?'<div class="notice ok">'+ICO.ok+'<div>Aus dem Scan übernommen:'+(pf.barcode?' Barcode <b>'+pf.barcode+'</b>':'')+(pf.info?'<br>Infoseite wird verlinkt.':'')+'</div></div>':'';
+  const scanInfo=((pf.barcode||pf.info)&&!pf.catalog)?'<div class="notice ok">'+ICO.ok+'<div>Aus dem Scan übernommen:'+(pf.barcode?' Barcode <b>'+esc(pf.barcode)+'</b>':'')+(pf.info?'<br>Infoseite wird verlinkt.':'')+'</div></div>':'';
   const aiSum=pf.ai?'<div class="notice ok">'+ICO.ok+'<div><b>KI hat aus dem SDB erkannt:</b><br>'+esc(pf.ai.h||'–')+' · '+esc(pf.ai.un||'–')+(pf.ai.lk?' · Lagerklasse '+esc(pf.ai.lk):'')+'<br><small>Bitte kurz prüfen und speichern.</small></div></div>':'';
   const catSum=pf.catalog?'<div class="notice ok">'+ICO.ok+'<div><b>Aus dem Schweizer Katalog übernommen.</b> Ein anderer Betrieb hat dieses Produkt bereits erfasst:<br>'+esc(pf.catalog.hersteller||'–')+' · '+esc(pf.catalog.h||'–')+' · '+esc(pf.catalog.un||'–')+(pf.catalog.lk?' · Lagerklasse '+esc(pf.catalog.lk):'')+'<br><small>Von '+(pf.catalog.n||1)+' Betrieben bestätigt · bitte kurz prüfen und speichern.</small></div></div>':'';
   const aiBtn='<input type="file" id="aiFile" accept="application/pdf,image/*" style="display:none" onchange="aiAnalyze(this.files&&this.files[0])">'+
     '<button type="button" class="act-primary" onclick="document.getElementById(\'aiFile\').click()" ondragover="dropDragOver(event,this)" ondragleave="dropDragLeave(this)" ondrop="dropAi(event,this)" style="margin-bottom:14px"><span class="ico">'+ICO.doc+'</span><span><b>SDB analysieren (KI)</b><span style="display:block;font-weight:500;opacity:.92;font-size:13px">PDF/Foto hochladen oder hierher ziehen – Felder füllen sich selbst</span></span></button>';
   const aiFileNote=state.aiFile?'<div class="notice ok">'+ICO.ok+'<div><b>SDB angehängt:</b> '+esc(state.aiFile.name||'Datei')+'<br><small>Wird beim Speichern automatisch mitgesichert – kein erneutes Hochladen nötig. <a href="#" data-action="clearAiFile" style="color:var(--accent);font-weight:600">Entfernen</a></small></div></div>':'';
   const sigAon=pf.sig==='Gefahr'?'':' on',sigGon=pf.sig==='Gefahr'?' on':'';
-  return '<div class="view"><h2 class="title">Stoff erfassen</h2><p class="sub">Nur das Nötigste. Lagerort: <b>'+ctx+'</b></p>'+
+  return '<div class="view"><h2 class="title">Stoff erfassen</h2><p class="sub">Nur das Nötigste. Lagerort: <b>'+esc(ctx)+'</b></p>'+
     (!l?'<div class="notice warn">'+ICO.warn+'<div>Kein Lagerort gesetzt – Datensatz wird ohne Lagerort gespeichert.</div></div>':'')+aiBtn+aiFileNote+scanInfo+aiSum+catSum+
     '<form id="erfForm">'+
     '<div class="field"><label>Produktname *</label><input name="name" placeholder="z. B. Spezialkleber X" value="'+esc(pf.name||'')+'"></div>'+
@@ -3890,9 +3892,9 @@ function scrErfassung(){
     '<div class="field"><label>Signalwort</label><div class="chips" style="margin:0"><button type="button" class="chip'+sigAon+'" id="sigA" onclick="setSig(\'Achtung\')">Achtung</button><button type="button" class="chip'+sigGon+'" id="sigG" onclick="setSig(\'Gefahr\')">Gefahr</button></div></div>'+
     '<div class="field"><label>Gefahrmerkmale (GHS)</label><div class="chips" style="margin:0">'+haz+'</div></div>'+
     '<div id="zlCheck"></div>'+
-    '<div class="field"><label>Externer Barcode (optional)</label><input name="barcode" placeholder="EAN / Barcode" value="'+(pf.barcode||'')+'"></div>'+
+    '<div class="field"><label>Externer Barcode (optional)</label><input name="barcode" placeholder="EAN / Barcode" value="'+esc(pf.barcode||'')+'"></div>'+
     (state.aiFile?'':'<div class="field"><label>SDB-Datei hochladen (PDF, optional)</label><input name="sdbfile" type="file" accept="application/pdf,image/*"></div>')+
-    '<div class="field"><label>oder SDB-Link / Infoseite (optional)</label><input name="sdb" placeholder="Link – leer = SDB fehlt" value="'+(pf.info||'')+'"></div>'+
+    '<div class="field"><label>oder SDB-Link / Infoseite (optional)</label><input name="sdb" placeholder="Link – leer = SDB fehlt" value="'+esc(pf.info||'')+'"></div>'+
     '<div class="notice info" style="margin-top:4px">'+ICO.info+'<div>Es entstehen ein <b>Stoffstamm</b> und ein <b>Bestand</b> am Lagerort. Eine <b>SDB-Datei</b> wird sicher ins Storage geladen; alternativ wird ein Link hinterlegt. Interner QR wird automatisch erzeugt.</div></div>'+
     '<div class="btn-row"><button type="button" class="btn ghost" data-action="back">Abbrechen</button><button type="button" class="btn" data-action="saveErf">Speichern</button></div></form>'+disclaimer()+'</div>';
 }
@@ -3938,16 +3940,16 @@ function render(){
 /* ---------- Modals ---------- */
 function openModal(t,b){const el=document.createElement('div');el.className='modal-back';el.id='modalBack';el.innerHTML='<div class="modal"><div class="modal-h"><b>'+t+'</b><button class="x" data-action="closeModal">×</button></div><div class="modal-body">'+b+'</div></div>';el.addEventListener('click',e=>{if(e.target===el)closeModal();});document.body.appendChild(el);}
 function closeModal(){const e=document.getElementById('modalBack');if(e)e.remove();}
-function modalQr(id){const i=instance(id),s=substance(i.sub),l=location_(i.loc);openModal('Interner QR-Code','<div class="qr-wrap"><div class="qr-frame" id="qrBox"></div><div class="qr-code">'+i.qr+'</div><div class="qr-sub">'+s.name+' · '+firmTag(l.company)+' '+l.name+'</div></div><div class="notice info" style="margin-top:15px">'+ICO.info+'<div>Echter QR-Code: mit jeder Handy-Kamera scannbar – öffnet diese Stoffkarte (wenn die App online erreichbar ist).</div></div><div class="btn-row"><button class="btn secondary" data-action="printQr">'+ICO.print+' Etikette drucken</button><button class="btn" data-action="simScanQr" data-id="'+i.id+'">'+ICO.qr+' Öffnen</button></div>');renderRealQr('qrBox',qrTextInst(i));}
-function modalLocQr(id){const l=location_(id),c=company(l.company);openModal('Lagerort-QR','<div class="qr-wrap"><div class="qr-frame" id="qrBox"></div><div class="qr-code">LOC-'+id.toUpperCase()+'</div><div class="qr-sub">'+l.name+' · '+l.bereich+' · '+c.name+'</div></div><div class="notice info" style="margin-top:15px">'+ICO.info+'<div>Echter QR-Code für die Lagerort-Etikette – scannen setzt diesen Lagerort als Kontext.</div></div><div class="btn-row"><button class="btn secondary" data-action="printQr">'+ICO.print+' Etikette drucken</button><button class="btn" data-action="setLoc" data-id="'+id+'">'+ICO.scan+' Als Lagerort setzen</button></div>');renderRealQr('qrBox',qrTextLoc(l));}
+function modalQr(id){const i=instance(id),s=substance(i.sub),l=location_(i.loc);openModal('Interner QR-Code','<div class="qr-wrap"><div class="qr-frame" id="qrBox"></div><div class="qr-code">'+esc(i.qr)+'</div><div class="qr-sub">'+esc(s.name)+' · '+firmTag(l.company)+' '+esc(l.name)+'</div></div><div class="notice info" style="margin-top:15px">'+ICO.info+'<div>Echter QR-Code: mit jeder Handy-Kamera scannbar – öffnet diese Stoffkarte (wenn die App online erreichbar ist).</div></div><div class="btn-row"><button class="btn secondary" data-action="printQr">'+ICO.print+' Etikette drucken</button><button class="btn" data-action="simScanQr" data-id="'+i.id+'">'+ICO.qr+' Öffnen</button></div>');renderRealQr('qrBox',qrTextInst(i));}
+function modalLocQr(id){const l=location_(id),c=company(l.company);openModal('Lagerort-QR','<div class="qr-wrap"><div class="qr-frame" id="qrBox"></div><div class="qr-code">LOC-'+id.toUpperCase()+'</div><div class="qr-sub">'+esc(l.name)+' · '+esc(l.bereich)+' · '+esc(c.name)+'</div></div><div class="notice info" style="margin-top:15px">'+ICO.info+'<div>Echter QR-Code für die Lagerort-Etikette – scannen setzt diesen Lagerort als Kontext.</div></div><div class="btn-row"><button class="btn secondary" data-action="printQr">'+ICO.print+' Etikette drucken</button><button class="btn" data-action="setLoc" data-id="'+id+'">'+ICO.scan+' Als Lagerort setzen</button></div>');renderRealQr('qrBox',qrTextLoc(l));}
 function modalSdb(id){const s=substance(id);let note,doc;
   if(s.sdb.status==='fehlt'){
     note='<div class="notice danger">'+ICO.warn+'<div><b>Kein SDB hinterlegt.</b> Datei hochladen oder Link ergänzen.</div></div>';
     doc='<div class="empty">'+ICO.doc+'<div>Keine SDB-Datei vorhanden.</div></div>';
   }else{
     const col=s.sdb.status==='alt'?'var(--warn)':'var(--ok)';
-    note=s.sdb.status==='alt'?'<div class="notice warn">'+ICO.warn+'<div><b>SDB älter als 3 Jahre</b> (Stand '+s.sdb.rev+').</div></div>':'<div class="notice ok">'+ICO.ok+'<div>SDB hinterlegt'+(s.sdb.rev?' · Revision '+s.sdb.rev:'')+'.</div></div>';
-    doc='<div class="sdb-doc"><div class="sdb-ico"><span class="fold"></span><span style="color:'+col+'">'+(s.sdb.path?'PDF':'LINK')+'</span></div><div style="min-width:0"><b style="font-size:15px">'+s.name+'</b><div style="font-size:12.5px;color:var(--ink-2);margin-top:3px;word-break:break-all">'+s.sdb.link+'</div>'+(s.sdb.rev?'<div style="font-size:12px;color:var(--ink-3);margin-top:2px">Revision '+s.sdb.rev+' · '+s.hersteller+'</div>':'')+'</div></div>';
+    note=s.sdb.status==='alt'?'<div class="notice warn">'+ICO.warn+'<div><b>SDB älter als 3 Jahre</b> (Stand '+esc(s.sdb.rev)+').</div></div>':'<div class="notice ok">'+ICO.ok+'<div>SDB hinterlegt'+(s.sdb.rev?' · Revision '+esc(s.sdb.rev):'')+'.</div></div>';
+    doc='<div class="sdb-doc"><div class="sdb-ico"><span class="fold"></span><span style="color:'+col+'">'+(s.sdb.path?'PDF':'LINK')+'</span></div><div style="min-width:0"><b style="font-size:15px">'+esc(s.name)+'</b><div style="font-size:12.5px;color:var(--ink-2);margin-top:3px;word-break:break-all">'+esc(s.sdb.link)+'</div>'+(s.sdb.rev?'<div style="font-size:12px;color:var(--ink-3);margin-top:2px">Revision '+esc(s.sdb.rev)+' · '+esc(s.hersteller)+'</div>':'')+'</div></div>';
   }
   const openBtn=(s.sdb.path||s.sdb.url)?'<div class="btn-row"><button class="btn secondary" data-action="openSdbDoc" data-id="'+s.id+'">'+ICO.doc+' SDB öffnen</button></div>':'';
   const canUp=isAdmin()||curUser().role==='Lagerverantwortlich'||curUser().role==='Mitarbeitend';
@@ -3973,7 +3975,7 @@ async function uploadSdbFromModal(subId){const inp=document.getElementById('sdbF
   catch(e){toast('Upload: '+(e&&e.message||e),false);}}
 function modalSwitchUser(){
   const u=curUser();const em=(AUTH.user&&AUTH.user.email)||'';
-  openModal('Konto','<div class="notice info" style="margin-bottom:14px">'+ICO.user+'<div>Angemeldet als <b>'+u.name+'</b><br>'+em+' · Rolle: '+u.role+'</div></div>'+
+  openModal('Konto','<div class="notice info" style="margin-bottom:14px">'+ICO.user+'<div>Angemeldet als <b>'+esc(u.name)+'</b><br>'+esc(em)+' · Rolle: '+esc(u.role)+'</div></div>'+
     '<button class="btn secondary" data-action="pwChange" style="width:100%;margin-bottom:10px">'+ICO.user+' Passwort ändern</button>'+
     '<div class="btn-row" style="margin-top:0"><button class="btn ghost" data-action="closeModal">Schliessen</button><button class="btn danger" data-action="logout">'+ICO.user+' Abmelden</button></div>'+
     '<div style="margin-top:16px">'+LEGAL_HTML+'</div>');
@@ -4000,7 +4002,7 @@ async function doChangePassword(){
 }
 
 function modalAddUser(){
-  const fOpts=DB.companies.map(c=>'<option value="'+c.id+'">'+c.name+'</option>').join('');
+  const fOpts=DB.companies.map(c=>'<option value="'+c.id+'">'+esc(c.name)+'</option>').join('');
   const rOpts=ROLES.map(r=>'<option'+(r==='Mitarbeitend'?' selected':'')+'>'+r+'</option>').join('');
   openModal('Person einladen','<form id="mForm">'+
     '<div class="notice info" style="margin-bottom:12px">'+ICO.info+'<div>Die Person registriert sich anschliessend selbst mit genau dieser <b>E-Mail-Adresse</b> über «Neues Konto erstellen». Beim ersten Login wird sie automatisch dieser Organisation mit der gewählten Rolle zugeordnet.</div></div>'+
@@ -4016,7 +4018,7 @@ function modalAddCompany(){
     '<button type="button" class="btn" data-action="saveCompany">'+ICO.plus+' Firma speichern</button></form>');
 }
 function modalAddLocation(){
-  const fOpts=DB.companies.filter(c=>!c.group).map(c=>'<option value="'+c.id+'"'+(c.id===state.adminCompany?' selected':'')+'>'+c.name+'</option>').join('');
+  const fOpts=DB.companies.filter(c=>!c.group).map(c=>'<option value="'+c.id+'"'+(c.id===state.adminCompany?' selected':'')+'>'+esc(c.name)+'</option>').join('');
   const tOpts=['Werkhof','Baustelle','Magazin','Werkstatt','Containerlager','Zwischenlager','Sonderabfall'].map(t=>'<option>'+t+'</option>').join('');
   openModal('Lagerort hinzufügen','<form id="mForm">'+
     '<div class="field"><label>Firma *</label><select name="company">'+fOpts+'</select></div>'+
@@ -4429,9 +4431,9 @@ function printReport(){
   if(!insts.length){toast('Keine Daten zum Drucken.',false);return;}
   let rows='';insts.forEach(i=>{const s=substance(i.sub),l=location_(i.loc),c=l?company(l.company):null;
     const warn=s.sdb.status==='fehlt';
-    rows+='<tr><td>'+(c?c.name:'–')+'</td><td>'+(l?l.name+' · '+l.bereich:'–')+'</td><td><b>'+s.name+'</b><br>'+s.hersteller+'</td>'+
-      '<td>'+mengeText(i)+'<br>'+i.anzahl+'× '+i.gebinde+'</td><td>'+s.signal+(ghsText(s)?'<br>'+ghsText(s):'')+'</td>'+
-      '<td>'+s.un+'</td><td'+(warn?' class="pr-warn"':'')+'>'+sdbText(s)+'</td><td>'+i.status+'</td><td>'+i.qr+'</td></tr>';});
+    rows+='<tr><td>'+(c?esc(c.name):'–')+'</td><td>'+(l?esc(l.name)+' · '+esc(l.bereich):'–')+'</td><td><b>'+esc(s.name)+'</b><br>'+esc(s.hersteller)+'</td>'+
+      '<td>'+mengeText(i)+'<br>'+i.anzahl+'× '+esc(i.gebinde)+'</td><td>'+esc(s.signal)+(ghsText(s)?'<br>'+ghsText(s):'')+'</td>'+
+      '<td>'+esc(s.un)+'</td><td'+(warn?' class="pr-warn"':'')+'>'+sdbText(s)+'</td><td>'+esc(i.status)+'</td><td>'+esc(i.qr)+'</td></tr>';});
   const html=prHeader('Bestandsliste · '+scopeName())+
     '<div class="pr-title">Gefahrstoff-Bestand · '+scopeName()+' ('+insts.length+' Positionen)</div>'+
     '<table class="pr-tbl"><thead><tr><th>Firma</th><th>Lagerort</th><th>Produkt</th><th>Menge / Gebinde</th><th>Signal / GHS</th><th>UN</th><th>SDB</th><th>Status</th><th>Interner QR</th></tr></thead><tbody>'+rows+'</tbody></table>'+prFooter();
@@ -4449,11 +4451,11 @@ function printLabels(){
   if(!locs.length&&!insts.length){toast('Keine Etiketten vorhanden.',false);return;}
   const jobs=[];let cells='';
   locs.forEach(l=>{const c=company(l.company),id='lq'+jobs.length;
-    cells+='<div class="lbl loc"><div class="ltag">Lagerort</div><div class="lqr" id="'+id+'"></div><div class="lname">'+l.name+'</div><div class="lsub">'+l.bereich+' · '+(c?c.name:'')+'</div><div class="lcode">LOC-'+String(l.id).slice(0,10).toUpperCase()+'</div></div>';
+    cells+='<div class="lbl loc"><div class="ltag">Lagerort</div><div class="lqr" id="'+id+'"></div><div class="lname">'+esc(l.name)+'</div><div class="lsub">'+esc(l.bereich)+' · '+(c?esc(c.name):'')+'</div><div class="lcode">LOC-'+String(l.id).slice(0,10).toUpperCase()+'</div></div>';
     jobs.push([id,qrTextLoc(l)]);});
   insts.forEach(i=>{const s=substance(i.sub),l=location_(i.loc),c=l?company(l.company):null,id='lq'+jobs.length;
-    const un=(s&&s.un&&s.un!=='–')?'<div class="lun">UN '+s.un+'</div>':'';
-    cells+='<div class="lbl"><div class="ltag">Artikel</div><div class="lname">'+s.name+'</div>'+labelHazard(s)+'<div class="lqr" id="'+id+'"></div><div class="lsub">'+(c?c.name+' · ':'')+(l?l.name:'')+' · '+mengeText(i)+'</div>'+un+'<div class="lcode">'+i.qr+'</div></div>';
+    const un=(s&&s.un&&s.un!=='–')?'<div class="lun">UN '+esc(s.un)+'</div>':'';
+    cells+='<div class="lbl"><div class="ltag">Artikel</div><div class="lname">'+esc(s.name)+'</div>'+labelHazard(s)+'<div class="lqr" id="'+id+'"></div><div class="lsub">'+(c?esc(c.name)+' · ':'')+(l?esc(l.name):'')+' · '+mengeText(i)+'</div>'+un+'<div class="lcode">'+esc(i.qr)+'</div></div>';
     jobs.push([id,qrTextInst(i)]);});
   const html=prHeader('Etiketten-Druckbogen · '+scopeName())+
     '<div class="pr-title">Etiketten · '+scopeName()+' ('+locs.length+' Lagerorte, '+insts.length+' Artikel)</div>'+
