@@ -2390,7 +2390,7 @@ function dossierPdf(){
   var cover='<div class="dos-cover"><div class="dos-logo">'+prLogoHtml()+'</div>'+
     '<div class="dos-kick">Prüf-Dossier · Gefahrstoffe</div>'+
     '<div class="dos-org">'+esc(orgName())+'</div>'+
-    '<table class="dos-meta"><tr><td>Umfang</td><td>'+esc(scope)+'</td></tr><tr><td>Erstellt am</td><td>'+today+'</td></tr>'+(who?'<tr><td>Verantwortlich</td><td>'+esc(who)+'</td></tr>':'')+'<tr><td>Inhalt</td><td>Kennzahlen · offene Punkte · Gefahrstoffliste · SDB-Status · Zusammenlagerung · Instruktionsnachweise · Betriebsanweisungen</td></tr></table>'+
+    '<table class="dos-meta"><tr><td>Umfang</td><td>'+esc(scope)+'</td></tr><tr><td>Erstellt am</td><td>'+today+'</td></tr>'+(who?'<tr><td>Verantwortlich</td><td>'+esc(who)+'</td></tr>':'')+'<tr><td>Inhalt</td><td>Kennzahlen · offene Punkte · Gefahrstoffliste · SDB-Status · Zusammenlagerung · Instruktionsnachweise · Betriebsanweisungen · Audit-Log</td></tr></table>'+
     '<div class="dos-note">Automatisch aus dem StoffScan-Kataster erstellt. Momentaufnahme zum Erstellungsdatum – ersetzt keine Gefährdungsbeurteilung vor Ort.</div></div>';
 
   // 2) Kennzahlen + offene Punkte
@@ -2436,7 +2436,16 @@ function dossierPdf(){
   var baRows=subs.map(function(s){return '<tr><td><b>'+esc(s.name)+'</b></td><td>'+esc(s.hersteller||'')+'</td><td>aus H-/P-Sätzen erzeugbar</td><td>☐ aushängen</td></tr>';}).join('');
   var page7=dossierHead('Betriebsanweisungen')+'<div class="pr-title">Betriebsanweisungen ('+subs.length+' Stoffe)</div>'+
     (subs.length?'<table class="pr-tbl"><thead><tr><th style="width:45%">Stoff</th><th>Hersteller</th><th>Betriebsanweisung</th><th>Aushang</th></tr></thead><tbody>'+baRows+'</tbody></table>':'<p class="dos-ok">Keine Stoffe erfasst.</p>')+
-    '<p class="dos-legend">Für jeden Stoff erzeugt StoffScan die aushängefertige Betriebsanweisung auf Knopfdruck (DE/FR/IT).</p>'+prFooter();
+    '<p class="dos-legend">Für jeden Stoff erzeugt StoffScan die aushängefertige Betriebsanweisung auf Knopfdruck (DE/FR/IT).</p>';
+
+  // 8) Audit-Log (revisionssichere Hash-Kette)
+  var achain=auditCompute(),avr=auditVerify();
+  var aseal=avr.ok?'<span style="color:#1f7a4d;font-weight:700">Kette intakt · Siegel '+auditShort(avr.seal)+'</span>':'<span class="pr-warn">Kette gebrochen bei Nr. '+avr.breakSeq+'</span>';
+  var aRows=achain.slice().reverse().map(function(e){return '<tr><td>#'+e.seq+'</td><td>'+esc(e.t)+'</td><td>'+esc(e.who)+'</td><td>'+esc(e.a)+'</td><td>'+esc(e.m)+'</td><td class="mono">'+auditShort(e.hash)+'</td></tr>';}).join('');
+  var page8=dossierHead('Audit-Log')+'<div class="pr-title">Audit-Log · Aktionsprotokoll</div>'+
+    '<p style="margin:-4px 0 10px;font-size:11px;color:#333">Status: '+aseal+' · '+avr.count+' Einträge</p>'+
+    (achain.length?'<table class="pr-tbl"><thead><tr><th style="width:44px">Nr.</th><th style="width:96px">Zeitpunkt</th><th style="width:96px">Person</th><th>Aktion</th><th>Detail</th><th style="width:96px">Prüfsumme</th></tr></thead><tbody>'+aRows+'</tbody></table>':'<p class="dos-ok">Noch keine Einträge im Audit-Log.</p>')+
+    '<p class="dos-legend">Jeder Eintrag enthält eine Prüfsumme über den vorherigen Eintrag (Hash-Kette). Nachträgliche Änderungen oder Löschungen verändern alle folgenden Prüfsummen und werden dadurch erkennbar. Betrieblicher Nachweis der Aktionshistorie – ersetzt keine gesetzlich vorgeschriebene Aufbewahrung.</p>'+prFooter();
 
   var html=cover+
     '<div class="pr-page">'+page2+'</div>'+
@@ -2444,7 +2453,8 @@ function dossierPdf(){
     '<div class="pr-page">'+page4+'</div>'+
     '<div class="pr-page">'+page5+'</div>'+
     '<div class="pr-page">'+page6+'</div>'+
-    '<div class="pr-page">'+page7+'</div>';
+    '<div class="pr-page">'+page7+'</div>'+
+    '<div class="pr-page">'+page8+'</div>';
   doPrint(html);
 }
 
