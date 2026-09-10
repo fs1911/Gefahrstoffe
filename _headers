@@ -5,7 +5,7 @@
 # fremde connect-/Exfil-Ziele, object/embed, base-uri-Hijack.
 /*
   Cache-Control: no-cache
-  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data: blob: https://pvzjxzunhhbgfimirbkl.supabase.co; media-src 'self' blob:; font-src 'self' https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' https://pvzjxzunhhbgfimirbkl.supabase.co wss://pvzjxzunhhbgfimirbkl.supabase.co https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self' blob:; manifest-src 'self'; frame-src 'self'
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data: blob: https://pvzjxzunhhbgfimirbkl.supabase.co; media-src 'self' blob:; font-src 'self' https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline'; connect-src 'self' https://pvzjxzunhhbgfimirbkl.supabase.co wss://pvzjxzunhhbgfimirbkl.supabase.co; worker-src 'self' blob:; manifest-src 'self'; frame-src 'self'
   Strict-Transport-Security: max-age=31536000; includeSubDomains
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
