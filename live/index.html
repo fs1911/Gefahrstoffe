@@ -4155,6 +4155,7 @@ document.addEventListener('click',e=>{
     case 'doDelLocation':delLocationDo(id);break;
     case 'logout':sbc.auth.signOut().then(()=>location.reload());break;
     case 'authLogin':doLogin();break;
+    case 'goLogin':location.hash='';renderLogin();break;
     case 'authSignup':doSignup();break;
     case 'authCreateOrg':doCreateOrg();break;
     case 'pwForgot':doForgotPassword();break;
@@ -4280,6 +4281,43 @@ function renderLogin(){overlay('<div style="max-width:390px;margin:0 auto;paddin
   '<button class="btn secondary" data-action="authSignup">Neues Konto erstellen</button></div>'+
   '<div class="disclaimer" style="text-align:center">Betriebliche Unterstützung – ersetzt keine Beurteilung vor Ort.<br><a href="../app/" style="color:var(--accent)">Zur Login-freien Demo</a></div>'+
   '<div style="margin-top:12px">'+LEGAL_HTML+'</div></div>');}
+function pubSigChip(sig){
+  if(sig==='Gefahr')return '<span style="display:inline-block;font-weight:800;font-size:13px;letter-spacing:.04em;color:#a3140b;border:1.6px solid #a3140b;border-radius:5px;padding:3px 11px">GEFAHR</span>';
+  if(sig==='Achtung')return '<span style="display:inline-block;font-weight:800;font-size:13px;letter-spacing:.04em;color:#8a5a06;border:1.6px solid #b9820f;border-radius:5px;padding:3px 11px">ACHTUNG</span>';
+  return '';
+}
+function publicScanCard(row,code){
+  var head='<div style="text-align:center;margin-bottom:14px"><div class="logo" style="margin:0 auto 10px;width:46px;height:46px;font-size:17px">St</div><div style="font-size:12px;color:var(--ink-3);font-weight:600">Öffentliche Sicherheitsinfo · ohne Login</div></div>';
+  var foot='<button class="btn secondary" data-action="goLogin" style="margin-top:12px;width:100%">Anmelden für Bestand &amp; Details</button>'+
+    '<div class="disclaimer" style="text-align:center;margin-top:10px">Öffentliche Sicherheitsauskunft aus dem Sicherheitsdatenblatt. Menge, Standort und Betrieb sind nur nach Anmeldung sichtbar – ersetzt keine Instruktion vor Ort.</div>';
+  var body;
+  if(!row){
+    body='<div class="card" style="padding:20px"><div class="notice warn">'+ICO.warn+'<div><b>Kein freigegebener Gefahrstoff gefunden.</b> Der gescannte Code «'+esc(code)+'» ist unbekannt oder der Stoff ist noch nicht freigegeben.</div></div></div>';
+  }else{
+    var ghs=(row.ghs_piktogramme||[]).map(function(k){return ghsBadge(k,'big');}).join('');
+    var secLab='font-size:11px;font-weight:700;color:var(--ink-3);letter-spacing:.02em;margin-bottom:3px';
+    var sec='margin:10px 0 0;padding-top:10px;border-top:1px solid var(--line-2)';
+    var row2='display:flex;justify-content:space-between;gap:12px;padding:8px 0 0;margin-top:8px;border-top:1px solid var(--line-2);font-size:14px';
+    var un=(row.un_nummer&&row.un_nummer!=='–')?'<div style="'+row2+'"><span style="color:var(--ink-3);font-weight:600">UN-Nummer</span><span style="font-weight:700">UN '+esc(row.un_nummer)+'</span></div>':'';
+    var lk=row.lagerklasse?'<div style="'+row2+'"><span style="color:var(--ink-3);font-weight:600">Lagerklasse</span><span style="font-weight:700">LK '+esc(row.lagerklasse)+'</span></div>':'';
+    body='<div class="card" style="padding:20px">'+
+      '<h2 class="title" style="margin:0 0 2px;font-size:22px">'+esc(row.produktname||'Gefahrstoff')+'</h2>'+
+      (row.hersteller?'<div style="color:var(--ink-2);font-size:13px;margin-bottom:12px">'+esc(row.hersteller)+'</div>':'<div style="height:6px"></div>')+
+      (pubSigChip(row.signalwort)?'<div style="margin-bottom:12px">'+pubSigChip(row.signalwort)+'</div>':'')+
+      (ghs?'<div class="sk-ghs" style="margin-bottom:6px">'+ghs+'</div>':'')+
+      ((row.h_saetze&&row.h_saetze!=='–')?'<div style="'+sec+'"><div style="'+secLab+'">Gefahrenhinweise (H)</div><div style="font-size:14px;line-height:1.5">'+esc(row.h_saetze)+'</div></div>':'')+
+      ((row.p_saetze&&row.p_saetze!=='–')?'<div style="'+sec+'"><div style="'+secLab+'">Sicherheitshinweise (P)</div><div style="font-size:14px;line-height:1.5">'+esc(row.p_saetze)+'</div></div>':'')+
+      un+lk+
+      '</div>';
+  }
+  return '<div style="max-width:440px;margin:0 auto;padding:34px 18px">'+head+body+foot+'</div>';
+}
+async function publicScan(code){
+  overlay('<div style="max-width:440px;margin:0 auto;padding:70px 18px;text-align:center;color:var(--ink-3)">Sicherheitsinfo wird geladen…</div>');
+  var row=null;
+  try{const r=await sbc.rpc('public_scan',{p_qr:code});if(!r.error&&r.data&&r.data.length)row=r.data[0];}catch(e){}
+  overlay(publicScanCard(row,code));
+}
 function renderOnboarding(){overlay('<div style="max-width:390px;margin:0 auto;padding:44px 20px">'+
   '<h2 class="title">Willkommen bei StoffScan</h2><p class="sub">Erstelle deine Organisation. Du wirst automatisch Gruppen-/IMS-Admin.</p>'+
   '<div class="card" style="padding:18px"><div id="authNote"></div>'+
@@ -4426,7 +4464,11 @@ function printLabels(){
 async function initApp(){
   const {data:{session}}=await sbc.auth.getSession();
   AUTH.user=session?session.user:null;
-  if(!session){renderLogin();return;}
+  if(!session){
+    const h0=location.hash||'';
+    if(h0.indexOf('#open=INST-')===0){return publicScan(h0.slice('#open='.length).trim());}
+    renderLogin();return;
+  }
   let {data:prof,error}=await sbc.from('profiles').select('*').eq('id',session.user.id).maybeSingle();
   if(error){renderLogin();authNote('Profil laden: '+error.message,'danger');return;}
   if(!prof){
