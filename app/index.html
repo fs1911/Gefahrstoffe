@@ -1145,6 +1145,14 @@
     .lbl .lsub{font-size:9px;color:#333;margin-top:2px}
     .lbl .lcode{font-family:var(--mono);font-size:8.5px;margin-top:3px;color:#111}
     .lbl .ltag{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:#666;margin-bottom:4px}
+    .lbl .lhz{display:flex;flex-direction:column;align-items:center;gap:3px;margin:4px 0 2px}
+    .lbl .lsig{font-family:var(--display);font-weight:800;font-size:9.5px;letter-spacing:.05em;padding:2px 8px;border-radius:4px;border:1.5px solid;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .lbl .lsig-d{color:#a3140b;border-color:#a3140b}
+    .lbl .lsig-w{color:#8a5a06;border-color:#b9820f}
+    .lbl .lpks{display:flex;gap:3px;justify-content:center;flex-wrap:wrap}
+    .lbl .lpk{width:11mm;height:11mm;display:inline-block;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .lbl .lpk svg{width:100%;height:100%;display:block}
+    .lbl .lun{font-family:var(--mono);font-weight:700;font-size:9px;margin-top:3px;border:1px solid #111;border-radius:4px;padding:1px 5px}
   }
   /* ===== Lagerklassen & Zusammenlagerung ===== */
   .lk-badge{display:inline-flex;align-items:center;font:700 11px/1 var(--mono);color:#fff;background:#555;border-radius:6px;padding:4px 7px;letter-spacing:.02em;white-space:nowrap;vertical-align:middle}
@@ -3929,6 +3937,12 @@ function printReport(){
     '<table class="pr-tbl"><thead><tr><th>Firma</th><th>Lagerort</th><th>Produkt</th><th>Menge / Gebinde</th><th>Signal / GHS</th><th>UN</th><th>SDB</th><th>Status</th><th>Interner QR</th></tr></thead><tbody>'+rows+'</tbody></table>'+prFooter();
   doPrint(html);
 }
+function labelHazard(s){
+  if(!s)return '';
+  var sig=s.signal==='Gefahr'?'<span class="lsig lsig-d">GEFAHR</span>':(s.signal==='Achtung'?'<span class="lsig lsig-w">ACHTUNG</span>':'');
+  var pk=(s.ghs&&s.ghs.length)?'<span class="lpks">'+s.ghs.slice(0,6).map(function(k){return '<span class="lpk">'+(GHS_SVG[k]||'')+'</span>';}).join('')+'</span>':'';
+  return (sig||pk)?'<div class="lhz">'+sig+pk+'</div>':'';
+}
 function printLabels(){
   const locs=expLocs(),insts=expInsts();
   if(!locs.length&&!insts.length){toast('Keine Etiketten vorhanden.',false);return;}
@@ -3937,7 +3951,8 @@ function printLabels(){
     cells+='<div class="lbl loc"><div class="ltag">Lagerort</div><div class="lqr" id="'+id+'"></div><div class="lname">'+l.name+'</div><div class="lsub">'+l.bereich+' · '+(c?c.name:'')+'</div><div class="lcode">LOC-'+String(l.id).slice(0,10).toUpperCase()+'</div></div>';
     jobs.push([id,qrTextLoc(l)]);});
   insts.forEach(i=>{const s=substance(i.sub),l=location_(i.loc),c=l?company(l.company):null,id='lq'+jobs.length;
-    cells+='<div class="lbl"><div class="ltag">Artikel</div><div class="lqr" id="'+id+'"></div><div class="lname">'+s.name+'</div><div class="lsub">'+(c?c.name+' · ':'')+(l?l.name:'')+' · '+mengeText(i)+'</div><div class="lcode">'+i.qr+'</div></div>';
+    const un=(s&&s.un&&s.un!=='–')?'<div class="lun">UN '+s.un+'</div>':'';
+    cells+='<div class="lbl"><div class="ltag">Artikel</div><div class="lname">'+s.name+'</div>'+labelHazard(s)+'<div class="lqr" id="'+id+'"></div><div class="lsub">'+(c?c.name+' · ':'')+(l?l.name:'')+' · '+mengeText(i)+'</div>'+un+'<div class="lcode">'+i.qr+'</div></div>';
     jobs.push([id,qrTextInst(i)]);});
   const html=prHeader('Etiketten-Druckbogen · '+scopeName())+
     '<div class="pr-title">Etiketten · '+scopeName()+' ('+locs.length+' Lagerorte, '+insts.length+' Artikel)</div>'+
