@@ -185,7 +185,7 @@
   @media(max-width:920px){.band .wrap{grid-template-columns:1fr;gap:30px}}
 
   /* Pricing */
-  .price-grid{grid-template-columns:repeat(3,1fr)}
+  .price-grid{grid-template-columns:repeat(2,1fr);max-width:760px;margin:0 auto}
   @media(max-width:920px){.price-grid{grid-template-columns:1fr;max-width:440px;margin:0 auto}}
   .plan{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:32px 28px;display:flex;flex-direction:column}
   .plan.pop{border:2px solid var(--brand);box-shadow:0 16px 40px -20px rgba(12,107,79,.4);position:relative}
@@ -1549,50 +1549,39 @@
   <div class="wrap">
     <div class="sec-head" style="max-width:620px">
       <div class="eyebrow">Preise</div>
-      <h2>Ein Preis pro Betrieb. Keine Überraschungen.</h2>
-      <p class="lead">Transparent nach Betriebsgrösse, jederzeit monatlich kündbar. Richtpreise – finale Konditionen im Gespräch.</p>
+      <h2>Zwei klare Pakete. Keine Überraschungen.</h2>
+      <p class="lead">Richtpreise pro Betrieb, jährlich abgerechnet. 14 Tage gratis testen – finale Konditionen im Gespräch.</p>
     </div>
     <div class="grid price-grid">
       <div class="plan">
         <h3>Starter</h3>
-        <div class="pdesc">Für den einzelnen Betrieb mit einem Standort.</div>
-        <div class="amt">CHF 49<small> /Mt.</small></div>
+        <div class="pdesc">Für den einzelnen Betrieb mit einem oder mehreren Lagerorten.</div>
+        <div class="amt">CHF 129<small> /Mt.</small></div>
         <div class="per">pro Betrieb, jährlich abgerechnet</div>
         <ul>
-          <li><svg class="ck" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> 1 Firma, mehrere Lagerorte</li>
+          <li><svg class="ck" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Ein Betrieb, mehrere Lagerorte</li>
           <li><svg class="ck" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Scan-Erfassung &amp; Stoffkarten</li>
           <li><svg class="ck" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> SDB-Ablage &amp; QR-Etiketten</li>
+          <li><svg class="ck" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Prüf-Dossier &amp; Audit-Log</li>
           <li><svg class="ck" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Bis 5 Benutzer</li>
         </ul>
-        <a class="btn ghost" href="#kontakt">Beratung anfragen</a>
+        <a class="btn ghost" href="mailto:kontakt@stoffscan.ch?subject=StoffScan%20Anfrage%20-%20Starter&amp;body=Guten%20Tag%0D%0A%0D%0AWir%20interessieren%20uns%20f%C3%BCr%20StoffScan%20(Paket%3A%20Starter).%0D%0A%0D%0AFirma%3A%0D%0AAnzahl%20Standorte%3A%0D%0AAnsprechperson%3A%0D%0ATelefon%3A%0D%0A%0D%0AFreundliche%20Gr%C3%BCsse">Anfrage senden</a>
       </div>
       <div class="plan pop">
         <div class="flag">Am beliebtesten</div>
-        <h3>Betrieb</h3>
-        <div class="pdesc">Für Betriebe mit mehreren Standorten und Teams.</div>
-        <div class="amt">CHF 149<small> /Mt.</small></div>
+        <h3>Pro</h3>
+        <div class="pdesc">Für Betriebe mit mehreren Firmen, Standorten und Teams.</div>
+        <div class="amt">CHF 349<small> /Mt.</small></div>
         <div class="per">pro Betrieb, jährlich abgerechnet</div>
         <ul>
           <li><svg class="ck" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Alles aus Starter</li>
+          <li><svg class="ck" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Mehrere Firmen (Gruppe) &amp; Standorte</li>
           <li><svg class="ck" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Rollen &amp; Rechte, Freigaben</li>
-          <li><svg class="ck" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Warnhinweise &amp; Hinweis-Dashboard</li>
+          <li><svg class="ck" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Warnhinweis-Dashboard &amp; Gesamtsicht (IMS)</li>
           <li><svg class="ck" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Export CSV/PDF, Etiketten-Druck</li>
           <li><svg class="ck" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Unbegrenzte Benutzer</li>
         </ul>
-        <a class="btn primary" href="#kontakt">Beratung anfragen</a>
-      </div>
-      <div class="plan">
-        <h3>Gruppe</h3>
-        <div class="pdesc">Für Firmengruppen mit mehreren Gesellschaften.</div>
-        <div class="amt">Auf Anfrage</div>
-        <div class="per">nach Anzahl Firmen &amp; Standorten</div>
-        <ul>
-          <li><svg class="ck" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Alles aus Betrieb</li>
-          <li><svg class="ck" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Gruppenweite Gesamtsicht (IMS)</li>
-          <li><svg class="ck" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Zentraler Stoffstamm für alle Firmen</li>
-          <li><svg class="ck" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg> Onboarding &amp; Support</li>
-        </ul>
-        <a class="btn ghost" href="#kontakt">Kontakt aufnehmen</a>
+        <a class="btn primary" href="mailto:kontakt@stoffscan.ch?subject=StoffScan%20Anfrage%20-%20Pro&amp;body=Guten%20Tag%0D%0A%0D%0AWir%20interessieren%20uns%20f%C3%BCr%20StoffScan%20(Paket%3A%20Pro).%0D%0A%0D%0AFirma%3A%0D%0AAnzahl%20Firmen%2FStandorte%3A%0D%0AAnsprechperson%3A%0D%0ATelefon%3A%0D%0A%0D%0AFreundliche%20Gr%C3%BCsse">Anfrage senden</a>
       </div>
     </div>
   </div>
@@ -1623,7 +1612,7 @@
     <p>Testen Sie die Demo oder besprechen Sie mit uns einen Pilotbetrieb – unverbindlich.</p>
     <div class="cta-row">
       <a class="btn light" href="app/" target="_blank" rel="noopener">Live-Demo öffnen</a>
-      <a class="btn onforest" href="mailto:kontakt@stoffscan.example?subject=StoffScan%20Beratung">Beratung anfragen</a>
+      <a class="btn onforest" href="mailto:kontakt@stoffscan.ch?subject=StoffScan%20Beratung&amp;body=Guten%20Tag%0D%0A%0D%0AWir%20interessieren%20uns%20f%C3%BCr%20StoffScan.%0D%0A%0D%0AFirma%3A%0D%0AAnzahl%20Standorte%3A%0D%0AAnsprechperson%3A%0D%0ATelefon%3A%0D%0A%0D%0AFreundliche%20Gr%C3%BCsse">Beratung anfragen</a>
     </div>
     <p class="note">Kontaktadresse und Konditionen bitte anpassen.</p>
   </div>
@@ -1646,7 +1635,7 @@
     </div>
     <div>
       <h4>Kontakt</h4>
-      <a href="mailto:kontakt@stoffscan.example">kontakt@stoffscan.example</a>
+      <a href="mailto:kontakt@stoffscan.ch">kontakt@stoffscan.ch</a>
       <a href="#kontakt">Beratung anfragen</a>
       <a href="#faq">FAQ</a>
     </div>
