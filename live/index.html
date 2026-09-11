@@ -1857,10 +1857,12 @@ const sbc=window.supabase.createClient(SB_URL,SB_KEY);
 sbc.auth.onAuthStateChange(function(event){ if(event==='PASSWORD_RECOVERY'){ renderResetPassword(); } });
 const AUTH={user:null,profile:null};
 const LEGAL_HTML='<div class="legal-links"><a href="../impressum.html" target="_blank" rel="noopener">Impressum</a><span>·</span><a href="../datenschutz.html" target="_blank" rel="noopener">Datenschutz</a><span>·</span><a href="../agb.html" target="_blank" rel="noopener">AGB</a></div>';
+// Hinweis: die interne id ('starter'/'betrieb') ist der DB-Enum-Wert von
+// set_org_plan; das zweite Paket heisst nach aussen "Pro" (frueher "Betrieb"
+// + "Gruppe" zusammengefuehrt), behaelt aber die id 'betrieb' fuer die DB.
 const PLANS=[
- {id:'starter',name:'Starter',price:'CHF 49',per:'/Mt.',note:'pro Betrieb, jährlich abgerechnet',tag:'',desc:'Für den einzelnen Betrieb mit einem Standort.',feats:['1 Firma, mehrere Lagerorte','Scan-Erfassung & Stoffkarten','SDB-Ablage & QR-Etiketten','Bis 5 Benutzer']},
- {id:'betrieb',name:'Betrieb',price:'CHF 149',per:'/Mt.',note:'pro Betrieb, jährlich abgerechnet',tag:'Am beliebtesten',desc:'Für Betriebe mit mehreren Standorten und Teams.',feats:['Alles aus Starter','Rollen & Rechte, Freigaben','Warnhinweise & Hinweis-Dashboard','Export CSV/PDF, Etiketten-Druck','Unbegrenzte Benutzer']},
- {id:'gruppe',name:'Gruppe',price:'Auf Anfrage',per:'',note:'nach Anzahl Firmen & Standorten',tag:'',desc:'Für Firmengruppen mit mehreren Gesellschaften.',feats:['Alles aus Betrieb','Gruppenweite Gesamtsicht (IMS)','Zentraler Stoffstamm für alle Firmen','Onboarding & Support']}
+ {id:'starter',name:'Starter',price:'CHF 129',per:'/Mt.',note:'pro Betrieb, jährlich abgerechnet',tag:'',desc:'Für den einzelnen Betrieb mit einem oder mehreren Lagerorten.',feats:['Ein Betrieb, mehrere Lagerorte','Scan-Erfassung & Stoffkarten','SDB-Ablage & QR-Etiketten','Prüf-Dossier & Audit-Log','Bis 5 Benutzer']},
+ {id:'betrieb',name:'Pro',price:'CHF 349',per:'/Mt.',note:'pro Betrieb, jährlich abgerechnet',tag:'Am beliebtesten',desc:'Für Betriebe mit mehreren Firmen, Standorten und Teams.',feats:['Alles aus Starter','Mehrere Firmen (Gruppe) & Standorte','Rollen & Rechte, Freigaben','Warnhinweis-Dashboard & Gesamtsicht (IMS)','Export CSV/PDF, Etiketten-Druck','Unbegrenzte Benutzer']}
 ];
 const PLAN_BY={};PLANS.forEach(function(p){PLAN_BY[p.id]=p;});
 let ONB_PLAN='starter';
