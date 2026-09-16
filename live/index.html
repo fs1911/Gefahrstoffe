@@ -767,6 +767,30 @@
   .lotse-all{display:inline-flex;align-items:center;gap:4px;margin-top:11px;color:var(--accent);font-weight:700;font-size:13px;cursor:pointer}
   .lotse-all svg{width:15px;height:15px}
   .lotse-card.done .lotse-ok{display:flex;align-items:center;gap:9px;background:var(--ok-bg);color:var(--ok);border-radius:11px;padding:12px 13px;font-weight:700;font-size:13.5px}
+  .onbguide{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:15px 16px 16px;margin:14px 0 4px;box-shadow:0 10px 26px -18px rgba(16,36,28,.5)}
+  .obg-head{display:flex;align-items:center;gap:13px;margin-bottom:12px}
+  .obg-badge{flex:none;width:52px;height:52px;border-radius:14px;background:var(--accent,#0c6b4f);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:17px}
+  .obg-meta{flex:1;min-width:0}
+  .obg-meta b{font-family:var(--display);font-size:15.5px;color:var(--ink);display:block}
+  .obg-meta small{display:block;color:var(--ink-3);font-size:12.5px;margin-top:2px;line-height:1.4}
+  .obg-steps{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .obg-row{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--surface);border:0;border-top:1px solid var(--line-2);padding:12px 13px;cursor:pointer;font-family:var(--font)}
+  .obg-row:first-child{border-top:0}
+  .obg-row.active{background:var(--surface-2)}
+  .obg-row.done{cursor:default}
+  .obg-mk{flex:none;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;background:var(--line-2);color:var(--ink-3)}
+  .obg-mk.active{background:var(--accent,#0c6b4f);color:#fff}
+  .obg-mk.done{background:var(--ok-bg);color:var(--ok)}
+  .obg-mk svg{width:15px;height:15px}
+  .obg-tx{flex:1;min-width:0}
+  .obg-tx b{font-size:14px;color:var(--ink);display:block;font-weight:600}
+  .obg-row.done .obg-tx b{color:var(--ink-3);text-decoration:line-through;text-decoration-thickness:1px}
+  .obg-tx small{display:block;color:var(--ink-3);font-size:12px;margin-top:2px;line-height:1.35}
+  .obg-go{flex:none;display:inline-flex;align-items:center;gap:3px;color:var(--accent,#0c6b4f);font-weight:700;font-size:12.5px}
+  .obg-go svg{width:16px;height:16px}
+  .obg-alt{display:flex;align-items:center;gap:8px;width:100%;justify-content:center;margin-top:10px;background:none;border:1px dashed var(--line);border-radius:11px;padding:10px 12px;color:var(--ink-2);font-weight:600;font-size:13px;cursor:pointer;font-family:var(--font)}
+  .obg-alt:hover{border-color:var(--accent,#0c6b4f);color:var(--accent,#0c6b4f)}
+  .obg-alt svg{width:16px;height:16px}
   .lotse-card.done .lotse-ok svg{width:18px;height:18px;flex:none}
   .starter-card{display:flex;align-items:center;gap:13px;border:1px solid var(--line);background:var(--surface);border-radius:13px;padding:14px 15px;margin-bottom:14px}
   .starter-ic{width:40px;height:40px;border-radius:10px;background:var(--ok-bg);color:var(--accent);display:grid;place-items:center;flex:none}
@@ -2059,7 +2083,7 @@ function scrStart(){
   return '<div class="view">'+
     '<h2 class="title">Dashboard</h2><p class="sub">Übersicht über gefährliche Stoffe der Gruppe.</p>'+
     '<button class="userline" data-action="switchUser">'+ICO.user+'<span>Angemeldet als <b>'+curUser().name+'</b> · '+curUser().role+'</span><span class="chg">wechseln</span></button>'+
-    '<button class="capture-btn" data-action="capture"><span class="ico">'+ICO.plus+'</span><span><b>Gefahrstoff aufnehmen</b><span>'+ctxNote+'</span></span></button>'+lotseCard()+
+    '<button class="capture-btn" data-action="capture"><span class="ico">'+ICO.plus+'</span><span><b>Gefahrstoff aufnehmen</b><span>'+ctxNote+'</span></span></button>'+(firstRunActive()?onboardGuide():lotseCard())+
     '<div class="kpi-grid">'+
       '<button class="kpi accent" data-action="goBestandAll"><span class="n">'+all.length+'</span><span class="t">'+ICO.box+' Datensätze</span></button>'+
       '<button class="kpi alert" data-action="goAdminSdb"><span class="n">'+noSdb.length+'</span><span class="t">'+ICO.warn+' ohne SDB</span></button>'+
@@ -2755,6 +2779,37 @@ function lotseScore(){
   DB.instances.forEach(function(i){total+=1;if(i.menge!=null)green+=1;});
   DB.locations.forEach(function(l){total+=1;if(!locConflicts(l.id).length)green+=1;});
   return {pct:total?Math.round(green/total*100):100,green:green,total:total};
+}
+/* ---------- Erstinbetriebnahme / Onboarding-Leitfaden (B1) ----------
+   Zeigt einem neuen Admin mit noch leerem Kataster einen geführten
+   Einrichtungs-Pfad statt der (bei 0 Datensätzen irreführenden)
+   "100% prüfbereit"-Lotse-Karte.                                        */
+function firstRunActive(){ return isAdmin() && DB.instances.length===0; }
+function onboardGuide(){
+  var hasCompany=DB.companies.filter(function(c){return !c.group;}).length>0;
+  var hasLoc=DB.locations.length>0;
+  var hasStock=DB.instances.length>0;
+  var hasTeam=(DB.users.length>1)||((DB.invites||[]).length>0);
+  var steps=[
+    {done:hasCompany,title:'Betrieb erfassen',sub:'Firma bzw. Standort anlegen',act:'goAdminFirmen'},
+    {done:hasLoc,title:'Lagerort anlegen',sub:'z. B. Materiallager, Werkstatt, Fahrzeug',act:'goAdminLager'},
+    {done:hasStock,title:'Ersten Gefahrstoff aufnehmen',sub:'Barcode/QR scannen – oder Starterkatalog nutzen',act:'capture'}
+  ];
+  var doneN=steps.filter(function(s){return s.done;}).length;
+  var activeIx=-1; for(var i=0;i<steps.length;i++){if(!steps[i].done){activeIx=i;break;}}
+  var rows=steps.map(function(s,ix){
+    var isActive=ix===activeIx;
+    var mark=s.done?'<span class="obg-mk done">'+ICO.ok+'</span>':'<span class="obg-mk'+(isActive?' active':'')+'">'+(ix+1)+'</span>';
+    var go=s.done?'':'<span class="obg-go">'+(isActive?'Jetzt ':'')+ICO.chev+'</span>';
+    return '<button class="obg-row'+(s.done?' done':'')+(isActive?' active':'')+'" data-action="'+s.act+'">'+mark+
+      '<span class="obg-tx"><b>'+s.title+'</b><small>'+s.sub+'</small></span>'+go+'</button>';
+  }).join('');
+  var starter=!hasStock?'<button class="obg-alt" data-action="starterOpen">'+ICO.plus+' Branchen-Starterkatalog öffnen</button>':'';
+  var team=!hasTeam?'<button class="obg-alt" data-action="goAdminPersonen">'+ICO.user+' Team einladen (optional)</button>':'';
+  return '<div class="onbguide">'+
+    '<div class="obg-head"><div class="obg-badge">'+doneN+'/'+steps.length+'</div>'+
+      '<div class="obg-meta"><b>Willkommen bei StoffScan</b><small>In drei Schritten zum prüfbereiten Kataster. Der nächste Schritt ist hervorgehoben.</small></div></div>'+
+    '<div class="obg-steps">'+rows+'</div>'+starter+team+'</div>';
 }
 function lotseCard(){
   var items=lotseItems(),sc=lotseScore(),top=items[0];
@@ -4069,6 +4124,8 @@ document.addEventListener('click',e=>{
     case 'goAdminMenge':state.adminTab='hb';state.adminCompany='';state.adminHbView='menge';goTo('admin',{reset:true,nav:'admin'});break;
     case 'goAdminZl':state.adminTab='hb';state.adminCompany='';state.adminHbView='zl';goTo('admin',{reset:true,nav:'admin'});break;
     case 'goAdminLager':state.adminTab='lager';state.adminCompany='';goTo('admin',{reset:true,nav:'admin'});break;
+    case 'goAdminFirmen':state.adminTab='firmen';state.adminCompany='';goTo('admin',{reset:true,nav:'admin'});break;
+    case 'goAdminPersonen':state.adminTab='personen';state.adminCompany='';goTo('admin',{reset:true,nav:'admin'});break;
     case 'goAdminVerlauf':state.adminTab='verlauf';state.adminCompany='';goTo('admin',{reset:true,nav:'admin'});break;
     case 'clearLoc':state.activeLoc=null;toast('Lagerort-Kontext aufgehoben');goTo('start',{reset:true,nav:'start'});break;
     case 'capture':goTo(state.activeLoc?'scanArt':'scanLoc',{reset:true,nav:'scan'});break;
