@@ -1888,7 +1888,7 @@ function modalAbo(){
     else{btn='<button class="btn" data-action="choosePlan" data-id="'+p.id+'">Auf '+p.name+' wechseln</button>';}
     return planCardHtml(p,curPlan,btn);
   }).join('');
-  openModal('Abo &amp; Plan',head+cards+'<div style="font-size:11.5px;color:var(--ink-3);margin-top:2px">Online-Bezahlung via Stripe wird vorbereitet. Bis dahin wird der gewählte Plan vorgemerkt; die Verrechnung erfolgt nach Absprache.</div>');
+  openModal('Abo &amp; Plan',head+cards+'<div style="font-size:11.5px;color:var(--ink-3);margin-top:2px">Der gewählte Plan wird vorgemerkt; die Verrechnung erfolgt per Rechnung nach Absprache.</div>');
 }
 async function choosePlan(plan){
   if(!(AUTH.profile&&(AUTH.profile.role==='firmenadmin'||AUTH.profile.role==='gruppenadmin'))){toast('Nur Admins können den Plan ändern.',false);return;}

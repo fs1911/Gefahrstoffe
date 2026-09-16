@@ -1979,7 +1979,7 @@ function planCardHtml(p,curPlan,btnHtml){
 }
 function modalAbo(){
   var curPlan=state.plan||'starter';
-  var head='<div class="abo-status">'+ICO.info+'<div>Aktuelles Abo (Demo): <b>'+PLAN_BY[curPlan].name+'</b> <span class="plan-badge">Testphase</span><br>In der echten App wählt der Admin hier den Plan; die Bezahlung läuft über Stripe.</div></div>';
+  var head='<div class="abo-status">'+ICO.info+'<div>Aktuelles Abo (Demo): <b>'+PLAN_BY[curPlan].name+'</b> <span class="plan-badge">Testphase</span><br>In der echten App wählt der Admin hier den Plan; die Verrechnung erfolgt per Rechnung nach Absprache.</div></div>';
   var cards=PLANS.map(function(p){
     var btn;
     if(p.id===curPlan){btn='<button class="plan-cur-btn">'+ICO.ok+' Aktueller Plan</button>';}
