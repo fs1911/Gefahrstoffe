@@ -544,6 +544,7 @@
   nav.bottom .scan-btn .sc svg{width:25px;height:25px;color:#fff}
 
   /* Modal */
+  body.modal-open{overflow:hidden}
   .modal-back{position:fixed;inset:0;background:rgba(13,18,22,.55);z-index:320;display:flex;align-items:flex-end;justify-content:center;animation:fade .15s}
   .modal{background:var(--surface);width:100%;max-width:620px;border-radius:16px 16px 0 0;max-height:90vh;overflow:auto;animation:up .22s ease;padding-bottom:env(safe-area-inset-bottom)}
   @keyframes up{from{transform:translateY(100%)}to{transform:none}}
@@ -2363,14 +2364,14 @@ function openChat(prefill){
     '<div class="chat-msgs" id="chatMsgs"></div>'+
     '<div class="chat-chips" id="chatChips">'+CHAT_SUG.map(function(x){return '<button type="button" class="chat-chip" data-action="chatChip" data-q="'+encodeURIComponent(x)+'">'+chatEsc(x)+'</button>';}).join('')+'</div>'+
     '<form class="chat-input" id="chatForm"><input id="chatInput" placeholder="Frage eingeben…" autocomplete="off"><button class="chat-send" type="submit" aria-label="Senden">'+send+'</button></form></div>';
-  document.body.appendChild(el);
+  document.body.appendChild(el);syncScrollLock();
   el.addEventListener('click',function(e){if(e.target===el)closeChat();});
   document.getElementById('chatForm').addEventListener('submit',function(e){e.preventDefault();chatSend();});
   chatAddBot('Hallo! Ich beantworte Fragen zu deinen Gefahrstoffen – wo ein Stoff steht, Erste Hilfe, fehlende SDB oder Zusammenlagerung. Frag einfach.');
   setTimeout(function(){var i=document.getElementById('chatInput');if(i)i.focus();},60);
   if(prefill)chatSend(prefill);
 }
-function closeChat(){var el=document.getElementById('chatOverlay');if(el)el.remove();}
+function closeChat(){var el=document.getElementById('chatOverlay');if(el)el.remove();syncScrollLock();}
 function chatSend(forced){
   if(chatBusy)return;
   var inp=document.getElementById('chatInput');
@@ -3995,8 +3996,9 @@ function render(){
 }
 
 /* ---------- Modals ---------- */
-function openModal(t,b){const el=document.createElement('div');el.className='modal-back';el.id='modalBack';el.innerHTML='<div class="modal"><div class="modal-h"><b>'+t+'</b><button class="x" data-action="closeModal">×</button></div><div class="modal-body">'+b+'</div></div>';el.addEventListener('click',e=>{if(e.target===el)closeModal();});document.body.appendChild(el);}
-function closeModal(){const e=document.getElementById('modalBack');if(e)e.remove();}
+function syncScrollLock(){document.body.classList.toggle('modal-open',!!document.querySelector('.modal-back,.chat-overlay'));}
+function openModal(t,b){closeModal();const el=document.createElement('div');el.className='modal-back';el.id='modalBack';el.innerHTML='<div class="modal"><div class="modal-h"><b>'+t+'</b><button class="x" data-action="closeModal">×</button></div><div class="modal-body">'+b+'</div></div>';el.addEventListener('click',e=>{if(e.target===el)closeModal();});document.body.appendChild(el);syncScrollLock();}
+function closeModal(){var m=document.querySelectorAll('.modal-back');for(var i=0;i<m.length;i++)m[i].remove();syncScrollLock();}
 function modalQr(id){const i=instance(id),s=substance(i.sub),l=location_(i.loc);openModal('Interner QR-Code','<div class="qr-wrap"><div class="qr-frame" id="qrBox"></div><div class="qr-code">'+esc(i.qr)+'</div><div class="qr-sub">'+esc(s.name)+' · '+firmTag(l.company)+' '+esc(l.name)+'</div></div><div class="notice info" style="margin-top:15px">'+ICO.info+'<div>Echter QR-Code: mit jeder Handy-Kamera scannbar – öffnet diese Stoffkarte (wenn die App online erreichbar ist).</div></div><div class="btn-row"><button class="btn secondary" data-action="printQr">'+ICO.print+' Etikette drucken</button><button class="btn" data-action="simScanQr" data-id="'+i.id+'">'+ICO.qr+' Öffnen</button></div>');renderRealQr('qrBox',qrTextInst(i));}
 function modalLocQr(id){const l=location_(id),c=company(l.company);openModal('Lagerort-QR','<div class="qr-wrap"><div class="qr-frame" id="qrBox"></div><div class="qr-code">LOC-'+id.toUpperCase()+'</div><div class="qr-sub">'+esc(l.name)+' · '+esc(l.bereich)+' · '+esc(c.name)+'</div></div><div class="notice info" style="margin-top:15px">'+ICO.info+'<div>Echter QR-Code für die Lagerort-Etikette – scannen setzt diesen Lagerort als Kontext.</div></div><div class="btn-row"><button class="btn secondary" data-action="printQr">'+ICO.print+' Etikette drucken</button><button class="btn" data-action="setLoc" data-id="'+id+'">'+ICO.scan+' Als Lagerort setzen</button></div>');renderRealQr('qrBox',qrTextLoc(l));}
 function modalSdb(id){const s=substance(id);let note,doc;
@@ -4108,6 +4110,11 @@ function confirmModal(title,text,actionId,id){
 let toastT;function toast(m,ok){const t=document.getElementById('toast');t.innerHTML=(ok!==false?ICO.ok:'')+'<span>'+m+'</span>';t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2400);}
 
 /* ---------- Events ---------- */
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Escape')return;
+  if(document.getElementById('chatOverlay')){closeChat();return;}
+  if(document.querySelector('.modal-back')){stopCamera();closeModal();}
+});
 document.addEventListener('click',e=>{
   const el=e.target.closest('[data-action]');if(!el)return;const a=el.dataset.action,id=el.dataset.id;
   switch(a){
