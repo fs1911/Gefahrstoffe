@@ -1917,7 +1917,6 @@ function modalAbo(){
 }
 async function choosePlan(plan){
   if(!(AUTH.profile&&(AUTH.profile.role==='firmenadmin'||AUTH.profile.role==='gruppenadmin'))){toast('Nur Admins können den Plan ändern.',false);return;}
-  try{var r=await sbc.functions.invoke('create-checkout-session',{body:{plan:plan}});if(!r.error&&r.data&&r.data.url){location.href=r.data.url;return;}}catch(e){}
   var res=await sbc.rpc('set_org_plan',{p_plan:plan});
   if(res.error){toast(res.error.message,false);return;}
   if(AUTH.org)AUTH.org.plan=plan;
@@ -4570,9 +4569,6 @@ async function initApp(){
   try{await loadDB();}catch(e){toast('Daten laden fehlgeschlagen: '+(e&&e.message||e),false);}
   clearOverlay();
   render();
-  const qs=location.search||'';
-  if(qs.indexOf('abo=success')>-1){toast('Danke! Dein Abo ist aktiv.');history.replaceState(null,'',location.pathname);}
-  else if(qs.indexOf('abo=cancel')>-1){toast('Bezahlung abgebrochen – kein Plan gebucht.',false);history.replaceState(null,'',location.pathname);}
   const hsh=location.hash||'';if(hsh.indexOf('#open=')===0||hsh.indexOf('#instr=')===0||hsh.indexOf('#einsatz=')===0){setTimeout(()=>routeCode(hsh),80);}
 }
 initApp();
