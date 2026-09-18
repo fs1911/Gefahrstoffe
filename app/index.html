@@ -4016,9 +4016,10 @@ function confirmModal(title,text,actionId,id){
     '<div class="btn-row" style="margin-top:0"><button class="btn ghost" data-action="closeModal">Abbrechen</button><button class="btn danger" data-action="'+actionId+'" data-id="'+id+'">'+ICO.trash+' Löschen</button></div>');
 }
 
-let toastT;function toast(m,ok){const t=document.getElementById('toast');t.innerHTML=(ok!==false?ICO.ok:'')+'<span>'+m+'</span>';t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2400);}
+let toastT;function toast(m,ok){const t=document.getElementById('toast');t.innerHTML=(ok!==false?ICO.ok:'')+'<span>'+m+'</span>';t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2400);if(ok===false){var bb=document.querySelectorAll('[data-busy]');for(var i=0;i<bb.length;i++)bb[i].removeAttribute('data-busy');}}
 
 /* ---------- Events ---------- */
+var MUT_ACTIONS=/^(subApprove|subReject|uploadSdb|pwSave|starterApply|saveInstr|saveUser|saveCompany|saveLocation|saveProfile|saveErf|saveLk|authLogin|authSignup|authCreateOrg|pwForgot|rpSave)$/;
 document.addEventListener('keydown',function(e){
   if(e.key!=='Escape')return;
   if(document.getElementById('chatOverlay')){closeChat();return;}
@@ -4026,6 +4027,8 @@ document.addEventListener('keydown',function(e){
 });
 document.addEventListener('click',e=>{
   const el=e.target.closest('[data-action]');if(!el)return;const a=el.dataset.action,id=el.dataset.id;
+  /* Doppel-Absenden verhindern (keine Repeat-/Stepper-Buttons in der App). */
+  if(MUT_ACTIONS.test(a)){var _n=Date.now();if(el.dataset.busy&&_n-(+el.dataset.busy)<1500)return;el.dataset.busy=_n;}
   switch(a){
     case 'back':goBack();break;
     case 'closeModal':stopCamera();closeModal();break;
