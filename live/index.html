@@ -3385,8 +3385,12 @@ async function lsApply(){
   try{
     for(var k=0;k<items.length;k++){var it=items[k];var sid=it.match;
       if(sid==='__new'){
-        var {data:sub,error:e1}=await sbc.from('substances').insert({organization_id:orgId(),produktname:it.desc,hersteller:'unbekannt',signalwort:'Achtung',ghs_piktogramme:[],h_saetze:'– (aus Lieferschein, bitte ergänzen)',p_saetze:'–',un_nummer:null,lagerklasse:null,externer_barcode:it.art||null,info_link:null,status:'needs_review',source:'import'}).select().single();
-        if(e1){toast('Stoff: '+e1.message,false);return;}sid=sub.id;newSubs++;
+        var dupS=findDupSubstance(it.desc,'',it.art);
+        if(dupS){sid=dupS.id;}
+        else{
+          var {data:sub,error:e1}=await sbc.from('substances').insert({organization_id:orgId(),produktname:it.desc,hersteller:'unbekannt',signalwort:'Achtung',ghs_piktogramme:[],h_saetze:'– (aus Lieferschein, bitte ergänzen)',p_saetze:'–',un_nummer:null,lagerklasse:null,externer_barcode:it.art||null,info_link:null,status:'needs_review',source:'import'}).select().single();
+          if(e1){toast('Stoff: '+e1.message,false);return;}sid=sub.id;newSubs++;
+        }
       }
       var qr='INST-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,5).toUpperCase();
       var {error:e2}=await sbc.from('substance_instances').insert({organization_id:orgId(),substance_id:sid,company_id:compId,storage_location_id:loc,gebindeart:it.gebinde,anzahl_gebinde:it.anzahl,menge_aktuell:it.menge,mengeneinheit:it.einheit,status:'Lager',internal_qr:qr}).select().single();
@@ -4325,6 +4329,23 @@ async function delCompanyDo(id){const {error}=await sbc.from('companies').delete
 async function delLocationDo(id){const {error}=await sbc.from('storage_locations').delete().eq('id',id);if(state.activeLoc===id)state.activeLoc=null;closeModal();if(error){toast(error.message,false);return;}await loadDB();toast('Lagerort gelöscht');render();}
 
 function defaultCompanyId(){const g=DB.companies.find(c=>c.group);return (g||DB.companies[0]||{}).id;}
+/* Dublettenschutz: findet einen bereits erfassten Stoff mit gleichem Barcode
+   (starker Schlüssel) oder identischem Produktnamen + kompatiblem Hersteller.
+   So entsteht keine Stoffstamm-Dublette und das SDB muss nur einmal hinterlegt
+   werden (statt je Kopie). */
+function findDupSubstance(name,hersteller,barcode){
+  var nm=String(name||'').toLowerCase().replace(/\s+/g,' ').trim(); if(!nm)return null;
+  var h=String(hersteller||'').toLowerCase().trim(), byName=null;
+  for(var i=0;i<DB.substances.length;i++){var s=DB.substances[i];
+    if(barcode&&s.barcode&&String(s.barcode).trim()===String(barcode).trim())return s;
+    if(!byName){
+      var sn=String(s.name||'').toLowerCase().replace(/\s+/g,' ').trim();
+      if(sn===nm){var sh=String(s.hersteller||'').toLowerCase().trim();
+        if(!h||h==='unbekannt'||!sh||sh==='unbekannt'||sh===h)byName=s;}
+    }
+  }
+  return byName;
+}
 async function saveErf(){const f=document.getElementById('erfForm');const name=f.name.value.trim();if(!name){toast('Produktname fehlt.',false);f.name.focus();return;}
   const mr=f.menge.value.trim();if(!mr){toast('Menge fehlt.',false);f.menge.focus();return;}
   const haz=[...f.querySelectorAll('.chip.on[data-haz]')].map(c=>c.dataset.haz);const sdb=f.sdb.value.trim();const sdbfile=(state.aiFile)||(f.sdbfile&&f.sdbfile.files&&f.sdbfile.files[0]);const bc=(f.barcode&&f.barcode.value.trim())||'';const sig=state._sig||'Achtung';
@@ -4332,20 +4353,33 @@ async function saveErf(){const f=document.getElementById('erfForm');const name=f
   const compId=state.activeLoc?location_(state.activeLoc).company:defaultCompanyId();
   if(!compId){toast('Keine Firma vorhanden – zuerst in der Verwaltung anlegen.',false);return;}
   try{
-    const {data:sub,error:e1}=await sbc.from('substances').insert({organization_id:orgId(),produktname:name,hersteller:ex.hersteller||'unbekannt',signalwort:sig,ghs_piktogramme:haz,h_saetze:ex.h||'– (manuell, bitte ergänzen)',p_saetze:ex.p||'–',un_nummer:ex.un||null,lagerklasse:normalizeLK(ex.lk),externer_barcode:bc||null,info_link:(/^https?:\/\//i.test(sdb)?sdb:null),status:erfStatus(),source:erfSource()}).select().single();
-    if(e1){toast('Stoff: '+e1.message,false);return;}
-    // KI-Extraktion (Provenienz) mit dem neuen Stoff verknüpfen
-    if(state.aiExtractionId){try{await sbc.from('sds_extractions').update({substance_id:sub.id}).eq('id',state.aiExtractionId);}catch(_){}state.aiExtractionId=null;}
-    // Beitrag in den mandantenübergreifenden Schweizer Katalog (anonym, nur wenn Barcode vorhanden)
-    if(bc){try{sbc.rpc('catalog_contribute',{p_barcode:bc,p_produktname:name,p_hersteller:ex.hersteller||null,p_signalwort:sig,p_ghs:haz,p_h:ex.h||null,p_p:ex.p||null,p_un:ex.un||null,p_lk:normalizeLK(ex.lk),p_quelle:(state.scanPrefill&&state.scanPrefill.catalog)?'bestaetigt':'neu'}).then(()=>{},()=>{});}catch(_){}}
-    if(sdbfile){try{await uploadSdbFile(sub.id,sdbfile);}catch(err){toast('SDB-Upload: '+(err&&err.message||err),false);}}
-    else if(sdb){await sbc.from('sds_documents').insert({organization_id:orgId(),substance_id:sub.id,external_link:sdb,revisionsdatum:new Date().toISOString().slice(0,10),uploaded_by:AUTH.profile.id});}
+    var dupS=findDupSubstance(name,ex.hersteller,bc);
+    var sub,dupHit=false;
+    if(dupS){
+      // Bestehenden Stoff wiederverwenden – keine Stoffstamm-Dublette anlegen.
+      dupHit=true; sub={id:dupS.id};
+      // Falls der bestehende Stoff noch kein SDB hat und hier eines mitgegeben wird: anhängen.
+      if(dupS.sdb&&dupS.sdb.status==='fehlt'){
+        if(sdbfile){try{await uploadSdbFile(dupS.id,sdbfile);}catch(err){toast('SDB-Upload: '+(err&&err.message||err),false);}}
+        else if(sdb){await sbc.from('sds_documents').insert({organization_id:orgId(),substance_id:dupS.id,external_link:sdb,revisionsdatum:new Date().toISOString().slice(0,10),uploaded_by:AUTH.profile.id});}
+      }
+    }else{
+      const r1=await sbc.from('substances').insert({organization_id:orgId(),produktname:name,hersteller:ex.hersteller||'unbekannt',signalwort:sig,ghs_piktogramme:haz,h_saetze:ex.h||'– (manuell, bitte ergänzen)',p_saetze:ex.p||'–',un_nummer:ex.un||null,lagerklasse:normalizeLK(ex.lk),externer_barcode:bc||null,info_link:(/^https?:\/\//i.test(sdb)?sdb:null),status:erfStatus(),source:erfSource()}).select().single();
+      if(r1.error){toast('Stoff: '+r1.error.message,false);return;}
+      sub=r1.data;
+      // KI-Extraktion (Provenienz) mit dem neuen Stoff verknüpfen
+      if(state.aiExtractionId){try{await sbc.from('sds_extractions').update({substance_id:sub.id}).eq('id',state.aiExtractionId);}catch(_){}state.aiExtractionId=null;}
+      // Beitrag in den mandantenübergreifenden Schweizer Katalog (anonym, nur wenn Barcode vorhanden)
+      if(bc){try{sbc.rpc('catalog_contribute',{p_barcode:bc,p_produktname:name,p_hersteller:ex.hersteller||null,p_signalwort:sig,p_ghs:haz,p_h:ex.h||null,p_p:ex.p||null,p_un:ex.un||null,p_lk:normalizeLK(ex.lk),p_quelle:(state.scanPrefill&&state.scanPrefill.catalog)?'bestaetigt':'neu'}).then(()=>{},()=>{});}catch(_){}}
+      if(sdbfile){try{await uploadSdbFile(sub.id,sdbfile);}catch(err){toast('SDB-Upload: '+(err&&err.message||err),false);}}
+      else if(sdb){await sbc.from('sds_documents').insert({organization_id:orgId(),substance_id:sub.id,external_link:sdb,revisionsdatum:new Date().toISOString().slice(0,10),uploaded_by:AUTH.profile.id});}
+    }
     const qr='INST-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,5).toUpperCase();
     const {data:inst,error:e2}=await sbc.from('substance_instances').insert({organization_id:orgId(),substance_id:sub.id,company_id:compId,storage_location_id:state.activeLoc||null,gebindeart:f.gebinde.value,anzahl_gebinde:parseInt(f.anzahl.value||'1',10),menge_aktuell:parseFloat(mr),mengeneinheit:f.einheit.value,status:'Lager',internal_qr:qr}).select().single();
     if(e2){toast('Bestand: '+e2.message,false);return;}
     addHistory('Bestand erfasst',name+(state.activeLoc?' · '+location_(state.activeLoc).name:''),state.activeLoc?location_(state.activeLoc).company:'');
     state._sig=null;state.scanPrefill=null;state.aiExtract=null;state.aiFile=null;
-    await loadDB();toast('Bestand erfasst · QR erstellt');goTo('detail',{sub:sub.id,inst:inst.id,reset:true,nav:'start'});setTimeout(()=>modalQr(inst.id),350);
+    await loadDB();toast(dupHit?('Als weiteres Vorkommen von «'+dupS.name+'» gebucht – SDB gilt für alle.'):'Bestand erfasst · QR erstellt');goTo('detail',{sub:sub.id,inst:inst.id,reset:true,nav:'start'});setTimeout(()=>modalQr(inst.id),350);
   }catch(e){toast('Fehler: '+e.message,false);}}
 
 async function saveLkDo(id){

@@ -3317,9 +3317,13 @@ function lsApply(){
   var made=0,newSubs=0;
   items.forEach(function(it,k){
     var sid;
-    if(it.match==='__new'){sid='s_'+Date.now()+'_'+k;
-      DB.substances.push({id:sid,name:it.desc,hersteller:'unbekannt',signal:'Achtung',ghs:[],h:'– (aus Lieferschein, bitte ergänzen)',p:'–',un:'–',lk:null,barcode:it.art||'',info:'',sdb:{status:'fehlt',rev:null,link:null}});
-      newSubs++;}
+    if(it.match==='__new'){
+      var dupS=findDupSubstance(it.desc,'',it.art);
+      if(dupS){sid=dupS.id;}
+      else{sid='s_'+Date.now()+'_'+k;
+        DB.substances.push({id:sid,name:it.desc,hersteller:'unbekannt',signal:'Achtung',ghs:[],h:'– (aus Lieferschein, bitte ergänzen)',p:'–',un:'–',lk:null,barcode:it.art||'',info:'',sdb:{status:'fehlt',rev:null,link:null}});
+        newSubs++;}
+    }
     else sid=it.match;
     qrCounter++;var qr='INST-'+String(qrCounter).padStart(6,'0');
     DB.instances.push({id:'i_'+Date.now()+'_'+k,sub:sid,loc:loc,gebinde:it.gebinde,groesse:it.groesse,anzahl:it.anzahl,menge:it.menge,einheit:it.einheit,status:'Lager',qr:qr,last:new Date().toISOString().slice(0,10)});
@@ -4191,15 +4195,34 @@ function modalEditUser(id){const u=DB.users.find(x=>x.id===id);if(!u)return;
     '<div class="field"><label>Firma</label><select name="company">'+fOpts+'</select></div>'+
     '<div class="btn-row" style="margin-top:0"><button type="button" class="btn ghost" data-action="closeModal">Abbrechen</button><button type="button" class="btn" data-action="saveUser" data-id="'+id+'">Speichern</button></div></form>');}
 
+/* Dublettenschutz: bestehenden Stoff (Barcode oder Name+Hersteller) wiederverwenden,
+   damit kein doppelter Stoffstamm entsteht und das SDB nur einmal nötig ist. */
+function findDupSubstance(name,hersteller,barcode){
+  var nm=String(name||'').toLowerCase().replace(/\s+/g,' ').trim(); if(!nm)return null;
+  var h=String(hersteller||'').toLowerCase().trim(), byName=null;
+  for(var i=0;i<DB.substances.length;i++){var s=DB.substances[i];
+    if(barcode&&s.barcode&&String(s.barcode).trim()===String(barcode).trim())return s;
+    if(!byName){
+      var sn=String(s.name||'').toLowerCase().replace(/\s+/g,' ').trim();
+      if(sn===nm){var sh=String(s.hersteller||'').toLowerCase().trim();
+        if(!h||h==='unbekannt'||!sh||sh==='unbekannt'||sh===h)byName=s;}
+    }
+  }
+  return byName;
+}
 function saveErf(){const f=document.getElementById('erfForm');const name=f.name.value.trim();if(!name){toast('Produktname fehlt.',false);f.name.focus();return;}
   const mr=f.menge.value.trim();if(!mr){toast('Menge fehlt.',false);f.menge.focus();return;}
   const haz=[...f.querySelectorAll('.chip.on[data-haz]')].map(c=>c.dataset.haz);const sdb=f.sdb.value.trim();const bc=(f.barcode&&f.barcode.value.trim())||'';const sig=state._sig||'Achtung';
   const ex=state.aiExtract||{};
-  const sid='s_'+Date.now();DB.substances.push({id:sid,name,hersteller:ex.hersteller||(f.hersteller?(f.hersteller.value||'').trim()||'unbekannt':'unbekannt'),signal:sig,ghs:haz,h:ex.h||'– (manuell, bitte ergänzen)',p:ex.p||'–',un:ex.un||'–',lk:ex.lk||null,barcode:bc,info:(/^https?:\/\//i.test(sdb)?sdb:''),sdb:sdb?{status:'ok',rev:new Date().toISOString().slice(0,7),link:sdb}:{status:'fehlt',rev:null,link:null}});
+  const hz=ex.hersteller||(f.hersteller?(f.hersteller.value||'').trim()||'unbekannt':'unbekannt');
+  var dupS=findDupSubstance(name,hz,bc);var sid,dupHit=false;
+  if(dupS){dupHit=true;sid=dupS.id;
+    if(dupS.sdb&&dupS.sdb.status==='fehlt'&&sdb){dupS.sdb={status:'ok',rev:new Date().toISOString().slice(0,7),link:sdb};if(/^https?:\/\//i.test(sdb))dupS.info=sdb;}
+  }else{sid='s_'+Date.now();DB.substances.push({id:sid,name,hersteller:hz,signal:sig,ghs:haz,h:ex.h||'– (manuell, bitte ergänzen)',p:ex.p||'–',un:ex.un||'–',lk:ex.lk||null,barcode:bc,info:(/^https?:\/\//i.test(sdb)?sdb:''),sdb:sdb?{status:'ok',rev:new Date().toISOString().slice(0,7),link:sdb}:{status:'fehlt',rev:null,link:null}});}
   qrCounter++;const qr='INST-'+String(qrCounter).padStart(6,'0');const iid='i_'+Date.now();
   DB.instances.push({id:iid,sub:sid,loc:state.activeLoc,gebinde:f.gebinde.value,groesse:'–',anzahl:parseInt(f.anzahl.value||'1',10),menge:parseFloat(mr),einheit:f.einheit.value,status:'Lager',qr,last:new Date().toISOString().slice(0,10)});
   addHistory('Bestand erfasst',name+(state.activeLoc?' · '+location_(state.activeLoc).name:''),state.activeLoc?location_(state.activeLoc).company:'');
-  state._sig=null;state.scanPrefill=null;state.aiExtract=null;saveDB();toast('Bestand erfasst · QR erstellt');goTo('detail',{sub:sid,inst:iid,reset:true,nav:'start'});setTimeout(()=>modalQr(iid),350);}
+  state._sig=null;state.scanPrefill=null;state.aiExtract=null;saveDB();toast(dupHit?('Als weiteres Vorkommen von «'+dupS.name+'» gebucht.'):'Bestand erfasst · QR erstellt');goTo('detail',{sub:sid,inst:iid,reset:true,nav:'start'});setTimeout(()=>modalQr(iid),350);}
 
 loadDB();
 render();
