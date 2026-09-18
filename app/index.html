@@ -82,7 +82,7 @@
   .locband.unset .lb-act{background:var(--warn);color:#fff}
   .locband.unset .lb-act:active{background:#7a4900}
 
-  main{flex:1;padding:16px 14px 96px}
+  main{flex:1;padding:16px 14px 128px}
   .view{animation:fade .16s ease}
   @keyframes fade{from{opacity:0}to{opacity:1}}
   h2.title{font-size:21px;margin:0 0 2px;font-weight:600}
@@ -564,7 +564,7 @@
   #toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%) translateY(20px);background:var(--slate);color:#fff;padding:13px 18px;border-radius:10px;font-size:13.5px;font-weight:600;z-index:70;opacity:0;pointer-events:none;transition:.25s;max-width:88%;box-shadow:0 6px 20px rgba(0,0,0,.3);display:flex;gap:9px;align-items:center}
   #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
   #toast svg{width:18px;height:18px;flex:none;color:#7fd3a4}
-  @media(min-width:680px){main{padding:22px 20px 96px}.act-grid{grid-template-columns:repeat(3,1fr)}}
+  @media(min-width:680px){main{padding:22px 20px 128px}.act-grid{grid-template-columns:repeat(3,1fr)}}
 
   /* ===== Dashboard + Desktop-Layout ===== */
   .shell{display:block}
@@ -595,7 +595,7 @@
     .sidebar{display:block;width:248px;flex:none;position:sticky;top:calc(56px + env(safe-area-inset-top));align-self:flex-start;height:calc(100vh - 56px - env(safe-area-inset-top));overflow:auto;background:var(--surface);border-right:1px solid var(--line);padding:14px 12px}
     .content{flex:1;min-width:0;border-left:0}
     nav.bottom{display:none}
-    main{padding:24px 28px 40px;max-width:980px;margin:0 auto;width:100%}
+    main{padding:24px 28px 84px;max-width:980px;margin:0 auto;width:100%}
     .locband{top:calc(56px + env(safe-area-inset-top))}
     /* Sidebar-Einträge */
     .sb-cap{width:100%;background:var(--accent);color:#fff;border:0;border-radius:10px;padding:13px 14px;display:flex;align-items:center;gap:10px;font-size:14.5px;font-weight:600;margin-bottom:14px}
@@ -1158,7 +1158,7 @@
   /* ===== Lagerklassen & Zusammenlagerung ===== */
   .lk-badge{display:inline-flex;align-items:center;font:700 11px/1 var(--mono);color:#fff;background:#555;border-radius:6px;padding:4px 7px;letter-spacing:.02em;white-space:nowrap;vertical-align:middle}
   .lk-badge.lk-unk{background:var(--surface-2);color:var(--ink-2);border:1px solid var(--line)}
-  .lk-edit{background:none;border:0;color:var(--accent);font-weight:700;font-size:12.5px;cursor:pointer;text-decoration:underline;padding:0 2px}
+  .lk-edit{background:none;border:0;color:var(--accent);font-weight:700;font-size:13px;cursor:pointer;text-decoration:underline;display:inline-block;padding:5px 7px;margin:-2px 0}
   .zl-alert{display:flex;gap:11px;border-radius:11px;padding:12px 13px;margin:12px 0;font-size:13px;line-height:1.5;align-items:flex-start}
   .zl-alert.r{background:var(--danger-bg);border:1px solid var(--danger-line);color:#7a1c14}
   .zl-alert.y{background:var(--warn-bg);border:1px solid var(--warn-line);color:#5e3800}
@@ -1172,7 +1172,7 @@
   .zl-pair{display:inline-flex;align-items:center;gap:5px;margin:4px 8px 0 0}
   .zl-arrow{opacity:.55;font-weight:700}
   .wk-tabs{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;margin:0 0 14px;-webkit-overflow-scrolling:touch}
-  .wk-tabs button{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:20px;padding:8px 15px;font-size:13px;font-weight:600;color:var(--ink-2)}
+  .wk-tabs button{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:20px;padding:11px 16px;font-size:13px;font-weight:600;color:var(--ink-2)}
   .wk-tabs button.on{background:var(--accent);border-color:var(--accent);color:#fff}
   .wk-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:15px 16px;margin-bottom:12px}
   .wk-card h3{margin:0 0 7px;font-family:var(--display);font-size:16px;color:var(--ink)}
