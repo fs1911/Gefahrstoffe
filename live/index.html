@@ -3392,6 +3392,13 @@ async function lsApply(){
           if(e1){toast('Stoff: '+e1.message,false);return;}sid=sub.id;newSubs++;
         }
       }
+      var mI=mergeableInstance(sid,loc,it.einheit,it.gebinde);
+      if(mI){
+        var nMenge=(parseFloat(mI.menge)||0)+(parseFloat(it.menge)||0), nAnz=(parseInt(mI.anzahl,10)||0)+(parseInt(it.anzahl,10)||0);
+        var up=await sbc.from('substance_instances').update({menge_aktuell:nMenge,anzahl_gebinde:nAnz}).eq('id',mI.id);
+        if(up.error){toast('Bestand: '+up.error.message,false);return;}
+        made++;continue;
+      }
       var qr='INST-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,5).toUpperCase();
       var {error:e2}=await sbc.from('substance_instances').insert({organization_id:orgId(),substance_id:sid,company_id:compId,storage_location_id:loc,gebindeart:it.gebinde,anzahl_gebinde:it.anzahl,menge_aktuell:it.menge,mengeneinheit:it.einheit,status:'Lager',internal_qr:qr}).select().single();
       if(e2){toast('Bestand: '+e2.message,false);return;}
@@ -4346,6 +4353,11 @@ function findDupSubstance(name,hersteller,barcode){
   }
   return byName;
 }
+/* Identisches Vorkommen im Lager (gleicher Stoff + Lagerort + Einheit + Gebindeart)
+   -> zum Zusammenfassen der Menge statt neuer Dubletten-Zeile. */
+function mergeableInstance(subId,loc,einheit,gebinde){
+  return DB.instances.find(function(i){return i.sub===subId&&i.loc===loc&&(i.einheit||'')===(einheit||'')&&(i.gebinde||'')===(gebinde||'')&&i.status==='Lager';});
+}
 async function saveErf(){const f=document.getElementById('erfForm');const name=f.name.value.trim();if(!name){toast('Produktname fehlt.',false);f.name.focus();return;}
   const mr=f.menge.value.trim();if(!mr){toast('Menge fehlt.',false);f.menge.focus();return;}
   const haz=[...f.querySelectorAll('.chip.on[data-haz]')].map(c=>c.dataset.haz);const sdb=f.sdb.value.trim();const sdbfile=(state.aiFile)||(f.sdbfile&&f.sdbfile.files&&f.sdbfile.files[0]);const bc=(f.barcode&&f.barcode.value.trim())||'';const sig=state._sig||'Achtung';
@@ -4373,6 +4385,16 @@ async function saveErf(){const f=document.getElementById('erfForm');const name=f
       if(bc){try{sbc.rpc('catalog_contribute',{p_barcode:bc,p_produktname:name,p_hersteller:ex.hersteller||null,p_signalwort:sig,p_ghs:haz,p_h:ex.h||null,p_p:ex.p||null,p_un:ex.un||null,p_lk:normalizeLK(ex.lk),p_quelle:(state.scanPrefill&&state.scanPrefill.catalog)?'bestaetigt':'neu'}).then(()=>{},()=>{});}catch(_){}}
       if(sdbfile){try{await uploadSdbFile(sub.id,sdbfile);}catch(err){toast('SDB-Upload: '+(err&&err.message||err),false);}}
       else if(sdb){await sbc.from('sds_documents').insert({organization_id:orgId(),substance_id:sub.id,external_link:sdb,revisionsdatum:new Date().toISOString().slice(0,10),uploaded_by:AUTH.profile.id});}
+    }
+    // Identisches Vorkommen am selben Lagerort? -> Menge addieren statt Dubletten-Zeile.
+    var mI=mergeableInstance(sub.id,state.activeLoc||null,f.einheit.value,f.gebinde.value);
+    if(mI){
+      var nMenge=(parseFloat(mI.menge)||0)+parseFloat(mr), nAnz=(parseInt(mI.anzahl,10)||0)+parseInt(f.anzahl.value||'1',10);
+      const up=await sbc.from('substance_instances').update({menge_aktuell:nMenge,anzahl_gebinde:nAnz}).eq('id',mI.id);
+      if(up.error){toast('Bestand: '+up.error.message,false);return;}
+      addHistory('Menge ergänzt',name+' · +'+mr+' '+f.einheit.value+(state.activeLoc?' · '+location_(state.activeLoc).name:''),state.activeLoc?location_(state.activeLoc).company:'');
+      state._sig=null;state.scanPrefill=null;state.aiExtract=null;state.aiFile=null;
+      await loadDB();toast('Menge zu bestehendem Vorkommen addiert · '+nMenge+' '+f.einheit.value);goTo('detail',{sub:sub.id,inst:mI.id,reset:true,nav:'start'});return;
     }
     const qr='INST-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,5).toUpperCase();
     const {data:inst,error:e2}=await sbc.from('substance_instances').insert({organization_id:orgId(),substance_id:sub.id,company_id:compId,storage_location_id:state.activeLoc||null,gebindeart:f.gebinde.value,anzahl_gebinde:parseInt(f.anzahl.value||'1',10),menge_aktuell:parseFloat(mr),mengeneinheit:f.einheit.value,status:'Lager',internal_qr:qr}).select().single();

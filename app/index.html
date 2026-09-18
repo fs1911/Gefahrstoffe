@@ -3325,6 +3325,8 @@ function lsApply(){
         newSubs++;}
     }
     else sid=it.match;
+    var mI=mergeableInstance(sid,loc,it.einheit,it.gebinde);
+    if(mI){mI.menge=(parseFloat(mI.menge)||0)+(parseFloat(it.menge)||0);mI.anzahl=(parseInt(mI.anzahl,10)||0)+(parseInt(it.anzahl,10)||0);mI.last=new Date().toISOString().slice(0,10);made++;return;}
     qrCounter++;var qr='INST-'+String(qrCounter).padStart(6,'0');
     DB.instances.push({id:'i_'+Date.now()+'_'+k,sub:sid,loc:loc,gebinde:it.gebinde,groesse:it.groesse,anzahl:it.anzahl,menge:it.menge,einheit:it.einheit,status:'Lager',qr:qr,last:new Date().toISOString().slice(0,10)});
     made++;
@@ -4210,6 +4212,10 @@ function findDupSubstance(name,hersteller,barcode){
   }
   return byName;
 }
+/* Identisches Vorkommen im Lager -> Menge zusammenfassen statt Dubletten-Zeile. */
+function mergeableInstance(subId,loc,einheit,gebinde){
+  return DB.instances.find(function(i){return i.sub===subId&&i.loc===loc&&(i.einheit||'')===(einheit||'')&&(i.gebinde||'')===(gebinde||'')&&i.status==='Lager';});
+}
 function saveErf(){const f=document.getElementById('erfForm');const name=f.name.value.trim();if(!name){toast('Produktname fehlt.',false);f.name.focus();return;}
   const mr=f.menge.value.trim();if(!mr){toast('Menge fehlt.',false);f.menge.focus();return;}
   const haz=[...f.querySelectorAll('.chip.on[data-haz]')].map(c=>c.dataset.haz);const sdb=f.sdb.value.trim();const bc=(f.barcode&&f.barcode.value.trim())||'';const sig=state._sig||'Achtung';
@@ -4219,6 +4225,12 @@ function saveErf(){const f=document.getElementById('erfForm');const name=f.name.
   if(dupS){dupHit=true;sid=dupS.id;
     if(dupS.sdb&&dupS.sdb.status==='fehlt'&&sdb){dupS.sdb={status:'ok',rev:new Date().toISOString().slice(0,7),link:sdb};if(/^https?:\/\//i.test(sdb))dupS.info=sdb;}
   }else{sid='s_'+Date.now();DB.substances.push({id:sid,name,hersteller:hz,signal:sig,ghs:haz,h:ex.h||'– (manuell, bitte ergänzen)',p:ex.p||'–',un:ex.un||'–',lk:ex.lk||null,barcode:bc,info:(/^https?:\/\//i.test(sdb)?sdb:''),sdb:sdb?{status:'ok',rev:new Date().toISOString().slice(0,7),link:sdb}:{status:'fehlt',rev:null,link:null}});}
+  var mI=mergeableInstance(sid,state.activeLoc,f.einheit.value,f.gebinde.value);
+  if(mI){
+    mI.menge=(parseFloat(mI.menge)||0)+parseFloat(mr);mI.anzahl=(parseInt(mI.anzahl,10)||0)+parseInt(f.anzahl.value||'1',10);mI.last=new Date().toISOString().slice(0,10);
+    addHistory('Menge ergänzt',name+' · +'+mr+' '+f.einheit.value+(state.activeLoc?' · '+location_(state.activeLoc).name:''),state.activeLoc?location_(state.activeLoc).company:'');
+    state._sig=null;state.scanPrefill=null;state.aiExtract=null;saveDB();toast('Menge zu bestehendem Vorkommen addiert · '+mI.menge+' '+f.einheit.value);goTo('detail',{sub:sid,inst:mI.id,reset:true,nav:'start'});return;
+  }
   qrCounter++;const qr='INST-'+String(qrCounter).padStart(6,'0');const iid='i_'+Date.now();
   DB.instances.push({id:iid,sub:sid,loc:state.activeLoc,gebinde:f.gebinde.value,groesse:'–',anzahl:parseInt(f.anzahl.value||'1',10),menge:parseFloat(mr),einheit:f.einheit.value,status:'Lager',qr,last:new Date().toISOString().slice(0,10)});
   addHistory('Bestand erfasst',name+(state.activeLoc?' · '+location_(state.activeLoc).name:''),state.activeLoc?location_(state.activeLoc).company:'');
