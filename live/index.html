@@ -2331,7 +2331,7 @@ function askLocal(qraw){
   if(isSdb){
     var miss=DB.instances.map(function(i){return substance(i.sub);}).filter(function(x,ix,arr){return x.sdb.status==='fehlt'&&arr.indexOf(x)===ix;});
     if(s&&/\b(hat|von|für)\b/.test(q)&&!/welche|alle|liste/.test(q))return '<b>'+chatEsc(s.name)+'</b>: SDB '+(s.sdb.status==='ok'?'vorhanden (Stand '+esc(s.sdb.rev)+')':s.sdb.status==='alt'?'älter als 3 Jahre (Stand '+esc(s.sdb.rev)+') – prüfen':'fehlt – bitte ergänzen')+'.'+chatSubActions(s);
-    if(!miss.length)return 'Alle Stoffe mit Bestand haben ein hinterlegtes Sicherheitsdatenblatt. 👍';
+    if(!miss.length)return 'Alle Stoffe mit Bestand haben ein hinterlegtes Sicherheitsdatenblatt.';
     return miss.length+' Stoff'+(miss.length>1?'e':'')+' ohne SDB:<ul class="chat-ul">'+miss.map(function(x){return '<li>'+chatEsc(x.name)+' · '+chatEsc(x.hersteller||'')+'</li>';}).join('')+'</ul>';
   }
   if(isZl){
@@ -2339,7 +2339,7 @@ function askLocal(qraw){
       var verd=r==='g'?'dürfen zusammen gelagert werden':r==='y'?'nur bedingt – SDB prüfen und Einzelfall beurteilen':r==='r'?'müssen getrennt gelagert werden':'– Lagerklasse unklar';
       return '<b>'+chatEsc(subs[0].name)+'</b> (LK '+(a||'?')+') und <b>'+chatEsc(subs[1].name)+'</b> (LK '+(b||'?')+') '+verd+'.';}
     var zc=allZlConflicts();
-    if(!zc.length)return 'Aktuell keine Zusammenlagerungs-Konflikte an deinen Lagerorten. 👍';
+    if(!zc.length)return 'Aktuell keine Zusammenlagerungs-Konflikte an deinen Lagerorten.';
     return zc.length+' Lagerort'+(zc.length>1?'e':'')+' mit Konflikt. Nenne zwei Stoffe für eine konkrete Prüfung, z. B. «Darf ich Aceton neben Natronlauge lagern?».';
   }
   if(isDisp)return (s?'<b>'+chatEsc(s.name)+'</b>: ':'')+'Reste und leere, nicht gereinigte Gebinde als Sonderabfall gemäss VeVA entsorgen – nicht in Kanalisation oder Hauskehricht. Details in Abschnitt 13 des SDB.'+(s?chatSubActions(s):'');
@@ -3359,7 +3359,7 @@ function lsParse(){
         '<label>Menge<input class="ls-menge" type="number" step="any" value="'+menge+'"></label>'+
         '<label>Einheit<select class="ls-einheit">'+einOpts+'</select></label>'+
       '</div>'+
-      '<label class="ls-matchlab">Zuordnung<select class="ls-match"><option value="__new"'+(sel?'':' selected')+'>➕ Neuen Stoff anlegen</option><option value="__ignore">Ignorieren</option>'+subOpts+'</select></label>'+
+      '<label class="ls-matchlab">Zuordnung<select class="ls-match"><option value="__new"'+(sel?'':' selected')+'>+ Neuen Stoff anlegen</option><option value="__ignore">Ignorieren</option>'+subOpts+'</select></label>'+
     '</div>';
   }).join('');
   html+='<button class="btn" data-action="lsApply" type="button" style="width:100%;margin-top:12px">'+ICO.ok+' In Bestand übernehmen</button>';
