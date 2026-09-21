@@ -32,9 +32,9 @@
   section{padding:92px 0}
   h1,h2,h3{margin:0;font-family:var(--display);line-height:1.08;letter-spacing:-.02em}
   h2{font-size:clamp(28px,4vw,38px);font-weight:700;margin-bottom:14px}
-  .eyebrow{font-family:var(--font);font-size:13.5px;font-weight:600;letter-spacing:0;
-    text-transform:none;color:var(--brand);margin-bottom:15px;display:flex;align-items:center;gap:9px}
-  .eyebrow::before{content:"";width:9px;height:9px;flex:none;background:var(--brand);transform:rotate(45deg);border-radius:1.5px}
+  .eyebrow{font-family:var(--mono,ui-monospace,monospace);font-size:11.5px;font-weight:600;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--ink-3);margin-bottom:16px;display:flex;align-items:center;gap:11px}
+  .eyebrow::before{content:"";width:24px;height:1px;flex:none;background:currentColor;opacity:.5;border-radius:0}
   .lead{font-size:19px;color:var(--ink-2);max-width:60ch;margin:0}
   .sec-head{max-width:640px;margin-bottom:46px}
 
@@ -73,12 +73,12 @@
     padding-top:74px;padding-bottom:80px;position:relative}
   .hero h1{font-size:clamp(38px,5.4vw,58px);font-weight:800;letter-spacing:-.035em;margin-bottom:22px;text-wrap:balance}
   .hero h1 .hl{color:inherit;white-space:nowrap}
-  .hero h1 .hl::after{content:"";display:inline-block;width:.4em;height:.4em;margin-left:.26em;background:var(--brand);transform:translateY(-.04em) rotate(45deg);border-radius:.07em}
+  .hero h1 .hl{color:var(--brand)}
   .hero p.sub{font-size:20px;color:var(--ink-2);max-width:52ch;margin:0 0 30px}
   .hero .cta-row{display:flex;gap:13px;flex-wrap:wrap}
   .hero .trust{margin-top:30px;display:flex;flex-wrap:wrap;gap:10px 22px;font-size:14px;color:var(--ink-3);font-weight:500}
   .hero .trust span{display:inline-flex;align-items:center;gap:8px}
-  .hero .trust .d{width:9px;height:9px;background:var(--brand);transform:rotate(45deg);border-radius:2px}
+  .hero .trust .d{width:5px;height:5px;background:var(--brand);border-radius:50%}
   @media(max-width:920px){.hero .wrap{grid-template-columns:1fr;gap:44px}}
 
   /* Phone mock — im neuen App-Look */
@@ -113,7 +113,7 @@
   /* Bildunterschrift zum Gerät */
   .stage-cap{margin-top:18px;display:flex;align-items:center;justify-content:center;gap:10px;
     font-size:13.5px;color:var(--ink-2);font-weight:500;max-width:296px;margin-left:auto;margin-right:auto;text-align:center}
-  .stage-cap .d{width:9px;height:9px;background:var(--brand);transform:rotate(45deg);border-radius:2px;flex:none}
+  .stage-cap .d{width:5px;height:5px;background:var(--brand);border-radius:50%;flex:none}
   @media(max-width:420px){.phone{width:100%}}
 
   /* Stat strip */
@@ -172,7 +172,7 @@
   /* Compliance band (forest) */
   .band{background:var(--forest);color:#dfe8e2}
   .band .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:52px;align-items:start}
-  .band .eyebrow{color:#82ceac}.band .eyebrow::before{background:#82ceac}
+  .band .eyebrow{color:rgba(255,255,255,.6)}.band .eyebrow::before{background:currentColor}
   .band h2{color:#fff}
   .band .lead{color:#aebdb4}
   .band ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
@@ -837,7 +837,7 @@
     <div class="stat"><b>2</b><span>Scans bis zum erfassten Stoff</span></div>
     <div class="stat"><b>1</b><span>Quelle für Bestand &amp; SDB</span></div>
     <div class="stat"><b>0</b><span>Excel-Listen nötig</span></div>
-    <div class="stat"><b>&infin;</b><span>Firmen &amp; Lagerorte</span></div>
+    <div class="stat"><b>3</b><span>Sprachen für Betriebsanweisung &amp; Unterweisung</span></div>
   </div>
 </div>
 
