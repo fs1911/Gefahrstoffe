@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="de-CH"><head><meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&family=Schibsted+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:1200px;height:630px}
+  body{background:#10241c;font-family:"Hanken Grotesk",sans-serif;color:#fff;position:relative;overflow:hidden}
+  /* subtiles Linien-Motiv wie im Hero */
+  .bg{position:absolute;inset:0;opacity:.5}
+  .bg svg{position:absolute;right:-80px;top:-60px;width:820px;height:820px;color:#1c3a2c}
+  .wrap{position:relative;height:100%;padding:66px 72px;display:flex;flex-direction:column;justify-content:space-between}
+  .brand{display:flex;align-items:center;gap:15px}
+  .badge{width:56px;height:56px;border-radius:15px;background:#0c6b4f;display:grid;place-items:center;font-family:"Schibsted Grotesk",sans-serif;font-weight:800;font-size:23px;color:#fff}
+  .wm{font-family:"Schibsted Grotesk",sans-serif;font-weight:700;font-size:31px;letter-spacing:-.01em}
+  .mid{max-width:800px}
+  .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:15px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:14px;margin-bottom:26px}
+  .eyebrow::before{content:"";width:34px;height:1px;background:currentColor;opacity:.6}
+  h1{font-family:"Schibsted Grotesk",sans-serif;font-weight:800;font-size:60px;line-height:1.05;letter-spacing:-.02em}
+  h1 .g{color:#4bbe8e}
+  .foot{display:flex;align-items:center;gap:12px;font-size:19px;color:rgba(255,255,255,.62);font-weight:500}
+  .dot{width:5px;height:5px;border-radius:50%;background:#4bbe8e;flex:none}
+  /* GHS-Raute als Marken-Akzent */
+  .ghs{position:absolute;right:96px;top:210px;width:210px;height:210px;border:4px solid #c0261f;background:#fff;border-radius:22px;transform:rotate(45deg);display:grid;place-items:center;box-shadow:0 30px 60px -20px rgba(0,0,0,.5)}
+  .ghs svg{transform:rotate(-45deg);width:96px;height:96px;fill:#17201c}
+</style></head>
+<body>
+  <div class="bg"><svg viewBox="0 0 579 579" fill="none" stroke="currentColor" stroke-width="8"><circle cx="289" cy="289" r="240"/><circle cx="289" cy="289" r="170"/><circle cx="289" cy="289" r="100"/></svg></div>
+  <div class="ghs"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 23a7 7 0 01-5-11.9C9 8.7 9.4 5.7 8.4 2.8 12.6 4 16 7.6 16 12c0 1.6-.6 3-1.5 4 .3-1.6-.2-3.2-1.5-4.4.2 2.6-1.2 4-2.6 5.1a3.2 3.2 0 001.4 6.2A7 7 0 0112 23z"/></svg></div>
+  <div class="wrap">
+    <div class="brand"><span class="badge">St</span><span class="wm">StoffScan</span></div>
+    <div class="mid">
+      <div class="eyebrow">Gefahrstoff-Kataster · Schweiz</div>
+      <h1>Das mobile Gefahrstoff-<br>Kataster für <span class="g">Bau&nbsp;&amp;&nbsp;Gewerbe</span></h1>
+    </div>
+    <div class="foot"><span>Lagerort scannen</span><span class="dot"></span><span>Artikel scannen</span><span class="dot"></span><span>SDB sofort griffbereit</span></div>
+  </div>
+</body></html>
